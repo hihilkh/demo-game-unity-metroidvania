@@ -1,0 +1,1 @@
+Scripts inside this folder are for HIHIFramework usage. The method logic and variable values of those scripts are based on the particular project, but the method and variable names should not be changed.
