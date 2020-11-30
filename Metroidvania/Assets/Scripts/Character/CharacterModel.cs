@@ -6,12 +6,12 @@ using HIHIFramework.Core;
 public class CharacterModel : MonoBehaviour {
     // TODO : remove SerializeField and set const
     [SerializeField] private bool IsAutoMoveMode = true;
-    [SerializeField] private float WalkingSpeed = 0.1f;
-    [SerializeField] private float JumpInitSpeed = 4f;
+    [SerializeField] private float WalkingSpeed = 0.05f;
+    [SerializeField] private float JumpInitSpeed = 8f;
 
     private const int MaxConsecutiveJump = 2;
 
-    private Rigidbody rb;
+    private Rigidbody2D rb;
 
     public CharacterController controller;
 
@@ -50,7 +50,7 @@ public class CharacterModel : MonoBehaviour {
     }
 
     private void InitPlayer () {
-        rb = GetComponent<Rigidbody> ();
+        rb = GetComponent<Rigidbody2D> ();
 
         facingDirection = CharacterEnum.Direction.Right;
         movingDirection = null;
@@ -151,7 +151,7 @@ public class CharacterModel : MonoBehaviour {
     private void Jump () {
         Log.PrintDebug ("Jump");
 
-        rb.velocity = new Vector3 (rb.velocity.x, JumpInitSpeed, rb.velocity.z);
+        rb.velocity = new Vector3 (rb.velocity.x, JumpInitSpeed);
 
         consecutiveJumpCount++;
         isInAir = true;
@@ -170,7 +170,7 @@ public class CharacterModel : MonoBehaviour {
 
     #region Collider
 
-    public void OnCollisionEnter (Collision collision) {
+    public void OnCollisionEnter2D (Collision2D collision) {
         switch (collision.gameObject.tag) {
             case GameVariable.GroundTag:
                 LandToGround ();
