@@ -17,6 +17,8 @@ public class CharacterController : MonoBehaviour, UserInput.ICharacterActions {
     public event Action StartedHold;
     public event Action StoppedHold;
 
+    private bool isHolding = false;
+
     void OnEnable () {
         if (userInput == null) {
             userInput = new UserInput ();
@@ -60,9 +62,13 @@ public class CharacterController : MonoBehaviour, UserInput.ICharacterActions {
     public void OnHold (InputAction.CallbackContext context) {
         Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase);
         if (context.phase == InputActionPhase.Performed) {
+            isHolding = true;
             StartedHold?.Invoke ();
         } else if (context.phase == InputActionPhase.Canceled) {
-            StoppedHold?.Invoke ();
+            if (isHolding) {
+                StoppedHold?.Invoke ();
+            }
+            isHolding = false;
         }
     }
 }

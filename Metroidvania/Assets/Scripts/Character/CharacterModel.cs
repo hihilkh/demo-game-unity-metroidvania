@@ -11,23 +11,32 @@ public class CharacterModel : MonoBehaviour {
 
     private const int MaxConsecutiveJump = 2;
 
+    private Dictionary<CharacterEnum.CommandSituation, CharacterEnum.Command?> commandDict = new Dictionary<CharacterEnum.CommandSituation, CharacterEnum.Command?> {
+        { CharacterEnum.CommandSituation.GroundTap, null },
+        { CharacterEnum.CommandSituation.GroundHold, null },
+        { CharacterEnum.CommandSituation.GroundRelease, null },
+        { CharacterEnum.CommandSituation.AirTap, null },
+        { CharacterEnum.CommandSituation.AirHold, null },
+        { CharacterEnum.CommandSituation.AirRelease, null }
+    };
+
     private Rigidbody2D rb;
 
     public CharacterController controller;
 
     private CharacterEnum.Direction facingDirection;
     private CharacterEnum.Direction? movingDirection;
-    private CharacterEnum.Action action;
+    private CharacterEnum.Animation charAnim;
     private bool isInAir;
     private int consecutiveJumpCount;
 
     private bool isJustTapped;
     private bool isHolding;
+    private bool isJustReleaseHold;
 
     // Temp control flags
     private bool isMoveLeft;
     private bool isMoveRight;
-    private bool isJump;
 
     void Start () {
         if (controller == null) {
@@ -54,16 +63,16 @@ public class CharacterModel : MonoBehaviour {
 
         facingDirection = CharacterEnum.Direction.Right;
         movingDirection = null;
-        action = CharacterEnum.Action.Idle;
+        charAnim = CharacterEnum.Animation.Idle;
         isInAir = false;
         consecutiveJumpCount = 0;
 
         isJustTapped = false;
         isHolding = false;
+        isJustReleaseHold = false;
 
         isMoveLeft = false;
         isMoveRight = false;
-        isJump = false;
 
         if (IsAutoMoveMode) {
             StartAutoMove ();
@@ -71,10 +80,13 @@ public class CharacterModel : MonoBehaviour {
     }
 
     private void Update () {
-        if (isHolding) {
-            HandleHoldInput ();
+        var situation = GetCurrentCommandSituation ();
+        if (situation != null) {
+            Log.Print (situation);
+            HandleCommnand ((CharacterEnum.CommandSituation)situation);
         }
 
+        // Basic movement
         if (!IsAutoMoveMode) {
             if (isMoveLeft && !isMoveRight) {
                 facingDirection = CharacterEnum.Direction.Left;
@@ -93,12 +105,8 @@ public class CharacterModel : MonoBehaviour {
             Idle ();
         }
 
-        if (isJump && CheckIsAllowJump ()) {
-            Jump ();
-        }
-
         isJustTapped = false;
-        isJump = false;
+        isJustReleaseHold = false;
     }
 
     #region Action Preparation
@@ -111,14 +119,22 @@ public class CharacterModel : MonoBehaviour {
         movingDirection = null;
     }
 
-    private bool CheckIsAllowJump () {
-        return consecutiveJumpCount < MaxConsecutiveJump;
+    private CharacterEnum.CommandSituation? GetCurrentCommandSituation () {
+        if (!isJustTapped && !isHolding && !isJustReleaseHold) {
+            return null;
+        }
+
+        if (isJustTapped) {
+            return isInAir ? CharacterEnum.CommandSituation.AirTap : CharacterEnum.CommandSituation.GroundTap;
+        } else if (isHolding) {
+            return isInAir ? CharacterEnum.CommandSituation.AirHold : CharacterEnum.CommandSituation.GroundHold;
+        } else {
+            return isInAir ? CharacterEnum.CommandSituation.AirRelease : CharacterEnum.CommandSituation.GroundRelease;
+        }
     }
 
-    private void HandleHoldInput () {
-        if (!isInAir) {
-            isJump = true;
-        }
+    private bool CheckIsAllowJump () {
+        return consecutiveJumpCount < MaxConsecutiveJump;
     }
 
     private void ChangeDirection () {
@@ -135,17 +151,33 @@ public class CharacterModel : MonoBehaviour {
 
     #region Player Action
 
+    private void HandleCommnand (CharacterEnum.CommandSituation situation) {
+        // TODO
+        var isJump = false;
+        if (situation == CharacterEnum.CommandSituation.GroundHold) {
+            isJump = true;
+        }
+
+        if (situation == CharacterEnum.CommandSituation.GroundTap || situation == CharacterEnum.CommandSituation.AirTap) {
+            isJump = true;
+        }
+
+        if (isJump && CheckIsAllowJump ()) {
+            Jump ();
+        }
+    }
+
     private void Idle () {
         //Log.PrintDebug ("Idle");
         movingDirection = null;
-        action = CharacterEnum.Action.Idle;
+        charAnim = CharacterEnum.Animation.Idle;
     }
 
     private void Walk () {
         //Log.PrintDebug ("Walk");
         var multiplier = facingDirection == CharacterEnum.Direction.Right ? 1 : -1;
         transform.position = transform.position + new Vector3 (WalkingSpeed * Time.deltaTime, 0, 0) * multiplier;
-        action = CharacterEnum.Action.Walking;
+        charAnim = CharacterEnum.Animation.Walking;
     }
 
     private void Jump () {
@@ -155,7 +187,7 @@ public class CharacterModel : MonoBehaviour {
 
         consecutiveJumpCount++;
         isInAir = true;
-        action = CharacterEnum.Action.Jumping;
+        charAnim = CharacterEnum.Animation.Jumping;
     }
 
     private void LandToGround () {
@@ -163,7 +195,7 @@ public class CharacterModel : MonoBehaviour {
         consecutiveJumpCount = 0;
         isInAir = false;
 
-        action = CharacterEnum.Action.Landing;
+        charAnim = CharacterEnum.Animation.Landing;
     }
 
     #endregion
@@ -213,7 +245,6 @@ public class CharacterModel : MonoBehaviour {
 
         Log.PrintDebug ("TriggerTapAction");
         isJustTapped = true;
-        isJump = true;
     }
 
     public void StartHoldAction () {
@@ -229,6 +260,7 @@ public class CharacterModel : MonoBehaviour {
     public void StopHoldAction () {
         Log.PrintDebug ("StopHoldAction");
         isHolding = false;
+        isJustReleaseHold = true;
     }
 
     #endregion

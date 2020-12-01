@@ -10,10 +10,27 @@ public class CharacterEnum
         Right
     }
 
-    public enum Action {
+    public enum Animation {
         Idle,
         Walking,
         Jumping,
         Landing
+    }
+
+    public enum Command {
+        Hit,
+        Jump,
+        Dash,
+        Arrow,
+        Turn
+    }
+
+    public enum CommandSituation {
+        GroundTap,
+        GroundHold,
+        GroundRelease,
+        AirTap,
+        AirHold,
+        AirRelease
     }
 }

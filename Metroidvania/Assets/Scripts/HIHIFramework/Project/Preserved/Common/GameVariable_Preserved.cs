@@ -13,7 +13,7 @@ public partial class GameVariable {
     #region Logger
 
     public const string LogTag = "Metroidvania";
-    public const LogLevel MinLogLevel = LogLevel.Debug;
+    public const LogLevel MinLogLevel = LogLevel.Info;
     public const bool IsLogForReleaseBuild = false;
 
     #endregion
