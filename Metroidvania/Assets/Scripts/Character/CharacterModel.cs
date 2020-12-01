@@ -6,7 +6,7 @@ using HIHIFramework.Core;
 public class CharacterModel : MonoBehaviour {
     // TODO : remove SerializeField and set const
     [SerializeField] private bool IsAutoMoveMode = true;
-    [SerializeField] private float WalkingSpeed = 0.05f;
+    [SerializeField] private float WalkingSpeed = 5f;
     [SerializeField] private float JumpInitSpeed = 8f;
 
     private const int MaxConsecutiveJump = 2;
@@ -144,7 +144,7 @@ public class CharacterModel : MonoBehaviour {
     private void Walk () {
         //Log.PrintDebug ("Walk");
         var multiplier = facingDirection == CharacterEnum.Direction.Right ? 1 : -1;
-        transform.position = transform.position + new Vector3 (WalkingSpeed, 0, 0) * multiplier;
+        transform.position = transform.position + new Vector3 (WalkingSpeed * Time.deltaTime, 0, 0) * multiplier;
         action = CharacterEnum.Action.Walking;
     }
 

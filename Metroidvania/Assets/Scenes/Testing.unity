@@ -836,7 +836,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsAutoMoveMode: 1
-  WalkingSpeed: 0.05
+  WalkingSpeed: 5
   JumpInitSpeed: 8
   controller: {fileID: 1041434103}
 --- !u!114 &1041434105
