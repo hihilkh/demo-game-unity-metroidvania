@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterEnum
-{
+public class CharacterEnum {
     public enum Direction {
         Left,
         Right
@@ -18,9 +17,9 @@ public class CharacterEnum
     }
 
     public enum Command {
-        Hit,
         Jump,
         Dash,
+        Hit,
         Arrow,
         Turn
     }
@@ -32,5 +31,11 @@ public class CharacterEnum
         AirTap,
         AirHold,
         AirRelease
+    }
+
+    public enum JumpChargeLevel {
+        Zero = 0,
+        One = 1,
+        Two = 2
     }
 }
