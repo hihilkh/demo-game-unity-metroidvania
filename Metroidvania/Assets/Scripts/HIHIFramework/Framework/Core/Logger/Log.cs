@@ -32,7 +32,11 @@ namespace HIHIFramework.Core {
         }
 
         public static void Print (object obj, LogLevel logLevel = LogLevel.Info) {
-            Print (obj.ToString (), logLevel);
+            if (obj == null) {
+                Print ("<null>", logLevel);
+            } else {
+                Print (obj.ToString (), logLevel);
+            }
         }
 
         public static void Print (string message, LogLevel logLevel = LogLevel.Info) {
