@@ -9,11 +9,17 @@ public class CharacterEnum {
         Right
     }
 
+    public enum HorizontalSpeed {
+        Walk,
+        Dash
+    }
+
     public enum Animation {
         Idle,
         Walking,
         Jumping,
-        Landing
+        Landing,
+        Dashing
     }
 
     public enum Command {
