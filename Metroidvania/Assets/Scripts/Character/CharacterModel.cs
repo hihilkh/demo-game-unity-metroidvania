@@ -5,7 +5,7 @@ using HIHIFramework.Core;
 using System;
 
 public class CharacterModel : MonoBehaviour {
-    // TODO : remove SerializeField and set const
+    // TODO : remove SerializeField and set const (Or think of a more beautiful way to store/change below constraints
     [SerializeField] private float WalkingSpeed = 5f;
     [SerializeField] private float SlideDownVelocity = -4f;
 
@@ -156,6 +156,21 @@ public class CharacterModel : MonoBehaviour {
         }
     }
 
+    public void SetAllowMove (bool isAllowMove) {
+        this.isAllowMove = isAllowMove;
+
+        controller.enabled = isAllowMove;
+
+        if (isAllowMove) {
+            StartWalking ();
+        } else {
+            ResetAllUpdateControlFlags ();
+            StartIdling ();
+        }
+    }
+
+    #region Situation and Command
+
     #region Situation To Command Dictionary
 
     public void ClearSituationToCommandDict () {
@@ -184,21 +199,6 @@ public class CharacterModel : MonoBehaviour {
 
     #endregion
 
-    #region Action Preparation
-
-    public void SetAllowMove (bool isAllowMove) {
-        this.isAllowMove = isAllowMove;
-
-        controller.enabled = isAllowMove;
-
-        if (isAllowMove) {
-            StartWalking ();
-        } else {
-            ResetAllUpdateControlFlags ();
-            StartIdling ();
-        }
-    }
-
     private CharacterEnum.CommandSituation? GetCurrentCommandSituation () {
         if (!isJustTapped && !isHolding && !isJustReleaseHold) {
             return null;
@@ -212,23 +212,6 @@ public class CharacterModel : MonoBehaviour {
             return currentLocation == CharacterEnum.Location.Ground ? CharacterEnum.CommandSituation.GroundRelease : CharacterEnum.CommandSituation.AirRelease;
         }
     }
-
-    private bool CheckIsAllowJump () {
-        return consecutiveJumpCount < MaxConsecutiveJump;
-    }
-
-    private void ChangeDirection () {
-        Log.PrintDebug ("ChangeDirection");
-        if (facingDirection == CharacterEnum.Direction.Left) {
-            facingDirection = CharacterEnum.Direction.Right;
-        } else {
-            facingDirection = CharacterEnum.Direction.Left;
-        }
-    }
-
-    #endregion
-
-    #region Player Action
 
     private void HandleCommand (CharacterEnum.CommandSituation? optionalSituation) {
         if (optionalSituation == null) {
@@ -351,6 +334,10 @@ public class CharacterModel : MonoBehaviour {
         currentCommand = command;
     }
 
+    #endregion
+
+    #region Horizontal movement
+
     private void HorizontalMovement () {
         if (!isAllowMove) {
             return;
@@ -388,6 +375,10 @@ public class CharacterModel : MonoBehaviour {
         charAnim = CharacterEnum.Animation.Walking;
         // TODO : Walk animation
     }
+
+    #endregion
+
+    #region Dash
 
     private void StartDashing (bool isOneShot) {
         Log.Print ("Dash : isOneShot = " + isOneShot);
@@ -471,6 +462,14 @@ public class CharacterModel : MonoBehaviour {
         dashCoolDownCoroutine = null;
     }
 
+    #endregion
+
+    #region Jump
+
+    private bool CheckIsAllowJump () {
+        return consecutiveJumpCount < MaxConsecutiveJump;
+    }
+
     private void Jump (CharacterEnum.JumpChargeLevel level) {
         Log.Print ("Jump : JumpChargeLevel = " + level);
 
@@ -529,6 +528,46 @@ public class CharacterModel : MonoBehaviour {
 
     #endregion
 
+    #region Change Direction
+
+    private void ChangeDirection () {
+        Log.PrintDebug ("ChangeDirection");
+        if (facingDirection == CharacterEnum.Direction.Left) {
+            facingDirection = CharacterEnum.Direction.Right;
+        } else {
+            facingDirection = CharacterEnum.Direction.Left;
+        }
+    }
+
+    #endregion
+
+    #region Collision
+
+    public void OnCollisionEnter2D (Collision2D collision) {
+        var collideType = collision.gameObject.tag;
+
+        if (collision.gameObject.tag == GameVariable.WallTag) {
+            var collisionNormal = collision.GetContact(0).normal;
+            var absX = Mathf.Abs (collisionNormal.x);
+            if (collisionNormal.y > 0 && collisionNormal.y > absX) {
+                collideType = GameVariable.GroundTag;
+            } else if (collisionNormal.y < 0 && -collisionNormal.y > absX) {
+                collideType = GameVariable.GroundTag;
+            }
+        }
+
+        Log.Print ("Char Collision : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType);
+
+        switch (collideType) {
+            case GameVariable.GroundTag:
+                LandToGround ();
+                break;
+            case GameVariable.WallTag:
+                HitOnWall ();
+                break;
+        }
+    }
+
     private void LandToGround () {
         Log.PrintDebug ("LandToGround");
         consecutiveJumpCount = 0;
@@ -576,33 +615,6 @@ public class CharacterModel : MonoBehaviour {
             rb.velocity = new Vector3 (rb.velocity.x, SlideDownVelocity);
 
             // TODO : Sliding animation
-        }
-    }
-
-    #region Collider
-
-    public void OnCollisionEnter2D (Collision2D collision) {
-        var collideType = collision.gameObject.tag;
-
-        if (collision.gameObject.tag == GameVariable.WallTag) {
-            var collisionNormal = collision.GetContact(0).normal;
-            var absX = Mathf.Abs (collisionNormal.x);
-            if (collisionNormal.y > 0 && collisionNormal.y > absX) {
-                collideType = GameVariable.GroundTag;
-            } else if (collisionNormal.y < 0 && -collisionNormal.y > absX) {
-                collideType = GameVariable.GroundTag;
-            }
-        }
-
-        Log.Print ("Char Collision : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType);
-
-        switch (collideType) {
-            case GameVariable.GroundTag:
-                LandToGround ();
-                break;
-            case GameVariable.WallTag:
-                HitOnWall ();
-                break;
         }
     }
 
