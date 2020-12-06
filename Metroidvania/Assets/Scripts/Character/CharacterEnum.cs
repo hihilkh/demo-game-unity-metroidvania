@@ -10,8 +10,15 @@ public class CharacterEnum {
     }
 
     public enum HorizontalSpeed {
+        Zero,
         Walk,
         Dash
+    }
+
+    public enum Location {
+        Ground,
+        Air,
+        Wall
     }
 
     public enum Animation {
@@ -19,7 +26,8 @@ public class CharacterEnum {
         Walking,
         Jumping,
         Landing,
-        Dashing
+        Dashing,
+        Sliding
     }
 
     public enum Command {
