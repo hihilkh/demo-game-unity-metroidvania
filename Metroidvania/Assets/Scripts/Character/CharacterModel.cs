@@ -45,7 +45,6 @@ public class CharacterModel : MonoBehaviour {
     private CharacterEnum.Direction facingDirection;
     private CharacterEnum.HorizontalSpeed currentHorizontalSpeed;
     private CharacterEnum.Location currentLocation;
-    private CharacterEnum.Animation charAnim;
     private bool isAllowMove;
     private int consecutiveJumpCount;
 
@@ -366,13 +365,13 @@ public class CharacterModel : MonoBehaviour {
     private void StartIdling () {
         rb.velocity = Vector2.zero; // Need to set velocity here because if set isAllowMove = false, HorizontalMovement() logic will bypass
         currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Zero;
-        charAnim = CharacterEnum.Animation.Idle;
+
         // TODO : Idle animation
     }
 
     private void StartWalking () {
         currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Walk;
-        charAnim = CharacterEnum.Animation.Walking;
+
         // TODO : Walk animation
     }
 
@@ -433,7 +432,6 @@ public class CharacterModel : MonoBehaviour {
         rb.velocity = new Vector3 (rb.velocity.x, 0);
         currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Dash;
 
-        charAnim = CharacterEnum.Animation.Dashing;
         // TODO : Dash animation
     }
 
@@ -485,7 +483,6 @@ public class CharacterModel : MonoBehaviour {
 
             consecutiveJumpCount++;
             currentLocation = CharacterEnum.Location.Air;
-            charAnim = CharacterEnum.Animation.Jumping;
         } else {
             Log.PrintError ("Jump Init Speed is missing. Cannot perform jump action. Please check. Level : " + level);
         }
@@ -588,8 +585,6 @@ public class CharacterModel : MonoBehaviour {
         // Always reset jump charge to prevent the case that user started to hold the key while in air
         // but he land to ground so fast that even not yet come to JumpChargeLevel One
         ResetJumpCharge ();
-
-        charAnim = CharacterEnum.Animation.Landing;
 
         // TODO : Landing animation
     }

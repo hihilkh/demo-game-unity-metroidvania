@@ -21,15 +21,6 @@ public class CharacterEnum {
         Wall
     }
 
-    public enum Animation {
-        Idle,
-        Walking,
-        Jumping,
-        Landing,
-        Dashing,
-        Sliding
-    }
-
     public enum Command {
         Jump,
         Dash,
