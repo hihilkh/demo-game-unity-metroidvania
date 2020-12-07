@@ -25,16 +25,26 @@ public class CharacterModel : MonoBehaviour {
     // Dash Command Constraint
     [SerializeField] private float DashingSpeed = 15f;
     [SerializeField] private float OneShotDashPeriod = 0.5f;
-    [SerializeField] private float AfterDashCoolDownPeriod = 0.2f;
+    [SerializeField] private float DashCoolDownPeriod = 0.2f;
+
+    // Hit Command Constraint
+    private static Dictionary<CharacterEnum.HitType, float> HitCoolDownPeriodDict = new Dictionary<CharacterEnum.HitType, float> {
+        { CharacterEnum.HitType.Normal, 0.3f },
+        { CharacterEnum.HitType.Charged, 0.5f },
+        { CharacterEnum.HitType.Finishing, 0.8f },
+        { CharacterEnum.HitType.Drop, 0.8f }
+    };
+
+    [SerializeField] private float DropHitVelocity = -15f;
 
     // TODO : Set commandDict to empty
     private Dictionary<CharacterEnum.CommandSituation, CharacterEnum.Command> situationToCommandDict = new Dictionary<CharacterEnum.CommandSituation, CharacterEnum.Command> {
         { CharacterEnum.CommandSituation.GroundTap, CharacterEnum.Command.Jump },
         { CharacterEnum.CommandSituation.GroundHold, CharacterEnum.Command.Jump },
         { CharacterEnum.CommandSituation.GroundRelease, CharacterEnum.Command.Jump },
-        { CharacterEnum.CommandSituation.AirTap, CharacterEnum.Command.Jump },
-        { CharacterEnum.CommandSituation.AirHold, CharacterEnum.Command.Dash },
-        { CharacterEnum.CommandSituation.AirRelease, CharacterEnum.Command.Dash }
+        { CharacterEnum.CommandSituation.AirTap, CharacterEnum.Command.Hit },
+        { CharacterEnum.CommandSituation.AirHold, CharacterEnum.Command.Hit },
+        { CharacterEnum.CommandSituation.AirRelease, CharacterEnum.Command.Hit }
     };
 
     private Rigidbody2D rb;
@@ -57,7 +67,6 @@ public class CharacterModel : MonoBehaviour {
     private CharacterEnum.CommandSituation? currentSituation;
     private CharacterEnum.Command? currentCommand;
     private bool isIgnoreHold;
-    private bool isIgnoreRelease;
     private bool isJustHitOnWall;
 
     // Jump Command Control
@@ -69,6 +78,12 @@ public class CharacterModel : MonoBehaviour {
     private bool isDashCoolingDown;
     private Coroutine dashCoroutine;
     private Coroutine dashCoolDownCoroutine;
+
+    // Hit Command Control
+    private bool isHitCoolingDown;
+    private bool isDropHitCharging;
+    private bool isDropHitting;
+    private Coroutine hitCoolDownCoroutine;
 
     void Start () {
         if (controller == null) {
@@ -105,6 +120,11 @@ public class CharacterModel : MonoBehaviour {
         isDashCoolingDown = false;
         dashCoroutine = null;
 
+        isHitCoolingDown = false;
+        isDropHitCharging = false;
+        isDropHitting = false;
+        hitCoolDownCoroutine = null;
+
         ResetAllUpdateControlFlags ();
     }
 
@@ -116,7 +136,6 @@ public class CharacterModel : MonoBehaviour {
         currentSituation = null;
         currentCommand = null;
         isIgnoreHold = false;
-        isIgnoreRelease = false;
         isJustHitOnWall = false;
     }
 
@@ -142,15 +161,16 @@ public class CharacterModel : MonoBehaviour {
 
         if (situation == CharacterEnum.CommandSituation.GroundRelease || situation == CharacterEnum.CommandSituation.AirRelease) {
             isIgnoreHold = false;
-            isIgnoreRelease = false;
         }
 
         // TODO : Debug usage only
-        if (Mathf.Abs(rb.velocity.x) < 1 && Mathf.Abs (rb.velocity.y) < 1) {
-            if (situation == null) {
-                Log.PrintError ("No velocity! Situation = null");
-            } else {
-                Log.PrintError ("No velocity! Situation = " + situation);
+        if (!(isDropHitting && isHitCoolingDown)) { // except the case of finished drop hit and cooling down
+            if (Mathf.Abs (rb.velocity.x) < 1 && Mathf.Abs (rb.velocity.y) < 1) {
+                if (situation == null) {
+                    Log.PrintError ("No velocity! Situation = null");
+                } else {
+                    Log.PrintError ("No velocity! Situation = " + situation);
+                }
             }
         }
     }
@@ -219,6 +239,23 @@ public class CharacterModel : MonoBehaviour {
         }
 
         var situation = (CharacterEnum.CommandSituation)optionalSituation;
+
+        if (isIgnoreHold && (situation == CharacterEnum.CommandSituation.GroundHold || situation == CharacterEnum.CommandSituation.AirHold)) {
+            SetCurrentCommandStatus (null, null);
+            return;
+        }
+
+        if (isDropHitting) {
+            Log.Print ("Ignore command situation due to drop hitting. situation = " + situation);
+            SetCurrentCommandStatus (null, null);
+
+            if (situation == CharacterEnum.CommandSituation.GroundHold || situation == CharacterEnum.CommandSituation.AirHold) {
+                isIgnoreHold = true;
+            }
+
+            return;
+        }
+
         var command = GetCommandBySituation (situation);
         Log.PrintDebug ("Situation : " + situation + "   Command : " + command);
 
@@ -235,16 +272,6 @@ public class CharacterModel : MonoBehaviour {
                         break;
                 }
             }
-        }
-
-        if (isIgnoreHold && (situation == CharacterEnum.CommandSituation.GroundHold || situation == CharacterEnum.CommandSituation.AirHold)) {
-            SetCurrentCommandStatus (null, null);
-            return;
-        }
-
-        if (isIgnoreRelease && (situation == CharacterEnum.CommandSituation.GroundRelease || situation == CharacterEnum.CommandSituation.AirRelease)) {
-            SetCurrentCommandStatus (null, null);
-            return;
         }
 
         if (command == null) {
@@ -320,6 +347,44 @@ public class CharacterModel : MonoBehaviour {
                 }
                 break;
             case CharacterEnum.Command.Hit:
+                if (isHitCoolingDown) {
+                    if (situation == CharacterEnum.CommandSituation.GroundHold || situation == CharacterEnum.CommandSituation.AirHold) {
+                        isIgnoreHold = true;
+                    }
+                    break;
+                }
+
+                CharacterEnum.HitType? hitType = null;
+                switch (situation) {
+                    case CharacterEnum.CommandSituation.GroundTap:
+                    case CharacterEnum.CommandSituation.AirTap:
+                        hitType = CharacterEnum.HitType.Normal;
+                        break;
+                    case CharacterEnum.CommandSituation.GroundHold:
+                        hitType = CharacterEnum.HitType.Charged;
+                        isIgnoreHold = true;
+                        break;
+                    case CharacterEnum.CommandSituation.AirHold:
+                        DropHitCharge ();
+                        break;
+                    case CharacterEnum.CommandSituation.GroundRelease:
+                        hitType = CharacterEnum.HitType.Finishing;
+                        break;
+                    case CharacterEnum.CommandSituation.AirRelease:
+                        if (currentCommand == CharacterEnum.Command.Hit) {  // That means, AirHold command is also Hit
+                            hitType = CharacterEnum.HitType.Drop;
+                        } else {
+                            hitType = CharacterEnum.HitType.Finishing;
+                        }
+                        break;
+                }
+
+                if (hitType != null) {
+                    Hit ((CharacterEnum.HitType)hitType);
+                }
+                isTriggeredCommand = true;
+                
+                break;
             case CharacterEnum.Command.Arrow:
             case CharacterEnum.Command.Turn:
                 break;
@@ -454,7 +519,7 @@ public class CharacterModel : MonoBehaviour {
     private IEnumerator DashCoolDownCoroutine () {
         isDashCoolingDown = true;
 
-        yield return new WaitForSeconds (AfterDashCoolDownPeriod);
+        yield return new WaitForSeconds (DashCoolDownPeriod);
 
         isDashCoolingDown = false;
         dashCoolDownCoroutine = null;
@@ -525,6 +590,92 @@ public class CharacterModel : MonoBehaviour {
 
     #endregion
 
+    #region Hit
+
+    private void Hit (CharacterEnum.HitType hitType) {
+        if (isHitCoolingDown) {
+            Log.PrintWarning ("isHitCoolingDown = true. It should not trigger Hit action. Please check.");
+            return;
+        }
+
+        if (isDropHitting) {
+            Log.PrintWarning ("isDropHitting = true. It should not trigger Hit action. Please check.");
+            return;
+        }
+
+        Log.Print ("Hit : HitType = " + hitType);
+
+        switch (hitType) {
+            case CharacterEnum.HitType.Normal:
+            case CharacterEnum.HitType.Charged:
+            case CharacterEnum.HitType.Finishing:
+                Log.PrintWarning ("Hit!!!    " + hitType);
+                // TODO : Implementation of actual hit
+                hitCoolDownCoroutine = StartCoroutine (HitCoolDownCoroutine (hitType));
+                break;
+            case CharacterEnum.HitType.Drop:
+                DropHit ();
+                break;
+        }
+    }
+
+    private void DropHit () {
+        Log.PrintWarning ("Hit!!!    Drop");
+        isDropHitting = true;
+
+        isDropHitCharging = false;
+        // TODO : remove drop hit charge animation
+
+        // TODO : Implementation of actual hit
+
+        currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Zero;
+        rb.gravityScale = 0;
+        rb.velocity = new Vector3 (0, DropHitVelocity);
+    }
+
+    private void FinishDropHit () {
+        Log.Print ("FinishDropHit");
+        currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Zero;
+        rb.gravityScale = originalGravityScale;
+        rb.velocity = new Vector3 (0, 0);
+
+        // TODO : Drop Hit Landing animation
+
+        hitCoolDownCoroutine = StartCoroutine (HitCoolDownCoroutine (CharacterEnum.HitType.Drop));
+    }
+
+    private void DropHitCharge () {
+        if (!isDropHitCharging) {
+            isDropHitCharging = true;
+            // TODO : drop hit charge animation
+        }
+    }
+
+    private IEnumerator HitCoolDownCoroutine (CharacterEnum.HitType hitType) {
+        isHitCoolingDown = true;
+
+        var hitCoolDownPeriod = 0f;
+
+        if (HitCoolDownPeriodDict.ContainsKey(hitType)) {
+            hitCoolDownPeriod = HitCoolDownPeriodDict[hitType];
+        } else {
+            Log.PrintWarning ("Not yet set hit cool down period for HitType : " + hitType + " . Assume cool down period to be 0s");
+        }
+
+        yield return new WaitForSeconds (hitCoolDownPeriod);
+
+        isHitCoolingDown = false;
+
+        if (hitType == CharacterEnum.HitType.Drop) {
+            isDropHitting = false;
+            currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Walk;
+        }
+
+        hitCoolDownCoroutine = null;
+    }
+
+    #endregion
+
     #region Change Direction
 
     private void ChangeDirection () {
@@ -574,14 +725,22 @@ public class CharacterModel : MonoBehaviour {
         rb.gravityScale = originalGravityScale;
         rb.velocity = new Vector3 (rb.velocity.x, 0);
 
-        // Special handling of "AirHold - Jump" command
-        if (currentJumpChargeLevel != CharacterEnum.JumpChargeLevel.Zero) {
+        // Special Handling
+        if (currentJumpChargeLevel != CharacterEnum.JumpChargeLevel.Zero) {     // "AirHold - Jump" command
             Log.Print ("LandToGround : Reset jump charge and ignore hold/release.");
             isIgnoreHold = true;
-            isIgnoreRelease = true;
 
             // TODO : Remove charge animation
+        } else if (isDropHitCharging) {                                         // "AirHold - Hit" command
+            Log.Print ("LandToGround : Reset hit charge and ignore hold/release.");
+            isDropHitCharging = false;
+            isIgnoreHold = true;
+
+            // TODO : Remove drop hit charge animation
+        } else if (isDropHitting) {                                             // "AirRelease - Hit" command
+            FinishDropHit ();
         }
+
         // Always reset jump charge to prevent the case that user started to hold the key while in air
         // but he land to ground so fast that even not yet come to JumpChargeLevel One
         ResetJumpCharge ();
@@ -607,7 +766,7 @@ public class CharacterModel : MonoBehaviour {
 
             // Slide down with constant speed
             rb.gravityScale = 0;
-            rb.velocity = new Vector3 (rb.velocity.x, SlideDownVelocity);
+            rb.velocity = new Vector3 (0, SlideDownVelocity);
 
             // TODO : Sliding animation
         }

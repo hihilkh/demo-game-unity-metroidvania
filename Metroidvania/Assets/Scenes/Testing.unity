@@ -847,7 +847,8 @@ MonoBehaviour:
   SlideDownVelocity: -4
   DashingSpeed: 15
   OneShotDashPeriod: 0.5
-  AfterDashCoolDownPeriod: 0.2
+  DashCoolDownPeriod: 0.2
+  DropHitVelocity: -15
   controller: {fileID: 1041434103}
 --- !u!114 &1041434105
 MonoBehaviour:
