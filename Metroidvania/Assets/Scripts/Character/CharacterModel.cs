@@ -44,14 +44,17 @@ public class CharacterModel : MonoBehaviour {
         { CharacterEnum.ArrowType.Triple, 0.5f }
     };
 
+    // Turn Command Constraint
+    [SerializeField] private float RepelFromWallDist = 0.05f;
+
     // TODO : Set commandDict to empty
     private Dictionary<CharacterEnum.CommandSituation, CharacterEnum.Command> situationToCommandDict = new Dictionary<CharacterEnum.CommandSituation, CharacterEnum.Command> {
         { CharacterEnum.CommandSituation.GroundTap, CharacterEnum.Command.Jump },
         { CharacterEnum.CommandSituation.GroundHold, CharacterEnum.Command.Jump },
         { CharacterEnum.CommandSituation.GroundRelease, CharacterEnum.Command.Jump },
-        { CharacterEnum.CommandSituation.AirTap, CharacterEnum.Command.Arrow },
-        { CharacterEnum.CommandSituation.AirHold, CharacterEnum.Command.Arrow },
-        { CharacterEnum.CommandSituation.AirRelease, CharacterEnum.Command.Arrow }
+        { CharacterEnum.CommandSituation.AirTap, CharacterEnum.Command.Turn },
+        { CharacterEnum.CommandSituation.AirHold, CharacterEnum.Command.Dash },
+        { CharacterEnum.CommandSituation.AirRelease, CharacterEnum.Command.Turn }
     };
 
     private Rigidbody2D rb;
@@ -60,6 +63,7 @@ public class CharacterModel : MonoBehaviour {
     public CharacterController controller;
 
     private CharacterEnum.Direction facingDirection;
+    private CharacterEnum.Direction movingDirection;
     private CharacterEnum.HorizontalSpeed currentHorizontalSpeed;
     private CharacterEnum.Location currentLocation;
     private bool isAllowMove;
@@ -116,6 +120,7 @@ public class CharacterModel : MonoBehaviour {
         originalGravityScale = rb.gravityScale;
 
         facingDirection = CharacterEnum.Direction.Right;
+        movingDirection = facingDirection;
         SetAllowMove (true);
         currentLocation = CharacterEnum.Location.Ground;
         consecutiveJumpCount = 0;
@@ -255,7 +260,6 @@ public class CharacterModel : MonoBehaviour {
             if (situation == CharacterEnum.CommandSituation.GroundHold || situation == CharacterEnum.CommandSituation.AirHold) {
                 isIgnoreHold = true;
             }
-
             return;
         }
 
@@ -420,6 +424,32 @@ public class CharacterModel : MonoBehaviour {
 
                 break;
             case CharacterEnum.Command.Turn:
+                switch (situation) {
+                    case CharacterEnum.CommandSituation.GroundTap:
+                    case CharacterEnum.CommandSituation.GroundRelease:
+                        ChangeFacingDirection (true);
+                        isTriggeredCommand = true;
+                        break;
+                    case CharacterEnum.CommandSituation.AirTap:
+                    case CharacterEnum.CommandSituation.AirRelease:
+                        if (currentLocation == CharacterEnum.Location.Wall) {
+                            ChangeFacingDirection (true);
+                            var directionMultiplier = facingDirection == CharacterEnum.Direction.Right ? -1 : 1;
+                            transform.position = transform.position + new Vector3 (RepelFromWallDist, 0, 0) * directionMultiplier;
+
+                            ReleaseFromWallSliding ();
+                        } else {
+                            ChangeFacingDirection (false);
+                        }
+                        isTriggeredCommand = true;
+                        break;
+                    case CharacterEnum.CommandSituation.GroundHold:
+                    case CharacterEnum.CommandSituation.AirHold:
+                        Log.PrintWarning ("No action of Turn command is defined for holding. Please check.");
+                        isIgnoreHold = true;
+                        break;
+                }
+                
                 break;
         }
 
@@ -440,7 +470,7 @@ public class CharacterModel : MonoBehaviour {
             return;
         }
 
-        var directionMultiplier = facingDirection == CharacterEnum.Direction.Right ? 1 : -1;
+        var directionMultiplier = movingDirection == CharacterEnum.Direction.Right ? 1 : -1;
         var horizontalSpeed = 0f;
 
         switch (currentHorizontalSpeed) {
@@ -481,6 +511,10 @@ public class CharacterModel : MonoBehaviour {
         Log.Print ("Dash : isOneShot = " + isOneShot);
 
         StopDashing (currentHorizontalSpeed, false);  // To ensure do not trigger 2 dash coroutines at the same time
+
+        if (currentLocation == CharacterEnum.Location.Wall) {
+            currentLocation = CharacterEnum.Location.Air;
+        }
 
         if (isOneShot) {
             dashCoroutine = StartCoroutine (OneShotDashCoroutine ());
@@ -756,13 +790,34 @@ public class CharacterModel : MonoBehaviour {
 
     #region Change Direction
 
-    private void ChangeDirection () {
-        Log.PrintDebug ("ChangeDirection");
+    private void ChangeFacingDirection (bool isAlignMovingDirection) {
+        Log.PrintDebug ("ChangeFacingDirection : isAlignMovingDirection = " + isAlignMovingDirection);
         if (facingDirection == CharacterEnum.Direction.Left) {
             facingDirection = CharacterEnum.Direction.Right;
         } else {
             facingDirection = CharacterEnum.Direction.Left;
         }
+
+        if (isAlignMovingDirection) {
+            movingDirection = facingDirection;
+        }
+    }
+
+    private void ChangeMovingDirection () {
+        // Remarks : Changing moving direction must also align facing direction
+
+        Log.PrintDebug ("ChangeMovingDirection");
+        if (movingDirection == CharacterEnum.Direction.Left) {
+            movingDirection = CharacterEnum.Direction.Right;
+        } else {
+            movingDirection = CharacterEnum.Direction.Left;
+        }
+
+        facingDirection = movingDirection;
+    }
+
+    private void AlignMovingWithFacingDirection () {
+        movingDirection = facingDirection;
     }
 
     #endregion
@@ -803,6 +858,8 @@ public class CharacterModel : MonoBehaviour {
         rb.gravityScale = originalGravityScale;
         rb.velocity = new Vector3 (rb.velocity.x, 0);
 
+        AlignMovingWithFacingDirection ();
+
         // Special Handling
         if (currentJumpChargeLevel != CharacterEnum.JumpChargeLevel.Zero) {     // "AirHold - Jump" command
             Log.Print ("LandToGround : Reset jump charge and ignore hold/release.");
@@ -828,26 +885,36 @@ public class CharacterModel : MonoBehaviour {
 
     private void HitOnWall () {
         isJustHitOnWall = true;
-        ChangeDirection ();
+        ChangeMovingDirection ();
 
-        if (currentLocation == CharacterEnum.Location.Wall) {
-            currentLocation = CharacterEnum.Location.Air;
-            StopDashing (CharacterEnum.HorizontalSpeed.Zero, true);
-        } else {
+        if (isDashing) {
             StopDashing (CharacterEnum.HorizontalSpeed.Walk, true);
         }
 
         if (currentLocation == CharacterEnum.Location.Air) {
-            currentLocation = CharacterEnum.Location.Wall;
-            currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Zero;
-            consecutiveJumpCount = 1;   // Allow jump in air again
-
-            // Slide down with constant speed
-            rb.gravityScale = 0;
-            rb.velocity = new Vector3 (0, SlideDownVelocity);
-
-            // TODO : Sliding animation
+            SlideOnWall ();
         }
+    }
+
+    private void SlideOnWall () {
+        currentLocation = CharacterEnum.Location.Wall;
+        currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Zero;
+        consecutiveJumpCount = 1;   // Allow jump in air again
+
+        // Slide down with constant speed
+        rb.gravityScale = 0;
+        rb.velocity = new Vector3 (0, SlideDownVelocity);
+
+        // TODO : Sliding animation
+    }
+
+    private void ReleaseFromWallSliding () {
+        currentLocation = CharacterEnum.Location.Air;
+
+        rb.gravityScale = originalGravityScale;
+        rb.velocity = new Vector3 (0, 0);
+
+        // TODO : Release from wall sliding animation
     }
 
     #endregion

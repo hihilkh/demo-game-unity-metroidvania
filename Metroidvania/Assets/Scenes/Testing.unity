@@ -924,6 +924,7 @@ MonoBehaviour:
   OneShotDashPeriod: 0.5
   DashCoolDownPeriod: 0.2
   DropHitVelocity: -15
+  RepelFromWallDist: 0.05
   controller: {fileID: 1041434103}
 --- !u!114 &1041434105
 MonoBehaviour:
