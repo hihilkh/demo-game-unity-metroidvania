@@ -52,9 +52,9 @@ public class CharacterModel : MonoBehaviour {
         { CharacterEnum.CommandSituation.GroundTap, CharacterEnum.Command.Jump },
         { CharacterEnum.CommandSituation.GroundHold, CharacterEnum.Command.Jump },
         { CharacterEnum.CommandSituation.GroundRelease, CharacterEnum.Command.Jump },
-        { CharacterEnum.CommandSituation.AirTap, CharacterEnum.Command.Turn },
-        { CharacterEnum.CommandSituation.AirHold, CharacterEnum.Command.Dash },
-        { CharacterEnum.CommandSituation.AirRelease, CharacterEnum.Command.Turn }
+        { CharacterEnum.CommandSituation.AirTap, CharacterEnum.Command.Jump },
+        { CharacterEnum.CommandSituation.AirHold, CharacterEnum.Command.Jump },
+        { CharacterEnum.CommandSituation.AirRelease, CharacterEnum.Command.Jump }
     };
 
     private Rigidbody2D rb;
@@ -307,10 +307,19 @@ public class CharacterModel : MonoBehaviour {
                         break;
                     case CharacterEnum.CommandSituation.GroundRelease:
                     case CharacterEnum.CommandSituation.AirRelease:
-                        // There are 2 cases:
-                        // 1. release after JumpCharge by hold input, i.e. currentJumpChargeLevel > 0
-                        // 2. release after other hold input command (e.g. dash), i.e. currentJumpChargeLevel = 0
-                        Jump (currentJumpChargeLevel);
+                        var checkSituation = (situation == CharacterEnum.CommandSituation.GroundRelease) ? CharacterEnum.CommandSituation.GroundHold : CharacterEnum.CommandSituation.AirHold;
+                        if (GetCommandBySituation(checkSituation) == CharacterEnum.Command.Jump) {
+                            // That mean this release command should be a charged jump
+                            if (currentJumpChargeLevel == CharacterEnum.JumpChargeLevel.Zero) {
+                                // If JumpChargeLevel = Zero, the JumpCharge is somehow cancelled. So do not do any action
+                                isTriggeredCommand = false;
+                            } else {
+                                Jump (currentJumpChargeLevel);
+                            }
+                        } else {
+                            // That mean this release command is a non charged jump
+                            Jump (CharacterEnum.JumpChargeLevel.Zero);
+                        }
                         break;
                 }
                 break;
@@ -330,15 +339,11 @@ public class CharacterModel : MonoBehaviour {
                     case CharacterEnum.CommandSituation.GroundHold:
                     case CharacterEnum.CommandSituation.AirHold:
                         if (currentSituation == situation) {    // Already dashing
-                            if (isJustHitOnWall) {
-                                isIgnoreHold = true;
-                            } else {
+                            if (!isJustHitOnWall) {
                                 isTriggeredCommand = true;
                             }
                         } else {
-                            if (isDashing) {                    // Trigger hold dash while doing one tap dash
-                                isIgnoreHold = true;
-                            } else {
+                            if (!isDashing) {                    // Ensure not trigger hold dash while doing one tap dash
                                 StartDashing (false);
                                 isTriggeredCommand = true;
                             }
@@ -355,9 +360,6 @@ public class CharacterModel : MonoBehaviour {
                 break;
             case CharacterEnum.Command.Hit:
                 if (isAttackCoolingDown) {
-                    if (situation == CharacterEnum.CommandSituation.GroundHold || situation == CharacterEnum.CommandSituation.AirHold) {
-                        isIgnoreHold = true;
-                    }
                     break;
                 }
 
@@ -446,13 +448,17 @@ public class CharacterModel : MonoBehaviour {
                     case CharacterEnum.CommandSituation.GroundHold:
                     case CharacterEnum.CommandSituation.AirHold:
                         Log.PrintWarning ("No action of Turn command is defined for holding. Please check.");
-                        isIgnoreHold = true;
                         break;
                 }
                 
                 break;
         }
 
+        if (!isTriggeredCommand) {
+            if (situation == CharacterEnum.CommandSituation.GroundHold || situation == CharacterEnum.CommandSituation.AirHold) {
+                isIgnoreHold = true;
+            }
+        }
         SetCurrentCommandStatus (situation, isTriggeredCommand ? command : null);
     }
 
