@@ -37,14 +37,21 @@ public class CharacterModel : MonoBehaviour {
 
     [SerializeField] private float DropHitVelocity = -15f;
 
+    // Arrow Command Constraint
+    private static Dictionary<CharacterEnum.ArrowType, float> ArrowCoolDownPeriodDict = new Dictionary<CharacterEnum.ArrowType, float> {
+        { CharacterEnum.ArrowType.Target, 0.5f },
+        { CharacterEnum.ArrowType.Straight, 0.5f },
+        { CharacterEnum.ArrowType.Triple, 0.5f }
+    };
+
     // TODO : Set commandDict to empty
     private Dictionary<CharacterEnum.CommandSituation, CharacterEnum.Command> situationToCommandDict = new Dictionary<CharacterEnum.CommandSituation, CharacterEnum.Command> {
         { CharacterEnum.CommandSituation.GroundTap, CharacterEnum.Command.Jump },
         { CharacterEnum.CommandSituation.GroundHold, CharacterEnum.Command.Jump },
         { CharacterEnum.CommandSituation.GroundRelease, CharacterEnum.Command.Jump },
-        { CharacterEnum.CommandSituation.AirTap, CharacterEnum.Command.Hit },
-        { CharacterEnum.CommandSituation.AirHold, CharacterEnum.Command.Hit },
-        { CharacterEnum.CommandSituation.AirRelease, CharacterEnum.Command.Hit }
+        { CharacterEnum.CommandSituation.AirTap, CharacterEnum.Command.Arrow },
+        { CharacterEnum.CommandSituation.AirHold, CharacterEnum.Command.Arrow },
+        { CharacterEnum.CommandSituation.AirRelease, CharacterEnum.Command.Arrow }
     };
 
     private Rigidbody2D rb;
@@ -79,11 +86,11 @@ public class CharacterModel : MonoBehaviour {
     private Coroutine dashCoroutine;
     private Coroutine dashCoolDownCoroutine;
 
-    // Hit Command Control
-    private bool isHitCoolingDown;
+    // Hit / Arrow Command Control
+    private bool isAttackCoolingDown;
     private bool isDropHitCharging;
     private bool isDropHitting;
-    private Coroutine hitCoolDownCoroutine;
+    private Coroutine attackCoolDownCoroutine;
 
     void Start () {
         if (controller == null) {
@@ -120,10 +127,10 @@ public class CharacterModel : MonoBehaviour {
         isDashCoolingDown = false;
         dashCoroutine = null;
 
-        isHitCoolingDown = false;
+        isAttackCoolingDown = false;
         isDropHitCharging = false;
         isDropHitting = false;
-        hitCoolDownCoroutine = null;
+        attackCoolDownCoroutine = null;
 
         ResetAllUpdateControlFlags ();
     }
@@ -164,13 +171,9 @@ public class CharacterModel : MonoBehaviour {
         }
 
         // TODO : Debug usage only
-        if (!(isDropHitting && isHitCoolingDown)) { // except the case of finished drop hit and cooling down
+        if (!(isDropHitting && isAttackCoolingDown)) { // except the case of finished drop hit and cooling down
             if (Mathf.Abs (rb.velocity.x) < 1 && Mathf.Abs (rb.velocity.y) < 1) {
-                if (situation == null) {
-                    Log.PrintError ("No velocity! Situation = null");
-                } else {
-                    Log.PrintError ("No velocity! Situation = " + situation);
-                }
+                Log.PrintError ("No velocity! Situation = " + situation + " ; horizontal speed = " + currentHorizontalSpeed);
             }
         }
     }
@@ -347,7 +350,7 @@ public class CharacterModel : MonoBehaviour {
                 }
                 break;
             case CharacterEnum.Command.Hit:
-                if (isHitCoolingDown) {
+                if (isAttackCoolingDown) {
                     if (situation == CharacterEnum.CommandSituation.GroundHold || situation == CharacterEnum.CommandSituation.AirHold) {
                         isIgnoreHold = true;
                     }
@@ -386,6 +389,36 @@ public class CharacterModel : MonoBehaviour {
                 
                 break;
             case CharacterEnum.Command.Arrow:
+                if (isAttackCoolingDown) {
+                    if (situation == CharacterEnum.CommandSituation.GroundHold || situation == CharacterEnum.CommandSituation.AirHold) {
+                        isIgnoreHold = true;
+                    }
+                    break;
+                }
+
+                CharacterEnum.ArrowType? arrowType = null;
+                switch (situation) {
+                    case CharacterEnum.CommandSituation.GroundTap:
+                    case CharacterEnum.CommandSituation.AirTap:
+                        arrowType = CharacterEnum.ArrowType.Target;
+                        break;
+                    case CharacterEnum.CommandSituation.GroundHold:
+                    case CharacterEnum.CommandSituation.AirHold:
+                        arrowType = CharacterEnum.ArrowType.Straight;
+                        isIgnoreHold = true;
+                        break;
+                    case CharacterEnum.CommandSituation.GroundRelease:
+                    case CharacterEnum.CommandSituation.AirRelease:
+                        arrowType = CharacterEnum.ArrowType.Triple;
+                        break;
+                }
+
+                if (arrowType != null) {
+                    ShootArrow ((CharacterEnum.ArrowType)arrowType);
+                }
+                isTriggeredCommand = true;
+
+                break;
             case CharacterEnum.Command.Turn:
                 break;
         }
@@ -593,8 +626,8 @@ public class CharacterModel : MonoBehaviour {
     #region Hit
 
     private void Hit (CharacterEnum.HitType hitType) {
-        if (isHitCoolingDown) {
-            Log.PrintWarning ("isHitCoolingDown = true. It should not trigger Hit action. Please check.");
+        if (isAttackCoolingDown) {
+            Log.PrintWarning ("isAttackCoolingDown = true. It should not trigger Hit action. Please check.");
             return;
         }
 
@@ -611,7 +644,7 @@ public class CharacterModel : MonoBehaviour {
             case CharacterEnum.HitType.Finishing:
                 Log.PrintWarning ("Hit!!!    " + hitType);
                 // TODO : Implementation of actual hit
-                hitCoolDownCoroutine = StartCoroutine (HitCoolDownCoroutine (hitType));
+                attackCoolDownCoroutine = StartCoroutine (HitCoolDownCoroutine (hitType));
                 break;
             case CharacterEnum.HitType.Drop:
                 DropHit ();
@@ -641,7 +674,7 @@ public class CharacterModel : MonoBehaviour {
 
         // TODO : Drop Hit Landing animation
 
-        hitCoolDownCoroutine = StartCoroutine (HitCoolDownCoroutine (CharacterEnum.HitType.Drop));
+        attackCoolDownCoroutine = StartCoroutine (HitCoolDownCoroutine (CharacterEnum.HitType.Drop));
     }
 
     private void DropHitCharge () {
@@ -652,7 +685,7 @@ public class CharacterModel : MonoBehaviour {
     }
 
     private IEnumerator HitCoolDownCoroutine (CharacterEnum.HitType hitType) {
-        isHitCoolingDown = true;
+        isAttackCoolingDown = true;
 
         var hitCoolDownPeriod = 0f;
 
@@ -664,16 +697,61 @@ public class CharacterModel : MonoBehaviour {
 
         yield return new WaitForSeconds (hitCoolDownPeriod);
 
-        isHitCoolingDown = false;
+        isAttackCoolingDown = false;
 
         if (hitType == CharacterEnum.HitType.Drop) {
             isDropHitting = false;
             currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Walk;
         }
 
-        hitCoolDownCoroutine = null;
+        attackCoolDownCoroutine = null;
     }
 
+    #endregion
+
+    #region Arrow
+
+    private void ShootArrow (CharacterEnum.ArrowType arrowType) {
+        if (isAttackCoolingDown) {
+            Log.PrintWarning ("isAttackCoolingDown = true. It should not trigger shoot arrow action. Please check.");
+            return;
+        }
+
+        if (isDropHitting) {
+            Log.PrintWarning ("isDropHitting = true. It should not trigger shoot arrow action. Please check.");
+            return;
+        }
+
+        Log.Print ("Shoot arrow : ArrowType = " + arrowType);
+
+        switch (arrowType) {
+            case CharacterEnum.ArrowType.Target:
+            case CharacterEnum.ArrowType.Straight:
+            case CharacterEnum.ArrowType.Triple:
+                Log.PrintWarning ("Arrow!!!    " + arrowType);
+                // TODO : Implementation of actual arrow shooting
+                attackCoolDownCoroutine = StartCoroutine (ArrowCoolDownCoroutine (arrowType));
+                break;
+        }
+    }
+
+    private IEnumerator ArrowCoolDownCoroutine (CharacterEnum.ArrowType arrowType) {
+        isAttackCoolingDown = true;
+
+        var arrowCoolDownPeriod = 0f;
+
+        if (ArrowCoolDownPeriodDict.ContainsKey (arrowType)) {
+            arrowCoolDownPeriod = ArrowCoolDownPeriodDict[arrowType];
+        } else {
+            Log.PrintWarning ("Not yet set arrow cool down period for ArrowType : " + arrowType + " . Assume cool down period to be 0s");
+        }
+
+        yield return new WaitForSeconds (arrowCoolDownPeriod);
+
+        isAttackCoolingDown = false;
+
+        attackCoolDownCoroutine = null;
+    }
     #endregion
 
     #region Change Direction

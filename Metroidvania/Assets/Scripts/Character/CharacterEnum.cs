@@ -50,4 +50,10 @@ public class CharacterEnum {
         Finishing,
         Drop
     }
+
+    public enum ArrowType {
+        Target,
+        Straight,
+        Triple
+    }
 }
