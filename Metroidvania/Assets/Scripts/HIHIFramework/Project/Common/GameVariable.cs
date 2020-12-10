@@ -11,4 +11,12 @@ public partial class GameVariable {
     public const string WallTag = "Wall";
 
     #endregion
+
+    #region Player Pref Key
+
+    // For GameConfig
+    public const string BaseURLKey = "BASE_URL";
+    public const string AnalyticsTypeKey = "ANALYTICS_TYPE";
+
+    #endregion
 }

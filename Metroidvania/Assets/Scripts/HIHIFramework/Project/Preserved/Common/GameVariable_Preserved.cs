@@ -10,6 +10,13 @@ public partial class GameVariable {
 
     #endregion
 
+    #region GameConfig
+
+    public const bool IsShowGameConfigSceneInReleaseBuild = false;
+    public const int TargetFrameRate = 60;
+
+    #endregion
+
     #region Logger
 
     public const string LogTag = "Metroidvania";
