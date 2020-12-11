@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace HIHIFramework.Core {
-    public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
+    public class Singleton<T> : MonoBehaviour where T : MonoBehaviour, new () {
 
         private static T instance;
         public static T Instance {

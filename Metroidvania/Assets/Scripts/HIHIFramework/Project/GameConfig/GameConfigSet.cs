@@ -1,6 +1,6 @@
 ﻿using HIHIFramework.GameConfiguration;
 
-public class GameConfigSet : GameConfigSetBase {
+public partial class GameConfigSet : GameConfigSetBase {
     public string baseURL { get; private set; }
     public GameConfigEnum.AnalyticsType analyticsType { get; private set; }
     public string Testing_CustomString { get; private set; }

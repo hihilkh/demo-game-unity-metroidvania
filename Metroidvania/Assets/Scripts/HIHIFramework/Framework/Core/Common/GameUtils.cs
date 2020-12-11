@@ -6,6 +6,16 @@ using UnityEngine;
 namespace HIHIFramework.Core {
     public class GameUtils : Singleton<GameUtils> {
 
+        #region Game Initialization
+
+        public static void InitGameSettings () {
+            // frame rate
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = GameVariable.TargetFrameRate;
+        }
+
+        #endregion
+
         #region Common
 
         public static bool GetIsReleaseBuild () {

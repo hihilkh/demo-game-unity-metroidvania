@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 namespace HIHIFramework.GameConfiguration {
     public class GameConfigSceneManager : MonoBehaviour {
 
-        // TODO : Think of a way to use GameConfigBase<GameConfigSetBase> instead of directly using GameConfig and GameConfigSet
         private GameConfig gameConfig = new GameConfig();
         private List<GameConfigSet> allConfigSets;
 
@@ -37,14 +36,9 @@ namespace HIHIFramework.GameConfiguration {
         private const string StringConfigDisplayValue = "({0}) {1}";    // {0} : config set name, {1} : value
 
         void Awake () {
-            // TODO
-            //GameApplication.InitBeforeGameConfig ();
+            GameUtils.InitGameSettings ();
             var isUseProductionConfig = GameUtils.GetIsReleaseBuild() && !GameVariable.IsShowGameConfigSceneInReleaseBuild;
             Log.PrintDebug ("isUseProductionConfig :: " + isUseProductionConfig);
-
-            // TODO : Move to a better place
-            QualitySettings.vSyncCount = 0;
-            Application.targetFrameRate = GameVariable.TargetFrameRate;
 
             if (isUseProductionConfig) {
                 settingsPanel.SetActive (false);
@@ -297,7 +291,6 @@ namespace HIHIFramework.GameConfiguration {
             }
 
             // TODO
-            //GameApplication.InitAfterGameConfig ();
             //SceneManager.LoadScene (GameManager.GetFirstSceneName ());
         }
 

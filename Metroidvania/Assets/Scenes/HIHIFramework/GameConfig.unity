@@ -3009,6 +3009,8 @@ MonoBehaviour:
   verticalLayout: {fileID: 177272858}
   projectVersionText: {fileID: 1157860258}
   frameworkVersionText: {fileID: 466920726}
+  clearPlayerPrefsBtn: {fileID: 2033322517}
+  confirmBtn: {fileID: 1678913831}
 --- !u!1 &2033322515
 GameObject:
   m_ObjectHideFlags: 0
