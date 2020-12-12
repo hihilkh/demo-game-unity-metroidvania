@@ -290,8 +290,7 @@ namespace HIHIFramework.GameConfiguration {
                 SetGameConfigWithCustomConfig ();
             }
 
-            // TODO
-            //SceneManager.LoadScene (GameManager.GetFirstSceneName ());
+            SceneManager.LoadScene (GameVariable.FirstSceneName);
         }
 
         #region event handler

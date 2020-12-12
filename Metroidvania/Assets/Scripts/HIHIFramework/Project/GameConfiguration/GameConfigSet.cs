@@ -3,7 +3,6 @@
 public partial class GameConfigSet : GameConfigSetBase {
     public string baseURL { get; private set; }
     public GameConfigEnum.AnalyticsType analyticsType { get; private set; }
-    public string Testing_CustomString { get; private set; }
 
     public GameConfigSet () {
         this.gameConfigSetName = null;
@@ -15,6 +14,5 @@ public partial class GameConfigSet : GameConfigSetBase {
         this.gameConfigSetName = gameConfigSetName;
         this.baseURL = baseURL;
         this.analyticsType = analyticsType;
-        this.Testing_CustomString = baseURL + "123";
     }
 }

@@ -14,6 +14,7 @@ public partial class GameVariable {
 
     public const bool IsShowGameConfigSceneInReleaseBuild = false;
     public const int TargetFrameRate = 60;
+    public const string FirstSceneName = "Landing";
 
     #endregion
 
