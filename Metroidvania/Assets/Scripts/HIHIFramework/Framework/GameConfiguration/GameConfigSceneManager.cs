@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using HIHIFramework.Core;
 using System.Text.RegularExpressions;
+using HIHIFramework.UI;
 
 namespace HIHIFramework.GameConfiguration {
     public class GameConfigSceneManager : MonoBehaviour {
@@ -19,8 +20,6 @@ namespace HIHIFramework.GameConfiguration {
         public GameObject verticalLayout;
         public Text projectVersionText;
         public Text frameworkVersionText;
-        public Button clearPlayerPrefsBtn;
-        public Button confirmBtn;
 
         private List<Dropdown> allDropdowns;
         private Dictionary<string, Dropdown> dropdownDictionary;
@@ -56,9 +55,14 @@ namespace HIHIFramework.GameConfiguration {
                 GenerateDropdown ();
                 ShowInitialDropdownSelection ();
 
-                clearPlayerPrefsBtn.onClick.AddListener (OnClearPlayerPrefsButtonClick);
-                confirmBtn.onClick.AddListener (OnConfirmButtonClick);
+                UIEventManager.AddEventHandler (BtnOnClickType.GameConfig_ClearPlayerPrefs, OnClearPlayerPrefsButtonClick);
+                UIEventManager.AddEventHandler (BtnOnClickType.GameConfig_Confirm, OnConfirmButtonClick);
             }
+        }
+
+        private void OnDestroy () {
+            UIEventManager.RemoveEventHandler (BtnOnClickType.GameConfig_ClearPlayerPrefs, OnClearPlayerPrefsButtonClick);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.GameConfig_Confirm, OnConfirmButtonClick);
         }
 
         private void GenerateDropdown () {
