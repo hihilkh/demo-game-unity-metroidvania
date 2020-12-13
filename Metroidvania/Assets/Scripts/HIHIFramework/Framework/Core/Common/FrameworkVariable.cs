@@ -22,7 +22,7 @@ namespace HIHIFramework.Core {
 
         #region Player Pref Key
 
-        // For GameConfig
+        // GameConfig
         public const string GameConfigLastTimeKey = "HIHI_GAME_CONFIG_LAST_TIME";
 
         #endregion

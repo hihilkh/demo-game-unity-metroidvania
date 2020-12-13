@@ -2,29 +2,31 @@
 using HIHIFramework.GameConfiguration;
 using System.Collections.Generic;
 
-public partial class GameConfig : GameConfigBase<GameConfigSet> {
-    // All the game config sets shown in GameConfig scene
-    public override List<GameConfigSet> allGameConfigSetList {
-		get {
-			return new List<GameConfigSet> {
-				sampleGameConfigSet1,
-				sampleGameConfigSet2
-			};
-		}
-	}
+public partial class GameConfig {
+	/// <summary>
+	/// All the game config sets shown in GameConfig scene
+	/// </summary>
+	public static readonly List<GameConfigSet> AllGameConfigSetList = new List<GameConfigSet> {
+        SampleGameConfigSet1,
+		SampleGameConfigSet2
+	};
 
-	// The game config set used for release build
-	public override GameConfigSet releaseBuildGameConfigSet {
-		get {
-			return sampleGameConfigSet1;
-		}
-	}
+	/// <summary>
+	/// The game config set used for release build
+	/// </summary>
+	public static readonly GameConfigSet ReleaseBuildGameConfigSet = SampleGameConfigSet1;
 
-	public override GameConfigSet GetEmptyGameConfigSet () {
+	/// <summary>
+	/// Get empty game config set
+	/// </summary>
+	public GameConfigSet GetEmptyGameConfigSet () {
 		return new GameConfigSet ();
 	}
 
-	public override void SetRuntimeGameConfig (GameConfigSet gameConfigSet) {
+	/// <summary>
+	/// Save selected game config set for runtime usage
+	/// </summary>
+	public void SaveRuntimeGameConfig (GameConfigSet gameConfigSet) {
 		BaseURL = gameConfigSet.baseURL;
 		AnalyticsType = gameConfigSet.analyticsType;
 	}

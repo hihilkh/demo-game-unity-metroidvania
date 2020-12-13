@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using HIHIFramework.GameConfiguration;
 
-public partial class GameConfig : GameConfigBase<GameConfigSet> {
+public partial class GameConfig {
 
 	#region All Game Config Set
 
 	// sampleGameConfigSet1
-	private GameConfigSet sampleGameConfigSet1 = new GameConfigSet (
+	private static readonly GameConfigSet SampleGameConfigSet1 = new GameConfigSet (
 		"SampleOnly",                               // gameConfigSetName
 		"www.google.com",                           // baseURL
 		GameConfigEnum.AnalyticsType.None           // analyticsType
 	);
 
 	// sampleGameConfigSet2
-	private GameConfigSet sampleGameConfigSet2 = new GameConfigSet (
+	private static readonly GameConfigSet SampleGameConfigSet2 = new GameConfigSet (
 		"PleaseDeleteMe",                                   // gameConfigSetName
 		"www.yahoo.com",                                    // baseURL
 		GameConfigEnum.AnalyticsType.Firebase               // analyticsType

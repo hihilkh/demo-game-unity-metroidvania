@@ -51,7 +51,7 @@ namespace HIHIFramework.GameConfiguration {
                 dropdownDictionary = new Dictionary<string, Dropdown> ();
                 allInputField = new List<InputField> ();
                 inputFieldDictionary = new Dictionary<string, InputField> ();
-                allConfigSets = gameConfig.allGameConfigSetList;
+                allConfigSets = GameConfig.AllGameConfigSetList;
                 GenerateDropdown ();
                 ShowInitialDropdownSelection ();
 
@@ -278,12 +278,12 @@ namespace HIHIFramework.GameConfiguration {
         }
 
         private void SetGameConfigWithProductionConfig () {
-            var productionConfigSet = gameConfig.releaseBuildGameConfigSet;
+            var productionConfigSet = GameConfig.ReleaseBuildGameConfigSet;
             SetGameConfig (productionConfigSet);
         }
 
         private void SetGameConfig (GameConfigSet gameConfigSet) {
-            gameConfig.SetRuntimeGameConfig (gameConfigSet);
+            gameConfig.SaveRuntimeGameConfig (gameConfigSet);
         }
 
         private void GoIntoGame (bool useProductionConfig) {
