@@ -18,6 +18,10 @@ namespace HIHIFramework.UI {
         public static void RemoveEventHandler (BtnOnClickType onClickType, Action handler) {
             if (BtnOnClickDict.ContainsKey (onClickType)) {
                 BtnOnClickDict[onClickType] -= handler;
+
+                if (BtnOnClickDict[onClickType] == null) {
+                    BtnOnClickDict.Remove (onClickType);
+                }
             }
         }
 
