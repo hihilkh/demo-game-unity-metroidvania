@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
 using UnityEngine;
 
 namespace HIHIFramework.Core {
@@ -126,6 +128,78 @@ namespace HIHIFramework.Core {
             }
 
             Resources.UnloadUnusedAssets ();
+        }
+
+        #endregion
+
+        #region Cryptography
+
+        public static string CalculateMD5 (string fileName) {
+            using (var md5 = MD5.Create ()) {
+                using (var stream = File.OpenRead (fileName)) {
+                    var hash = md5.ComputeHash (stream);
+                    return BitConverter.ToString (hash).Replace ("-", "").ToLowerInvariant ();
+                }
+            }
+        }
+
+        #endregion
+
+        #region I/O
+
+        /// <summary>
+        /// This method does <b>not</b> work with getting files under folders of <b>streaming assets on android or WebGL platform</b>
+        /// </summary>
+        public static List<string> GetAllFilePaths (string folderPath, string extension = "*", FrameworkEnum.FilePathType filePathType = FrameworkEnum.FilePathType.FullPath, bool isRecursive = false) {
+            var filePaths = new string[0];
+            try {
+                filePaths = Directory.GetFiles (folderPath, "*." + extension, isRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+            } catch (Exception ex) {
+                Log.PrintWarning (ex.Message);
+            }
+
+            var resultList = new List<string> ();
+
+            switch (filePathType) {
+                case FrameworkEnum.FilePathType.FullPath:
+                    resultList.AddRange (filePaths);
+                    break;
+                case FrameworkEnum.FilePathType.FileNameOnly:
+                    foreach (var path in filePaths) {
+                        resultList.Add (Path.GetFileName (path));
+                    }
+                    break;
+                case FrameworkEnum.FilePathType.FileNameOnlyWithoutExtension:
+                    foreach (var path in filePaths) {
+                        resultList.Add (Path.GetFileNameWithoutExtension (path));
+                    }
+                    break;
+            }
+
+            return resultList;
+        }
+
+        /// <summary>
+        /// It <b>will override</b> original file in destFolder if existed
+        /// </summary>
+        public static void Unzip (string zipFilePath, string destFolder, bool isDeleteOriginalZipFile = true) {
+            Log.Print ("Start unzip file. zipFilePath : " + zipFilePath + " , exportPath : " + destFolder);
+            ZipUtils.Unzip (zipFilePath, destFolder);
+            Log.Print ("Finish unzip file. zipFilePath : " + zipFilePath + " , exportPath : " + destFolder);
+
+            if (isDeleteOriginalZipFile) {
+                DeleteFile (zipFilePath);
+            }
+        }
+
+        public static void DeleteFile (string filePath) {
+            Log.Print ("Start delete file. filePath : " + filePath);
+            if (!File.Exists (filePath)) {
+                Log.Print ("File do not exist. No need to delete. filePath : " + filePath);
+                return;
+            }
+            File.Delete (filePath);
+            Log.Print ("Finish delete file. filePath : " + filePath);
         }
 
         #endregion
