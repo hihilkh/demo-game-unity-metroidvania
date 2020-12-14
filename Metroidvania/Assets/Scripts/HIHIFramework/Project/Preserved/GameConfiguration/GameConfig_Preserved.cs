@@ -19,14 +19,14 @@ public partial class GameConfig {
 	/// <summary>
 	/// Get empty game config set
 	/// </summary>
-	public GameConfigSet GetEmptyGameConfigSet () {
+	public static GameConfigSet GetEmptyGameConfigSet () {
 		return new GameConfigSet ();
 	}
 
 	/// <summary>
 	/// Save selected game config set for runtime usage
 	/// </summary>
-	public void SaveRuntimeGameConfig (GameConfigSet gameConfigSet) {
+	public static void SaveRuntimeGameConfig (GameConfigSet gameConfigSet) {
 		BaseURL = gameConfigSet.baseURL;
 		AnalyticsType = gameConfigSet.analyticsType;
 	}

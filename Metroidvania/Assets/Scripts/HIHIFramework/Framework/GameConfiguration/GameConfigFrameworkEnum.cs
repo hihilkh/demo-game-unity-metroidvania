@@ -1,5 +1,5 @@
 ﻿namespace HIHIFramework.GameConfiguration {
-    public class GameConfigBaseEnum {
+    public class GameConfigFrameworkEnum {
         public enum GameConfigType {
             GameConfigSetName = 0,
             String = 1,

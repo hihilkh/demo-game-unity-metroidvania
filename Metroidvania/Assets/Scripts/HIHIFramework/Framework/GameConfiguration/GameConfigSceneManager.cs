@@ -10,8 +10,6 @@ using HIHIFramework.UI;
 
 namespace HIHIFramework.GameConfiguration {
     public class GameConfigSceneManager : MonoBehaviour {
-
-        private GameConfig gameConfig = new GameConfig();
         private List<GameConfigSet> allConfigSets;
 
         public GameObject settingsPanel;
@@ -26,7 +24,7 @@ namespace HIHIFramework.GameConfiguration {
         private List<InputField> allInputField;
         private Dictionary<string, InputField> inputFieldDictionary;
 
-        private Dictionary<string, GameConfigBaseEnum.GameConfigType> fieldNameDictionary;
+        private Dictionary<string, GameConfigFrameworkEnum.GameConfigType> fieldNameDictionary;
 
         private string configSetNameSearchKey;
 
@@ -80,7 +78,7 @@ namespace HIHIFramework.GameConfiguration {
             // 3. Enum
             // 4. Custom String
             foreach (var pair in fieldNameDictionary) {
-                if (pair.Value == GameConfigBaseEnum.GameConfigType.GameConfigSetName) {
+                if (pair.Value == GameConfigFrameworkEnum.GameConfigType.GameConfigSetName) {
                     configSetNameSearchKey = pair.Key;
                     GenerateDropdown (pair.Key, pair.Value);
                     break;
@@ -88,19 +86,19 @@ namespace HIHIFramework.GameConfiguration {
             }
 
             foreach (var pair in fieldNameDictionary) {
-                if (pair.Value == GameConfigBaseEnum.GameConfigType.String) {
+                if (pair.Value == GameConfigFrameworkEnum.GameConfigType.String) {
                     GenerateDropdown (pair.Key, pair.Value);
                 }
             }
 
             foreach (var pair in fieldNameDictionary) {
-                if (pair.Value == GameConfigBaseEnum.GameConfigType.Enum) {
+                if (pair.Value == GameConfigFrameworkEnum.GameConfigType.Enum) {
                     GenerateDropdown (pair.Key, pair.Value);
                 }
             }
 
             foreach (var pair in fieldNameDictionary) {
-                if (pair.Value == GameConfigBaseEnum.GameConfigType.CustomString) {
+                if (pair.Value == GameConfigFrameworkEnum.GameConfigType.CustomString) {
                     GenerateInputField (pair.Key);
                 }
             }
@@ -119,7 +117,7 @@ namespace HIHIFramework.GameConfiguration {
             }
         }
 
-        private void GenerateDropdown (string fieldName, GameConfigBaseEnum.GameConfigType gameConfigType) {
+        private void GenerateDropdown (string fieldName, GameConfigFrameworkEnum.GameConfigType gameConfigType) {
             var dropdownObject = Instantiate (dropdownTemplate);
             dropdownObject.transform.SetParent (verticalLayout.transform);
             dropdownObject.transform.localScale = dropdownTemplate.transform.localScale;
@@ -131,7 +129,7 @@ namespace HIHIFramework.GameConfiguration {
             var dropdownOptions = new List<Dropdown.OptionData> ();
 
             switch (gameConfigType) {
-                case GameConfigBaseEnum.GameConfigType.GameConfigSetName:
+                case GameConfigFrameworkEnum.GameConfigType.GameConfigSetName:
                     for (var i = 0; i < allConfigSets.Count; i++) {
                         var displayString = new Dropdown.OptionData (allConfigSets[i].GetFieldValue (fieldName).ToString ());
                         dropdownOptions.Add (displayString);
@@ -141,14 +139,14 @@ namespace HIHIFramework.GameConfiguration {
                         OnConfigSetDropdownValueSelect (dropdown);
                     });
                     break;
-                case GameConfigBaseEnum.GameConfigType.String:
+                case GameConfigFrameworkEnum.GameConfigType.String:
                     for (var i = 0; i < allConfigSets.Count; i++) {
                         var configSetName = allConfigSets[i].GetFieldValue (configSetNameSearchKey).ToString ();
                         var displayString = new Dropdown.OptionData (GameUtils.StringReplace (StringConfigDisplayValue, configSetName, allConfigSets[i].GetFieldValue (fieldName).ToString ()));
                         dropdownOptions.Add (displayString);
                     }
                     break;
-                case GameConfigBaseEnum.GameConfigType.Enum:
+                case GameConfigFrameworkEnum.GameConfigType.Enum:
                     var fieldTypeName = allConfigSets[0].GetFieldTypeName (fieldName);
                     var enumType = Type.GetType (fieldTypeName);
                     foreach (var enumValue in Enum.GetValues (enumType)) {
@@ -214,10 +212,10 @@ namespace HIHIFramework.GameConfiguration {
                 var dropdown = pair.Value;
                 var gameConfigType = fieldNameDictionary[pair.Key];
                 switch (gameConfigType) {
-                    case GameConfigBaseEnum.GameConfigType.String:
+                    case GameConfigFrameworkEnum.GameConfigType.String:
                         dropdown.value = configSetIndex;
                         break;
-                    case GameConfigBaseEnum.GameConfigType.Enum:
+                    case GameConfigFrameworkEnum.GameConfigType.Enum:
                         for (var i = 0; i < dropdown.options.Count (); i++) {
                             if (dropdown.options[i].text == selectedConfigSet.GetFieldValue (pair.Key).ToString ()) {
                                 dropdown.value = i;
@@ -232,7 +230,7 @@ namespace HIHIFramework.GameConfiguration {
                 var inputField = pair.Value;
                 var gameConfigType = fieldNameDictionary[pair.Key];
                 switch (gameConfigType) {
-                    case GameConfigBaseEnum.GameConfigType.CustomString:
+                    case GameConfigFrameworkEnum.GameConfigType.CustomString:
                         inputField.text = selectedConfigSet.GetFieldValue (pair.Key).ToString ();
                         break;
                 }
@@ -255,20 +253,20 @@ namespace HIHIFramework.GameConfiguration {
         }
 
         private void SetGameConfigWithCustomConfig () {
-            var customConfigSet = gameConfig.GetEmptyGameConfigSet ();
+            var customConfigSet = GameConfig.GetEmptyGameConfigSet ();
 
             foreach (var pair in fieldNameDictionary) {
                 switch (pair.Value) {
-                    case GameConfigBaseEnum.GameConfigType.GameConfigSetName:
-                    case GameConfigBaseEnum.GameConfigType.String:
+                    case GameConfigFrameworkEnum.GameConfigType.GameConfigSetName:
+                    case GameConfigFrameworkEnum.GameConfigType.String:
                         var selectedValue = dropdownDictionary[pair.Key].value;
                         customConfigSet.SetFieldValue (pair.Key, allConfigSets[selectedValue].GetFieldValue (pair.Key));
                         break;
-                    case GameConfigBaseEnum.GameConfigType.Enum:
+                    case GameConfigFrameworkEnum.GameConfigType.Enum:
                         var selectedValue_Enum = dropdownDictionary[pair.Key].value;
                         customConfigSet.SetFieldValue (pair.Key, (object)selectedValue_Enum);
                         break;
-                    case GameConfigBaseEnum.GameConfigType.CustomString:
+                    case GameConfigFrameworkEnum.GameConfigType.CustomString:
                         var selectedValue_CustomString = inputFieldDictionary[pair.Key].text;
                         customConfigSet.SetFieldValue (pair.Key, selectedValue_CustomString);
                         break;
@@ -283,7 +281,7 @@ namespace HIHIFramework.GameConfiguration {
         }
 
         private void SetGameConfig (GameConfigSet gameConfigSet) {
-            gameConfig.SaveRuntimeGameConfig (gameConfigSet);
+            GameConfig.SaveRuntimeGameConfig (gameConfigSet);
         }
 
         private void GoIntoGame (bool useProductionConfig) {
