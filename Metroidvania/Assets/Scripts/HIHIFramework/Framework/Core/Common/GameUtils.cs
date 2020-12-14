@@ -14,6 +14,7 @@ namespace HIHIFramework.Core {
             // frame rate
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = GameVariable.TargetFrameRate;
+            LangManager.Init ();
         }
 
         #endregion

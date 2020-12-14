@@ -20,6 +20,13 @@ namespace HIHIFramework.Core {
 
         #endregion
 
+        #region Lang
+
+        public const string LocalizationFileExtension = "tsv";
+        public const string LocalizationFileDelimiter = "\t";
+
+        #endregion
+
         #region Asset
 
         public const string IOTempFolderName = "Temp";
@@ -32,6 +39,9 @@ namespace HIHIFramework.Core {
 
         // GameConfig
         public const string GameConfigLastTimeKey = "HIHI_GAME_CONFIG_LAST_TIME";
+
+        // Lang
+        public const string CurrentLangTypeKey = "HIHI_CURRENT_LANG_TYPE";
 
         // Asset
         public const string AssetVersionKey = "HIHI_Version_{0}_{1}";
