@@ -20,10 +20,21 @@ namespace HIHIFramework.Core {
 
         #endregion
 
+        #region Asset
+
+        public const string IOTempFolderName = "Temp";
+        public const string AssetVersionFileExtension = "version";
+        public const string AssetChecksumFileExtension = "checksum";
+
+        #endregion
+
         #region Player Pref Key
 
         // GameConfig
         public const string GameConfigLastTimeKey = "HIHI_GAME_CONFIG_LAST_TIME";
+
+        // Asset
+        public const string AssetVersionKey = "HIHI_Version_{0}_{1}";
 
         #endregion
     }
