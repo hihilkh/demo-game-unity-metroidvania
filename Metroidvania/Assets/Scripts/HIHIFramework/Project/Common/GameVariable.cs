@@ -12,11 +12,22 @@ public partial class GameVariable {
 
     #endregion
 
+    #region Scene
+
+    public const string LandingSceneName = "Landing";
+    public const string MainMenuSceneName = "MainMenu";
+    public const string GameSceneName = "Game";
+
+    #endregion
+
     #region Player Pref Key
 
-    // For GameConfig
+    // GameConfig
     public const string BaseURLKey = "BASE_URL";
     public const string AnalyticsTypeKey = "ANALYTICS_TYPE";
+
+    // Tutorial
+    public const string HasDoneOpeningTutorialKey = "HAS_DONE_OPENING_TUTORIAL";
 
     #endregion
 }
