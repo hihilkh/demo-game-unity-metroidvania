@@ -33,29 +33,36 @@ namespace HIHIFramework.GameConfiguration {
         private const string StringConfigDisplayValue = "({0}) {1}";    // {0} : config set name, {1} : value
 
         void Awake () {
-            GameUtils.InitGameSettings ();
-            var isUseProductionConfig = GameUtils.GetIsReleaseBuild() && !GameVariable.IsShowGameConfigSceneInReleaseBuild;
+            var isUseProductionConfig = GameUtils.GetIsReleaseBuild () && !GameVariable.IsShowGameConfigSceneInReleaseBuild;
             Log.PrintDebug ("isUseProductionConfig :: " + isUseProductionConfig);
 
             if (isUseProductionConfig) {
                 settingsPanel.SetActive (false);
-                GoIntoGame (true);
             } else {
                 settingsPanel.SetActive (true);
-                projectVersionText.text = GameUtils.StringReplace(GameVersionStringFormat, Application.version);
-                frameworkVersionText.text = GameUtils.StringReplace (FrameworkVersionStringFormat, FrameworkVariable.FrameworkVersion);
-
-                allDropdowns = new List<Dropdown> ();
-                dropdownDictionary = new Dictionary<string, Dropdown> ();
-                allInputField = new List<InputField> ();
-                inputFieldDictionary = new Dictionary<string, InputField> ();
-                allConfigSets = GameConfig.AllGameConfigSetList;
-                GenerateDropdown ();
-                ShowInitialDropdownSelection ();
-
-                UIEventManager.AddEventHandler (BtnOnClickType.GameConfig_ClearPlayerPrefs, OnClearPlayerPrefsButtonClick);
-                UIEventManager.AddEventHandler (BtnOnClickType.GameConfig_Confirm, OnConfirmButtonClick);
             }
+
+            Action<bool> onInitGameSettingsFinished = (isSuccess) => {
+                if (isUseProductionConfig) {
+                    GoIntoGame (true);
+                } else {
+                    projectVersionText.text = GameUtils.StringReplace (GameVersionStringFormat, Application.version);
+                    frameworkVersionText.text = GameUtils.StringReplace (FrameworkVersionStringFormat, FrameworkVariable.FrameworkVersion);
+
+                    allDropdowns = new List<Dropdown> ();
+                    dropdownDictionary = new Dictionary<string, Dropdown> ();
+                    allInputField = new List<InputField> ();
+                    inputFieldDictionary = new Dictionary<string, InputField> ();
+                    allConfigSets = GameConfig.AllGameConfigSetList;
+                    GenerateDropdown ();
+                    ShowInitialDropdownSelection ();
+
+                    UIEventManager.AddEventHandler (BtnOnClickType.GameConfig_ClearPlayerPrefs, OnClearPlayerPrefsButtonClick);
+                    UIEventManager.AddEventHandler (BtnOnClickType.GameConfig_Confirm, OnConfirmButtonClick);
+                }
+            };
+
+            GameUtils.InitGameSettings (onInitGameSettingsFinished);
         }
 
         private void OnDestroy () {
