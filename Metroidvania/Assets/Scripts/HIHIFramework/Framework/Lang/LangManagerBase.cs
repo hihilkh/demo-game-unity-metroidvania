@@ -45,7 +45,6 @@ namespace HIHIFramework.Lang {
 
         #region Initialization
 
-        // TODO : Call Init function with onFinished control
         public static void Init (Action<bool> onFinished = null) {
             Log.Print ("Start init LangManager");
             Action<bool> onInitStreamingAssetsFinished = (isSuccess) => {
@@ -66,7 +65,6 @@ namespace HIHIFramework.Lang {
             InitStreamingAssets (onInitStreamingAssetsFinished);
         }
 
-        // TODO : Think of handle in a common script for all streaming assets
         private static void InitStreamingAssets (Action<bool> onFinished = null) {
             Log.Print ("Start init language streaming assets.");
             var fileNameList = new List<string> ();
@@ -175,7 +173,15 @@ namespace HIHIFramework.Lang {
         #endregion
 
         #region Event
-        // TODO LangChangedEvent
+
+        public static void AddLangChangedEventHandler (Action handler) {
+            LangChangedEvent += handler;
+        }
+
+        public static void RemoveLangChangedEventHandler (Action handler) {
+            LangChangedEvent -= handler;
+        }
+
         #endregion
 
         #region CurrentLang
@@ -250,21 +256,21 @@ namespace HIHIFramework.Lang {
             return mapping[key];
         }
 
-        // TODO : Make a class for TextLocalizationDetails and do iteration
         /// <summary>
-        /// Set the Text components with corresponding TextLocalizationDetails
+        /// Set the Text components with corresponding BasicLocalizedTextDetails List
         /// </summary>
-        public static void SetWords (Dictionary<TextMeshProUGUI, string> textLocalizationKeyDict, bool isFallbackToRootLang = true) {
-            if (textLocalizationKeyDict == null || textLocalizationKeyDict.Count <= 0) {
-                Log.PrintWarning ("The input textLocalizationKeyDict is empty. Cannot set words.");
+        //// Remarks : Use IEnumerable because it is covariance
+        public static void SetWords (IEnumerable<BasicLocalizedTextDetails> detailsList, bool isFallbackToRootLang = true) {
+            if (detailsList == null) {
+                Log.PrintWarning ("The input detailsList is null. Cannot set words.");
                 return;
             }
 
             // TODO
             //var font = GetCurrentFont ();
-            foreach (var pair in textLocalizationKeyDict) {
-                //pair.Key.font = font;
-                pair.Key.text = GetWord (pair.Value, isFallbackToRootLang);
+            foreach (var details in detailsList) {
+                //details.text.font = font;
+                details.text.text = GetWord (details.localizationKey, isFallbackToRootLang);
             }
         }
 

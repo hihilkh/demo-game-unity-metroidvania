@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using HIHIFramework.Core;
+using System;
 
 public class LandingSceneUIManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI startText;
@@ -11,10 +13,10 @@ public class LandingSceneUIManager : MonoBehaviour {
     }
     
     private void SetTexts () {
-        Dictionary<TextMeshProUGUI, string> textLocalizationKeyDict = new Dictionary<TextMeshProUGUI, string> {
-            { startText, "PressToStart" }
-        };
+        var detailsList = new List<LocalizedTextDetails> ();
+        detailsList.Add (new LocalizedTextDetails (startText, "PressToStart"));
 
-        LangManager.SetWords (textLocalizationKeyDict);
+        LangManager.SetWords (detailsList);
     }
+
 }
