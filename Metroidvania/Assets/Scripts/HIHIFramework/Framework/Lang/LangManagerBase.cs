@@ -5,6 +5,7 @@ using UnityEngine;
 using HIHIFramework.Core;
 using HIHIFramework.Asset;
 using TMPro;
+using System.IO;
 
 namespace HIHIFramework.Lang {
     public abstract class LangManagerBase {
@@ -42,6 +43,7 @@ namespace HIHIFramework.Lang {
         }
 
         protected static Dictionary<LangType, Dictionary<string, string>> LangKeyValueMappingDict = new Dictionary<LangType, Dictionary<string, string>> ();
+        protected static Dictionary<LangType, TMP_FontAsset> FontDict = new Dictionary<LangType, TMP_FontAsset> ();
 
         #region Initialization
 
@@ -198,15 +200,24 @@ namespace HIHIFramework.Lang {
 
         #region Font
 
-        // TODO
         public static TMP_FontAsset GetCurrentFont () {
-            return new TMP_FontAsset ();
+            return GetFont (CurrentLang);
         }
 
-        // TODO
         public static TMP_FontAsset GetFont (LangType langType) {
-            return new TMP_FontAsset ();
+            if (!FontDict.ContainsKey (langType)) {
+                var resourcesName = LangConfig.GetFontResourcesName (langType);
+                var font = Resources.Load<TMP_FontAsset> (Path.Combine (FrameworkVariable.FontResourcesFolder, resourcesName));
+                if (font == null) {
+                    Log.PrintError ("Get font failed. LangType : " + langType);
+                } else {
+                    FontDict[langType] = font;
+                }
+            }
+
+            return FontDict[langType];
         }
+
         #endregion
 
         #region GetWord / SetWord method
@@ -266,10 +277,9 @@ namespace HIHIFramework.Lang {
                 return;
             }
 
-            // TODO
-            //var font = GetCurrentFont ();
+            var font = GetCurrentFont ();
             foreach (var details in detailsList) {
-                //details.text.font = font;
+                details.text.font = font;
                 details.text.text = GetWord (details.localizationKey, isFallbackToRootLang);
             }
         }

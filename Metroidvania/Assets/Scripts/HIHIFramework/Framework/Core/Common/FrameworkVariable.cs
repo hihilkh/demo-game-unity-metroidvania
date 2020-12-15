@@ -24,6 +24,7 @@ namespace HIHIFramework.Core {
 
         public const string LocalizationFileExtension = "tsv";
         public const string LocalizationFileDelimiter = "\t";
+        public const string FontResourcesFolder = "Fonts";
 
         #endregion
 

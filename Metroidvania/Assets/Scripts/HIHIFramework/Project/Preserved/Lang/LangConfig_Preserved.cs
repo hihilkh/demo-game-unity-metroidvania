@@ -59,4 +59,11 @@ public partial class LangConfig {
             return langCode + "." + FrameworkVariable.LocalizationFileExtension;
         }
     }
+
+    /// <summary>
+    /// Get the font resources name of corresponding LangType (Inside Resources/Fonts folder)
+    /// </summary>
+    public static string GetFontResourcesName (LangType langType) {
+        return "NotoSansCJKtc-Regular";
+    }
 }
