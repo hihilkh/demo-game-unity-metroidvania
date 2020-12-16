@@ -29,5 +29,10 @@ public static partial class GameVariable {
     // Tutorial
     public const string HasDoneOpeningTutorialKey = "HAS_DONE_OPENING_TUTORIAL";
 
+    // Game Progress
+    public const string AllMissionProgressKey = "ALL_MISSION_PROGRESS";
+    public const string EnabledCommandListKey = "ENABLED_COMMAND_LIST";
+
+
     #endregion
 }

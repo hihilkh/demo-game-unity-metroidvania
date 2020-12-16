@@ -21,12 +21,13 @@ public class CharacterEnum {
         Wall
     }
 
-    public enum Command {
-        Jump,
-        Dash,
-        Hit,
-        Arrow,
-        Turn
+    // Remarks: Never change the Command enum int value. It is saved in PlayerPrefs to represent the Command
+    public enum Command : int {
+        Jump = 1,
+        Dash = 2,
+        Hit = 3,
+        Arrow = 4,
+        Turn = 5
     }
 
     public enum CommandSituation {
