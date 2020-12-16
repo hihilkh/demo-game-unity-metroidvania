@@ -1893,7 +1893,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  onClickType: 1001
+  onClickType: 10001
 --- !u!114 &1209800828
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2944,7 +2944,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  onClickType: 1000
+  onClickType: 10000
 --- !u!114 &1884033001
 MonoBehaviour:
   m_ObjectHideFlags: 0
