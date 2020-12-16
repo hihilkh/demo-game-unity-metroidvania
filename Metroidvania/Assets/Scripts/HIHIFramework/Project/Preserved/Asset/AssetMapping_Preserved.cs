@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using HIHIFramework.Core;
 
-public partial class AssetMapping {
+public static partial class AssetMapping {
     /// <summary>
     /// Get the folder name of corresponding AssetType
     /// </summary>

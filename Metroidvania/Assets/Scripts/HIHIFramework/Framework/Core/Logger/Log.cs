@@ -5,7 +5,7 @@ using System.Diagnostics;
 using UnityEngine;
 
 namespace HIHIFramework.Core {
-    public class Log {
+    public static class Log {
 
         public static void PrintDebug (object obj) {
             Print (obj, LogLevel.Debug);

@@ -186,13 +186,13 @@ namespace HIHIFramework.GameConfiguration {
 
         private void ShowInitialDropdownSelection () {
             try {
-                var GameConfigSelectionStringLastTime = PlayerPrefs.GetString (FrameworkVariable.GameConfigLastTimeKey, "");
-                if (GameConfigSelectionStringLastTime != "") {
-                    var selectionStringList = GameConfigSelectionStringLastTime.Split ('|');
+                var gameConfigSelectionStringLastTime = PlayerPrefs.GetString (FrameworkVariable.GameConfigLastTimeKey, "");
+                if (gameConfigSelectionStringLastTime != "") {
+                    var selectionStringList = gameConfigSelectionStringLastTime.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
 
                     var index = 0;
                     for (var i = 0; i < allDropdowns.Count; i++) {
-                        allDropdowns[i].value = Int32.Parse (selectionStringList[index]);
+                        allDropdowns[i].value = int.Parse (selectionStringList[index]);
                         index++;
                     }
                     for (var j = 0; j < allInputField.Count; j++) {
@@ -245,17 +245,21 @@ namespace HIHIFramework.GameConfiguration {
         }
 
         private void SaveCustomConfigForNextTime () {
-            var customConfigSelectionString = "";
+            var tempList = new List<string> ();
 
             for (var i = 0; i < allDropdowns.Count; i++) {
-                customConfigSelectionString += allDropdowns[i].value.ToString () + "|";
+                tempList.Add (allDropdowns[i].value.ToString ());
             }
 
             for (var j = 0; j < allInputField.Count; j++) {
-                customConfigSelectionString += allInputField[j].text + "|";
+                tempList.Add (allInputField[j].text);
             }
 
-            customConfigSelectionString.Substring (0, customConfigSelectionString.Length - 1);
+            var customConfigSelectionString = "";
+            if (tempList.Count > 0) {
+                customConfigSelectionString = string.Join (FrameworkVariable.DefaultDelimiter, tempList);
+            }
+
             PlayerPrefs.SetString (FrameworkVariable.GameConfigLastTimeKey, customConfigSelectionString);
         }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using HIHIFramework.GameConfiguration;
 
-public partial class GameConfig {
+public static partial class GameConfig {
 
 	#region All Game Config Set
 

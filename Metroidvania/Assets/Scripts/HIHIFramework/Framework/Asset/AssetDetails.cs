@@ -6,7 +6,7 @@ using HIHIFramework.Core;
 using UnityEngine;
 
 namespace HIHIFramework.Asset {
-    public class AssetDetails {
+    public static class AssetDetails {
 
         public static string GetIOTempZipFilePath () {
             var ioTempFolderPath = Path.Combine (Application.persistentDataPath, FrameworkVariable.IOTempFolderName);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using HIHIFramework.Core;
 using UnityEngine;
 
-public partial class LangConfig {
+public static partial class LangConfig {
     /// <summary>
     /// Device default language is the language to use after app installed
     /// </summary>

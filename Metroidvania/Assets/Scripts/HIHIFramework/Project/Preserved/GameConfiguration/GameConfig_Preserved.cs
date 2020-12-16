@@ -2,7 +2,7 @@
 using HIHIFramework.GameConfiguration;
 using System.Collections.Generic;
 
-public partial class GameConfig {
+public static partial class GameConfig {
 	/// <summary>
 	/// All the game config sets shown in GameConfig scene
 	/// </summary>

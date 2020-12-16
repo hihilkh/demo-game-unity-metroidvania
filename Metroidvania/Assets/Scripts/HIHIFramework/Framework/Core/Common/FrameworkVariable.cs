@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace HIHIFramework.Core {
-    public class FrameworkVariable {
+    public static class FrameworkVariable {
 
         public const string FrameworkVersion = "1.0.0";
 
         #region Common
 
-        public const string DefaultDelimiter = "||";
+        public const string DefaultDelimiter = "|";
 
         #endregion
 

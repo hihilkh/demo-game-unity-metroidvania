@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace HIHIFramework.UI {
-    public class UIEventManager {
+    public static class UIEventManager {
 
         private static Dictionary<BtnOnClickType, Action> BtnOnClickDict = new Dictionary<BtnOnClickType, Action> ();
 

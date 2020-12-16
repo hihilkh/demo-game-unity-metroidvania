@@ -1,5 +1,5 @@
 ﻿namespace HIHIFramework.Asset {
-    public class AssetFrameworkEnum {
+    public static class AssetFrameworkEnum {
         public enum AssetCategory {
             StreamingAssets,
             PersistentData
