@@ -53,17 +53,30 @@ public class MissionProgressWithId {
 public class MissionProgress {
     public bool isUnlocked;
     public bool isCleared;
-    public float currentProgress;
+    public List<MissionCollectable.Type> collectedCollectables;
 
     public MissionProgress () {
         isUnlocked = false;
         isCleared = false;
-        currentProgress = 0;
+        collectedCollectables = new List<MissionCollectable.Type> ();
     }
 
-    public MissionProgress (bool isUnlocked, bool isCleared, float currentProgress) {
+    public MissionProgress (bool isUnlocked, bool isCleared, params MissionCollectable.Type[] collectedCollectables) {
         this.isUnlocked = isUnlocked;
         this.isCleared = isCleared;
-        this.currentProgress = currentProgress;
+        this.collectedCollectables = new List<MissionCollectable.Type> ();
+        if (collectedCollectables != null && collectedCollectables.Length > 0) {
+            this.collectedCollectables.AddRange (collectedCollectables);
+        }
+    }
+
+    public void AddCollectedCollectable (MissionCollectable.Type collectable) {
+        if (collectedCollectables == null) {
+            collectedCollectables = new List<MissionCollectable.Type> ();
+        }
+
+        if (!collectedCollectables.Contains (collectable)) {
+            collectedCollectables.Add (collectable);
+        }
     }
 }

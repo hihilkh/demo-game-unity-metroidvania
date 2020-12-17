@@ -10,11 +10,11 @@ public class MainMenuSceneManager : MonoBehaviour {
     [SerializeField] private SelectMissionItem selectMissionItemTemplate;
 
     private void Start () {
-        GenerateSelectMissionItems ();
         UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_SelectMissionItem, OnSelectMissionItemClick);
+        GenerateSelectMissionItems ();
     }
 
-    private void nDestroy () {
+    private void OnDestroy () {
         UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_SelectMissionItem, OnSelectMissionItemClick);
     }
 
