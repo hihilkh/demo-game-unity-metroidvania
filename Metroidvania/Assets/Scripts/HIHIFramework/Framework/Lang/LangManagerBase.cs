@@ -140,8 +140,8 @@ namespace HIHIFramework.Lang {
             for (var i = 0; i < lines.Length; i++) {
                 var pair = lines[i].Split (new string[] { FrameworkVariable.LocalizationFileDelimiter }, StringSplitOptions.None);
                 if (pair == null || pair.Length != 2) {
-                    Log.PrintError ("Load localization file Failed. langType : " + langType + " , Error : Wrong format in line " + (i + 1) + " of the localization file.");
-                    return false;
+                    // Line with wrong format. Ignore it.
+                    continue;
                 }
 
                 if (keyValueMapping.ContainsKey (pair[0])) {
@@ -282,6 +282,8 @@ namespace HIHIFramework.Lang {
                 details.text.font = font;
                 if (details.isNeedLocalization) {
                     details.text.text = GetWord (details.localizationKey, isFallbackToRootLang);
+                } else {
+                    details.text.text = details.localizationKey;
                 }
             }
         }
