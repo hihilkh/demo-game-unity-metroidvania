@@ -280,7 +280,9 @@ namespace HIHIFramework.Lang {
             var font = GetCurrentFont ();
             foreach (var details in detailsList) {
                 details.text.font = font;
-                details.text.text = GetWord (details.localizationKey, isFallbackToRootLang);
+                if (details.isNeedLocalization) {
+                    details.text.text = GetWord (details.localizationKey, isFallbackToRootLang);
+                }
             }
         }
 
