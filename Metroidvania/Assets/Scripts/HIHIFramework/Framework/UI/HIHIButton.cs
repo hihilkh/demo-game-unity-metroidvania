@@ -23,6 +23,7 @@ namespace HIHIFramework.UI {
 
     public class HIHIButton : Button {
         [SerializeField] private BtnOnClickType onClickType;
+        private object info = null;
 
         [MenuItem ("GameObject/UI/Button - HIHIFramework")]
         public static void CreateButtonWithTextObject () {
@@ -60,8 +61,12 @@ namespace HIHIFramework.UI {
             this.onClick.AddListener (OnClick);
         }
 
-        public void SetOnClickType (BtnOnClickType onClickType) {
+        public void SetOnClickInfo (BtnOnClickType onClickType, object info = null) {
             this.onClickType = onClickType;
+
+            if (info != null) {
+                this.info = info;
+            }
         }
 
         private void OnClick () {
@@ -71,7 +76,12 @@ namespace HIHIFramework.UI {
             }
 
             Log.Print ("OnClick : " + onClickType);
-            UIEventManager.InvokeEvent (onClickType);
+            if (info == null) {
+                UIEventManager.InvokeEvent (onClickType);
+            } else {
+                UIEventManager.InvokeEvent (onClickType, info);
+            }
+
         }
     }
 }
