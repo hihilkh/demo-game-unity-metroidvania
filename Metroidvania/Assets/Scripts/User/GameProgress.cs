@@ -6,7 +6,7 @@ using HIHIFramework.Core;
 
 public static class GameProgress {
 
-    public static List<MissionProgress> MissionProgressList { get; private set; }
+    public static Dictionary<int, MissionProgress> MissionProgressDict { get; private set; }
     public static List<CharacterEnum.Command> EnabledCommandList { get; private set; }
 
     #region Load Progress
@@ -21,16 +21,14 @@ public static class GameProgress {
     #region getter
 
     public static MissionProgress GetMissionProgress (int missionId) {
-        if (MissionProgressList == null) {
+        if (MissionProgressDict == null) {
             return null;
         }
 
-        var index = MissionProgressList.FindIndex (x => x.id == missionId);
-
-        if (index < 0) {
-            return null;
+        if (MissionProgressDict.ContainsKey (missionId)) {
+            return MissionProgressDict[missionId];
         } else {
-            return MissionProgressList[index];
+            return null;
         }
     }
 
@@ -38,22 +36,20 @@ public static class GameProgress {
 
     #region update
 
-    public static void UpdateMissionProgress (MissionProgress missionProgress) {
+    public static void UpdateMissionProgress (int missionId, MissionProgress missionProgress) {
         if (missionProgress == null) {
             Log.PrintWarning ("The input MissionProgress is null. Do not update anything.");
             return;
         }
 
-        if (MissionProgressList == null) {
-            MissionProgressList = new List<MissionProgress> ();
+        if (MissionProgressDict == null) {
+            MissionProgressDict = new Dictionary<int, MissionProgress> ();
         }
 
-        var index = MissionProgressList.FindIndex (x => x.id == missionProgress.id);
-
-        if (index < 0) {
-            MissionProgressList.Add (missionProgress);
+        if (MissionProgressDict.ContainsKey (missionId)) {
+            MissionProgressDict[missionId] = missionProgress;
         } else {
-            MissionProgressList[index] = missionProgress;
+            MissionProgressDict.Add (missionId, missionProgress);
         }
 
         SaveMissionProgressList ();
@@ -77,8 +73,8 @@ public static class GameProgress {
 
     private static void SaveMissionProgressList () {
         var json = "";
-        if (MissionProgressList != null && MissionProgressList.Count > 0) {
-            var allMissionProgress = new AllMissionProgress (MissionProgressList);
+        if (MissionProgressDict != null && MissionProgressDict.Count > 0) {
+            var allMissionProgress = new AllMissionProgress (MissionProgressDict);
             json = JsonUtility.ToJson (allMissionProgress);
         }
 
@@ -89,11 +85,11 @@ public static class GameProgress {
         var json = PlayerPrefs.GetString (GameVariable.AllMissionProgressKey, null);
 
         if (string.IsNullOrEmpty (json)) {
-            MissionProgressList = new List<MissionProgress> ();
+            MissionProgressDict = new Dictionary<int, MissionProgress> ();
         } else {
             var allMissionProgress = new AllMissionProgress ();
             allMissionProgress = JsonUtility.FromJson<AllMissionProgress> (json);
-            MissionProgressList = allMissionProgress.progress;
+            MissionProgressDict = allMissionProgress.ConvertToDict ();
         }
     }
 

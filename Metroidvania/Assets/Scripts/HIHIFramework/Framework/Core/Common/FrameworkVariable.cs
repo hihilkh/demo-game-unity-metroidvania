@@ -36,6 +36,12 @@ namespace HIHIFramework.Core {
 
         #endregion
 
+        #region GameUtils
+
+        public const string ProgressPercentFormat = "{0}%";
+
+        #endregion
+
         #region Player Pref Key
 
         // GameConfig

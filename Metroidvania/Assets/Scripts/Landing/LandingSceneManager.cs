@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class LandingSceneManager : MonoBehaviour {
     [SerializeField] private LandingSceneUIManager uiManager;
 
-    private void Awake () {
+    private void Start () {
         UIEventManager.AddEventHandler (BtnOnClickType.Landing_Start, OnStartBtnClick);
     }
 
@@ -19,10 +19,12 @@ public class LandingSceneManager : MonoBehaviour {
     private void OnStartBtnClick () {
         GameProgress.LoadProgress ();
 
-        if (TutorialManager.HasDoneTutorial_Opening) {
-            SceneManager.LoadScene (GameVariable.MainMenuSceneName);
-        } else {
-            SceneManager.LoadScene (GameVariable.GameSceneName);
-        }
+        // TODO : Implement TutorialManager.HasDoneTutorial_Opening logic
+        //if (TutorialManager.HasDoneTutorial_Opening) {
+        //    SceneManager.LoadScene (GameVariable.MainMenuSceneName);
+        //} else {
+        //    SceneManager.LoadScene (GameVariable.GameSceneName);
+        //}
+        SceneManager.LoadScene (GameVariable.MainMenuSceneName);
     }
 }

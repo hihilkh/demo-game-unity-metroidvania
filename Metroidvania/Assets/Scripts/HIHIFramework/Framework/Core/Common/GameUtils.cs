@@ -14,6 +14,8 @@ namespace HIHIFramework.Core {
             // frame rate
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = GameVariable.TargetFrameRate;
+
+            // LangManager
             LangManager.Init (onFinished);
         }
 
@@ -41,6 +43,23 @@ namespace HIHIFramework.Core {
             }
 
             return stringBase;
+        }
+
+        public static string GetProgressPercentStr (float progress, bool isAllowOverOne = false, bool isAllowNegative = false) {
+            var progressPercent = progress * 100;
+            var progressPercentInt = Mathf.FloorToInt (progressPercent);
+
+            if (progressPercentInt > 100) {
+                if (!isAllowOverOne) {
+                    progressPercentInt = 100;
+                }
+            } else if (progressPercentInt < 0) {
+                if (!isAllowNegative) {
+                    progressPercentInt = 0;
+                }
+            }
+
+            return StringReplace (FrameworkVariable.ProgressPercentFormat, progressPercentInt.ToString());
         }
 
         #endregion
