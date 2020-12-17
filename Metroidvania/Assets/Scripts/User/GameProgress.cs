@@ -25,51 +25,21 @@ public static class GameProgress {
 
     #region getter
 
+    /// <summary>
+    /// Get the MissionProgress of the corresponding missionId.<br />
+    /// Notes :<br />
+    /// 1. The returned value is referenced in GameProgress class. Do not amend it outside the GameProgress class. Clone and use it if needed.<br />
+    /// 2. The returned value is ensured not be null
+    /// </summary>
     public static MissionProgress GetMissionProgress (int missionId) {
-        if (MissionProgressDict == null) {
-            return null;
-        }
-
+        // Remarks : The static constructor ensure MissionProgressDict != null
         if (MissionProgressDict.ContainsKey (missionId)) {
             return MissionProgressDict[missionId];
         } else {
-            return null;
-        }
-    }
-
-    #endregion
-
-    #region update
-
-    public static void UpdateMissionProgress (int missionId, MissionProgress missionProgress) {
-        if (missionProgress == null) {
-            Log.PrintWarning ("The input MissionProgress is null. Do not update anything.");
-            return;
-        }
-
-        if (MissionProgressDict == null) {
-            MissionProgressDict = new Dictionary<int, MissionProgress> ();
-        }
-
-        if (MissionProgressDict.ContainsKey (missionId)) {
-            MissionProgressDict[missionId] = missionProgress;
-        } else {
+            var missionProgress = new MissionProgress ();
             MissionProgressDict.Add (missionId, missionProgress);
+            return missionProgress;
         }
-
-        SaveMissionProgressList ();
-    }
-
-    public static void EnableCommand (CharacterEnum.Command command) {
-        if (EnabledCommandList == null) {
-            EnabledCommandList = new List<CharacterEnum.Command> ();
-        }
-
-        if (!EnabledCommandList.Contains (command)) {
-            EnabledCommandList.Add (command);
-        }
-
-        SaveEnabledCommandList ();
     }
 
     #endregion
@@ -135,14 +105,48 @@ public static class GameProgress {
         var firstMissionId = MissionDetails.OrderedMissionList[0].id;
         var progress = GetMissionProgress (firstMissionId);
 
-        if (progress == null) {
-            progress = new MissionProgress ();
+        if (!progress.isUnlocked) {
             progress.isUnlocked = true;
-            UpdateMissionProgress (firstMissionId, progress);
-        } else if (!progress.isUnlocked) {
-            progress.isUnlocked = true;
-            UpdateMissionProgress (firstMissionId, progress);
+            SaveMissionProgressList ();
         }
     }
+
+    public static void ClearMission (int missionId) {
+        var clearMissionProgress = GetMissionProgress (missionId);
+        clearMissionProgress.isCleared = true;
+
+        var clearMissionIndex = MissionDetails.OrderedMissionList.FindIndex (x => x.id == missionId);
+        if (clearMissionIndex < 0) {
+            Log.PrintWarning ("You has just cleared a mission which is not inside OrderedMissionList. Please check. Mission Id : " + missionId);
+        } else {
+            if (clearMissionIndex + 1 < MissionDetails.OrderedMissionList.Count) { // Check if there is next mission or not
+                var nextMissionId = MissionDetails.OrderedMissionList[clearMissionIndex + 1].id;
+                var nextMissionProgress = GetMissionProgress (nextMissionId);
+                nextMissionProgress.isUnlocked = true;
+            }
+        }
+
+        SaveMissionProgressList ();
+    }
+
+    public static void CollectedCollectable (int missionId, MissionCollectable.Type collectable) {
+        var missionProgress = GetMissionProgress (missionId);
+        missionProgress.AddCollectedCollectable (collectable);
+
+        SaveMissionProgressList ();
+    }
+
+    public static void EnableCommand (CharacterEnum.Command command) {
+        if (EnabledCommandList == null) {
+            EnabledCommandList = new List<CharacterEnum.Command> ();
+        }
+
+        if (!EnabledCommandList.Contains (command)) {
+            EnabledCommandList.Add (command);
+        }
+
+        SaveEnabledCommandList ();
+    }
+
     #endregion
 }

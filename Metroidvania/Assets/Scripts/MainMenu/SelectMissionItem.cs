@@ -14,7 +14,8 @@ public class SelectMissionItem : MonoBehaviour {
     private bool isAddedLangChangedEvent = false;
 
     /// <summary>
-    /// Init the SelectMissionItem.<br />progress = null : Use new MissionProgress () as value
+    /// Init the SelectMissionItem.<br />
+    /// progress = null : Use new MissionProgress () as value
     /// </summary>
     public void Init (MissionDetails details, MissionProgress progress = null) {
         if (progress == null) {
