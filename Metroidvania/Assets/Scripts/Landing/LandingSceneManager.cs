@@ -17,8 +17,6 @@ public class LandingSceneManager : MonoBehaviour {
     }
 
     private void OnStartBtnClick () {
-        GameProgress.LoadProgress ();
-
         // TODO : Implement TutorialManager.HasDoneTutorial_Opening logic
         //if (TutorialManager.HasDoneTutorial_Opening) {
         //    SceneManager.LoadScene (GameVariable.MainMenuSceneName);

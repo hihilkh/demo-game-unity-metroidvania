@@ -9,9 +9,14 @@ public static class GameProgress {
     public static Dictionary<int, MissionProgress> MissionProgressDict { get; private set; }
     public static List<CharacterEnum.Command> EnabledCommandList { get; private set; }
 
-    #region Load Progress
+    #region Init
 
-    public static void LoadProgress () {
+    static GameProgress () {
+        LoadProgress ();
+    }
+
+    private static void LoadProgress () {
+        Log.PrintDebug ("Load Game Progress");
         LoadMissionProgressList ();
         LoadEnabledCommandList ();
     }
@@ -91,6 +96,8 @@ public static class GameProgress {
             allMissionProgress = JsonUtility.FromJson<AllMissionProgress> (json);
             MissionProgressDict = allMissionProgress.ConvertToDict ();
         }
+
+        SetFirstMissionUnlocked ();
     }
 
     private static void SaveEnabledCommandList () {
@@ -122,4 +129,20 @@ public static class GameProgress {
 
     #endregion
 
+    #region Logic
+
+    private static void SetFirstMissionUnlocked () {
+        var firstMissionId = MissionDetails.OrderedMissionList[0].id;
+        var progress = GetMissionProgress (firstMissionId);
+
+        if (progress == null) {
+            progress = new MissionProgress ();
+            progress.isUnlocked = true;
+            UpdateMissionProgress (firstMissionId, progress);
+        } else if (!progress.isUnlocked) {
+            progress.isUnlocked = true;
+            UpdateMissionProgress (firstMissionId, progress);
+        }
+    }
+    #endregion
 }
