@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HIHIFramework.Core;
 using HIHIFramework.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MainMenuSceneManager : MonoBehaviour {
     [SerializeField] private MainMenuSceneUIManager uiManager;
@@ -42,6 +43,6 @@ public class MainMenuSceneManager : MonoBehaviour {
         var details = (MissionDetails)info;
 
         // TODO
-        Log.Print (details.mapSceneName);
+        SceneManager.LoadScene (GameVariable.GameSceneName);
     }
 }

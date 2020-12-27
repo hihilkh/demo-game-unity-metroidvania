@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: CharacterUpperPartMask
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Meshes
+    m_Weight: 0
+  - m_Path: Meshes/Arm
+    m_Weight: 1
+  - m_Path: Meshes/Arm/arm.l
+    m_Weight: 1
+  - m_Path: Meshes/Arm/arm.r
+    m_Weight: 1
+  - m_Path: Meshes/Arm/Weapon
+    m_Weight: 1
+  - m_Path: Meshes/Arm/Weapon/arrow
+    m_Weight: 1
+  - m_Path: Meshes/Arm/Weapon/bow
+    m_Weight: 1
+  - m_Path: Meshes/Head
+    m_Weight: 1
+  - m_Path: Meshes/Head/head.confused
+    m_Weight: 1
+  - m_Path: Meshes/Head/head.normal
+    m_Weight: 1
+  - m_Path: Meshes/Head/head.shocked
+    m_Weight: 1
+  - m_Path: Meshes/Leg
+    m_Weight: 1
+  - m_Path: Meshes/Leg/leg.l
+    m_Weight: 1
+  - m_Path: Meshes/Leg/leg.r
+    m_Weight: 1
+  - m_Path: Meshes/Leg/Thruster
+    m_Weight: 1
+  - m_Path: Meshes/Leg/Thruster/thruster.l
+    m_Weight: 1
+  - m_Path: Meshes/Leg/Thruster/thruster.r
+    m_Weight: 1
+  - m_Path: rig_arm.l
+    m_Weight: 1
+  - m_Path: rig_arm.l/rig_arm.l_end
+    m_Weight: 1
+  - m_Path: rig_arm.r
+    m_Weight: 1
+  - m_Path: rig_arm.r/rig_arm.r_end
+    m_Weight: 1
+  - m_Path: rig_head
+    m_Weight: 1
+  - m_Path: rig_head/rig_head_end
+    m_Weight: 1
+  - m_Path: rig_leg.l.upper
+    m_Weight: 0
+  - m_Path: rig_leg.l.upper/rig_leg.l.lower
+    m_Weight: 1
+  - m_Path: rig_leg.l.upper/rig_leg.l.lower/rig_leg.l.lower_end
+    m_Weight: 1
+  - m_Path: rig_leg.r.upper
+    m_Weight: 0
+  - m_Path: rig_leg.r.upper/rig_leg.r.lower
+    m_Weight: 1
+  - m_Path: rig_leg.r.upper/rig_leg.r.lower/rig_leg.r.lower_end
+    m_Weight: 1
