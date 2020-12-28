@@ -39,12 +39,6 @@ public class CharacterEnum {
         AirRelease
     }
 
-    public enum JumpChargeLevel {
-        Zero = 0,
-        One = 1,
-        Two = 2
-    }
-
     public enum HitType {
         Normal,
         Charged,
@@ -56,5 +50,12 @@ public class CharacterEnum {
         Target,
         Straight,
         Triple
+    }
+
+    public enum FaceType {
+        Normal,
+        Normal_Inversed,
+        Confused,
+        Shocked
     }
 }

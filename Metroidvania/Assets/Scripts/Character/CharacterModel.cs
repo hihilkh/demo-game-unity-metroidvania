@@ -4,49 +4,8 @@ using UnityEngine;
 using HIHIFramework.Core;
 using System;
 
+// TODO : Think of the case of character become in air by terrain
 public class CharacterModel : MonoBehaviour {
-    // TODO : remove SerializeField and set const (Or think of a more beautiful way to store/change below constraints
-    [SerializeField] private float WalkingSpeed = 5f;
-    [SerializeField] private float SlideDownVelocity = -4f;
-
-    // Jump Command Constraint
-    private const int MaxConsecutiveJump = 2;
-    private static Dictionary<CharacterEnum.JumpChargeLevel, float> JumpInitSpeedDict = new Dictionary<CharacterEnum.JumpChargeLevel, float> {
-        { CharacterEnum.JumpChargeLevel.Zero, 12f },
-        { CharacterEnum.JumpChargeLevel.One, 16f },
-        { CharacterEnum.JumpChargeLevel.Two, 20f }
-    };
-    private static Dictionary<CharacterEnum.JumpChargeLevel, float> JumpChargeTimeDict = new Dictionary<CharacterEnum.JumpChargeLevel, float> {
-        { CharacterEnum.JumpChargeLevel.Zero, 0f },     // Done by tap
-        { CharacterEnum.JumpChargeLevel.One, 0f },      // Done by initial hold input
-        { CharacterEnum.JumpChargeLevel.Two, 0.5f }     // Start counting from StartHoldAction
-    };
-
-    // Dash Command Constraint
-    [SerializeField] private float DashingSpeed = 15f;
-    [SerializeField] private float OneShotDashPeriod = 0.5f;
-    [SerializeField] private float DashCoolDownPeriod = 0.2f;
-
-    // Hit Command Constraint
-    private static Dictionary<CharacterEnum.HitType, float> HitCoolDownPeriodDict = new Dictionary<CharacterEnum.HitType, float> {
-        { CharacterEnum.HitType.Normal, 0.3f },
-        { CharacterEnum.HitType.Charged, 0.5f },
-        { CharacterEnum.HitType.Finishing, 0.8f },
-        { CharacterEnum.HitType.Drop, 0.8f }
-    };
-
-    [SerializeField] private float DropHitVelocity = -15f;
-
-    // Arrow Command Constraint
-    private static Dictionary<CharacterEnum.ArrowType, float> ArrowCoolDownPeriodDict = new Dictionary<CharacterEnum.ArrowType, float> {
-        { CharacterEnum.ArrowType.Target, 0.5f },
-        { CharacterEnum.ArrowType.Straight, 0.5f },
-        { CharacterEnum.ArrowType.Triple, 0.5f }
-    };
-
-    // Turn Command Constraint
-    [SerializeField] private float RepelFromWallDist = 0.05f;
-
     // TODO : Set commandDict to empty
     private Dictionary<CharacterEnum.CommandSituation, CharacterEnum.Command> situationToCommandDict = new Dictionary<CharacterEnum.CommandSituation, CharacterEnum.Command> {
         { CharacterEnum.CommandSituation.GroundTap, CharacterEnum.Command.Jump },
@@ -57,10 +16,11 @@ public class CharacterModel : MonoBehaviour {
         { CharacterEnum.CommandSituation.AirRelease, CharacterEnum.Command.Jump }
     };
 
+    [SerializeField] private CharacterController controller;
+    [SerializeField] private CharacterParams characterParams;
+
     private Rigidbody2D rb;
     private float originalGravityScale;
-
-    public CharacterController controller;
 
     private CharacterEnum.Direction facingDirection;
     private CharacterEnum.Direction movingDirection;
@@ -81,8 +41,7 @@ public class CharacterModel : MonoBehaviour {
     private bool isJustHitOnWall;
 
     // Jump Command Control
-    private CharacterEnum.JumpChargeLevel currentJumpChargeLevel;
-    private float currentJumpChargedTime;
+    private bool isJumpCharged;
 
     // Dash Command Control
     private bool isDashing;
@@ -125,8 +84,7 @@ public class CharacterModel : MonoBehaviour {
         currentLocation = CharacterEnum.Location.Ground;
         consecutiveJumpCount = 0;
 
-        currentJumpChargeLevel = CharacterEnum.JumpChargeLevel.Zero;
-        currentJumpChargedTime = 0;
+        isJumpCharged = false;
 
         isDashing = false;
         isDashCoolingDown = false;
@@ -299,7 +257,7 @@ public class CharacterModel : MonoBehaviour {
                 switch (situation) {
                     case CharacterEnum.CommandSituation.GroundTap:
                     case CharacterEnum.CommandSituation.AirTap:
-                        Jump (CharacterEnum.JumpChargeLevel.Zero);
+                        Jump ();
                         break;
                     case CharacterEnum.CommandSituation.GroundHold:
                     case CharacterEnum.CommandSituation.AirHold:
@@ -310,15 +268,15 @@ public class CharacterModel : MonoBehaviour {
                         var checkSituation = (situation == CharacterEnum.CommandSituation.GroundRelease) ? CharacterEnum.CommandSituation.GroundHold : CharacterEnum.CommandSituation.AirHold;
                         if (GetCommandBySituation(checkSituation) == CharacterEnum.Command.Jump) {
                             // That mean this release command should be a charged jump
-                            if (currentJumpChargeLevel == CharacterEnum.JumpChargeLevel.Zero) {
-                                // If JumpChargeLevel = Zero, the JumpCharge is somehow cancelled. So do not do any action
-                                isTriggeredCommand = false;
+                            if (isJumpCharged) {
+                                Jump ();
                             } else {
-                                Jump (currentJumpChargeLevel);
+                                // If isJumpCharged = false, the JumpCharge is somehow cancelled. So do not do any action
+                                isTriggeredCommand = false;
                             }
                         } else {
                             // That mean this release command is a non charged jump
-                            Jump (CharacterEnum.JumpChargeLevel.Zero);
+                            Jump ();
                         }
                         break;
                 }
@@ -437,7 +395,7 @@ public class CharacterModel : MonoBehaviour {
                         if (currentLocation == CharacterEnum.Location.Wall) {
                             ChangeFacingDirection (true);
                             var directionMultiplier = facingDirection == CharacterEnum.Direction.Right ? -1 : 1;
-                            transform.position = transform.position + new Vector3 (RepelFromWallDist, 0, 0) * directionMultiplier;
+                            transform.position = transform.position + new Vector3 (characterParams.repelFromWallDistByTurn, 0, 0) * directionMultiplier;
 
                             ReleaseFromWallSliding ();
                         } else {
@@ -484,10 +442,10 @@ public class CharacterModel : MonoBehaviour {
                 horizontalSpeed = 0;
                 break;
             case CharacterEnum.HorizontalSpeed.Walk:
-                horizontalSpeed = WalkingSpeed;
+                horizontalSpeed = characterParams.walkingSpeed;
                 break;
             case CharacterEnum.HorizontalSpeed.Dash:
-                horizontalSpeed = DashingSpeed;
+                horizontalSpeed = characterParams.dashingSpeed;
                 break;
         }
 
@@ -578,7 +536,7 @@ public class CharacterModel : MonoBehaviour {
 
         var startTime = Time.time;
 
-        while (Time.time - startTime < OneShotDashPeriod) {
+        while (Time.time - startTime < characterParams.oneShotDashPeriod) {
             if (isJustHitOnWall) {
                 break;
             }
@@ -592,7 +550,7 @@ public class CharacterModel : MonoBehaviour {
     private IEnumerator DashCoolDownCoroutine () {
         isDashCoolingDown = true;
 
-        yield return new WaitForSeconds (DashCoolDownPeriod);
+        yield return new WaitForSeconds (characterParams.dashCoolDownPeriod);
 
         isDashCoolingDown = false;
         dashCoolDownCoroutine = null;
@@ -603,62 +561,44 @@ public class CharacterModel : MonoBehaviour {
     #region Jump
 
     private bool CheckIsAllowJump () {
-        return consecutiveJumpCount < MaxConsecutiveJump;
+        return consecutiveJumpCount < characterParams.maxConsecutiveJump;
     }
 
-    private void Jump (CharacterEnum.JumpChargeLevel level) {
-        Log.Print ("Jump : JumpChargeLevel = " + level);
+    private void Jump () {
+        Log.Print ("Jump : isCharged = " + isJumpCharged);
 
-        if (JumpInitSpeedDict.ContainsKey(level)) {
-            StopDashing (currentHorizontalSpeed, false);
-            var jumpInitSpeed = JumpInitSpeedDict[level];
+        StopDashing (currentHorizontalSpeed, false);
+        var jumpInitSpeed = isJumpCharged ? characterParams.chargeJumpInitSpeed : characterParams.normalJumpInitSpeed;
 
-            rb.velocity = new Vector3 (rb.velocity.x, jumpInitSpeed);
-            if (currentLocation == CharacterEnum.Location.Wall) {
-                currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Walk;
-                rb.gravityScale = originalGravityScale;
-            }
-
-            consecutiveJumpCount++;
-            currentLocation = CharacterEnum.Location.Air;
-        } else {
-            Log.PrintError ("Jump Init Speed is missing. Cannot perform jump action. Please check. Level : " + level);
+        rb.velocity = new Vector3 (rb.velocity.x, jumpInitSpeed);
+        if (currentLocation == CharacterEnum.Location.Wall) {
+            currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Walk;
+            rb.gravityScale = originalGravityScale;
         }
 
-        ResetJumpCharge ();
+        consecutiveJumpCount++;
+        currentLocation = CharacterEnum.Location.Air;
+
+        CancelJumpCharge ();
 
         // TODO : Jump animation
     }
 
     private void JumpCharge () {
-        switch (currentJumpChargeLevel) {
-            case CharacterEnum.JumpChargeLevel.Zero:
-                currentJumpChargeLevel = CharacterEnum.JumpChargeLevel.One;
-                currentJumpChargedTime = 0;
-                Log.Print ("Jump Charge Level -> " + currentJumpChargeLevel);
-                break;
-            default:
-                currentJumpChargedTime += Time.deltaTime;
-                var nextLevel = (CharacterEnum.JumpChargeLevel)((int)currentJumpChargeLevel + 1);
-                if (Enum.IsDefined (typeof (CharacterEnum.JumpChargeLevel), nextLevel)) {
-                    if (JumpChargeTimeDict.ContainsKey (nextLevel)) {
-                        if (currentJumpChargedTime >= JumpChargeTimeDict[nextLevel]) {
-                            currentJumpChargeLevel = nextLevel;
-                            Log.Print ("Jump Charge Level -> " + currentJumpChargeLevel);
-                        }
-                    } else {
-                        Log.PrintWarning ("Jump Charge Time is missing. Cannot charge to level : " + nextLevel);
-                    }
-                }
-                break;
-        }
+        if (!isJumpCharged) {
+            isJumpCharged = true;
+            isIgnoreHold = true;
 
-        // TODO : Jump charge animation
+            // TODO : Jump charge animation
+        }
     }
 
-    private void ResetJumpCharge () {
-        currentJumpChargeLevel = CharacterEnum.JumpChargeLevel.Zero;
-        currentJumpChargedTime = 0;
+    private void CancelJumpCharge () {
+        if (isJumpCharged) {
+            isJumpCharged = false;
+
+            // TODO : Cancel Jump charge animation
+        }
     }
 
     #endregion
@@ -703,7 +643,7 @@ public class CharacterModel : MonoBehaviour {
 
         currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Zero;
         rb.gravityScale = 0;
-        rb.velocity = new Vector3 (0, DropHitVelocity);
+        rb.velocity = new Vector3 (0, characterParams.dropHitVelocity);
     }
 
     private void FinishDropHit () {
@@ -729,10 +669,22 @@ public class CharacterModel : MonoBehaviour {
 
         var hitCoolDownPeriod = 0f;
 
-        if (HitCoolDownPeriodDict.ContainsKey(hitType)) {
-            hitCoolDownPeriod = HitCoolDownPeriodDict[hitType];
-        } else {
-            Log.PrintWarning ("Not yet set hit cool down period for HitType : " + hitType + " . Assume cool down period to be 0s");
+        switch (hitType) {
+            case CharacterEnum.HitType.Normal:
+                hitCoolDownPeriod = characterParams.hitCoolDownPeriod_Normal;
+                break;
+            case CharacterEnum.HitType.Charged:
+                hitCoolDownPeriod = characterParams.hitCoolDownPeriod_Charged;
+                break;
+            case CharacterEnum.HitType.Finishing:
+                hitCoolDownPeriod = characterParams.hitCoolDownPeriod_Finishing;
+                break;
+            case CharacterEnum.HitType.Drop:
+                hitCoolDownPeriod = characterParams.hitCoolDownPeriod_Drop;
+                break;
+            default:
+                Log.PrintWarning ("Not yet set hit cool down period for HitType : " + hitType + " . Assume cool down period to be 0s");
+                break;
         }
 
         yield return new WaitForSeconds (hitCoolDownPeriod);
@@ -780,10 +732,19 @@ public class CharacterModel : MonoBehaviour {
 
         var arrowCoolDownPeriod = 0f;
 
-        if (ArrowCoolDownPeriodDict.ContainsKey (arrowType)) {
-            arrowCoolDownPeriod = ArrowCoolDownPeriodDict[arrowType];
-        } else {
-            Log.PrintWarning ("Not yet set arrow cool down period for ArrowType : " + arrowType + " . Assume cool down period to be 0s");
+        switch (arrowType) {
+            case CharacterEnum.ArrowType.Target:
+                arrowCoolDownPeriod = characterParams.arrowCoolDownPeriod_Target;
+                break;
+            case CharacterEnum.ArrowType.Straight:
+                arrowCoolDownPeriod = characterParams.arrowCoolDownPeriod_Straight;
+                break;
+            case CharacterEnum.ArrowType.Triple:
+                arrowCoolDownPeriod = characterParams.arrowCoolDownPeriod_Triple;
+                break;
+            default:
+                Log.PrintWarning ("Not yet set arrow cool down period for ArrowType : " + arrowType + " . Assume cool down period to be 0s");
+                break;
         }
 
         yield return new WaitForSeconds (arrowCoolDownPeriod);
@@ -867,24 +828,20 @@ public class CharacterModel : MonoBehaviour {
         AlignMovingWithFacingDirection ();
 
         // Special Handling
-        if (currentJumpChargeLevel != CharacterEnum.JumpChargeLevel.Zero) {     // "AirHold - Jump" command
-            Log.Print ("LandToGround : Reset jump charge and ignore hold/release.");
-            isIgnoreHold = true;
-
-            // TODO : Remove charge animation
-        } else if (isDropHitCharging) {                                         // "AirHold - Hit" command
+        if (isDropHitCharging) {     // "AirHold - Hit" command
             Log.Print ("LandToGround : Reset hit charge and ignore hold/release.");
             isDropHitCharging = false;
             isIgnoreHold = true;
 
             // TODO : Remove drop hit charge animation
-        } else if (isDropHitting) {                                             // "AirRelease - Hit" command
+        } else if (isDropHitting) {         // "AirRelease - Hit" command
             FinishDropHit ();
+        } else if (isJumpCharged) {         // "AirHold - Jump" command
+            CancelJumpCharge ();
         }
 
-        // Always reset jump charge to prevent the case that user started to hold the key while in air
-        // but he land to ground so fast that even not yet come to JumpChargeLevel One
-        ResetJumpCharge ();
+        // TODO : Stop hold and ignore release for the case : holding in air and land to ground
+        // TODO : ignore hold and release for the case : started to hold the key while in air but landed to ground so fast that not yet counted as hold while in air
 
         // TODO : Landing animation
     }
@@ -909,7 +866,7 @@ public class CharacterModel : MonoBehaviour {
 
         // Slide down with constant speed
         rb.gravityScale = 0;
-        rb.velocity = new Vector3 (0, SlideDownVelocity);
+        rb.velocity = new Vector3 (0, characterParams.slideDownVelocity);
 
         // TODO : Sliding animation
     }

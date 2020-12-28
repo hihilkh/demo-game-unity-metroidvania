@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 717099a6ef1484bb5960ccb3d73a9db1, type: 3}
+  m_Name: CharacterParams
+  m_EditorClassIdentifier: 
+  _walkingSpeed: 5
+  _slideDownVelocity: -4
+  _maxConsecutiveJump: 2
+  _normalJumpInitSpeed: 12
+  _chargedJumpInitSpeed: 20
+  _dashingSpeed: 15
+  _oneShotDashPeriod: 0.5
+  _dashCoolDownPeriod: 0.2
+  _hitCoolDownPeriod_Normal: 0.3
+  _hitCoolDownPeriod_Charged: 0.5
+  _hitCoolDownPeriod_Finishing: 0.8
+  _hitCoolDownPeriod_Drop: 0.8
+  _dropHitVelocity: -15
+  _arrowCoolDownPeriod_Target: 0.5
+  _arrowCoolDownPeriod_Straight: 0.5
+  _arrowCoolDownPeriod_Triple: 0.5
+  _repelFromWallDistByTurn: 0.05
