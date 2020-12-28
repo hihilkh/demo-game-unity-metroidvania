@@ -10,11 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 717099a6ef1484bb5960ccb3d73a9db1, type: 3}
-  m_Name: CharacterParams
+  m_Name: CharParams
   m_EditorClassIdentifier: 
   _walkingSpeed: 5
   _slideDownVelocity: -4
-  _maxConsecutiveJump: 2
   _normalJumpInitSpeed: 12
   _chargedJumpInitSpeed: 20
   _dashingSpeed: 15

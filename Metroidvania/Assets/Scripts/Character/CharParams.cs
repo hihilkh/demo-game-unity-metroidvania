@@ -13,9 +13,6 @@ public class CharParams : ScriptableObject {
     public float slideDownVelocity => _slideDownVelocity;
 
     [Header ("Jump")]
-    [SerializeField] private int _maxConsecutiveJump;
-    public int maxConsecutiveJump => _maxConsecutiveJump;
-
     [SerializeField] private float _normalJumpInitSpeed;
     public float normalJumpInitSpeed => _normalJumpInitSpeed;
 

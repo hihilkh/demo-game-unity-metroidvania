@@ -10,7 +10,7 @@ namespace HIHIFramework.Core {
 
         #region Game Initialization
 
-        public static void InitGameSettings (Action<bool> onFinished) {
+        public static void InitGameSettings (Action<bool> onFinished = null) {
             // frame rate
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = GameVariable.TargetFrameRate;

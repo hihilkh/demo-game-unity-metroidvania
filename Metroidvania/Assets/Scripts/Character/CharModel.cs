@@ -4,7 +4,6 @@ using UnityEngine;
 using HIHIFramework.Core;
 using System;
 
-// TODO : Think of the case of character become in air by terrain
 public class CharModel : MonoBehaviour {
     // TODO : Set commandDict to empty
     private Dictionary<CharEnum.CommandSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.CommandSituation, CharEnum.Command> {
@@ -22,12 +21,13 @@ public class CharModel : MonoBehaviour {
     private Rigidbody2D rb;
     private float originalGravityScale;
 
+    // Character Situation
     private CharEnum.Direction facingDirection;
     private CharEnum.Direction movingDirection;
     private CharEnum.HorizontalSpeed currentHorizontalSpeed;
     private CharEnum.Location currentLocation;
     private bool isAllowMove;
-    private int consecutiveJumpCount;
+    private bool isAllowAirJump;
 
     // User Input Control
     private bool isJustTapped;
@@ -37,7 +37,9 @@ public class CharModel : MonoBehaviour {
     // Command Control
     private CharEnum.CommandSituation? currentSituation;
     private CharEnum.Command? currentCommand;
+    private CharEnum.Location startedPressLocation;
     private bool isIgnoreHold;
+    private bool isIgnoreRelease;
     private bool isJustHitOnWall;
 
     // Jump Command Control
@@ -55,6 +57,9 @@ public class CharModel : MonoBehaviour {
     private bool isDropHitting;
     private Coroutine attackCoolDownCoroutine;
 
+    // Collision
+    private Dictionary<Collider2D, string> currentCollisionDict = new Dictionary<Collider2D, string> ();
+
     void Start () {
         if (controller == null) {
             controller = GetComponent<CharController> ();
@@ -66,6 +71,7 @@ public class CharModel : MonoBehaviour {
             // Remarks :
             // Currently do not add StartedLeft, StoppedLeft, StartedRight, StoppedRight handling to prevent complicated code.
             // Add them back if found them to be useful for development or debugging.
+            controller.StartedPress += TriggerStartPressAction;
             controller.Tapped += TriggerTapAction;
             controller.StartedHold += StartHoldAction;
             controller.StoppedHold += StopHoldAction;
@@ -82,7 +88,7 @@ public class CharModel : MonoBehaviour {
         movingDirection = facingDirection;
         SetAllowMove (true);
         currentLocation = CharEnum.Location.Ground;
-        consecutiveJumpCount = 0;
+        isAllowAirJump = true;
 
         isJumpCharged = false;
 
@@ -105,12 +111,14 @@ public class CharModel : MonoBehaviour {
 
         currentSituation = null;
         currentCommand = null;
+        startedPressLocation = CharEnum.Location.Ground;
         isIgnoreHold = false;
+        isIgnoreRelease = false;
         isJustHitOnWall = false;
     }
 
     // Remarks :
-    // Currently all physics all with sharp changes, so they are stick on Update().
+    // Currently all physics is with sharp changes, so they are stick on Update().
     // Change to stick on FixedUpdate() if continuous changes is needed.
     private void Update () {
         if (!isAllowMove) {
@@ -131,6 +139,7 @@ public class CharModel : MonoBehaviour {
 
         if (situation == CharEnum.CommandSituation.GroundRelease || situation == CharEnum.CommandSituation.AirRelease) {
             isIgnoreHold = false;
+            isIgnoreRelease = false;
         }
 
         // TODO : Debug usage only
@@ -206,9 +215,34 @@ public class CharModel : MonoBehaviour {
 
         var situation = (CharEnum.CommandSituation)optionalSituation;
 
-        if (isIgnoreHold && (situation == CharEnum.CommandSituation.GroundHold || situation == CharEnum.CommandSituation.AirHold)) {
-            SetCurrentCommandStatus (null, null);
-            return;
+        if (situation == CharEnum.CommandSituation.GroundHold || situation == CharEnum.CommandSituation.AirHold) {
+            if (isIgnoreHold) {
+                SetCurrentCommandStatus (null, null);
+                return;
+            } else if (currentSituation != CharEnum.CommandSituation.GroundHold && currentSituation != CharEnum.CommandSituation.AirHold) {
+                // (The situation that it is just triggered hold)
+                // Hold and release would fail if started to press in air but it is on the ground while triggered hold, or vice versa
+                var isHoldFailed = false;
+                if (situation == CharEnum.CommandSituation.GroundHold && startedPressLocation != CharEnum.Location.Ground) {
+                    isHoldFailed = true;
+                } else if (situation == CharEnum.CommandSituation.AirHold && startedPressLocation == CharEnum.Location.Ground) {
+                    isHoldFailed = true;
+                }
+
+                if (isHoldFailed) {
+                    isIgnoreHold = true;
+                    isIgnoreRelease = true;
+                    SetCurrentCommandStatus (null, null);
+                    return;
+                }
+            }
+        }
+
+        if (situation == CharEnum.CommandSituation.GroundRelease || situation == CharEnum.CommandSituation.AirRelease) {
+            if (isIgnoreRelease) {
+                SetCurrentCommandStatus (null, null);
+                return;
+            }
         }
 
         if (isDropHitting) {
@@ -561,7 +595,11 @@ public class CharModel : MonoBehaviour {
     #region Jump
 
     private bool CheckIsAllowJump () {
-        return consecutiveJumpCount < characterParams.maxConsecutiveJump;
+        if (currentLocation == CharEnum.Location.Ground) {
+            return true;
+        }
+
+        return isAllowAirJump;
     }
 
     private void Jump () {
@@ -576,10 +614,12 @@ public class CharModel : MonoBehaviour {
             rb.gravityScale = originalGravityScale;
         }
 
-        consecutiveJumpCount++;
+        if (currentLocation != CharEnum.Location.Ground) {
+            isAllowAirJump = false;
+        }
         currentLocation = CharEnum.Location.Air;
 
-        CancelJumpCharge ();
+        StopJumpCharge ();
 
         // TODO : Jump animation
     }
@@ -593,7 +633,7 @@ public class CharModel : MonoBehaviour {
         }
     }
 
-    private void CancelJumpCharge () {
+    private void StopJumpCharge () {
         if (isJumpCharged) {
             isJumpCharged = false;
 
@@ -634,10 +674,9 @@ public class CharModel : MonoBehaviour {
 
     private void DropHit () {
         Log.PrintWarning ("Hit!!!    Drop");
-        isDropHitting = true;
 
-        isDropHitCharging = false;
-        // TODO : remove drop hit charge animation
+        StopDropHitCharge ();
+        isDropHitting = true;
 
         // TODO : Implementation of actual hit
 
@@ -661,6 +700,14 @@ public class CharModel : MonoBehaviour {
         if (!isDropHitCharging) {
             isDropHitCharging = true;
             // TODO : drop hit charge animation
+        }
+    }
+
+    private void StopDropHitCharge () {
+        if (isDropHitCharging) {
+            isDropHitCharging = false;
+
+            // TODO : cancel drop hit charge animation
         }
     }
 
@@ -804,7 +851,7 @@ public class CharModel : MonoBehaviour {
             }
         }
 
-        Log.Print ("Char Collision : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType);
+        Log.Print ("Char Collision Enter : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType);
 
         switch (collideType) {
             case GameVariable.GroundTag:
@@ -814,11 +861,34 @@ public class CharModel : MonoBehaviour {
                 HitOnWall ();
                 break;
         }
+
+        if (currentCollisionDict.ContainsKey (collision.collider)) {
+            currentCollisionDict[collision.collider] = collideType;
+        } else {
+            currentCollisionDict.Add (collision.collider, collideType);
+        }
+    }
+
+    public void OnCollisionExit2D (Collision2D collision) {
+        if (!currentCollisionDict.ContainsKey (collision.collider)) {
+            Log.PrintError ("Missing key in currentCollisionDict. collision name : " + collision.gameObject.name);
+            return;
+        }
+        var collideType = currentCollisionDict[collision.collider];
+        currentCollisionDict.Remove (collision.collider);
+
+        Log.Print ("Char Collision Exit : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType);
+
+        switch (collideType) {
+            case GameVariable.GroundTag:
+                LeaveGround ();
+                break;
+        }
     }
 
     private void LandToGround () {
         Log.PrintDebug ("LandToGround");
-        consecutiveJumpCount = 0;
+        isAllowAirJump = true;
         currentLocation = CharEnum.Location.Ground;
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
 
@@ -829,21 +899,40 @@ public class CharModel : MonoBehaviour {
 
         // Special Handling
         if (isDropHitCharging) {     // "AirHold - Hit" command
-            Log.Print ("LandToGround : Reset hit charge and ignore hold/release.");
-            isDropHitCharging = false;
-            isIgnoreHold = true;
-
-            // TODO : Remove drop hit charge animation
+            StopDropHitCharge ();
         } else if (isDropHitting) {         // "AirRelease - Hit" command
             FinishDropHit ();
         } else if (isJumpCharged) {         // "AirHold - Jump" command
-            CancelJumpCharge ();
+            StopJumpCharge ();
+        } else if (currentSituation == CharEnum.CommandSituation.AirHold && isDashing) {         // "AirHold - Dash" command
+            StopDashing (CharEnum.HorizontalSpeed.Walk, true);
         }
 
-        // TODO : Stop hold and ignore release for the case : holding in air and land to ground
-        // TODO : ignore hold and release for the case : started to hold the key while in air but landed to ground so fast that not yet counted as hold while in air
+        if (currentSituation == CharEnum.CommandSituation.AirHold) {
+            isIgnoreHold = true;
+            isIgnoreRelease = true;
+        }
 
         // TODO : Landing animation
+    }
+
+    private void LeaveGround () {
+        Log.PrintDebug ("LeaveGround");
+        currentLocation = CharEnum.Location.Air;
+
+        // Special Handling
+        if (isJumpCharged) {         // "GroundHold - Jump" command
+            StopJumpCharge ();
+        } else if (currentSituation == CharEnum.CommandSituation.GroundHold && isDashing) {         // "GroundHold - Dash" command
+            StopDashing (CharEnum.HorizontalSpeed.Walk, true);
+        }
+
+        if (currentSituation == CharEnum.CommandSituation.GroundHold) {
+            isIgnoreHold = true;
+            isIgnoreRelease = true;
+        }
+
+        // TODO : Leave ground animation
     }
 
     private void HitOnWall () {
@@ -862,7 +951,7 @@ public class CharModel : MonoBehaviour {
     private void SlideOnWall () {
         currentLocation = CharEnum.Location.Wall;
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Zero;
-        consecutiveJumpCount = 1;   // Allow jump in air again
+        isAllowAirJump = true;   // Allow jump in air again
 
         // Slide down with constant speed
         rb.gravityScale = 0;
@@ -883,6 +972,12 @@ public class CharModel : MonoBehaviour {
     #endregion
 
     #region Event Handler
+
+    private void TriggerStartPressAction () {
+        startedPressLocation = currentLocation;
+
+        Log.PrintDebug ("TriggerStartPressAction");
+    }
 
     private void TriggerTapAction () {
         if (isHolding) {
