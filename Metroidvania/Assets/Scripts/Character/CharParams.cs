@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu (fileName = "CharacterParams", menuName = "ScriptableObjects/CharacterParams", order = 1)]
-public class CharacterParams : ScriptableObject {
+[CreateAssetMenu (fileName = "CharParams", menuName = "ScriptableObjects/CharParams", order = 1)]
+public class CharParams : ScriptableObject {
     [Header ("Walk")]
     [SerializeField] private float _walkingSpeed;
     public float walkingSpeed => _walkingSpeed;

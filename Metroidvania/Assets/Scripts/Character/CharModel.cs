@@ -5,27 +5,27 @@ using HIHIFramework.Core;
 using System;
 
 // TODO : Think of the case of character become in air by terrain
-public class CharacterModel : MonoBehaviour {
+public class CharModel : MonoBehaviour {
     // TODO : Set commandDict to empty
-    private Dictionary<CharacterEnum.CommandSituation, CharacterEnum.Command> situationToCommandDict = new Dictionary<CharacterEnum.CommandSituation, CharacterEnum.Command> {
-        { CharacterEnum.CommandSituation.GroundTap, CharacterEnum.Command.Jump },
-        { CharacterEnum.CommandSituation.GroundHold, CharacterEnum.Command.Jump },
-        { CharacterEnum.CommandSituation.GroundRelease, CharacterEnum.Command.Jump },
-        { CharacterEnum.CommandSituation.AirTap, CharacterEnum.Command.Jump },
-        { CharacterEnum.CommandSituation.AirHold, CharacterEnum.Command.Jump },
-        { CharacterEnum.CommandSituation.AirRelease, CharacterEnum.Command.Jump }
+    private Dictionary<CharEnum.CommandSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.CommandSituation, CharEnum.Command> {
+        { CharEnum.CommandSituation.GroundTap, CharEnum.Command.Jump },
+        { CharEnum.CommandSituation.GroundHold, CharEnum.Command.Jump },
+        { CharEnum.CommandSituation.GroundRelease, CharEnum.Command.Jump },
+        { CharEnum.CommandSituation.AirTap, CharEnum.Command.Jump },
+        { CharEnum.CommandSituation.AirHold, CharEnum.Command.Jump },
+        { CharEnum.CommandSituation.AirRelease, CharEnum.Command.Jump }
     };
 
-    [SerializeField] private CharacterController controller;
-    [SerializeField] private CharacterParams characterParams;
+    [SerializeField] private CharController controller;
+    [SerializeField] private CharParams characterParams;
 
     private Rigidbody2D rb;
     private float originalGravityScale;
 
-    private CharacterEnum.Direction facingDirection;
-    private CharacterEnum.Direction movingDirection;
-    private CharacterEnum.HorizontalSpeed currentHorizontalSpeed;
-    private CharacterEnum.Location currentLocation;
+    private CharEnum.Direction facingDirection;
+    private CharEnum.Direction movingDirection;
+    private CharEnum.HorizontalSpeed currentHorizontalSpeed;
+    private CharEnum.Location currentLocation;
     private bool isAllowMove;
     private int consecutiveJumpCount;
 
@@ -35,8 +35,8 @@ public class CharacterModel : MonoBehaviour {
     private bool isJustReleaseHold;
 
     // Command Control
-    private CharacterEnum.CommandSituation? currentSituation;
-    private CharacterEnum.Command? currentCommand;
+    private CharEnum.CommandSituation? currentSituation;
+    private CharEnum.Command? currentCommand;
     private bool isIgnoreHold;
     private bool isJustHitOnWall;
 
@@ -57,7 +57,7 @@ public class CharacterModel : MonoBehaviour {
 
     void Start () {
         if (controller == null) {
-            controller = GetComponent<CharacterController> ();
+            controller = GetComponent<CharController> ();
         }
 
         if (controller == null) {
@@ -78,10 +78,10 @@ public class CharacterModel : MonoBehaviour {
         rb = GetComponent<Rigidbody2D> ();
         originalGravityScale = rb.gravityScale;
 
-        facingDirection = CharacterEnum.Direction.Right;
+        facingDirection = CharEnum.Direction.Right;
         movingDirection = facingDirection;
         SetAllowMove (true);
-        currentLocation = CharacterEnum.Location.Ground;
+        currentLocation = CharEnum.Location.Ground;
         consecutiveJumpCount = 0;
 
         isJumpCharged = false;
@@ -129,7 +129,7 @@ public class CharacterModel : MonoBehaviour {
         isJustReleaseHold = false;
         isJustHitOnWall = false;
 
-        if (situation == CharacterEnum.CommandSituation.GroundRelease || situation == CharacterEnum.CommandSituation.AirRelease) {
+        if (situation == CharEnum.CommandSituation.GroundRelease || situation == CharEnum.CommandSituation.AirRelease) {
             isIgnoreHold = false;
         }
 
@@ -162,7 +162,7 @@ public class CharacterModel : MonoBehaviour {
         situationToCommandDict.Clear ();
     }
 
-    public void SetSituationToCommandDict (CharacterEnum.CommandSituation situation, CharacterEnum.Command command) {
+    public void SetSituationToCommandDict (CharEnum.CommandSituation situation, CharEnum.Command command) {
         if (situationToCommandDict.ContainsKey (situation)) {
             situationToCommandDict[situation] = command;
         } else {
@@ -170,11 +170,11 @@ public class CharacterModel : MonoBehaviour {
         }
     }
 
-    public void RemoveSituationToCommandDictKey (CharacterEnum.CommandSituation situation) {
+    public void RemoveSituationToCommandDictKey (CharEnum.CommandSituation situation) {
         situationToCommandDict.Remove (situation);
     }
 
-    public CharacterEnum.Command? GetCommandBySituation (CharacterEnum.CommandSituation situation) {
+    public CharEnum.Command? GetCommandBySituation (CharEnum.CommandSituation situation) {
         if (situationToCommandDict.ContainsKey (situation)) {
             return situationToCommandDict[situation];
         } else {
@@ -184,29 +184,29 @@ public class CharacterModel : MonoBehaviour {
 
     #endregion
 
-    private CharacterEnum.CommandSituation? GetCurrentCommandSituation () {
+    private CharEnum.CommandSituation? GetCurrentCommandSituation () {
         if (!isJustTapped && !isHolding && !isJustReleaseHold) {
             return null;
         }
 
         if (isJustTapped) {
-            return currentLocation == CharacterEnum.Location.Ground ? CharacterEnum.CommandSituation.GroundTap : CharacterEnum.CommandSituation.AirTap;
+            return currentLocation == CharEnum.Location.Ground ? CharEnum.CommandSituation.GroundTap : CharEnum.CommandSituation.AirTap;
         } else if (isHolding) {
-            return currentLocation == CharacterEnum.Location.Ground ? CharacterEnum.CommandSituation.GroundHold : CharacterEnum.CommandSituation.AirHold;
+            return currentLocation == CharEnum.Location.Ground ? CharEnum.CommandSituation.GroundHold : CharEnum.CommandSituation.AirHold;
         } else {
-            return currentLocation == CharacterEnum.Location.Ground ? CharacterEnum.CommandSituation.GroundRelease : CharacterEnum.CommandSituation.AirRelease;
+            return currentLocation == CharEnum.Location.Ground ? CharEnum.CommandSituation.GroundRelease : CharEnum.CommandSituation.AirRelease;
         }
     }
 
-    private void HandleCommand (CharacterEnum.CommandSituation? optionalSituation) {
+    private void HandleCommand (CharEnum.CommandSituation? optionalSituation) {
         if (optionalSituation == null) {
             SetCurrentCommandStatus (null, null);
             return;
         }
 
-        var situation = (CharacterEnum.CommandSituation)optionalSituation;
+        var situation = (CharEnum.CommandSituation)optionalSituation;
 
-        if (isIgnoreHold && (situation == CharacterEnum.CommandSituation.GroundHold || situation == CharacterEnum.CommandSituation.AirHold)) {
+        if (isIgnoreHold && (situation == CharEnum.CommandSituation.GroundHold || situation == CharEnum.CommandSituation.AirHold)) {
             SetCurrentCommandStatus (null, null);
             return;
         }
@@ -215,7 +215,7 @@ public class CharacterModel : MonoBehaviour {
             Log.Print ("Ignore command situation due to drop hitting. situation = " + situation);
             SetCurrentCommandStatus (null, null);
 
-            if (situation == CharacterEnum.CommandSituation.GroundHold || situation == CharacterEnum.CommandSituation.AirHold) {
+            if (situation == CharEnum.CommandSituation.GroundHold || situation == CharEnum.CommandSituation.AirHold) {
                 isIgnoreHold = true;
             }
             return;
@@ -225,14 +225,14 @@ public class CharacterModel : MonoBehaviour {
         Log.PrintDebug ("Situation : " + situation + "   Command : " + command);
 
         // Fisish the hold command
-        if (situation == CharacterEnum.CommandSituation.GroundRelease || situation == CharacterEnum.CommandSituation.AirRelease) {
-            if (currentSituation == CharacterEnum.CommandSituation.GroundHold || currentSituation == CharacterEnum.CommandSituation.AirHold) {
+        if (situation == CharEnum.CommandSituation.GroundRelease || situation == CharEnum.CommandSituation.AirRelease) {
+            if (currentSituation == CharEnum.CommandSituation.GroundHold || currentSituation == CharEnum.CommandSituation.AirHold) {
                 switch (currentCommand) {
-                    case CharacterEnum.Command.Dash:
-                        if (command == CharacterEnum.Command.Jump || command == CharacterEnum.Command.Dash) {
+                    case CharEnum.Command.Dash:
+                        if (command == CharEnum.Command.Jump || command == CharEnum.Command.Dash) {
                             StopDashing (currentHorizontalSpeed, false);
                         } else {
-                            StopDashing (CharacterEnum.HorizontalSpeed.Walk, true);
+                            StopDashing (CharEnum.HorizontalSpeed.Walk, true);
                         }
                         break;
                 }
@@ -244,29 +244,29 @@ public class CharacterModel : MonoBehaviour {
             return;
         }
 
-        command = (CharacterEnum.Command)command;
+        command = (CharEnum.Command)command;
         var isTriggeredCommand = false;
 
         switch (command) {
-            case CharacterEnum.Command.Jump:
+            case CharEnum.Command.Jump:
                 if (!CheckIsAllowJump ()) {
                     break;
                 }
 
                 isTriggeredCommand = true;
                 switch (situation) {
-                    case CharacterEnum.CommandSituation.GroundTap:
-                    case CharacterEnum.CommandSituation.AirTap:
+                    case CharEnum.CommandSituation.GroundTap:
+                    case CharEnum.CommandSituation.AirTap:
                         Jump ();
                         break;
-                    case CharacterEnum.CommandSituation.GroundHold:
-                    case CharacterEnum.CommandSituation.AirHold:
+                    case CharEnum.CommandSituation.GroundHold:
+                    case CharEnum.CommandSituation.AirHold:
                         JumpCharge ();
                         break;
-                    case CharacterEnum.CommandSituation.GroundRelease:
-                    case CharacterEnum.CommandSituation.AirRelease:
-                        var checkSituation = (situation == CharacterEnum.CommandSituation.GroundRelease) ? CharacterEnum.CommandSituation.GroundHold : CharacterEnum.CommandSituation.AirHold;
-                        if (GetCommandBySituation(checkSituation) == CharacterEnum.Command.Jump) {
+                    case CharEnum.CommandSituation.GroundRelease:
+                    case CharEnum.CommandSituation.AirRelease:
+                        var checkSituation = (situation == CharEnum.CommandSituation.GroundRelease) ? CharEnum.CommandSituation.GroundHold : CharEnum.CommandSituation.AirHold;
+                        if (GetCommandBySituation(checkSituation) == CharEnum.Command.Jump) {
                             // That mean this release command should be a charged jump
                             if (isJumpCharged) {
                                 Jump ();
@@ -281,21 +281,21 @@ public class CharacterModel : MonoBehaviour {
                         break;
                 }
                 break;
-            case CharacterEnum.Command.Dash:
+            case CharEnum.Command.Dash:
                 if (isDashCoolingDown) {
                     break;
                 }
 
                 switch (situation) {
-                    case CharacterEnum.CommandSituation.GroundTap:
-                    case CharacterEnum.CommandSituation.AirTap:
+                    case CharEnum.CommandSituation.GroundTap:
+                    case CharEnum.CommandSituation.AirTap:
                         if (!isDashing) {
                             StartDashing (true);
                             isTriggeredCommand = true;
                         }
                         break;
-                    case CharacterEnum.CommandSituation.GroundHold:
-                    case CharacterEnum.CommandSituation.AirHold:
+                    case CharEnum.CommandSituation.GroundHold:
+                    case CharEnum.CommandSituation.AirHold:
                         if (currentSituation == situation) {    // Already dashing
                             if (!isJustHitOnWall) {
                                 isTriggeredCommand = true;
@@ -307,8 +307,8 @@ public class CharacterModel : MonoBehaviour {
                             }
                         }
                         break;
-                    case CharacterEnum.CommandSituation.GroundRelease:
-                    case CharacterEnum.CommandSituation.AirRelease:
+                    case CharEnum.CommandSituation.GroundRelease:
+                    case CharEnum.CommandSituation.AirRelease:
                         if (!isDashing) {
                             StartDashing (true);
                             isTriggeredCommand = true;
@@ -316,85 +316,85 @@ public class CharacterModel : MonoBehaviour {
                         break;
                 }
                 break;
-            case CharacterEnum.Command.Hit:
+            case CharEnum.Command.Hit:
                 if (isAttackCoolingDown) {
                     break;
                 }
 
-                CharacterEnum.HitType? hitType = null;
+                CharEnum.HitType? hitType = null;
                 switch (situation) {
-                    case CharacterEnum.CommandSituation.GroundTap:
-                    case CharacterEnum.CommandSituation.AirTap:
-                        hitType = CharacterEnum.HitType.Normal;
+                    case CharEnum.CommandSituation.GroundTap:
+                    case CharEnum.CommandSituation.AirTap:
+                        hitType = CharEnum.HitType.Normal;
                         break;
-                    case CharacterEnum.CommandSituation.GroundHold:
-                        hitType = CharacterEnum.HitType.Charged;
+                    case CharEnum.CommandSituation.GroundHold:
+                        hitType = CharEnum.HitType.Charged;
                         isIgnoreHold = true;
                         break;
-                    case CharacterEnum.CommandSituation.AirHold:
+                    case CharEnum.CommandSituation.AirHold:
                         DropHitCharge ();
                         break;
-                    case CharacterEnum.CommandSituation.GroundRelease:
-                        hitType = CharacterEnum.HitType.Finishing;
+                    case CharEnum.CommandSituation.GroundRelease:
+                        hitType = CharEnum.HitType.Finishing;
                         break;
-                    case CharacterEnum.CommandSituation.AirRelease:
-                        if (currentCommand == CharacterEnum.Command.Hit) {  // That means, AirHold command is also Hit
-                            hitType = CharacterEnum.HitType.Drop;
+                    case CharEnum.CommandSituation.AirRelease:
+                        if (currentCommand == CharEnum.Command.Hit) {  // That means, AirHold command is also Hit
+                            hitType = CharEnum.HitType.Drop;
                         } else {
-                            hitType = CharacterEnum.HitType.Finishing;
+                            hitType = CharEnum.HitType.Finishing;
                         }
                         break;
                 }
 
                 if (hitType != null) {
-                    Hit ((CharacterEnum.HitType)hitType);
+                    Hit ((CharEnum.HitType)hitType);
                 }
                 isTriggeredCommand = true;
                 
                 break;
-            case CharacterEnum.Command.Arrow:
+            case CharEnum.Command.Arrow:
                 if (isAttackCoolingDown) {
-                    if (situation == CharacterEnum.CommandSituation.GroundHold || situation == CharacterEnum.CommandSituation.AirHold) {
+                    if (situation == CharEnum.CommandSituation.GroundHold || situation == CharEnum.CommandSituation.AirHold) {
                         isIgnoreHold = true;
                     }
                     break;
                 }
 
-                CharacterEnum.ArrowType? arrowType = null;
+                CharEnum.ArrowType? arrowType = null;
                 switch (situation) {
-                    case CharacterEnum.CommandSituation.GroundTap:
-                    case CharacterEnum.CommandSituation.AirTap:
-                        arrowType = CharacterEnum.ArrowType.Target;
+                    case CharEnum.CommandSituation.GroundTap:
+                    case CharEnum.CommandSituation.AirTap:
+                        arrowType = CharEnum.ArrowType.Target;
                         break;
-                    case CharacterEnum.CommandSituation.GroundHold:
-                    case CharacterEnum.CommandSituation.AirHold:
-                        arrowType = CharacterEnum.ArrowType.Straight;
+                    case CharEnum.CommandSituation.GroundHold:
+                    case CharEnum.CommandSituation.AirHold:
+                        arrowType = CharEnum.ArrowType.Straight;
                         isIgnoreHold = true;
                         break;
-                    case CharacterEnum.CommandSituation.GroundRelease:
-                    case CharacterEnum.CommandSituation.AirRelease:
-                        arrowType = CharacterEnum.ArrowType.Triple;
+                    case CharEnum.CommandSituation.GroundRelease:
+                    case CharEnum.CommandSituation.AirRelease:
+                        arrowType = CharEnum.ArrowType.Triple;
                         break;
                 }
 
                 if (arrowType != null) {
-                    ShootArrow ((CharacterEnum.ArrowType)arrowType);
+                    ShootArrow ((CharEnum.ArrowType)arrowType);
                 }
                 isTriggeredCommand = true;
 
                 break;
-            case CharacterEnum.Command.Turn:
+            case CharEnum.Command.Turn:
                 switch (situation) {
-                    case CharacterEnum.CommandSituation.GroundTap:
-                    case CharacterEnum.CommandSituation.GroundRelease:
+                    case CharEnum.CommandSituation.GroundTap:
+                    case CharEnum.CommandSituation.GroundRelease:
                         ChangeFacingDirection (true);
                         isTriggeredCommand = true;
                         break;
-                    case CharacterEnum.CommandSituation.AirTap:
-                    case CharacterEnum.CommandSituation.AirRelease:
-                        if (currentLocation == CharacterEnum.Location.Wall) {
+                    case CharEnum.CommandSituation.AirTap:
+                    case CharEnum.CommandSituation.AirRelease:
+                        if (currentLocation == CharEnum.Location.Wall) {
                             ChangeFacingDirection (true);
-                            var directionMultiplier = facingDirection == CharacterEnum.Direction.Right ? -1 : 1;
+                            var directionMultiplier = facingDirection == CharEnum.Direction.Right ? -1 : 1;
                             transform.position = transform.position + new Vector3 (characterParams.repelFromWallDistByTurn, 0, 0) * directionMultiplier;
 
                             ReleaseFromWallSliding ();
@@ -403,8 +403,8 @@ public class CharacterModel : MonoBehaviour {
                         }
                         isTriggeredCommand = true;
                         break;
-                    case CharacterEnum.CommandSituation.GroundHold:
-                    case CharacterEnum.CommandSituation.AirHold:
+                    case CharEnum.CommandSituation.GroundHold:
+                    case CharEnum.CommandSituation.AirHold:
                         Log.PrintWarning ("No action of Turn command is defined for holding. Please check.");
                         break;
                 }
@@ -413,14 +413,14 @@ public class CharacterModel : MonoBehaviour {
         }
 
         if (!isTriggeredCommand) {
-            if (situation == CharacterEnum.CommandSituation.GroundHold || situation == CharacterEnum.CommandSituation.AirHold) {
+            if (situation == CharEnum.CommandSituation.GroundHold || situation == CharEnum.CommandSituation.AirHold) {
                 isIgnoreHold = true;
             }
         }
         SetCurrentCommandStatus (situation, isTriggeredCommand ? command : null);
     }
 
-    private void SetCurrentCommandStatus (CharacterEnum.CommandSituation? situation, CharacterEnum.Command? command) {
+    private void SetCurrentCommandStatus (CharEnum.CommandSituation? situation, CharEnum.Command? command) {
         currentSituation = situation;
         currentCommand = command;
     }
@@ -434,17 +434,17 @@ public class CharacterModel : MonoBehaviour {
             return;
         }
 
-        var directionMultiplier = movingDirection == CharacterEnum.Direction.Right ? 1 : -1;
+        var directionMultiplier = movingDirection == CharEnum.Direction.Right ? 1 : -1;
         var horizontalSpeed = 0f;
 
         switch (currentHorizontalSpeed) {
-            case CharacterEnum.HorizontalSpeed.Zero:
+            case CharEnum.HorizontalSpeed.Zero:
                 horizontalSpeed = 0;
                 break;
-            case CharacterEnum.HorizontalSpeed.Walk:
+            case CharEnum.HorizontalSpeed.Walk:
                 horizontalSpeed = characterParams.walkingSpeed;
                 break;
-            case CharacterEnum.HorizontalSpeed.Dash:
+            case CharEnum.HorizontalSpeed.Dash:
                 horizontalSpeed = characterParams.dashingSpeed;
                 break;
         }
@@ -456,13 +456,13 @@ public class CharacterModel : MonoBehaviour {
 
     private void StartIdling () {
         rb.velocity = Vector2.zero; // Need to set velocity here because if set isAllowMove = false, HorizontalMovement() logic will bypass
-        currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Zero;
+        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Zero;
 
         // TODO : Idle animation
     }
 
     private void StartWalking () {
-        currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Walk;
+        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
 
         // TODO : Walk animation
     }
@@ -476,8 +476,8 @@ public class CharacterModel : MonoBehaviour {
 
         StopDashing (currentHorizontalSpeed, false);  // To ensure do not trigger 2 dash coroutines at the same time
 
-        if (currentLocation == CharacterEnum.Location.Wall) {
-            currentLocation = CharacterEnum.Location.Air;
+        if (currentLocation == CharEnum.Location.Wall) {
+            currentLocation = CharEnum.Location.Air;
         }
 
         if (isOneShot) {
@@ -487,7 +487,7 @@ public class CharacterModel : MonoBehaviour {
         }
     }
 
-    private void StopDashing (CharacterEnum.HorizontalSpeed speedAfterStopDashing, bool isNeedDashCoolDown) {
+    private void StopDashing (CharEnum.HorizontalSpeed speedAfterStopDashing, bool isNeedDashCoolDown) {
         // Remarks:
         // There is a case that calling StopDashing() while it is already in dash cool down stage.
         // Below is to ensure no dash cool down if isNeedDashCoolDown = false
@@ -526,7 +526,7 @@ public class CharacterModel : MonoBehaviour {
         isDashing = true;
         rb.gravityScale = 0;  // prevent fall down behaviour from gravity
         rb.velocity = new Vector3 (rb.velocity.x, 0);
-        currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Dash;
+        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Dash;
 
         // TODO : Dash animation
     }
@@ -544,7 +544,7 @@ public class CharacterModel : MonoBehaviour {
             yield return null;
         }
 
-        StopDashing (CharacterEnum.HorizontalSpeed.Walk, true);
+        StopDashing (CharEnum.HorizontalSpeed.Walk, true);
     }
 
     private IEnumerator DashCoolDownCoroutine () {
@@ -571,13 +571,13 @@ public class CharacterModel : MonoBehaviour {
         var jumpInitSpeed = isJumpCharged ? characterParams.chargeJumpInitSpeed : characterParams.normalJumpInitSpeed;
 
         rb.velocity = new Vector3 (rb.velocity.x, jumpInitSpeed);
-        if (currentLocation == CharacterEnum.Location.Wall) {
-            currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Walk;
+        if (currentLocation == CharEnum.Location.Wall) {
+            currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
             rb.gravityScale = originalGravityScale;
         }
 
         consecutiveJumpCount++;
-        currentLocation = CharacterEnum.Location.Air;
+        currentLocation = CharEnum.Location.Air;
 
         CancelJumpCharge ();
 
@@ -605,7 +605,7 @@ public class CharacterModel : MonoBehaviour {
 
     #region Hit
 
-    private void Hit (CharacterEnum.HitType hitType) {
+    private void Hit (CharEnum.HitType hitType) {
         if (isAttackCoolingDown) {
             Log.PrintWarning ("isAttackCoolingDown = true. It should not trigger Hit action. Please check.");
             return;
@@ -619,14 +619,14 @@ public class CharacterModel : MonoBehaviour {
         Log.Print ("Hit : HitType = " + hitType);
 
         switch (hitType) {
-            case CharacterEnum.HitType.Normal:
-            case CharacterEnum.HitType.Charged:
-            case CharacterEnum.HitType.Finishing:
+            case CharEnum.HitType.Normal:
+            case CharEnum.HitType.Charged:
+            case CharEnum.HitType.Finishing:
                 Log.PrintWarning ("Hit!!!    " + hitType);
                 // TODO : Implementation of actual hit
                 attackCoolDownCoroutine = StartCoroutine (HitCoolDownCoroutine (hitType));
                 break;
-            case CharacterEnum.HitType.Drop:
+            case CharEnum.HitType.Drop:
                 DropHit ();
                 break;
         }
@@ -641,20 +641,20 @@ public class CharacterModel : MonoBehaviour {
 
         // TODO : Implementation of actual hit
 
-        currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Zero;
+        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Zero;
         rb.gravityScale = 0;
         rb.velocity = new Vector3 (0, characterParams.dropHitVelocity);
     }
 
     private void FinishDropHit () {
         Log.Print ("FinishDropHit");
-        currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Zero;
+        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Zero;
         rb.gravityScale = originalGravityScale;
         rb.velocity = new Vector3 (0, 0);
 
         // TODO : Drop Hit Landing animation
 
-        attackCoolDownCoroutine = StartCoroutine (HitCoolDownCoroutine (CharacterEnum.HitType.Drop));
+        attackCoolDownCoroutine = StartCoroutine (HitCoolDownCoroutine (CharEnum.HitType.Drop));
     }
 
     private void DropHitCharge () {
@@ -664,22 +664,22 @@ public class CharacterModel : MonoBehaviour {
         }
     }
 
-    private IEnumerator HitCoolDownCoroutine (CharacterEnum.HitType hitType) {
+    private IEnumerator HitCoolDownCoroutine (CharEnum.HitType hitType) {
         isAttackCoolingDown = true;
 
         var hitCoolDownPeriod = 0f;
 
         switch (hitType) {
-            case CharacterEnum.HitType.Normal:
+            case CharEnum.HitType.Normal:
                 hitCoolDownPeriod = characterParams.hitCoolDownPeriod_Normal;
                 break;
-            case CharacterEnum.HitType.Charged:
+            case CharEnum.HitType.Charged:
                 hitCoolDownPeriod = characterParams.hitCoolDownPeriod_Charged;
                 break;
-            case CharacterEnum.HitType.Finishing:
+            case CharEnum.HitType.Finishing:
                 hitCoolDownPeriod = characterParams.hitCoolDownPeriod_Finishing;
                 break;
-            case CharacterEnum.HitType.Drop:
+            case CharEnum.HitType.Drop:
                 hitCoolDownPeriod = characterParams.hitCoolDownPeriod_Drop;
                 break;
             default:
@@ -691,9 +691,9 @@ public class CharacterModel : MonoBehaviour {
 
         isAttackCoolingDown = false;
 
-        if (hitType == CharacterEnum.HitType.Drop) {
+        if (hitType == CharEnum.HitType.Drop) {
             isDropHitting = false;
-            currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Walk;
+            currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
         }
 
         attackCoolDownCoroutine = null;
@@ -703,7 +703,7 @@ public class CharacterModel : MonoBehaviour {
 
     #region Arrow
 
-    private void ShootArrow (CharacterEnum.ArrowType arrowType) {
+    private void ShootArrow (CharEnum.ArrowType arrowType) {
         if (isAttackCoolingDown) {
             Log.PrintWarning ("isAttackCoolingDown = true. It should not trigger shoot arrow action. Please check.");
             return;
@@ -717,9 +717,9 @@ public class CharacterModel : MonoBehaviour {
         Log.Print ("Shoot arrow : ArrowType = " + arrowType);
 
         switch (arrowType) {
-            case CharacterEnum.ArrowType.Target:
-            case CharacterEnum.ArrowType.Straight:
-            case CharacterEnum.ArrowType.Triple:
+            case CharEnum.ArrowType.Target:
+            case CharEnum.ArrowType.Straight:
+            case CharEnum.ArrowType.Triple:
                 Log.PrintWarning ("Arrow!!!    " + arrowType);
                 // TODO : Implementation of actual arrow shooting
                 attackCoolDownCoroutine = StartCoroutine (ArrowCoolDownCoroutine (arrowType));
@@ -727,19 +727,19 @@ public class CharacterModel : MonoBehaviour {
         }
     }
 
-    private IEnumerator ArrowCoolDownCoroutine (CharacterEnum.ArrowType arrowType) {
+    private IEnumerator ArrowCoolDownCoroutine (CharEnum.ArrowType arrowType) {
         isAttackCoolingDown = true;
 
         var arrowCoolDownPeriod = 0f;
 
         switch (arrowType) {
-            case CharacterEnum.ArrowType.Target:
+            case CharEnum.ArrowType.Target:
                 arrowCoolDownPeriod = characterParams.arrowCoolDownPeriod_Target;
                 break;
-            case CharacterEnum.ArrowType.Straight:
+            case CharEnum.ArrowType.Straight:
                 arrowCoolDownPeriod = characterParams.arrowCoolDownPeriod_Straight;
                 break;
-            case CharacterEnum.ArrowType.Triple:
+            case CharEnum.ArrowType.Triple:
                 arrowCoolDownPeriod = characterParams.arrowCoolDownPeriod_Triple;
                 break;
             default:
@@ -759,10 +759,10 @@ public class CharacterModel : MonoBehaviour {
 
     private void ChangeFacingDirection (bool isAlignMovingDirection) {
         Log.PrintDebug ("ChangeFacingDirection : isAlignMovingDirection = " + isAlignMovingDirection);
-        if (facingDirection == CharacterEnum.Direction.Left) {
-            facingDirection = CharacterEnum.Direction.Right;
+        if (facingDirection == CharEnum.Direction.Left) {
+            facingDirection = CharEnum.Direction.Right;
         } else {
-            facingDirection = CharacterEnum.Direction.Left;
+            facingDirection = CharEnum.Direction.Left;
         }
 
         if (isAlignMovingDirection) {
@@ -774,10 +774,10 @@ public class CharacterModel : MonoBehaviour {
         // Remarks : Changing moving direction must also align facing direction
 
         Log.PrintDebug ("ChangeMovingDirection");
-        if (movingDirection == CharacterEnum.Direction.Left) {
-            movingDirection = CharacterEnum.Direction.Right;
+        if (movingDirection == CharEnum.Direction.Left) {
+            movingDirection = CharEnum.Direction.Right;
         } else {
-            movingDirection = CharacterEnum.Direction.Left;
+            movingDirection = CharEnum.Direction.Left;
         }
 
         facingDirection = movingDirection;
@@ -819,8 +819,8 @@ public class CharacterModel : MonoBehaviour {
     private void LandToGround () {
         Log.PrintDebug ("LandToGround");
         consecutiveJumpCount = 0;
-        currentLocation = CharacterEnum.Location.Ground;
-        currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Walk;
+        currentLocation = CharEnum.Location.Ground;
+        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
 
         rb.gravityScale = originalGravityScale;
         rb.velocity = new Vector3 (rb.velocity.x, 0);
@@ -851,17 +851,17 @@ public class CharacterModel : MonoBehaviour {
         ChangeMovingDirection ();
 
         if (isDashing) {
-            StopDashing (CharacterEnum.HorizontalSpeed.Walk, true);
+            StopDashing (CharEnum.HorizontalSpeed.Walk, true);
         }
 
-        if (currentLocation == CharacterEnum.Location.Air) {
+        if (currentLocation == CharEnum.Location.Air) {
             SlideOnWall ();
         }
     }
 
     private void SlideOnWall () {
-        currentLocation = CharacterEnum.Location.Wall;
-        currentHorizontalSpeed = CharacterEnum.HorizontalSpeed.Zero;
+        currentLocation = CharEnum.Location.Wall;
+        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Zero;
         consecutiveJumpCount = 1;   // Allow jump in air again
 
         // Slide down with constant speed
@@ -872,7 +872,7 @@ public class CharacterModel : MonoBehaviour {
     }
 
     private void ReleaseFromWallSliding () {
-        currentLocation = CharacterEnum.Location.Air;
+        currentLocation = CharEnum.Location.Air;
 
         rb.gravityScale = originalGravityScale;
         rb.velocity = new Vector3 (0, 0);

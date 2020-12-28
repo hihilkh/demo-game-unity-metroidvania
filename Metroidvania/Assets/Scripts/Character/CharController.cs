@@ -5,7 +5,7 @@ using HIHIFramework.Core;
 using UnityEngine.InputSystem;
 using System;
 
-public class CharacterController : MonoBehaviour, UserInput.ICharacterActions {
+public class CharController : MonoBehaviour, UserInput.ICharacterActions {
 
     private UserInput userInput;
 

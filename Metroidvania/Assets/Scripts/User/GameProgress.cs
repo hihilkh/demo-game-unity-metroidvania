@@ -7,7 +7,7 @@ using HIHIFramework.Core;
 public static class GameProgress {
 
     public static Dictionary<int, MissionProgress> MissionProgressDict { get; private set; }
-    public static List<CharacterEnum.Command> EnabledCommandList { get; private set; }
+    public static List<CharEnum.Command> EnabledCommandList { get; private set; }
 
     #region Init
 
@@ -88,11 +88,11 @@ public static class GameProgress {
         var str = PlayerPrefs.GetString (GameVariable.EnabledCommandListKey, null);
 
         if (string.IsNullOrEmpty (str)) {
-            EnabledCommandList = new List<CharacterEnum.Command> ();
+            EnabledCommandList = new List<CharEnum.Command> ();
         } else {
             var array = str.Split (new string[] { FrameworkVariable.DefaultDelimiter }, System.StringSplitOptions.None);
             foreach (var commandIntStr in array) {
-                EnabledCommandList.Add ((CharacterEnum.Command)int.Parse (commandIntStr));
+                EnabledCommandList.Add ((CharEnum.Command)int.Parse (commandIntStr));
             }
         }
     }
@@ -136,9 +136,9 @@ public static class GameProgress {
         SaveMissionProgressList ();
     }
 
-    public static void EnableCommand (CharacterEnum.Command command) {
+    public static void EnableCommand (CharEnum.Command command) {
         if (EnabledCommandList == null) {
-            EnabledCommandList = new List<CharacterEnum.Command> ();
+            EnabledCommandList = new List<CharEnum.Command> ();
         }
 
         if (!EnabledCommandList.Contains (command)) {
