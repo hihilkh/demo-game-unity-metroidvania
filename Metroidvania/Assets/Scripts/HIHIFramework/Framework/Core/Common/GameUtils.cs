@@ -8,15 +8,29 @@ using UnityEngine;
 namespace HIHIFramework.Core {
     public class GameUtils : Singleton<GameUtils> {
 
+        private static bool IsGameSettingsInitialized = false;
         #region Game Initialization
 
         public static void InitGameSettings (Action<bool> onFinished = null) {
+            if (IsGameSettingsInitialized) {
+                onFinished?.Invoke (true);
+                return;
+            }
+
+            IsGameSettingsInitialized = true;
+
             // frame rate
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = GameVariable.TargetFrameRate;
 
             // LangManager
             LangManager.Init (onFinished);
+        }
+
+        [RuntimeInitializeOnLoadMethod]
+        private static void OnRuntimeInitializeLoad () {
+            // For convenient of development, which start at a random scene
+            InitGameSettings ();
         }
 
         #endregion
