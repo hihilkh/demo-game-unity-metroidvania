@@ -1,4 +1,6 @@
-﻿public class CharEnum {
+﻿using System;
+
+public class CharEnum {
     public enum Direction {
         Left,
         Right
@@ -52,5 +54,15 @@
         Normal_Inversed,
         Confused,
         Shocked
+    }
+
+    [Flags]
+    public enum BodyPart : short {
+        None = 0,
+        Head = 1,
+        Arms = 2,
+        Legs = 4,
+        Thrusters = 8,
+        Arrow = 16
     }
 }

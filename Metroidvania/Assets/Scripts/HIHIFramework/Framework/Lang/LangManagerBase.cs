@@ -11,7 +11,7 @@ namespace HIHIFramework.Lang {
     public abstract class LangManagerBase {
 
         protected static bool IsInitialized = false;
-        protected static event Action LangChangedEvent;
+        public static event Action LangChangedEvent;
 
         private static LangType? _CurrentLang = null;
         protected static LangType CurrentLang {
@@ -170,18 +170,6 @@ namespace HIHIFramework.Lang {
             if (isSuccess) {
                 LangChangedEvent?.Invoke ();
             }
-        }
-
-        #endregion
-
-        #region Event
-
-        public static void AddLangChangedEventHandler (Action handler) {
-            LangChangedEvent += handler;
-        }
-
-        public static void RemoveLangChangedEventHandler (Action handler) {
-            LangChangedEvent -= handler;
         }
 
         #endregion

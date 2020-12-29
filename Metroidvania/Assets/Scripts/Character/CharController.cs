@@ -9,14 +9,14 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
 
     private UserInput userInput;
 
-    public event Action StartedLeft;
-    public event Action StoppedLeft;
-    public event Action StartedRight;
-    public event Action StoppedRight;
-    public event Action StartedPress;
-    public event Action Tapped;
-    public event Action StartedHold;
-    public event Action StoppedHold;
+    public event Action StartedLeftEvent;
+    public event Action StoppedLeftEvent;
+    public event Action StartedRightEvent;
+    public event Action StoppedRightEvent;
+    public event Action StartedPressEvent;
+    public event Action TappedEvent;
+    public event Action StartedHoldEvent;
+    public event Action StoppedHoldEvent;
 
     private bool isHolding = false;
 
@@ -38,27 +38,27 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
     public void OnLeft (InputAction.CallbackContext context) {
         Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase);
         if (context.phase == InputActionPhase.Started) {
-            StartedLeft?.Invoke ();
+            StartedLeftEvent?.Invoke ();
         } else if (context.phase == InputActionPhase.Canceled) {
-            StoppedLeft?.Invoke ();
+            StoppedLeftEvent?.Invoke ();
         }
     }
 
     public void OnRight (InputAction.CallbackContext context) {
         Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase);
         if (context.phase == InputActionPhase.Started) {
-            StartedRight?.Invoke ();
+            StartedRightEvent?.Invoke ();
         } else if (context.phase == InputActionPhase.Canceled) {
-            StoppedRight?.Invoke ();
+            StoppedRightEvent?.Invoke ();
         }
     }
 
     public void OnTap (InputAction.CallbackContext context) {
         Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase);
         if (context.phase == InputActionPhase.Performed) {
-            Tapped?.Invoke ();
+            TappedEvent?.Invoke ();
         } else if (context.phase == InputActionPhase.Started) {
-            StartedPress?.Invoke ();
+            StartedPressEvent?.Invoke ();
         }
     }
 
@@ -66,10 +66,10 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
         Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase);
         if (context.phase == InputActionPhase.Performed) {
             isHolding = true;
-            StartedHold?.Invoke ();
+            StartedHoldEvent?.Invoke ();
         } else if (context.phase == InputActionPhase.Canceled) {
             if (isHolding) {
-                StoppedHold?.Invoke ();
+                StoppedHoldEvent?.Invoke ();
             }
             isHolding = false;
         }

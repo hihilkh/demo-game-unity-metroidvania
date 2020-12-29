@@ -32,13 +32,13 @@ public class SelectMissionItem : MonoBehaviour {
         detailsList.Add (new LocalizedTextDetails (progressText, GameUtils.GetProgressPercentStr (GetMissionProgress (details, progress)), false));
         OnLangChanged ();
 
-        LangManager.AddLangChangedEventHandler (OnLangChanged);
+        LangManager.LangChangedEvent += OnLangChanged;
         isAddedLangChangedEvent = true;
     }
 
     private void OnDestroy () {
         if (isAddedLangChangedEvent) {
-            LangManager.RemoveLangChangedEventHandler (OnLangChanged);
+            LangManager.LangChangedEvent -= OnLangChanged;
         }
     }
 

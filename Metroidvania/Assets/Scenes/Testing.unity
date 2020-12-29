@@ -510,7 +510,7 @@ GameObject:
   m_Component:
   - component: {fileID: 212444368}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: MeshCorrection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -667,6 +667,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &540957838 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: d8ef92b73e14447c3b6d7910156deb2b,
+    type: 3}
+  m_PrefabInstance: {fileID: 718747363}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &718747363
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -704,6 +710,11 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 8f372f589881a4c249cb9df41403c0cd, type: 2}
+    - target: {fileID: 8483981631053555805, guid: d8ef92b73e14447c3b6d7910156deb2b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d8ef92b73e14447c3b6d7910156deb2b, type: 3}
 --- !u!1 &894378338
@@ -941,7 +952,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 1041434103}
-  characterParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
+  animator: {fileID: 540957838}
+  _characterParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
 --- !u!114 &1041434105
 MonoBehaviour:
   m_ObjectHideFlags: 0
