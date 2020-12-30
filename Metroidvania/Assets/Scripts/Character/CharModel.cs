@@ -25,7 +25,7 @@ public class CharModel : MonoBehaviour {
 
     // Body Parts
     public CharEnum.BodyPart obtainedBodyParts { get; private set; } = CharEnum.BodyPart.Head | CharEnum.BodyPart.Arms | CharEnum.BodyPart.Legs | CharEnum.BodyPart.Thrusters | CharEnum.BodyPart.Arrow;
-    public static event Action<CharModel, CharEnum.BodyPart> ObtainedBodyPartsChangedEvent;
+    public event Action<CharEnum.BodyPart> obtainedBodyPartsChangedEvent;
 
     // Character Situation
     public CharEnum.Direction facingDirection { get; private set; }
@@ -172,7 +172,7 @@ public class CharModel : MonoBehaviour {
         if (!obtainedBodyParts.HasFlag(part)) {
             obtainedBodyParts = obtainedBodyParts | part;
 
-            ObtainedBodyPartsChangedEvent?.Invoke (this, obtainedBodyParts);
+            obtainedBodyPartsChangedEvent?.Invoke (obtainedBodyParts);
         }
     }
 
