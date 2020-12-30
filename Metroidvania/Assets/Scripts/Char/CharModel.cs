@@ -10,9 +10,9 @@ public class CharModel : MonoBehaviour {
         { CharEnum.CommandSituation.GroundTap, CharEnum.Command.Jump },
         { CharEnum.CommandSituation.GroundHold, CharEnum.Command.Jump },
         { CharEnum.CommandSituation.GroundRelease, CharEnum.Command.Jump },
-        { CharEnum.CommandSituation.AirTap, CharEnum.Command.Jump },
-        { CharEnum.CommandSituation.AirHold, CharEnum.Command.Jump },
-        { CharEnum.CommandSituation.AirRelease, CharEnum.Command.Jump }
+        { CharEnum.CommandSituation.AirTap, CharEnum.Command.Turn },
+        { CharEnum.CommandSituation.AirHold, CharEnum.Command.Hit },
+        { CharEnum.CommandSituation.AirRelease, CharEnum.Command.Hit }
     };
 
     [SerializeField] private CharController controller;

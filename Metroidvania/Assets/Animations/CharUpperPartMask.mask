@@ -6,7 +6,7 @@ AvatarMask:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: CharacterUpperPartMask
+  m_Name: CharUpperPartMask
   m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
   m_Elements:
   - m_Path: 
@@ -31,6 +31,8 @@ AvatarMask:
     m_Weight: 1
   - m_Path: Meshes/Head/head.normal
     m_Weight: 1
+  - m_Path: Meshes/Head/head.normal_inversed
+    m_Weight: 1
   - m_Path: Meshes/Head/head.shocked
     m_Weight: 1
   - m_Path: Meshes/Leg
@@ -49,13 +51,31 @@ AvatarMask:
     m_Weight: 1
   - m_Path: rig_arm.l/rig_arm.l_end
     m_Weight: 1
+  - m_Path: rig_arm.l.IK
+    m_Weight: 0
+  - m_Path: rig_arm.l.IK/rig_arm.l.IK_end
+    m_Weight: 1
   - m_Path: rig_arm.r
     m_Weight: 1
   - m_Path: rig_arm.r/rig_arm.r_end
     m_Weight: 1
+  - m_Path: rig_arm.r.IK
+    m_Weight: 0
+  - m_Path: rig_arm.r.IK/rig_arm.r.IK_end
+    m_Weight: 1
   - m_Path: rig_head
     m_Weight: 1
-  - m_Path: rig_head/rig_head_end
+  - m_Path: rig_head/rig_shoulder.up.l
+    m_Weight: 1
+  - m_Path: rig_head/rig_shoulder.up.l/rig_shoulder.down.l
+    m_Weight: 1
+  - m_Path: rig_head/rig_shoulder.up.l/rig_shoulder.down.l/rig_shoulder.down.l_end
+    m_Weight: 1
+  - m_Path: rig_head/rig_shoulder.up.r
+    m_Weight: 1
+  - m_Path: rig_head/rig_shoulder.up.r/rig_shoulder.down.r
+    m_Weight: 1
+  - m_Path: rig_head/rig_shoulder.up.r/rig_shoulder.down.r/rig_shoulder.down.r_end
     m_Weight: 1
   - m_Path: rig_leg.l.upper
     m_Weight: 0

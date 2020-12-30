@@ -37,12 +37,12 @@ public class CharSMBBase : StateMachineBehaviour
                 faceDict.Add (CharEnum.FaceType.Normal, normalHeadTransform.gameObject);
             }
 
-            //var normalInversedHeadTransform = animator.transform.Find (HeadName_NormalInversed);
-            //if (normalInversedHeadTransform == null) {
-            //    Log.PrintError ("Cannot find normal inversed head of the character.");
-            //} else {
-            //    faceDict.Add (CharacterEnum.FaceType.Normal_Inversed, normalInversedHeadTransform.gameObject);
-            //}
+            var normalInversedHeadTransform = animator.transform.Find (MeshName_HeadNormalInversed);
+            if (normalInversedHeadTransform == null) {
+                Log.PrintError ("Cannot find normal inversed head of the character.");
+            } else {
+                faceDict.Add (CharEnum.FaceType.Normal_Inversed, normalInversedHeadTransform.gameObject);
+            }
 
             var confusedHeadTransform = animator.transform.Find (MeshName_HeadConfused);
             if (confusedHeadTransform == null) {

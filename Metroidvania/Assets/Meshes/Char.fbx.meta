@@ -56,21 +56,35 @@ ModelImporter:
     second: Slide
   - first:
       74: -3707080510933827714
-    second: HitLeft
+    second: SlideHit
   - first:
       74: -1526470514164753436
-    second: HitRight
+    second: SlideShoot
   - first:
       74: -3704289112126983070
     second: Shoot
   - first:
       74: 1419879912259550416
     second: DropHit
+  - first:
+      74: -6270087057795631697
+    second: HitLeft
+  - first:
+      74: 5220371770559520887
+    second: HitRight
+  - first:
+      74: 105087626658668840
+    second: FreeFall
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: mat_char
+    second: {fileID: 2100000, guid: 2c1d1f2e0198a42d6ace0544e30bc16d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mat_char.001
     second: {fileID: 2100000, guid: 2c1d1f2e0198a42d6ace0544e30bc16d, type: 2}
   materials:
     materialImportMode: 1
@@ -104,7 +118,7 @@ ModelImporter:
       takeName: Armature|ArmatureAction.001
       internalID: 0
       firstFrame: 0
-      lastFrame: 0
+      lastFrame: 1
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -132,8 +146,8 @@ ModelImporter:
       name: Walk
       takeName: Armature|ArmatureAction.001
       internalID: 0
-      firstFrame: 1
-      lastFrame: 33
+      firstFrame: 2
+      lastFrame: 34
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -161,8 +175,8 @@ ModelImporter:
       name: Jump
       takeName: Armature|ArmatureAction.001
       internalID: 0
-      firstFrame: 34
-      lastFrame: 42
+      firstFrame: 35
+      lastFrame: 38
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -190,8 +204,8 @@ ModelImporter:
       name: Landing
       takeName: Armature|ArmatureAction.001
       internalID: 0
-      firstFrame: 43
-      lastFrame: 51
+      firstFrame: 38
+      lastFrame: 42
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -219,8 +233,8 @@ ModelImporter:
       name: Dash
       takeName: Armature|ArmatureAction.001
       internalID: 0
-      firstFrame: 52
-      lastFrame: 52
+      firstFrame: 43
+      lastFrame: 44
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -248,8 +262,8 @@ ModelImporter:
       name: Slide
       takeName: Armature|ArmatureAction.001
       internalID: 0
-      firstFrame: 53
-      lastFrame: 53
+      firstFrame: 45
+      lastFrame: 46
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -274,11 +288,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: HitLeft
+      name: SlideHit
       takeName: Armature|ArmatureAction.001
       internalID: 0
-      firstFrame: 54
-      lastFrame: 60
+      firstFrame: 47
+      lastFrame: 53
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -303,11 +317,69 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
+      name: SlideShoot
+      takeName: Armature|ArmatureAction.001
+      internalID: 0
+      firstFrame: 54
+      lastFrame: 55
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: HitLeft
+      takeName: Armature|ArmatureAction.001
+      internalID: 0
+      firstFrame: 56
+      lastFrame: 62
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
       name: HitRight
       takeName: Armature|ArmatureAction.001
       internalID: 0
-      firstFrame: 61
-      lastFrame: 67
+      firstFrame: 63
+      lastFrame: 69
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -335,15 +407,15 @@ ModelImporter:
       name: Shoot
       takeName: Armature|ArmatureAction.001
       internalID: 0
-      firstFrame: 68
-      lastFrame: 68
+      firstFrame: 70
+      lastFrame: 71
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -364,8 +436,37 @@ ModelImporter:
       name: DropHit
       takeName: Armature|ArmatureAction.001
       internalID: 0
-      firstFrame: 69
-      lastFrame: 72
+      firstFrame: 72
+      lastFrame: 74
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: FreeFall
+      takeName: Armature|ArmatureAction.001
+      internalID: 0
+      firstFrame: 75
+      lastFrame: 76
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
