@@ -27,11 +27,7 @@ public class CharLandingSMB : CharMovementSMBBase {
             if (stateInfo.normalizedTime >= 1) {
                 isAnimFinished = true;
 
-                if (model.currentHorizontalSpeed == CharEnum.HorizontalSpeed.Zero) {
-                    model.StartIdling ();
-                } else {
-                    model.StartWalking ();
-                }
+                model.StartIdleOrWalk ();
             }
         }
 

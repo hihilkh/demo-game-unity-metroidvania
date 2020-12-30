@@ -306,7 +306,7 @@ public class CharModel : MonoBehaviour {
                 switch (situation) {
                     case CharEnum.CommandSituation.GroundTap:
                     case CharEnum.CommandSituation.AirTap:
-                        Jump ();
+                        StartCoroutine (Jump ());
                         break;
                     case CharEnum.CommandSituation.GroundHold:
                     case CharEnum.CommandSituation.AirHold:
@@ -318,14 +318,14 @@ public class CharModel : MonoBehaviour {
                         if (GetCommandBySituation(checkSituation) == CharEnum.Command.Jump) {
                             // That mean this release command should be a charged jump
                             if (isJumpCharged) {
-                                Jump ();
+                                StartCoroutine (Jump ());
                             } else {
                                 // If isJumpCharged = false, the JumpCharge is somehow cancelled. So do not do any action
                                 isTriggeredCommand = false;
                             }
                         } else {
                             // That mean this release command is a non charged jump
-                            Jump ();
+                            StartCoroutine (Jump ());
                         }
                         break;
                 }
@@ -487,7 +487,7 @@ public class CharModel : MonoBehaviour {
         var horizontalSpeed = 0f;
 
         switch (currentHorizontalSpeed) {
-            case CharEnum.HorizontalSpeed.Zero:
+            case CharEnum.HorizontalSpeed.Idle:
                 horizontalSpeed = 0;
                 break;
             case CharEnum.HorizontalSpeed.Walk:
@@ -503,15 +503,30 @@ public class CharModel : MonoBehaviour {
         // TODO : Think of idle/walk animation
     }
 
-    public void StartIdling () {
-        // TODO : Remove below
+    public void StartIdleOrWalk () {
+        switch (currentHorizontalSpeed) {
+            case CharEnum.HorizontalSpeed.Idle:
+                StartIdling ();
+                break;
+            case CharEnum.HorizontalSpeed.Walk:
+                StartWalking ();
+                break;
+            default:
+                Log.PrintWarning ("Current horizontal speed is : " + currentHorizontalSpeed + " . It does not match idle or walk. Force to change to walk. Please check.");
+                StartWalking ();
+                break;
+        }
+    }
+
+    private void StartIdling () {
+        // TODO : Check and remove below
         //rb.velocity = Vector2.zero; // Need to set velocity here because if set isAllowMove = false, HorizontalMovement() logic will bypass
-        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Zero;
+        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
 
         animator.SetTrigger (CharAnimConstant.IdleTriggerName);
     }
 
-    public void StartWalking () {
+    private void StartWalking () {
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
 
         animator.SetTrigger (CharAnimConstant.WalkTriggerName);
@@ -618,7 +633,7 @@ public class CharModel : MonoBehaviour {
         return isAllowAirJump;
     }
 
-    private void Jump () {
+    private IEnumerator Jump () {
         Log.Print ("Jump : isCharged = " + isJumpCharged);
 
         StopDashing (currentHorizontalSpeed, false);
@@ -632,9 +647,11 @@ public class CharModel : MonoBehaviour {
         }
         currentLocation = CharEnum.Location.Air;
 
-        StopJumpCharge ();
-
         animator.SetTrigger (CharAnimConstant.JumpTriggerName);
+
+        // Remarks : WaitForEndOfFrame in order to let CharJumpSMB know the jump is charged
+        yield return new WaitForEndOfFrame ();
+        StopJumpCharge ();
     }
 
     private void JumpCharge () {
@@ -686,21 +703,23 @@ public class CharModel : MonoBehaviour {
     }
 
     private void DropHit () {
-        Log.PrintWarning ("Hit!!!    Drop");
+        Log.Print ("Start DropHit");
 
         StopDropHitCharge ();
         isDropHitting = true;
 
         // TODO : Implementation of actual hit
 
-        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Zero;
-        rb.gravityScale = 0;
-        rb.velocity = new Vector3 (0, characterParams.dropHitVelocity);
+        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
+
+        animator.SetTrigger (CharAnimConstant.DropHitTriggerName);
     }
 
     private void FinishDropHit () {
-        Log.Print ("FinishDropHit");
-        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Zero;
+        Log.Print ("Finish DropHit");
+
+        isDropHitting = false;
+        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
 
         attackCoolDownCoroutine = StartCoroutine (HitCoolDownCoroutine (CharEnum.HitType.Drop));
     }
@@ -746,12 +765,6 @@ public class CharModel : MonoBehaviour {
         yield return new WaitForSeconds (hitCoolDownPeriod);
 
         isAttackCoolingDown = false;
-
-        if (hitType == CharEnum.HitType.Drop) {
-            isDropHitting = false;
-            currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
-        }
-
         attackCoolDownCoroutine = null;
     }
 
@@ -975,7 +988,7 @@ public class CharModel : MonoBehaviour {
 
     private void SlideOnWall () {
         currentLocation = CharEnum.Location.Wall;
-        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Zero;
+        currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
         isAllowAirJump = true;   // Allow jump in air again
 
         // Slide down with constant speed

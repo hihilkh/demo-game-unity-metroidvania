@@ -28,7 +28,7 @@ public class CharMovementSMBBase : CharSMBBase {
         var horizontalSpeed = 0f;
 
         switch (model.currentHorizontalSpeed) {
-            case CharEnum.HorizontalSpeed.Zero:
+            case CharEnum.HorizontalSpeed.Idle:
                 horizontalSpeed = 0;
                 break;
             case CharEnum.HorizontalSpeed.Walk:

@@ -7,7 +7,7 @@ public class CharEnum {
     }
 
     public enum HorizontalSpeed {
-        Zero,
+        Idle,
         Walk,
         Dash
     }
