@@ -21,6 +21,14 @@ public class CharPreparationSMB : CharSMBBase {
     override public void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
+        // Rigid body
+        var rb = animator.GetComponentInParent<Rigidbody2D> ();
+        if (rb == null) {
+            Log.PrintError ("Cannot find corresponding Rigidbody2D.");
+        } else {
+            rb.gravityScale = model.characterParams.gravityScale;
+        }
+
         // bodyPartDict
         if (bodyPartDict == null) {
             bodyPartDict = new Dictionary<CharEnum.BodyPart, GameObject> ();

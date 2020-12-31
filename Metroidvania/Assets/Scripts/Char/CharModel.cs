@@ -31,7 +31,7 @@ public class CharModel : MonoBehaviour {
     public CharEnum.Direction facingDirection { get; private set; }
     public CharEnum.Direction movingDirection { get; private set; }
     public CharEnum.HorizontalSpeed currentHorizontalSpeed { get; private set; }
-    private CharEnum.Location currentLocation;
+    public CharEnum.Location currentLocation { get; private set; }
     private bool isAllowMove;
     private bool isAllowAirJump;
 
@@ -446,7 +446,7 @@ public class CharModel : MonoBehaviour {
                             var directionMultiplier = facingDirection == CharEnum.Direction.Right ? -1 : 1;
                             transform.position = transform.position + new Vector3 (characterParams.repelFromWallDistByTurn, 0, 0) * directionMultiplier;
 
-                            ReleaseFromWallSliding ();
+                            StartFreeFall ();
                         } else {
                             ChangeFacingDirection (false);
                         }
@@ -991,20 +991,13 @@ public class CharModel : MonoBehaviour {
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
         isAllowAirJump = true;   // Allow jump in air again
 
-        // Slide down with constant speed
-        rb.gravityScale = 0;
-        rb.velocity = new Vector3 (0, characterParams.slideDownVelocity);
-
-        // TODO : Sliding animation
+        animator.SetTrigger (CharAnimConstant.SlideTriggerName);
     }
 
-    private void ReleaseFromWallSliding () {
+    private void StartFreeFall () {
         currentLocation = CharEnum.Location.Air;
 
-        rb.gravityScale = originalGravityScale;
-        rb.velocity = new Vector3 (0, 0);
-
-        // TODO : Release from wall sliding animation
+        animator.SetTrigger (CharAnimConstant.FreeFallTriggerName);
     }
 
     #endregion

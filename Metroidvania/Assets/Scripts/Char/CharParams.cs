@@ -4,6 +4,10 @@ using UnityEngine;
 
 [CreateAssetMenu (fileName = "CharParams", menuName = "ScriptableObjects/CharParams", order = 1)]
 public class CharParams : ScriptableObject {
+    [Header ("Physics")]
+    [SerializeField] private float _gravityScale;
+    public float gravityScale => _gravityScale;
+
     [Header ("Walk")]
     [SerializeField] private float _walkingSpeed;
     public float walkingSpeed => _walkingSpeed;

@@ -17,6 +17,7 @@ public class CharSMBBase : StateMachineBehaviour
     override public void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
+        Log.PrintDebug ("Char OnStateEnter : " + this);
         // model
         if (model == null) {
             model = animator.GetComponentInParent<CharModel> ();

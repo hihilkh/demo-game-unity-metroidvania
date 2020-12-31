@@ -5,7 +5,6 @@ using HIHIFramework.Core;
 
 public class CharMovementSMBBase : CharSMBBase {
     protected Rigidbody2D rb { get; private set; }
-    private float originalGravityScale;
 
     override public void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
@@ -16,8 +15,6 @@ public class CharMovementSMBBase : CharSMBBase {
 
             if (rb == null) {
                 Log.PrintError ("Cannot find corresponding Rigidbody2D.");
-            } else {
-                originalGravityScale = rb.gravityScale;
             }
         }
     }
@@ -48,13 +45,18 @@ public class CharMovementSMBBase : CharSMBBase {
         }
     }
 
-    protected void UpdateFacingDirection () {
+    protected void UpdateFacingDirection (bool isNeedOppositeDirection = false) {
         var scale = (model.facingDirection == CharEnum.Direction.Right) ? 1 : -1;
+
+        if (isNeedOppositeDirection) {
+            scale = scale * -1;
+        }
+
         rb.transform.localScale = new Vector3 (scale, 1, 1);
     }
 
     protected void ResetGravity () {
-        rb.gravityScale = originalGravityScale;
+        rb.gravityScale = model.characterParams.gravityScale;
     }
 
     protected void RemoveGravity () {

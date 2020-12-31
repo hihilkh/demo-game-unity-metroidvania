@@ -13,9 +13,11 @@ public class CharLandingSMB : CharMovementSMBBase {
         rb.velocity = new Vector3 (rb.velocity.x, 0);
         ResetGravity ();
     }
+
     public override void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateUpdate (animator, stateInfo, layerIndex);
 
+        // It may touch wall and change direction while landing, so it needs to update horizontal velocity and facing direction at OnStateUpdate
         UpdateHorizontalVelocity ();
         UpdateFacingDirection ();
 
