@@ -625,6 +625,10 @@ public class CharModel : MonoBehaviour {
 
     #region Jump
 
+    public float GetCurrentJumpInitSpeed () {
+        return isJumpCharged ? characterParams.chargeJumpInitSpeed : characterParams.normalJumpInitSpeed;
+    }
+
     private bool CheckIsAllowJump () {
         if (currentLocation == CharEnum.Location.Ground) {
             return true;

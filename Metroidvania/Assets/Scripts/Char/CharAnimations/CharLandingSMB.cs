@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharLandingSMB : CharMovementSMBBase {
+public class CharLandingSMB : CharSMBBase {
     private bool isAnimFinished = false;
 
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
@@ -10,16 +10,16 @@ public class CharLandingSMB : CharMovementSMBBase {
 
         isAnimFinished = false;
 
-        rb.velocity = new Vector3 (rb.velocity.x, 0);
-        ResetGravity ();
+        animUtils.SetVelocity (null, 0);
+        animUtils.ResetGravity ();
     }
 
     public override void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateUpdate (animator, stateInfo, layerIndex);
 
         // It may touch wall and change direction while landing, so it needs to update horizontal velocity and facing direction at OnStateUpdate
-        UpdateHorizontalVelocity ();
-        UpdateFacingDirection ();
+        animUtils.UpdateHorizontalVelocity ();
+        animUtils.UpdateFacingDirection ();
 
         // TODO : cancel jump charge
         // TODO : cancel drop hit charge
@@ -29,7 +29,7 @@ public class CharLandingSMB : CharMovementSMBBase {
             if (stateInfo.normalizedTime >= 1) {
                 isAnimFinished = true;
 
-                model.StartIdleOrWalk ();
+                animUtils.model.StartIdleOrWalk ();
             }
         }
 

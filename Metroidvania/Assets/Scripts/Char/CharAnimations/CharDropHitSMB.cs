@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharDropHitSMB : CharMovementSMBBase {
+public class CharDropHitSMB : CharSMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        rb.velocity = new Vector3 (0, model.characterParams.dropHitVelocity);
-        RemoveGravity ();
+        animUtils.SetVelocity (0, animUtils.model.characterParams.dropHitVelocity);
+        animUtils.RemoveGravity ();
     }
 
     public override void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {

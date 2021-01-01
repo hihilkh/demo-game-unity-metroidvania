@@ -2,25 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharSlideSMB : CharMovementSMBBase {
+public class CharSlideSMB : CharSMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
         animator.SetBool (CharAnimConstant.SlidingBoolName, true);
 
-        // Slide down with constant speed
-        rb.velocity = new Vector3 (0, model.characterParams.slideDownVelocity);
-        RemoveGravity ();
+        
+        animUtils.SetVelocity (0, animUtils.model.characterParams.slideDownVelocity);
+        animUtils.RemoveGravity ();     // Slide down with constant speed
 
-        SetFace (CharEnum.FaceType.Normal_Inversed);
-        UpdateFacingDirection (true);
+        animUtils.SetFace (CharEnum.FaceType.Normal_Inversed);
+        animUtils.UpdateFacingDirection (true);
     }
 
     public override void OnStateExit (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateExit (animator, stateInfo, layerIndex);
 
-        if (model.currentLocation != CharEnum.Location.Wall) {
-            SetDefaultFace ();
+        if (animUtils.model.currentLocation != CharEnum.Location.Wall) {
+            animUtils.SetDefaultFace ();
             animator.SetBool (CharAnimConstant.SlidingBoolName, false);
         }
     }
