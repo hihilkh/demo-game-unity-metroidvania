@@ -8,6 +8,7 @@ public class CharWalkSMB : CharSMBBase {
 
         animUtils.UpdateHorizontalVelocity ();
         animUtils.UpdateFacingDirection ();
+        animUtils.ResetGravity ();
 
         // TODO : Jump charge
     }

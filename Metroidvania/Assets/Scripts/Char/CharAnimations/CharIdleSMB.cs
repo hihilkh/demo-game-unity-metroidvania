@@ -10,5 +10,6 @@ public class CharIdleSMB : CharSMBBase {
 
         animUtils.UpdateHorizontalVelocity ();
         animUtils.UpdateFacingDirection ();
+        animUtils.ResetGravity ();
     }
 }

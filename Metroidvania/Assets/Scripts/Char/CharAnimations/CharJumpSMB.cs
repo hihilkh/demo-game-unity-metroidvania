@@ -7,7 +7,6 @@ public class CharJumpSMB : CharSMBBase {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
         animUtils.SetVelocity (null, animUtils.model.GetCurrentJumpInitSpeed ());
-        animUtils.UpdateHorizontalVelocity ();    // Call this to prevent some case that rb.velocity.x is affected by Physics system at that moment (e.g. hit a wall and velocity.x become 0)
         animUtils.ResetGravity ();
     }
 

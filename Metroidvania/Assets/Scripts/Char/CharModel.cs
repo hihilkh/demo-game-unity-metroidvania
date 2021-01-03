@@ -8,11 +8,11 @@ public class CharModel : MonoBehaviour {
     // TODO : Set commandDict to empty
     private Dictionary<CharEnum.CommandSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.CommandSituation, CharEnum.Command> {
         { CharEnum.CommandSituation.GroundTap, CharEnum.Command.Jump },
-        { CharEnum.CommandSituation.GroundHold, CharEnum.Command.Jump },
-        { CharEnum.CommandSituation.GroundRelease, CharEnum.Command.Jump },
-        { CharEnum.CommandSituation.AirTap, CharEnum.Command.Turn },
-        { CharEnum.CommandSituation.AirHold, CharEnum.Command.Hit },
-        { CharEnum.CommandSituation.AirRelease, CharEnum.Command.Hit }
+        { CharEnum.CommandSituation.GroundHold, CharEnum.Command.Dash },
+        { CharEnum.CommandSituation.GroundRelease, CharEnum.Command.Dash },
+        { CharEnum.CommandSituation.AirTap, CharEnum.Command.Dash },
+        { CharEnum.CommandSituation.AirHold, CharEnum.Command.Dash },
+        { CharEnum.CommandSituation.AirRelease, CharEnum.Command.Dash }
     };
 
     [SerializeField] private CharController controller;
@@ -39,6 +39,7 @@ public class CharModel : MonoBehaviour {
     private bool isJustTapped;
     private bool isHolding;
     private bool isJustReleaseHold;
+    private bool isIgnoreUserInputInThisFrame;
 
     // Command Control
     private CharEnum.CommandSituation? currentSituation;
@@ -46,10 +47,10 @@ public class CharModel : MonoBehaviour {
     private CharEnum.Location startedPressLocation;
     private bool isIgnoreHold;
     private bool isIgnoreRelease;
-    private bool isJustHitOnWall;
 
     // Jump Command Control
-    public bool isJumpCharged { get; private set; }
+    public bool isJumpCharging { get; private set; }
+    private bool isJustJumpedUp;
 
     // Dash Command Control
     private bool isDashing;
@@ -65,6 +66,8 @@ public class CharModel : MonoBehaviour {
 
     // Collision
     private Dictionary<Collider2D, string> currentCollisionDict = new Dictionary<Collider2D, string> ();
+    private bool isJustTouchWall;
+    private bool isTouchingWall;
 
     void Start () {
         if (controller == null) {
@@ -96,7 +99,8 @@ public class CharModel : MonoBehaviour {
         currentLocation = CharEnum.Location.Ground;
         isAllowAirJump = true;
 
-        isJumpCharged = false;
+        isJumpCharging = false;
+        isJustJumpedUp = false;
 
         isDashing = false;
         isDashCoolingDown = false;
@@ -106,6 +110,8 @@ public class CharModel : MonoBehaviour {
         isDropHitCharging = false;
         isDropHitting = false;
         attackCoolDownCoroutine = null;
+
+        isTouchingWall = false;
 
         ResetAllUpdateControlFlags ();
     }
@@ -120,7 +126,9 @@ public class CharModel : MonoBehaviour {
         startedPressLocation = CharEnum.Location.Ground;
         isIgnoreHold = false;
         isIgnoreRelease = false;
-        isJustHitOnWall = false;
+
+        isJustTouchWall = false;
+        isIgnoreUserInputInThisFrame = false;
     }
 
     // Remarks :
@@ -141,7 +149,8 @@ public class CharModel : MonoBehaviour {
         // Reset control flags
         isJustTapped = false;
         isJustReleaseHold = false;
-        isJustHitOnWall = false;
+        isJustTouchWall = false;
+        isIgnoreUserInputInThisFrame = false;
 
         if (situation == CharEnum.CommandSituation.GroundRelease || situation == CharEnum.CommandSituation.AirRelease) {
             isIgnoreHold = false;
@@ -228,6 +237,11 @@ public class CharModel : MonoBehaviour {
             return;
         }
 
+        if (isIgnoreUserInputInThisFrame) {
+            SetCurrentCommandStatus (null, null);
+            return;
+        }
+
         var situation = (CharEnum.CommandSituation)optionalSituation;
 
         if (situation == CharEnum.CommandSituation.GroundHold || situation == CharEnum.CommandSituation.AirHold) {
@@ -279,9 +293,9 @@ public class CharModel : MonoBehaviour {
                 switch (currentCommand) {
                     case CharEnum.Command.Dash:
                         if (command == CharEnum.Command.Jump || command == CharEnum.Command.Dash) {
-                            StopDashing (currentHorizontalSpeed, false);
+                            StopDashing (currentHorizontalSpeed, false, false);
                         } else {
-                            StopDashing (CharEnum.HorizontalSpeed.Walk, true);
+                            StopDashing (CharEnum.HorizontalSpeed.Walk, true, true);
                         }
                         break;
                 }
@@ -317,7 +331,7 @@ public class CharModel : MonoBehaviour {
                         var checkSituation = (situation == CharEnum.CommandSituation.GroundRelease) ? CharEnum.CommandSituation.GroundHold : CharEnum.CommandSituation.AirHold;
                         if (GetCommandBySituation(checkSituation) == CharEnum.Command.Jump) {
                             // That mean this release command should be a charged jump
-                            if (isJumpCharged) {
+                            if (isJumpCharging) {
                                 StartCoroutine (Jump ());
                             } else {
                                 // If isJumpCharged = false, the JumpCharge is somehow cancelled. So do not do any action
@@ -346,7 +360,7 @@ public class CharModel : MonoBehaviour {
                     case CharEnum.CommandSituation.GroundHold:
                     case CharEnum.CommandSituation.AirHold:
                         if (currentSituation == situation) {    // Already dashing
-                            if (!isJustHitOnWall) {
+                            if (!isJustTouchWall) {
                                 isTriggeredCommand = true;
                             }
                         } else {
@@ -433,6 +447,15 @@ public class CharModel : MonoBehaviour {
 
                 break;
             case CharEnum.Command.Turn:
+                // Do not do turn action if touching wall and not sliding because changing moving direction is trigged while touch wall
+                if (isTouchingWall && currentLocation != CharEnum.Location.Wall) {
+                    break;
+                }
+
+                if (isDashing) {
+                    StopDashing (CharEnum.HorizontalSpeed.Walk, true, true);
+                }
+
                 switch (situation) {
                     case CharEnum.CommandSituation.GroundTap:
                     case CharEnum.CommandSituation.GroundRelease:
@@ -472,6 +495,10 @@ public class CharModel : MonoBehaviour {
     private void SetCurrentCommandStatus (CharEnum.CommandSituation? situation, CharEnum.Command? command) {
         currentSituation = situation;
         currentCommand = command;
+
+        //if (currentSituation != null) {
+        //    Log.PrintDebug (currentSituation + "  " + currentCommand);
+        //}
     }
 
     #endregion
@@ -539,7 +566,7 @@ public class CharModel : MonoBehaviour {
     private void StartDashing (bool isOneShot) {
         Log.Print ("Dash : isOneShot = " + isOneShot);
 
-        StopDashing (currentHorizontalSpeed, false);  // To ensure do not trigger 2 dash coroutines at the same time
+        StopDashing (currentHorizontalSpeed, false, false);  // To ensure do not trigger 2 dash coroutines at the same time
 
         if (currentLocation == CharEnum.Location.Wall) {
             currentLocation = CharEnum.Location.Air;
@@ -552,7 +579,7 @@ public class CharModel : MonoBehaviour {
         }
     }
 
-    private void StopDashing (CharEnum.HorizontalSpeed speedAfterStopDashing, bool isNeedDashCoolDown) {
+    private void StopDashing (CharEnum.HorizontalSpeed speedAfterStopDashing, bool isNeedDashCoolDown, bool isNeedToChangeMovementAnim) {
         // Remarks:
         // There is a case that calling StopDashing() while it is already in dash cool down stage.
         // Below is to ensure no dash cool down if isNeedDashCoolDown = false
@@ -574,10 +601,14 @@ public class CharModel : MonoBehaviour {
         }
 
         isDashing = false;
-        rb.gravityScale = originalGravityScale;
         currentHorizontalSpeed = speedAfterStopDashing;
-
-        // TODO : Walk / fall down animation
+        if (isNeedToChangeMovementAnim) {
+            if (currentLocation == CharEnum.Location.Ground) {
+                StartIdleOrWalk ();
+            } else {
+                StartFreeFall ();
+            }
+        }
 
         if (isNeedDashCoolDown) {
             if (dashCoolDownCoroutine != null) {
@@ -589,11 +620,9 @@ public class CharModel : MonoBehaviour {
 
     private void SetDashing () {
         isDashing = true;
-        rb.gravityScale = 0;  // prevent fall down behaviour from gravity
-        rb.velocity = new Vector3 (rb.velocity.x, 0);
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Dash;
 
-        // TODO : Dash animation
+        animator.SetTrigger (CharAnimConstant.DashTriggerName);
     }
 
     private IEnumerator OneShotDashCoroutine () {
@@ -602,14 +631,15 @@ public class CharModel : MonoBehaviour {
         var startTime = Time.time;
 
         while (Time.time - startTime < characterParams.oneShotDashPeriod) {
-            if (isJustHitOnWall) {
+            if (isJustTouchWall) {
                 break;
             }
 
             yield return null;
         }
 
-        StopDashing (CharEnum.HorizontalSpeed.Walk, true);
+        // If touching wall, sliding animation dominate the animation
+        StopDashing (CharEnum.HorizontalSpeed.Walk, true, isJustTouchWall ? false : true);
     }
 
     private IEnumerator DashCoolDownCoroutine () {
@@ -626,7 +656,7 @@ public class CharModel : MonoBehaviour {
     #region Jump
 
     public float GetCurrentJumpInitSpeed () {
-        return isJumpCharged ? characterParams.chargeJumpInitSpeed : characterParams.normalJumpInitSpeed;
+        return isJumpCharging ? characterParams.chargeJumpInitSpeed : characterParams.normalJumpInitSpeed;
     }
 
     private bool CheckIsAllowJump () {
@@ -638,18 +668,22 @@ public class CharModel : MonoBehaviour {
     }
 
     private IEnumerator Jump () {
-        Log.Print ("Jump : isCharged = " + isJumpCharged);
+        Log.Print ("Jump : isCharged = " + isJumpCharging);
 
-        StopDashing (currentHorizontalSpeed, false);
+        StopDashing (currentHorizontalSpeed, false, false);
 
         if (currentLocation == CharEnum.Location.Wall) {
             currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
         }
 
-        if (currentLocation != CharEnum.Location.Ground) {
+        if (currentLocation == CharEnum.Location.Ground) {
+            isJustJumpedUp = true;
+        } else {
             isAllowAirJump = false;
         }
+
         currentLocation = CharEnum.Location.Air;
+        
 
         animator.SetTrigger (CharAnimConstant.JumpTriggerName);
 
@@ -659,8 +693,8 @@ public class CharModel : MonoBehaviour {
     }
 
     private void JumpCharge () {
-        if (!isJumpCharged) {
-            isJumpCharged = true;
+        if (!isJumpCharging) {
+            isJumpCharging = true;
             isIgnoreHold = true;
 
             // TODO : Jump charge animation
@@ -668,8 +702,8 @@ public class CharModel : MonoBehaviour {
     }
 
     private void StopJumpCharge () {
-        if (isJumpCharged) {
-            isJumpCharged = false;
+        if (isJumpCharging) {
+            isJumpCharging = false;
 
             // TODO : Cancel Jump charge animation
         }
@@ -867,8 +901,8 @@ public class CharModel : MonoBehaviour {
     public void OnCollisionEnter2D (Collision2D collision) {
         var collideType = collision.gameObject.tag;
 
+        var collisionNormal = collision.GetContact (0).normal;
         if (collision.gameObject.tag == GameVariable.WallTag) {
-            var collisionNormal = collision.GetContact(0).normal;
             var absX = Mathf.Abs (collisionNormal.x);
             if (collisionNormal.y > 0 && collisionNormal.y > absX) {
                 collideType = GameVariable.GroundTag;
@@ -876,8 +910,8 @@ public class CharModel : MonoBehaviour {
                 collideType = GameVariable.GroundTag;
             }
         }
-
-        Log.Print ("Char Collision Enter : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType);
+        
+        Log.Print ("Char Collision Enter : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType + " ; collisionNormal = " + collisionNormal + " ; movingDirection = " + movingDirection);
 
         if (currentCollisionDict.ContainsKey (collision.collider)) {
             currentCollisionDict[collision.collider] = collideType;
@@ -895,7 +929,8 @@ public class CharModel : MonoBehaviour {
                 TouchGround ();
                 break;
             case GameVariable.WallTag:
-                TouchWall ();
+                var wallPosition = (collisionNormal.x <= 0) ? CharEnum.Direction.Right : CharEnum.Direction.Left;
+                TouchWall (wallPosition);
                 break;
         }
     }
@@ -914,15 +949,20 @@ public class CharModel : MonoBehaviour {
             case GameVariable.GroundTag:
                 LeaveGround ();
                 break;
+            case GameVariable.WallTag:
+                LeaveWall ();
+                break;
         }
     }
 
     private void TouchGround () {
         Log.PrintDebug ("TouchGround");
 
+        isIgnoreUserInputInThisFrame = true;
+
         if (isDashing) {
             if (currentSituation == CharEnum.CommandSituation.AirHold) {         // "AirHold - Dash" command
-                StopDashing (CharEnum.HorizontalSpeed.Walk, true);
+                StopDashing (CharEnum.HorizontalSpeed.Walk, true, true);
             } else {
                 // Remarks :
                 // That is, one shot dash and somehow touch ground during dash (e.g.dashing through a 凹 shape)
@@ -935,7 +975,7 @@ public class CharModel : MonoBehaviour {
             } else {
                 if (isDropHitCharging) {     // "AirHold - Hit" command
                     StopDropHitCharge ();
-                } else if (isJumpCharged) {         // "AirHold - Jump" command
+                } else if (isJumpCharging) {         // "AirHold - Jump" command
                     StopJumpCharge ();
                 }
                 currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
@@ -949,6 +989,7 @@ public class CharModel : MonoBehaviour {
             }
         }
 
+        isJustJumpedUp = false;
         isAllowAirJump = true;
         currentLocation = CharEnum.Location.Ground;
 
@@ -960,13 +1001,16 @@ public class CharModel : MonoBehaviour {
 
     private void LeaveGround () {
         Log.PrintDebug ("LeaveGround");
+
+        isIgnoreUserInputInThisFrame = true;
+
         currentLocation = CharEnum.Location.Air;
 
         // Special Handling
-        if (isJumpCharged) {         // "GroundHold - Jump" command
+        if (isJumpCharging) {         // "GroundHold - Jump" command
             StopJumpCharge ();
         } else if (currentSituation == CharEnum.CommandSituation.GroundHold && isDashing) {         // "GroundHold - Dash" command
-            StopDashing (CharEnum.HorizontalSpeed.Walk, true);
+            StopDashing (CharEnum.HorizontalSpeed.Walk, true, false);
         }
 
         if (currentSituation == CharEnum.CommandSituation.GroundHold) {
@@ -974,20 +1018,49 @@ public class CharModel : MonoBehaviour {
             isIgnoreRelease = true;
         }
 
-        // TODO : Leave ground animation
+        if (!isJustJumpedUp) {
+            StartFreeFall ();
+        }
     }
 
-    private void TouchWall () {
-        isJustHitOnWall = true;
-        ChangeMovingDirection ();
+    private void TouchWall (CharEnum.Direction wallPosition) {
+        Log.PrintDebug ("TouchWall");
+
+        isIgnoreUserInputInThisFrame = true;
+        isJustTouchWall = true;
+        isTouchingWall = true;
+
+        if (wallPosition == movingDirection) {  // Change moving direction only when char originally move towards wall
+            ChangeMovingDirection ();
+        }
+
+        if (isDropHitCharging) {     // "AirHold - Hit" command
+            StopDropHitCharge ();
+        } else if (isJumpCharging) {         // "AirHold - Jump" command
+            StopJumpCharge ();
+        }
 
         if (isDashing) {
-            StopDashing (CharEnum.HorizontalSpeed.Walk, true);
+            StopDashing (CharEnum.HorizontalSpeed.Walk, true, currentLocation == CharEnum.Location.Ground);
         }
 
         if (currentLocation == CharEnum.Location.Air) {
             SlideOnWall ();
         }
+
+        if (currentSituation == CharEnum.CommandSituation.GroundHold || currentSituation == CharEnum.CommandSituation.AirHold) {
+            isIgnoreHold = true;
+            isIgnoreRelease = true;
+        }
+    }
+
+    private void LeaveWall () {
+        Log.PrintDebug ("LeaveWall");
+
+        isTouchingWall = false;
+        isIgnoreUserInputInThisFrame = true;
+
+        // TODO : Handling of leave wall due to sliding to the end of the wall
     }
 
     private void SlideOnWall () {

@@ -155,23 +155,9 @@ public class CharAnimUtils : MonoBehaviour
     #region Movement Related
 
     public void UpdateHorizontalVelocity () {
-        var multiplier = (model.movingDirection == CharEnum.Direction.Right) ? 1 : -1;
+        var velocityX = GetVelocityXByCurrentHorizontalSpeed ();
 
-        var horizontalSpeed = 0f;
-
-        switch (model.currentHorizontalSpeed) {
-            case CharEnum.HorizontalSpeed.Idle:
-                horizontalSpeed = 0;
-                break;
-            case CharEnum.HorizontalSpeed.Walk:
-                horizontalSpeed = model.characterParams.walkingSpeed;
-                break;
-            case CharEnum.HorizontalSpeed.Dash:
-                horizontalSpeed = model.characterParams.dashingSpeed;
-                break;
-        }
-
-        rb.velocity = new Vector3 (horizontalSpeed * multiplier, rb.velocity.y);
+        rb.velocity = new Vector3 (velocityX, rb.velocity.y);
 
         // TODO : Debug usage only
         if (Mathf.Abs (rb.velocity.x) < 1 && Mathf.Abs (rb.velocity.y) < 1) {
@@ -180,12 +166,31 @@ public class CharAnimUtils : MonoBehaviour
         }
     }
 
-    /// <param name="x">Input null means using current velocity.x</param>
-    /// <param name="y">Input null means using current velocity.y</param>
-    public void SetVelocity (float? x, float? y) {
-        var velocityX = (x == null) ? rb.velocity.x : (float)x;
-        var velocityY = (y == null) ? rb.velocity.y : (float)y;
-        rb.velocity = new Vector3 (velocityX, velocityY);
+    private float GetVelocityXByCurrentHorizontalSpeed () {
+        var multiplier = (model.movingDirection == CharEnum.Direction.Right) ? 1 : -1;
+
+        var velocityX = 0f;
+
+        switch (model.currentHorizontalSpeed) {
+            case CharEnum.HorizontalSpeed.Idle:
+                velocityX = 0;
+                break;
+            case CharEnum.HorizontalSpeed.Walk:
+                velocityX = model.characterParams.walkingSpeed;
+                break;
+            case CharEnum.HorizontalSpeed.Dash:
+                velocityX = model.characterParams.dashingSpeed;
+                break;
+        }
+
+        return velocityX * multiplier;
+    }
+
+    /// <param name="x">Input null means determined by model.currentHorizontalSpeed</param>
+    public void SetVelocity (float? x, float y) {
+        var velocityX = (x == null) ? GetVelocityXByCurrentHorizontalSpeed () : (float)x;
+
+        rb.velocity = new Vector3 (velocityX, y);
     }
 
     public void UpdateFacingDirection (bool isNeedOppositeDirection = false) {
