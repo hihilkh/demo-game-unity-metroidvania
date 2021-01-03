@@ -20,9 +20,6 @@ public class CharModel : MonoBehaviour {
     [SerializeField] private CharParams _characterParams;
     public CharParams characterParams { get => _characterParams; }
 
-    public Rigidbody2D rb { get; private set; }
-    public float originalGravityScale { get; private set; }
-
     // Body Parts
     public CharEnum.BodyPart obtainedBodyParts { get; private set; } = CharEnum.BodyPart.Head | CharEnum.BodyPart.Arms | CharEnum.BodyPart.Legs | CharEnum.BodyPart.Thrusters | CharEnum.BodyPart.Arrow;
     public event Action<CharEnum.BodyPart> obtainedBodyPartsChangedEvent;
@@ -90,9 +87,6 @@ public class CharModel : MonoBehaviour {
     }
 
     private void InitPlayer () {
-        rb = GetComponent<Rigidbody2D> ();
-        originalGravityScale = rb.gravityScale;
-
         facingDirection = CharEnum.Direction.Right;
         movingDirection = facingDirection;
         SetAllowMove (true);
@@ -142,9 +136,6 @@ public class CharModel : MonoBehaviour {
         // Action by situation and command
         var situation = GetCurrentCommandSituation ();
         HandleCommand (situation);
-
-        // Horizontal movement
-        //HorizontalMovement ();
 
         // Reset control flags
         isJustTapped = false;
@@ -503,32 +494,7 @@ public class CharModel : MonoBehaviour {
 
     #endregion
 
-    #region Horizontal movement
-
-    private void HorizontalMovement () {
-        if (!isAllowMove) {
-            return;
-        }
-
-        var directionMultiplier = movingDirection == CharEnum.Direction.Right ? 1 : -1;
-        var horizontalSpeed = 0f;
-
-        switch (currentHorizontalSpeed) {
-            case CharEnum.HorizontalSpeed.Idle:
-                horizontalSpeed = 0;
-                break;
-            case CharEnum.HorizontalSpeed.Walk:
-                horizontalSpeed = characterParams.walkingSpeed;
-                break;
-            case CharEnum.HorizontalSpeed.Dash:
-                horizontalSpeed = characterParams.dashingSpeed;
-                break;
-        }
-
-        rb.velocity = new Vector3 (horizontalSpeed * directionMultiplier, rb.velocity.y);
-
-        // TODO : Think of idle/walk animation
-    }
+    #region Idle / Walk
 
     public void StartIdleOrWalk () {
         switch (currentHorizontalSpeed) {
@@ -546,8 +512,6 @@ public class CharModel : MonoBehaviour {
     }
 
     private void StartIdling () {
-        // TODO : Check and remove below
-        //rb.velocity = Vector2.zero; // Need to set velocity here because if set isAllowMove = false, HorizontalMovement() logic will bypass
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
 
         animator.SetTrigger (CharAnimConstant.IdleTriggerName);
