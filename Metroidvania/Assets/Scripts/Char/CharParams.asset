@@ -20,12 +20,12 @@ MonoBehaviour:
   _dashingSpeed: 15
   _oneShotDashPeriod: 0.5
   _dashCoolDownPeriod: 0.2
-  _hitCoolDownPeriod_Normal: 0.3
-  _hitCoolDownPeriod_Charged: 0.5
-  _hitCoolDownPeriod_Finishing: 0.8
-  _hitCoolDownPeriod_Drop: 0.8
+  _hitCoolDownPeriod_Normal: 0.15
+  _hitCoolDownPeriod_Charged: 0.3
+  _hitCoolDownPeriod_Finishing: 0.5
+  _hitCoolDownPeriod_Drop: 0.5
   _dropHitVelocity: -15
-  _arrowCoolDownPeriod_Target: 0.5
-  _arrowCoolDownPeriod_Straight: 0.5
-  _arrowCoolDownPeriod_Triple: 0.5
+  _arrowCoolDownPeriod_Target: 0.4
+  _arrowCoolDownPeriod_Straight: 0.4
+  _arrowCoolDownPeriod_Triple: 0.4
   _repelFromWallDistByTurn: 0.05

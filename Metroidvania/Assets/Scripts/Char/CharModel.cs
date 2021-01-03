@@ -8,9 +8,9 @@ public class CharModel : MonoBehaviour {
     // TODO : Set commandDict to empty
     private Dictionary<CharEnum.CommandSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.CommandSituation, CharEnum.Command> {
         { CharEnum.CommandSituation.GroundTap, CharEnum.Command.Jump },
-        { CharEnum.CommandSituation.GroundHold, CharEnum.Command.Dash },
-        { CharEnum.CommandSituation.GroundRelease, CharEnum.Command.Dash },
-        { CharEnum.CommandSituation.AirTap, CharEnum.Command.Dash },
+        { CharEnum.CommandSituation.GroundHold, CharEnum.Command.Jump },
+        { CharEnum.CommandSituation.GroundRelease, CharEnum.Command.Jump },
+        { CharEnum.CommandSituation.AirTap, CharEnum.Command.Arrow },
         { CharEnum.CommandSituation.AirHold, CharEnum.Command.Dash },
         { CharEnum.CommandSituation.AirRelease, CharEnum.Command.Dash }
     };
@@ -730,8 +730,8 @@ public class CharModel : MonoBehaviour {
             case CharEnum.HitType.Normal:
             case CharEnum.HitType.Charged:
             case CharEnum.HitType.Finishing:
-                Log.PrintWarning ("Hit!!!    " + hitType);
-                // TODO : Implementation of actual hit
+                // TODO : Different HitType
+                animator.SetTrigger (CharAnimConstant.HitTriggerName);
                 attackCoolDownCoroutine = StartCoroutine (HitCoolDownCoroutine (hitType));
                 break;
             case CharEnum.HitType.Drop:
@@ -828,7 +828,8 @@ public class CharModel : MonoBehaviour {
             case CharEnum.ArrowType.Straight:
             case CharEnum.ArrowType.Triple:
                 Log.PrintWarning ("Arrow!!!    " + arrowType);
-                // TODO : Implementation of actual arrow shooting
+                // TODO : Different ArrowType
+                animator.SetTrigger (CharAnimConstant.ShootTriggerName);
                 attackCoolDownCoroutine = StartCoroutine (ArrowCoolDownCoroutine (arrowType));
                 break;
         }
