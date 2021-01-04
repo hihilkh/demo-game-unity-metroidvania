@@ -76,6 +76,21 @@ namespace HIHIFramework.Core {
             return StringReplace (FrameworkVariable.ProgressPercentFormat, progressPercentInt.ToString());
         }
 
+        /// <summary>
+        /// Used by non MonoBehaviour scripts. Call coroutine to wait until <paramref name="predicate"/> return <b>true</b> and trigger <paramref name="action"/>.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="action"></param>
+        public void WaitUntil (Func<bool> predicate, Action action) {
+            StartCoroutine (WaitUntilCoroutine (predicate, action));
+        }
+
+        private IEnumerator WaitUntilCoroutine (Func<bool> predicate, Action action) {
+            yield return new WaitUntil (predicate);
+
+            action?.Invoke ();
+        }
+
         #endregion
 
         #region Parent/Child GameObject

@@ -17,22 +17,23 @@ public class CharAnimUtils : MonoBehaviour
     private const string MeshName_Thrusters = "Meshes/Leg/Thruster";
     private const string MeshName_ArrowWeapon = "Meshes/Arm/Weapon";
 
-    public CharModel model { get; private set; }
-    public Rigidbody2D rb { get; private set; }
+    [SerializeField] private CharModel _model;
+    public CharModel model => _model;
+
+    [SerializeField] private Rigidbody2D _rb;
+    public Rigidbody2D rb => _rb;
+
+    [SerializeField] private CharNormalHit _normalHitTemplate;
+    public CharNormalHit normalHitTemplate => _normalHitTemplate;
+
+    [Header ("RefPoint")]
+    [SerializeField] private Transform _refPoint_GroundHit;
+    public Transform refPoint_GroundHit => _refPoint_GroundHit;
+
+    [SerializeField] private Transform _refPoint_SlideHit;
+    public Transform refPoint_SlideHit => _refPoint_SlideHit;
 
     private void Awake () {
-        // model
-        model = GetComponentInParent<CharModel> ();
-        if (model == null) {
-            Log.PrintError ("Cannot find corresponding CharacterModel script.");
-        }
-
-        // Rigid body
-        rb = GetComponentInParent<Rigidbody2D> ();
-        if (rb == null) {
-            Log.PrintError ("Cannot find corresponding Rigidbody2D.");
-        }
-
         var animator = GetComponent<Animator> ();
 
         // faceDict
@@ -158,17 +159,9 @@ public class CharAnimUtils : MonoBehaviour
         var velocityX = GetVelocityXByCurrentHorizontalSpeed ();
 
         rb.velocity = new Vector3 (velocityX, rb.velocity.y);
-
-        // TODO : Debug usage only
-        if (Mathf.Abs (rb.velocity.x) < 1 && Mathf.Abs (rb.velocity.y) < 1) {
-            Log.PrintError ("No velocity! ; horizontal speed = " + model.currentHorizontalSpeed);
-            //Log.PrintError ("No velocity! Situation = " + model.situation + " ; horizontal speed = " + model.currentHorizontalSpeed);
-        }
     }
 
-    private float GetVelocityXByCurrentHorizontalSpeed () {
-        var multiplier = (model.movingDirection == CharEnum.Direction.Right) ? 1 : -1;
-
+    public float GetVelocityXByCurrentHorizontalSpeed (bool magnitudeOnly = false) {
         var velocityX = 0f;
 
         switch (model.currentHorizontalSpeed) {
@@ -176,14 +169,19 @@ public class CharAnimUtils : MonoBehaviour
                 velocityX = 0;
                 break;
             case CharEnum.HorizontalSpeed.Walk:
-                velocityX = model.characterParams.walkingSpeed;
+                velocityX = model.charParams.walkingSpeed;
                 break;
             case CharEnum.HorizontalSpeed.Dash:
-                velocityX = model.characterParams.dashingSpeed;
+                velocityX = model.charParams.dashingSpeed;
                 break;
         }
 
-        return velocityX * multiplier;
+        if (magnitudeOnly) {
+            return velocityX;
+        } else {
+            var multiplier = (model.movingDirection == CharEnum.Direction.Right) ? 1 : -1;
+            return velocityX * multiplier;
+        }
     }
 
     /// <param name="x">Input null means determined by model.currentHorizontalSpeed</param>
@@ -204,7 +202,7 @@ public class CharAnimUtils : MonoBehaviour
     }
 
     public void ResetGravity () {
-        rb.gravityScale = model.characterParams.gravityScale;
+        rb.gravityScale = model.charParams.gravityScale;
     }
 
     public void RemoveGravity () {

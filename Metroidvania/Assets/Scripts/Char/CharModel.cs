@@ -9,8 +9,8 @@ public class CharModel : MonoBehaviour {
 
     [SerializeField] private CharController controller;
     [SerializeField] private Animator animator;
-    [SerializeField] private CharParams _characterParams;
-    public CharParams characterParams { get => _characterParams; }
+    [SerializeField] private CharParams _charParams;
+    public CharParams charParams { get => _charParams; }
 
     // Body Parts
     public CharEnum.BodyPart obtainedBodyParts { get; private set; } = CharEnum.BodyPart.Head | CharEnum.BodyPart.Arms | CharEnum.BodyPart.Legs | CharEnum.BodyPart.Thrusters | CharEnum.BodyPart.Arrow;
@@ -466,7 +466,7 @@ public class CharModel : MonoBehaviour {
                         if (currentLocation == CharEnum.Location.Wall) {
                             ChangeFacingDirection (true);
                             var directionMultiplier = facingDirection == CharEnum.Direction.Right ? -1 : 1;
-                            transform.position = transform.position + new Vector3 (characterParams.repelFromWallDistByTurn, 0, 0) * directionMultiplier;
+                            transform.position = transform.position + new Vector3 (charParams.repelFromWallDistByTurn, 0, 0) * directionMultiplier;
 
                             StartFreeFall ();
                         } else {
@@ -602,7 +602,7 @@ public class CharModel : MonoBehaviour {
 
         var startTime = Time.time;
 
-        while (Time.time - startTime < characterParams.oneShotDashPeriod) {
+        while (Time.time - startTime < charParams.oneShotDashPeriod) {
             if (isJustTouchWall) {
                 break;
             }
@@ -617,7 +617,7 @@ public class CharModel : MonoBehaviour {
     private IEnumerator DashCoolDownCoroutine () {
         isDashCoolingDown = true;
 
-        yield return new WaitForSeconds (characterParams.dashCoolDownPeriod);
+        yield return new WaitForSeconds (charParams.dashCoolDownPeriod);
 
         isDashCoolingDown = false;
         dashCoolDownCoroutine = null;
@@ -628,7 +628,7 @@ public class CharModel : MonoBehaviour {
     #region Jump
 
     public float GetCurrentJumpInitSpeed () {
-        return isJumpCharging ? characterParams.chargeJumpInitSpeed : characterParams.normalJumpInitSpeed;
+        return isJumpCharging ? charParams.chargeJumpInitSpeed : charParams.normalJumpInitSpeed;
     }
 
     private bool CheckIsAllowJump () {
@@ -756,16 +756,16 @@ public class CharModel : MonoBehaviour {
 
         switch (hitType) {
             case CharEnum.HitType.Normal:
-                hitCoolDownPeriod = characterParams.hitCoolDownPeriod_Normal;
+                hitCoolDownPeriod = charParams.hitCoolDownPeriod_Normal;
                 break;
             case CharEnum.HitType.Charged:
-                hitCoolDownPeriod = characterParams.hitCoolDownPeriod_Charged;
+                hitCoolDownPeriod = charParams.hitCoolDownPeriod_Charged;
                 break;
             case CharEnum.HitType.Finishing:
-                hitCoolDownPeriod = characterParams.hitCoolDownPeriod_Finishing;
+                hitCoolDownPeriod = charParams.hitCoolDownPeriod_Finishing;
                 break;
             case CharEnum.HitType.Drop:
-                hitCoolDownPeriod = characterParams.hitCoolDownPeriod_Drop;
+                hitCoolDownPeriod = charParams.hitCoolDownPeriod_Drop;
                 break;
             default:
                 Log.PrintWarning ("Not yet set hit cool down period for HitType : " + hitType + " . Assume cool down period to be 0s");
@@ -814,13 +814,13 @@ public class CharModel : MonoBehaviour {
 
         switch (arrowType) {
             case CharEnum.ArrowType.Target:
-                arrowCoolDownPeriod = characterParams.arrowCoolDownPeriod_Target;
+                arrowCoolDownPeriod = charParams.arrowCoolDownPeriod_Target;
                 break;
             case CharEnum.ArrowType.Straight:
-                arrowCoolDownPeriod = characterParams.arrowCoolDownPeriod_Straight;
+                arrowCoolDownPeriod = charParams.arrowCoolDownPeriod_Straight;
                 break;
             case CharEnum.ArrowType.Triple:
-                arrowCoolDownPeriod = characterParams.arrowCoolDownPeriod_Triple;
+                arrowCoolDownPeriod = charParams.arrowCoolDownPeriod_Triple;
                 break;
             default:
                 Log.PrintWarning ("Not yet set arrow cool down period for ArrowType : " + arrowType + " . Assume cool down period to be 0s");
