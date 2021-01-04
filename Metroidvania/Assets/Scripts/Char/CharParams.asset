@@ -29,3 +29,9 @@ MonoBehaviour:
   _arrowCoolDownPeriod_Straight: 0.4
   _arrowCoolDownPeriod_Triple: 0.4
   _repelFromWallDistByTurn: 0.05
+  _groundTapCommand: 2
+  _groundHoldCommand: 2
+  _groundReleaseCommand: 2
+  _airTapCommand: 3
+  _airHoldCommand: 2
+  _airReleaseCommand: 3

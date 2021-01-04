@@ -5,15 +5,7 @@ using HIHIFramework.Core;
 using System;
 
 public class CharModel : MonoBehaviour {
-    // TODO : Set commandDict to empty
-    private Dictionary<CharEnum.CommandSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.CommandSituation, CharEnum.Command> {
-        { CharEnum.CommandSituation.GroundTap, CharEnum.Command.Jump },
-        { CharEnum.CommandSituation.GroundHold, CharEnum.Command.Jump },
-        { CharEnum.CommandSituation.GroundRelease, CharEnum.Command.Jump },
-        { CharEnum.CommandSituation.AirTap, CharEnum.Command.Arrow },
-        { CharEnum.CommandSituation.AirHold, CharEnum.Command.Dash },
-        { CharEnum.CommandSituation.AirRelease, CharEnum.Command.Dash }
-    };
+    private Dictionary<CharEnum.CommandSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.CommandSituation, CharEnum.Command> ();
 
     [SerializeField] private CharController controller;
     [SerializeField] private Animator animator;
@@ -202,6 +194,22 @@ public class CharModel : MonoBehaviour {
         if (situationToCommandDict.ContainsKey (situation)) {
             return situationToCommandDict[situation];
         } else {
+            // TODO : Dev only
+            switch (situation) {
+                case CharEnum.CommandSituation.GroundTap:
+                    return charParams.groundTapCommand;
+                case CharEnum.CommandSituation.GroundHold:
+                    return charParams.groundHoldCommand;
+                case CharEnum.CommandSituation.GroundRelease:
+                    return charParams.groundReleaseCommand;
+                case CharEnum.CommandSituation.AirTap:
+                    return charParams.airTapCommand;
+                case CharEnum.CommandSituation.AirHold:
+                    return charParams.airHoldCommand;
+                case CharEnum.CommandSituation.AirRelease:
+                    return charParams.airReleaseCommand;
+            }
+
             return null;
         }
     }

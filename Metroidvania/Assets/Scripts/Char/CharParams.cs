@@ -62,4 +62,24 @@ public class CharParams : ScriptableObject {
     [Header ("Turn")]
     [SerializeField] private float _repelFromWallDistByTurn;
     public float repelFromWallDistByTurn => _repelFromWallDistByTurn;
+
+    [Header ("Dev Only - Command")]
+    [SerializeField] private CharEnum.Command _groundTapCommand;
+    public CharEnum.Command groundTapCommand => _groundTapCommand;
+
+    [SerializeField] private CharEnum.Command _groundHoldCommand;
+    public CharEnum.Command groundHoldCommand => _groundHoldCommand;
+
+    [SerializeField] private CharEnum.Command _groundReleaseCommand;
+    public CharEnum.Command groundReleaseCommand => _groundReleaseCommand;
+
+    [SerializeField] private CharEnum.Command _airTapCommand;
+    public CharEnum.Command airTapCommand => _airTapCommand;
+
+    [SerializeField] private CharEnum.Command _airHoldCommand;
+    public CharEnum.Command airHoldCommand => _airHoldCommand;
+
+    [SerializeField] private CharEnum.Command _airReleaseCommand;
+    public CharEnum.Command airReleaseCommand => _airReleaseCommand;
+
 }
