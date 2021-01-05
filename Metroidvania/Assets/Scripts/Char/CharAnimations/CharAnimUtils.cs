@@ -30,6 +30,9 @@ public class CharAnimUtils : MonoBehaviour
     [SerializeField] private CharChargedHit _chargedHitTemplate;
     public CharChargedHit chargedHitTemplate => _chargedHitTemplate;
 
+    [SerializeField] private CharFinishingHit _finishingHitTemplate;
+    public CharFinishingHit finishingHitTemplate => _finishingHitTemplate;
+
     [Header ("RefPoint")]
     [SerializeField] private Transform _refPoint_GroundHit;
     public Transform refPoint_GroundHit => _refPoint_GroundHit;

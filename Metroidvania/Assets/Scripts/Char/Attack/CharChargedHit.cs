@@ -14,6 +14,7 @@ public class CharChargedHit : CharHitBase {
             var shape = ps.shape;
             shape.position = -shape.position;
             shape.rotation = -shape.rotation;
+
             velocity = -velocity;
         }
 

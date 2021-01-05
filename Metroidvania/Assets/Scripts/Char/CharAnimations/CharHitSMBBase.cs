@@ -23,6 +23,9 @@ public class CharHitSMBBase : CharSMBBase {
                 startPos = startHitRefPoint.position;
                 break;
             case CharEnum.HitType.Finishing:
+                clone = Instantiate (animUtils.finishingHitTemplate);
+                startPos = startHitRefPoint.position;
+                break;
             case CharEnum.HitType.Drop:
             default:
                 Log.PrintError ("currentHitType = " + animUtils.model.currentHitType + " . No implementation in CharHitSMBBase. Please check.");

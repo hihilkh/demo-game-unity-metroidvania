@@ -697,6 +697,8 @@ MonoBehaviour:
     type: 3}
   _chargedHitTemplate: {fileID: 5143845770374917409, guid: 80a2c83210a8f42c5b57918eb18ffa48,
     type: 3}
+  _finishingHitTemplate: {fileID: 6871684591903549134, guid: b51cfbc3ee1184cc0bd4bc4953e0c99a,
+    type: 3}
   _refPoint_GroundHit: {fileID: 848595903}
   _refPoint_SlideHit: {fileID: 1949254674}
 --- !u!1001 &718747363

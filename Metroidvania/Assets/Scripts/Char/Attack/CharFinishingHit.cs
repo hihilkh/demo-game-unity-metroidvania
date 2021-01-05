@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharNormalHit : CharHitBase {
+public class CharFinishingHit : CharHitBase {
     // TODO : Put to CharParams
     private float additionalSpeed = 1f;
 
@@ -11,8 +11,14 @@ public class CharNormalHit : CharHitBase {
 
         var velocity = charHorizontalSpeed + additionalSpeed;
         if (direction == CharEnum.Direction.Left) {
+            transform.eulerAngles = -transform.eulerAngles;
+
+            var shape = ps.shape;
+            shape.position = -shape.position;
+            shape.rotation = -shape.rotation;
+
             var psr = ps.GetComponent<ParticleSystemRenderer> ();
-            psr.flip = new Vector3 (1, 0, 0);
+            psr.flip = new Vector3 (0, 1, 0);
 
             velocity = -velocity;
         }
