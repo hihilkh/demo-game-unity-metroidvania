@@ -6,8 +6,8 @@ public class CharNormalHit : CharHitBase {
     // TODO : Put to CharParams
     private float additionalSpeed = 1f;
 
-    public override void StartAttack (Vector3 startWorldPos, CharEnum.Direction direction, float charHorizontalSpeed) {
-        transform.position = startWorldPos;
+    public override void StartAttack (Transform refPoint, CharEnum.Direction direction, float charHorizontalSpeed) {
+        transform.position = refPoint.position;
 
         var velocity = charHorizontalSpeed + additionalSpeed;
         if (direction == CharEnum.Direction.Left) {

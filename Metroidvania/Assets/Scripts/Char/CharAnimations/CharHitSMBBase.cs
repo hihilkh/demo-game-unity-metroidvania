@@ -1,37 +1,37 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
+﻿using HIHIFramework.Core;
 using UnityEngine;
 
 public class CharHitSMBBase : CharSMBBase {
-    protected virtual Transform startHitRefPoint => animUtils.refPoint_GroundHit;
+    protected CharHitBase hitClone;
+    protected virtual Transform generalHitRefPoint => animUtils.refPoint_GroundHit;
 
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        CharHitBase clone;
-        Vector3 startPos;
+        Transform refPoint;
 
         switch (animUtils.model.currentHitType) {
             case CharEnum.HitType.Normal:
-                clone = Instantiate (animUtils.normalHitTemplate);
-                startPos = startHitRefPoint.position;
+                hitClone = Instantiate (animUtils.normalHitTemplate);
+                refPoint = generalHitRefPoint;
                 break;
             case CharEnum.HitType.Charged:
-                clone = Instantiate (animUtils.chargedHitTemplate);
-                startPos = startHitRefPoint.position;
+                hitClone = Instantiate (animUtils.chargedHitTemplate);
+                refPoint = generalHitRefPoint;
                 break;
             case CharEnum.HitType.Finishing:
-                clone = Instantiate (animUtils.finishingHitTemplate);
-                startPos = startHitRefPoint.position;
+                hitClone = Instantiate (animUtils.finishingHitTemplate);
+                refPoint = generalHitRefPoint;
                 break;
             case CharEnum.HitType.Drop:
+                hitClone = Instantiate (animUtils.dropHitTemplate);
+                refPoint = animUtils.refPoint_DropHit;
+                break;
             default:
                 Log.PrintError ("currentHitType = " + animUtils.model.currentHitType + " . No implementation in CharHitSMBBase. Please check.");
                 return;
         }
 
-        clone.StartAttack (startPos, animUtils.model.facingDirection, animUtils.GetVelocityXByCurrentHorizontalSpeed (true));
+        hitClone.StartAttack (refPoint, animUtils.model.facingDirection, animUtils.GetVelocityXByCurrentHorizontalSpeed (true));
     }
 }

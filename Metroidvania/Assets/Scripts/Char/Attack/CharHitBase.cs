@@ -7,11 +7,15 @@ public abstract class CharHitBase : MonoBehaviour {
     [SerializeField] protected ParticleSystem ps;
     [SerializeField] protected Rigidbody2D rb;
 
-    public abstract void StartAttack (Vector3 startWorldPos, CharEnum.Direction direction, float charHorizontalSpeed);
+    public abstract void StartAttack (Transform refPoint, CharEnum.Direction direction, float charHorizontalSpeed);
 
     protected IEnumerator PSNotAliveDestroyCoroutine () {
         yield return new WaitUntil (() => !ps.IsAlive ());
 
+        DestroySelf ();
+    }
+
+    public virtual void DestroySelf () {
         if (gameObject != null) {
             Destroy (gameObject);
         }

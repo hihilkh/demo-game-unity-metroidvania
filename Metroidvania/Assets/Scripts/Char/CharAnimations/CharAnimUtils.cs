@@ -33,12 +33,18 @@ public class CharAnimUtils : MonoBehaviour
     [SerializeField] private CharFinishingHit _finishingHitTemplate;
     public CharFinishingHit finishingHitTemplate => _finishingHitTemplate;
 
+    [SerializeField] private CharDropHit _dropHitTemplate;
+    public CharDropHit dropHitTemplate => _dropHitTemplate;
+
     [Header ("RefPoint")]
     [SerializeField] private Transform _refPoint_GroundHit;
     public Transform refPoint_GroundHit => _refPoint_GroundHit;
 
     [SerializeField] private Transform _refPoint_SlideHit;
     public Transform refPoint_SlideHit => _refPoint_SlideHit;
+
+    [SerializeField] private Transform _refPoint_DropHit;
+    public Transform refPoint_DropHit => _refPoint_DropHit;
 
     private void Awake () {
         var animator = GetComponent<Animator> ();
