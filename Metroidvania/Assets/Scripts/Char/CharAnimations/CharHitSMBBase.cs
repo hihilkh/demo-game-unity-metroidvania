@@ -10,7 +10,25 @@ public class CharHitSMBBase : CharSMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        var clone = GameObject.Instantiate<CharNormalHit> (animUtils.normalHitTemplate);
-        clone.StartAttack (startHitRefPoint.position, animUtils.model.facingDirection, animUtils.GetVelocityXByCurrentHorizontalSpeed(true));
+        CharHitBase clone;
+        Vector3 startPos;
+
+        switch (animUtils.model.currentHitType) {
+            case CharEnum.HitType.Normal:
+                clone = Instantiate (animUtils.normalHitTemplate);
+                startPos = startHitRefPoint.position;
+                break;
+            case CharEnum.HitType.Charged:
+                clone = Instantiate (animUtils.chargedHitTemplate);
+                startPos = startHitRefPoint.position;
+                break;
+            case CharEnum.HitType.Finishing:
+            case CharEnum.HitType.Drop:
+            default:
+                Log.PrintError ("currentHitType = " + animUtils.model.currentHitType + " . No implementation in CharHitSMBBase. Please check.");
+                return;
+        }
+
+        clone.StartAttack (startPos, animUtils.model.facingDirection, animUtils.GetVelocityXByCurrentHorizontalSpeed (true));
     }
 }

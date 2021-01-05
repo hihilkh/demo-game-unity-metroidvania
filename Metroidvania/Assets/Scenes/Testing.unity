@@ -695,6 +695,8 @@ MonoBehaviour:
   _rb: {fileID: 1041434098}
   _normalHitTemplate: {fileID: 7143613927472316200, guid: ad821f23cd0ff4300b8560815d9be5d4,
     type: 3}
+  _chargedHitTemplate: {fileID: 5143845770374917409, guid: 80a2c83210a8f42c5b57918eb18ffa48,
+    type: 3}
   _refPoint_GroundHit: {fileID: 848595903}
   _refPoint_SlideHit: {fileID: 1949254674}
 --- !u!1001 &718747363

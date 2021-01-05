@@ -23,8 +23,12 @@ public class CharAnimUtils : MonoBehaviour
     [SerializeField] private Rigidbody2D _rb;
     public Rigidbody2D rb => _rb;
 
+    [Header ("Hit Template")]
     [SerializeField] private CharNormalHit _normalHitTemplate;
     public CharNormalHit normalHitTemplate => _normalHitTemplate;
+
+    [SerializeField] private CharChargedHit _chargedHitTemplate;
+    public CharChargedHit chargedHitTemplate => _chargedHitTemplate;
 
     [Header ("RefPoint")]
     [SerializeField] private Transform _refPoint_GroundHit;

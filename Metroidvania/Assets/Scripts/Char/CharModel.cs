@@ -21,6 +21,8 @@ public class CharModel : MonoBehaviour {
     public CharEnum.Direction movingDirection { get; private set; }
     public CharEnum.HorizontalSpeed currentHorizontalSpeed { get; private set; }
     public CharEnum.Location currentLocation { get; private set; }
+    public CharEnum.HitType? currentHitType { get; private set; }
+    public CharEnum.ArrowType? currentArrowType { get; private set; }
     private bool isAllowMove;
     private bool isAllowAirJump;
 
@@ -83,6 +85,8 @@ public class CharModel : MonoBehaviour {
         movingDirection = facingDirection;
         SetAllowMove (true);
         currentLocation = CharEnum.Location.Ground;
+        currentHitType = null;
+        currentArrowType = null;
         isAllowAirJump = true;
 
         isJumpCharging = false;
@@ -697,6 +701,7 @@ public class CharModel : MonoBehaviour {
         }
 
         Log.Print ("Hit : HitType = " + hitType);
+        currentHitType = hitType;
 
         switch (hitType) {
             case CharEnum.HitType.Normal:
@@ -774,6 +779,7 @@ public class CharModel : MonoBehaviour {
 
         yield return new WaitForSeconds (hitCoolDownPeriod);
 
+        currentHitType = null;
         isAttackCoolingDown = false;
         attackCoolDownCoroutine = null;
     }
@@ -794,6 +800,7 @@ public class CharModel : MonoBehaviour {
         }
 
         Log.Print ("Shoot arrow : ArrowType = " + arrowType);
+        currentArrowType = arrowType;
 
         switch (arrowType) {
             case CharEnum.ArrowType.Target:
@@ -829,8 +836,8 @@ public class CharModel : MonoBehaviour {
 
         yield return new WaitForSeconds (arrowCoolDownPeriod);
 
+        currentArrowType = null;
         isAttackCoolingDown = false;
-
         attackCoolDownCoroutine = null;
     }
     #endregion
