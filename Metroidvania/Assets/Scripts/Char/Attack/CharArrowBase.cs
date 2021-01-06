@@ -12,8 +12,6 @@ public abstract class CharArrowBase : MonoBehaviour
     protected bool hasHitAnything = false;
     private const float VanishPeriod = 1f;
 
-    public abstract void StartAttack (Transform refPoint, CharEnum.Direction facingDirection, Transform target);
-
     protected void SetInitPos (Vector3 pos) {
         // keep posZ so that it render on top
         transform.position = new Vector3 (pos.x, pos.y, transform.position.z);

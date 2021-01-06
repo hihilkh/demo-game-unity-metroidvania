@@ -703,6 +703,10 @@ MonoBehaviour:
     type: 3}
   _targetArrowTemplate: {fileID: 858284693220932100, guid: e9ab7e6cb5abb4b119fa6f803d34ffa5,
     type: 3}
+  _straightArrowTemplate: {fileID: 3793835525634486067, guid: 55586ef83aa3f4aae8e2d5bb9844899b,
+    type: 3}
+  _tripleArrowTemplate: {fileID: 1446912141832703017, guid: b1dc5a0341a6f4d37a98302788c4018f,
+    type: 3}
   _refPoint_GeneralHit: {fileID: 848595903}
   _refPoint_SlideHit: {fileID: 1949254674}
   _refPoint_DropHit: {fileID: 1115106670}

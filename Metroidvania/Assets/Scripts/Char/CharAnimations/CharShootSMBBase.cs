@@ -9,25 +9,32 @@ public class CharShootSMBBase : CharSMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        CharArrowBase arrowClone;
         Transform target = null;
 
         switch (animUtils.model.currentArrowType) {
             case CharEnum.ArrowType.Target:
-                arrowClone = Instantiate (animUtils.targetArrowTemplate);
+                var targetArrowClone = Instantiate (animUtils.targetArrowTemplate);
                 target = animUtils.model.SearchShootTarget ();
+                targetArrowClone.StartAttack (shootRefPoint, animUtils.model.facingDirection, target);
                 break;
             case CharEnum.ArrowType.Straight:
-                arrowClone = Instantiate (animUtils.targetArrowTemplate);
+                var straightArrowClone = Instantiate (animUtils.straightArrowTemplate);
+                straightArrowClone.StartAttack (shootRefPoint, animUtils.model.facingDirection);
                 break;
             case CharEnum.ArrowType.Triple:
-                arrowClone = Instantiate (animUtils.targetArrowTemplate);
+                if (animUtils.model.charParams.tripleArrowShootingAngleList == null || animUtils.model.charParams.tripleArrowShootingAngleList.Count <= 0) {
+                    Log.PrintError ("tripleArrowShootingAngleList has not yet set. Please check.");
+                    return;
+                }
+
+                foreach (var angle in animUtils.model.charParams.tripleArrowShootingAngleList) {
+                    var tripleArrowClone = Instantiate (animUtils.tripleArrowTemplate);
+                    tripleArrowClone.StartAttack (shootRefPoint, animUtils.model.facingDirection, angle);
+                }
                 break;
             default:
                 Log.PrintError ("currentArrowType = " + animUtils.model.currentHitType + " . No implementation in CharShootSMBBase. Please check.");
                 return;
         }
-
-        arrowClone.StartAttack (shootRefPoint, animUtils.model.facingDirection, target);
     }
 }

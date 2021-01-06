@@ -28,14 +28,18 @@ MonoBehaviour:
   _arrowCoolDownPeriod_Target: 0.4
   _arrowCoolDownPeriod_Straight: 0.4
   _arrowCoolDownPeriod_Triple: 0.4
-  _arrowInitialSpeed_Target: 10
-  _arrowInitialSpeed_Straight: 10
-  _arrowInitialSpeed_Triple: 10
+  _arrowInitialSpeed_Target: 15
+  _arrowInitialSpeed_Straight: 20
+  _arrowInitialSpeed_Triple: 15
   _targetArrowMaxElevationAngle: 60
+  _tripleArrowShootingAngleList:
+  - 30
+  - 40
+  - 50
   _repelFromWallDistByTurn: 0.05
-  _groundTapCommand: 2
-  _groundHoldCommand: 2
-  _groundReleaseCommand: 2
-  _airTapCommand: 3
-  _airHoldCommand: 2
-  _airReleaseCommand: 3
+  _groundTapCommand: 1
+  _groundHoldCommand: 1
+  _groundReleaseCommand: 1
+  _airTapCommand: 4
+  _airHoldCommand: 4
+  _airReleaseCommand: 4

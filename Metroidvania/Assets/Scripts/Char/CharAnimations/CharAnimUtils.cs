@@ -40,6 +40,12 @@ public class CharAnimUtils : MonoBehaviour
     [SerializeField] private CharTargetArrow _targetArrowTemplate;
     public CharTargetArrow targetArrowTemplate => _targetArrowTemplate;
 
+    [SerializeField] private CharStraightArrow _straightArrowTemplate;
+    public CharStraightArrow straightArrowTemplate => _straightArrowTemplate;
+
+    [SerializeField] private CharTripleArrow _tripleArrowTemplate;
+    public CharTripleArrow tripleArrowTemplate => _tripleArrowTemplate;
+
     [Header ("RefPoint")]
     [SerializeField] private Transform _refPoint_GeneralHit;
     public Transform refPoint_GeneralHit => _refPoint_GeneralHit;

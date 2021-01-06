@@ -4,21 +4,19 @@ using HIHIFramework.Core;
 using UnityEngine;
 
 public class CharTargetArrow : CharArrowBase {
-    private const float DefaultImpulseAngle = Mathf.PI / 6; // In radian
+    private const float DefaultImpulseAngleInRadian = Mathf.PI / 6;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (!hasHitAnything) {
-            UpdateArrowPointingDirection ();
-        }
-    }
-
-    public override void StartAttack (Transform refPoint, CharEnum.Direction facingDirection, Transform target) {
+    public void StartAttack (Transform refPoint, CharEnum.Direction facingDirection, Transform target) {
         SetInitPos (refPoint.position);
 
         var impulse = CalculateInitialImpulse (facingDirection, target);
         rb.AddForce (impulse, ForceMode2D.Impulse);
+    }
+
+    private void Update () {
+        if (!hasHitAnything) {
+            UpdateArrowPointingDirection ();
+        }
     }
 
     #region Calculation
@@ -117,9 +115,9 @@ public class CharTargetArrow : CharArrowBase {
 
     private float GetDefaultImpulseAngle (CharEnum.Direction facingDirection) {
         if (facingDirection == CharEnum.Direction.Right) {
-            return DefaultImpulseAngle;
+            return DefaultImpulseAngleInRadian;
         } else {
-            return Mathf.PI - DefaultImpulseAngle;
+            return Mathf.PI - DefaultImpulseAngleInRadian;
         }
     }
 

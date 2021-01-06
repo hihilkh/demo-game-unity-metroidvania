@@ -74,6 +74,12 @@ public class CharParams : ScriptableObject {
     /// </summary>
     public float targetArrowMaxElevationAngle => _targetArrowMaxElevationAngle;
 
+    [SerializeField] private List<float> _tripleArrowShootingAngleList;
+    /// <summary>
+    /// In degree
+    /// </summary>
+    public List<float> tripleArrowShootingAngleList => _tripleArrowShootingAngleList;
+
     [Header ("Turn")]
     [SerializeField] private float _repelFromWallDistByTurn;
     public float repelFromWallDistByTurn => _repelFromWallDistByTurn;
