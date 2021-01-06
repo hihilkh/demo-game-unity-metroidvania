@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1679123366757433512}
   m_Layer: 0
   m_Name: DropHit
-  m_TagString: Untagged
+  m_TagString: Attack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9073589436541787045}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -668,7 +668,7 @@ ParticleSystem:
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
     donutRadius: 0.2
-    m_Position: {x: 0, y: 0, z: -1}
+    m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0}
     m_Scale: {x: 1, y: 1, z: 1}
     placementMode: 0
@@ -4834,5 +4834,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca1c247728f9e44cabb39bf71c3b6d10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ps: {fileID: 9073589436541787042}
+  charParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
   rb: {fileID: 9073589436541787055}
+  ps: {fileID: 9073589436541787042}

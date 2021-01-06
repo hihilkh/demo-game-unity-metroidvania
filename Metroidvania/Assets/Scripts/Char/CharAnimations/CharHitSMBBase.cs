@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CharHitSMBBase : CharSMBBase {
     protected CharHitBase hitClone;
-    protected virtual Transform generalHitRefPoint => animUtils.refPoint_GroundHit;
+    protected virtual Transform generalHitRefPoint => animUtils.refPoint_GeneralHit;
 
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);

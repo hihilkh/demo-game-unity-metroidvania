@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 6871684591903549134}
   m_Layer: 0
   m_Name: FinishingHit
-  m_TagString: Untagged
+  m_TagString: Attack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3466689531986376997}
   m_LocalRotation: {x: 0, y: 0, z: -0.17364825, w: 0.9848078}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -668,7 +668,7 @@ ParticleSystem:
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
     donutRadius: 0.2
-    m_Position: {x: -1.5, y: 0, z: -1}
+    m_Position: {x: -1.5, y: 0, z: 0}
     m_Rotation: {x: 0, y: 90, z: 0}
     m_Scale: {x: 1, y: 1, z: 1}
     placementMode: 0
@@ -4806,5 +4806,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebf934714b62b44f383e61929091b7a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ps: {fileID: 3466689531986376994}
+  charParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
   rb: {fileID: 3466689531986377007}
+  ps: {fileID: 3466689531986376994}

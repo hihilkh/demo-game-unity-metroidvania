@@ -2,5 +2,5 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharGroundHitSMB : CharHitSMBBase {
+public class CharGeneralHitSMB : CharHitSMBBase {
 }

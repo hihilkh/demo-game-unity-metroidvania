@@ -7,8 +7,10 @@ public static partial class GameVariable {
 
     #region Tag
 
+    public const string PlayerTag = "Player";
     public const string GroundTag = "Ground";
     public const string WallTag = "Wall";
+    public const string AttackTag = "Attack";
 
     #endregion
 

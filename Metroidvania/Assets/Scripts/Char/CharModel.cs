@@ -707,7 +707,6 @@ public class CharModel : MonoBehaviour {
             case CharEnum.HitType.Normal:
             case CharEnum.HitType.Charged:
             case CharEnum.HitType.Finishing:
-                // TODO : Different HitType
                 animator.SetTrigger (CharAnimConstant.HitTriggerName);
                 attackCoolDownCoroutine = StartCoroutine (HitCoolDownCoroutine (hitType));
                 break;

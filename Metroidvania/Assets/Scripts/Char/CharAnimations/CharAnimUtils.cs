@@ -37,8 +37,8 @@ public class CharAnimUtils : MonoBehaviour
     public CharDropHit dropHitTemplate => _dropHitTemplate;
 
     [Header ("RefPoint")]
-    [SerializeField] private Transform _refPoint_GroundHit;
-    public Transform refPoint_GroundHit => _refPoint_GroundHit;
+    [SerializeField] private Transform _refPoint_GeneralHit;
+    public Transform refPoint_GeneralHit => _refPoint_GeneralHit;
 
     [SerializeField] private Transform _refPoint_SlideHit;
     public Transform refPoint_SlideHit => _refPoint_SlideHit;
