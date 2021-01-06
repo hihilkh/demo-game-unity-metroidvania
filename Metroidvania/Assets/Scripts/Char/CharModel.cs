@@ -805,8 +805,6 @@ public class CharModel : MonoBehaviour {
             case CharEnum.ArrowType.Target:
             case CharEnum.ArrowType.Straight:
             case CharEnum.ArrowType.Triple:
-                Log.PrintWarning ("Arrow!!!    " + arrowType);
-                // TODO : Different ArrowType
                 animator.SetTrigger (CharAnimConstant.ShootTriggerName);
                 attackCoolDownCoroutine = StartCoroutine (ArrowCoolDownCoroutine (arrowType));
                 break;
@@ -839,6 +837,12 @@ public class CharModel : MonoBehaviour {
         isAttackCoolingDown = false;
         attackCoolDownCoroutine = null;
     }
+
+    public Transform SearchShootTarget () {
+        // TODO
+        return null;
+    }
+
     #endregion
 
     #region Change Direction

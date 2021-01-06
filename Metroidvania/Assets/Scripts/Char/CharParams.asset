@@ -28,6 +28,10 @@ MonoBehaviour:
   _arrowCoolDownPeriod_Target: 0.4
   _arrowCoolDownPeriod_Straight: 0.4
   _arrowCoolDownPeriod_Triple: 0.4
+  _arrowInitialSpeed_Target: 10
+  _arrowInitialSpeed_Straight: 10
+  _arrowInitialSpeed_Triple: 10
+  _targetArrowMaxElevationAngle: 60
   _repelFromWallDistByTurn: 0.05
   _groundTapCommand: 2
   _groundHoldCommand: 2

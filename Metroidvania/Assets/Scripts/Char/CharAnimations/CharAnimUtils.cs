@@ -36,6 +36,10 @@ public class CharAnimUtils : MonoBehaviour
     [SerializeField] private CharDropHit _dropHitTemplate;
     public CharDropHit dropHitTemplate => _dropHitTemplate;
 
+    [Header ("Arrow Template")]
+    [SerializeField] private CharTargetArrow _targetArrowTemplate;
+    public CharTargetArrow targetArrowTemplate => _targetArrowTemplate;
+
     [Header ("RefPoint")]
     [SerializeField] private Transform _refPoint_GeneralHit;
     public Transform refPoint_GeneralHit => _refPoint_GeneralHit;
@@ -45,6 +49,9 @@ public class CharAnimUtils : MonoBehaviour
 
     [SerializeField] private Transform _refPoint_DropHit;
     public Transform refPoint_DropHit => _refPoint_DropHit;
+
+    [SerializeField] private Transform _refPoint_GeneralShoot;
+    public Transform refPoint_GeneralShoot => _refPoint_GeneralShoot;
 
     private void Awake () {
         var animator = GetComponent<Animator> ();

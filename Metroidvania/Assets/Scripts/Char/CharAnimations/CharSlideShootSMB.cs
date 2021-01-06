@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharSlideShootSMB : CharShootSMB {
+public class CharSlideShootSMB : CharGeneralShootSMB {
     public override void OnStateExit (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateExit (animator, stateInfo, layerIndex);
 

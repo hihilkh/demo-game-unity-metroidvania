@@ -59,6 +59,21 @@ public class CharParams : ScriptableObject {
     [SerializeField] private float _arrowCoolDownPeriod_Triple;
     public float arrowCoolDownPeriod_Triple => _arrowCoolDownPeriod_Triple;
 
+    [SerializeField] private float _arrowInitialSpeed_Target;
+    public float arrowInitialSpeed_Target => _arrowInitialSpeed_Target;
+
+    [SerializeField] private float _arrowInitialSpeed_Straight;
+    public float arrowInitialSpeed_Straight => _arrowInitialSpeed_Straight;
+
+    [SerializeField] private float _arrowInitialSpeed_Triple;
+    public float arrowInitialSpeed_Triple => _arrowInitialSpeed_Triple;
+
+    [SerializeField] private float _targetArrowMaxElevationAngle;
+    /// <summary>
+    /// In degree
+    /// </summary>
+    public float targetArrowMaxElevationAngle => _targetArrowMaxElevationAngle;
+
     [Header ("Turn")]
     [SerializeField] private float _repelFromWallDistByTurn;
     public float repelFromWallDistByTurn => _repelFromWallDistByTurn;

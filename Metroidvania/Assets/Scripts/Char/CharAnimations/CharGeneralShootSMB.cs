@@ -2,6 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharShootSMB : CharSMBBase {
+public class CharGeneralShootSMB : CharShootSMBBase {
 
 }
