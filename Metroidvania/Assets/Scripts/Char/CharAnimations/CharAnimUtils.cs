@@ -59,6 +59,9 @@ public class CharAnimUtils : MonoBehaviour
     [SerializeField] private Transform _refPoint_GeneralShoot;
     public Transform refPoint_GeneralShoot => _refPoint_GeneralShoot;
 
+    [SerializeField] private Transform _refPoint_SlideShoot;
+    public Transform refPoint_SlideShoot => _refPoint_SlideShoot;
+
     private void Awake () {
         var animator = GetComponent<Animator> ();
 
