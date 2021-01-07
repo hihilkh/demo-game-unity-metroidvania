@@ -10,7 +10,7 @@ namespace HIHIFramework.Asset {
 
         public static string GetIOTempZipFilePath () {
             var ioTempFolderPath = Path.Combine (Application.persistentDataPath, FrameworkVariable.IOTempFolderName);
-            var timestampMS = GameUtils.ConvertDateTimeToTimestampMS (DateTime.Now);
+            var timestampMS = FrameworkUtils.ConvertDateTimeToTimestampMS (DateTime.Now);
 
             return Path.Combine (ioTempFolderPath, timestampMS + ".zip");
         }
@@ -61,7 +61,7 @@ namespace HIHIFramework.Asset {
                 return null;
             }
 
-            return GameUtils.StringReplace (FrameworkVariable.AssetVersionKey, folderName, fileName);
+            return FrameworkUtils.StringReplace (FrameworkVariable.AssetVersionKey, folderName, fileName);
         }
 
         #endregion

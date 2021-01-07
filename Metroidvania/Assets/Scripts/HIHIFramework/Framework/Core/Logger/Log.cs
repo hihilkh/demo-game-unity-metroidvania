@@ -67,7 +67,7 @@ namespace HIHIFramework.Core {
                 return false;
             }
 
-            if (!GameVariable.IsLogForReleaseBuild && GameUtils.GetIsReleaseBuild ()) {
+            if (!GameVariable.IsLogForReleaseBuild && FrameworkUtils.GetIsReleaseBuild ()) {
                 return false;
             }
 

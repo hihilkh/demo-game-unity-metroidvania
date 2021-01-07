@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using UnityEngine;
 
 namespace HIHIFramework.Core {
-    public class GameUtils : Singleton<GameUtils> {
+    public class FrameworkUtils : Singleton<FrameworkUtils> {
 
         private static bool IsGameSettingsInitialized = false;
         #region Game Initialization
@@ -23,8 +23,12 @@ namespace HIHIFramework.Core {
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = GameVariable.TargetFrameRate;
 
+            Action<bool> onLangManagerInitFinished = (isSuccess) => {
+                GameUtils.InitGameSettings (onFinished);
+            };
+
             // LangManager
-            LangManager.Init (onFinished);
+            LangManager.Init (onLangManagerInitFinished);
         }
 
         [RuntimeInitializeOnLoadMethod]

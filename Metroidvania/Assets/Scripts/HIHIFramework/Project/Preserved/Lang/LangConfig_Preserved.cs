@@ -48,7 +48,7 @@ public static partial class LangConfig {
     }
 
     /// <summary>
-    /// Get the localization file name (without extension) of corresponding LangType
+    /// Get the localization file name (with extension) of corresponding LangType
     /// </summary>
     public static string GetLocalizationFileName (LangType langType) {
         var langCode = GetLangCode (langType);

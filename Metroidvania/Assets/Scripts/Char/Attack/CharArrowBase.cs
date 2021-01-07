@@ -23,7 +23,7 @@ public abstract class CharArrowBase : MonoBehaviour
 
     private void Hit (Transform target) {
         hasHitAnything = true;
-        GameUtils.InsertChildrenToParent (target, gameObject);
+        FrameworkUtils.InsertChildrenToParent (target, gameObject);
         rb.bodyType = RigidbodyType2D.Kinematic;
         rb.velocity = Vector2.zero;
 

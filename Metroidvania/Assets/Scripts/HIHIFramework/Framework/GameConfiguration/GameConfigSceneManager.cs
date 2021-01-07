@@ -33,7 +33,7 @@ namespace HIHIFramework.GameConfiguration {
         private const string StringConfigDisplayValue = "({0}) {1}";    // {0} : config set name, {1} : value
 
         void Awake () {
-            var isUseProductionConfig = GameUtils.GetIsReleaseBuild () && !GameVariable.IsShowGameConfigSceneInReleaseBuild;
+            var isUseProductionConfig = FrameworkUtils.GetIsReleaseBuild () && !GameVariable.IsShowGameConfigSceneInReleaseBuild;
             Log.PrintDebug ("isUseProductionConfig :: " + isUseProductionConfig);
 
             if (isUseProductionConfig) {
@@ -46,8 +46,8 @@ namespace HIHIFramework.GameConfiguration {
                 if (isUseProductionConfig) {
                     GoIntoGame (true);
                 } else {
-                    projectVersionText.text = GameUtils.StringReplace (GameVersionStringFormat, Application.version);
-                    frameworkVersionText.text = GameUtils.StringReplace (FrameworkVersionStringFormat, FrameworkVariable.FrameworkVersion);
+                    projectVersionText.text = FrameworkUtils.StringReplace (GameVersionStringFormat, Application.version);
+                    frameworkVersionText.text = FrameworkUtils.StringReplace (FrameworkVersionStringFormat, FrameworkVariable.FrameworkVersion);
 
                     allDropdowns = new List<Dropdown> ();
                     dropdownDictionary = new Dictionary<string, Dropdown> ();
@@ -62,7 +62,7 @@ namespace HIHIFramework.GameConfiguration {
                 }
             };
 
-            GameUtils.InitGameSettings (onInitGameSettingsFinished);
+            FrameworkUtils.InitGameSettings (onInitGameSettingsFinished);
         }
 
         private void OnDestroy () {
@@ -149,7 +149,7 @@ namespace HIHIFramework.GameConfiguration {
                 case GameConfigFrameworkEnum.GameConfigType.String:
                     for (var i = 0; i < allConfigSets.Count; i++) {
                         var configSetName = allConfigSets[i].GetFieldValue (configSetNameSearchKey).ToString ();
-                        var displayString = new Dropdown.OptionData (GameUtils.StringReplace (StringConfigDisplayValue, configSetName, allConfigSets[i].GetFieldValue (fieldName).ToString ()));
+                        var displayString = new Dropdown.OptionData (FrameworkUtils.StringReplace (StringConfigDisplayValue, configSetName, allConfigSets[i].GetFieldValue (fieldName).ToString ()));
                         dropdownOptions.Add (displayString);
                     }
                     break;

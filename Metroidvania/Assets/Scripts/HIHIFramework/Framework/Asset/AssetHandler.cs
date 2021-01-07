@@ -12,7 +12,17 @@ namespace HIHIFramework.Asset {
         #region Check Assets Update
 
         /// <param name="onFinished">bool : isSuccess</param>
-        public void CheckAndUpdateStreamingAssets (AssetEnum.AssetType type, string fileName, bool isNeedUnzip, Action<bool> onFinished = null) {
+        public void CheckAndUpdateStreamingAssets (AssetEnum.AssetType type, Action<bool> onFinished = null) {
+            var fileNameList = AssetMapping.GetPracticalStreamingAssetsFileNames (type);
+            if (fileNameList == null) {
+                onFinished?.Invoke (false);
+                return;
+            }
+
+            CheckAndUpdateStreamingAssetsRecursive (type, fileNameList, onFinished);
+        }
+
+        private void CheckAndUpdateStreamingAssets (AssetEnum.AssetType type, string fileName, bool isNeedUnzip, Action<bool> onFinished = null) {
             Action<bool, int> onCheckFinished = (isNeedUpdate, versionToUpdate) => {
                 if (isNeedUpdate) {
                     UpdateStreamingAssets (type, fileName, isNeedUnzip, versionToUpdate, onFinished);
@@ -24,6 +34,26 @@ namespace HIHIFramework.Asset {
             CheckIsNeedUpdateStreamingAssets (type, fileName, onCheckFinished);
         }
 
+        private void CheckAndUpdateStreamingAssetsRecursive (AssetEnum.AssetType type, List<string> fileNameList, Action<bool> onFinished = null) {
+            if (fileNameList.Count <= 0) {
+                onFinished?.Invoke (true);
+                return;
+            }
+
+            Action<bool> onOneFinished = (isSuccess) => {
+                if (isSuccess) {
+                    fileNameList.RemoveAt (0);
+                    CheckAndUpdateStreamingAssetsRecursive (type, fileNameList, onFinished);
+                } else {
+                    Log.PrintError ("Check and update streaming assets failed. AssetType : " + type + " , fileName : " + fileNameList[0]);
+                    onFinished?.Invoke (false);
+                }
+            };
+
+            var fileName = fileNameList[0];
+            var isNeedUnzip = Path.GetExtension (fileName) == ".zip";
+            CheckAndUpdateStreamingAssets (type, fileName, isNeedUnzip, onOneFinished);
+        }
         #endregion
 
         #region Asset Files Update
@@ -44,12 +74,12 @@ namespace HIHIFramework.Asset {
                         if (isCorrect) {
                             if (isNeedUnzip) {
                                 var destFolder = Path.GetDirectoryName (destPath);
-                                GameUtils.Unzip (copyDestPath, destFolder);
+                                FrameworkUtils.Unzip (copyDestPath, destFolder);
                             }
 
                             SetCurrentAssetVersion (type, fileName, version);
                         } else {
-                            GameUtils.DeleteFile (copyDestPath);
+                            FrameworkUtils.DeleteFile (copyDestPath);
 
                             // If isNeedUnzip = false, that means the file with wrong checksum has already overridden original file. The asset version should also be overridden.
                             if (!isNeedUnzip) {
@@ -62,7 +92,7 @@ namespace HIHIFramework.Asset {
 
                     CheckIsChecksumCorrect (type, fileName, copyDestPath, onCheckChecksumFinished);
                 } else {
-                    GameUtils.DeleteFile (copyDestPath);
+                    FrameworkUtils.DeleteFile (copyDestPath);
                     ClearCurrentAssetVersion (type, fileName);
                     onFinished?.Invoke (false);
                 }
@@ -292,7 +322,7 @@ namespace HIHIFramework.Asset {
         private void CheckIsChecksumCorrect (AssetEnum.AssetType type, string fileName, string copiedFilePath, Action<bool> onFinished) {
             Log.Print ("Start checking copied file checksum. AssetType : " + type + " , fileName : " + fileName);
             Action<string> onReadChecksumFinished = (streamingAssetsChecksum) => {
-                var copiedFileChecksum = GameUtils.CalculateMD5 (copiedFilePath);
+                var copiedFileChecksum = FrameworkUtils.CalculateMD5 (copiedFilePath);
 
                 Log.PrintDebug ("streamingAssetsChecksum : " + streamingAssetsChecksum + " , copiedFileChecksum : " + copiedFileChecksum + " . AssetType : " + type + " , fileName : " + fileName);
 

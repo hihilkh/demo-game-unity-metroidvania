@@ -29,7 +29,7 @@ public class SelectMissionItem : MonoBehaviour {
 
         detailsList = new List<LocalizedTextDetails> ();
         detailsList.Add (new LocalizedTextDetails (missionNameText, details.displayNameKey));
-        detailsList.Add (new LocalizedTextDetails (progressText, GameUtils.GetProgressPercentStr (GetMissionProgress (details, progress)), false));
+        detailsList.Add (new LocalizedTextDetails (progressText, FrameworkUtils.GetProgressPercentStr (GetMissionProgress (details, progress)), false));
         OnLangChanged ();
 
         LangManager.LangChangedEvent += OnLangChanged;

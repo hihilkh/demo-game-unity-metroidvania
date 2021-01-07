@@ -8,7 +8,7 @@ public class MainMenuSceneUIManager : MonoBehaviour {
 
     public void SetSelectMissionItems (List<SelectMissionItem> selectMissionItemList) {
         if (selectMissionItemList != null && selectMissionItemList.Count > 0) {
-            GameUtils.InsertChildrenToParent<SelectMissionItem> (selectMissionItemContainer, selectMissionItemList, true, -1, false);
+            FrameworkUtils.InsertChildrenToParent<SelectMissionItem> (selectMissionItemContainer, selectMissionItemList, true, -1, false);
         }
     }
 }

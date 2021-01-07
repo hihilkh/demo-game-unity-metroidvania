@@ -58,9 +58,11 @@ namespace HIHIFramework.Lang {
                         IsInitialized = true;
                         onFinished?.Invoke (true);
                     } else {
+                        Log.PrintError ("LangManager init failed. Please check.");
                         onFinished?.Invoke (false);
                     }
                 } else {
+                    Log.PrintError ("LangManager init failed. Please check.");
                     onFinished?.Invoke (false);
                 }
             };
@@ -69,14 +71,6 @@ namespace HIHIFramework.Lang {
 
         private static void InitStreamingAssets (Action<bool> onFinished = null) {
             Log.Print ("Start init language streaming assets.");
-            var fileNameList = new List<string> ();
-
-            foreach (LangType langType in Enum.GetValues (typeof (LangType))) {
-                var fileName = LangConfig.GetLocalizationFileName (langType);
-                if (!string.IsNullOrEmpty (fileName)) {
-                    fileNameList.Add (fileName);
-                }
-            }
 
             Action<bool> onCopyFinished = (isSuccess) => {
                 if (isSuccess) {
@@ -86,26 +80,7 @@ namespace HIHIFramework.Lang {
                 onFinished?.Invoke (isSuccess);
             };
 
-            CopySreamingAssetsFilesRecursive (fileNameList, onCopyFinished);
-        }
-
-        private static void CopySreamingAssetsFilesRecursive (List<string> fileNameList, Action<bool> onFinished = null) {
-            if (fileNameList.Count <= 0) {
-                onFinished?.Invoke (true);
-                return;
-            }
-
-            Action<bool> onCopyOneFileFinished = (isSuccess) => {
-                if (isSuccess) {
-                    fileNameList.RemoveAt (0);
-                    CopySreamingAssetsFilesRecursive (fileNameList, onFinished);
-                } else {
-                    Log.PrintError ("Update streaming assets failed. AssetType : " + AssetEnum.AssetType.Localization + " , fileName : " + fileNameList[0]);
-                    onFinished?.Invoke (false);
-                }
-            };
-
-            AssetHandler.Instance.CheckAndUpdateStreamingAssets (AssetEnum.AssetType.Localization, fileNameList[0], false, onCopyOneFileFinished);
+            AssetHandler.Instance.CheckAndUpdateStreamingAssets (AssetEnum.AssetType.Localization, onCopyFinished);
         }
 
         #endregion
