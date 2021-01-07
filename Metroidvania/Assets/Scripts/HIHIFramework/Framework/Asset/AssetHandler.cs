@@ -13,7 +13,7 @@ namespace HIHIFramework.Asset {
 
         /// <param name="onFinished">bool : isSuccess</param>
         public void CheckAndUpdateStreamingAssets (AssetEnum.AssetType type, Action<bool> onFinished = null) {
-            var fileNameList = AssetMapping.GetPracticalStreamingAssetsFileNames (type);
+            var fileNameList = AssetDetails.GetPracticalStreamingAssetsFileNames (type);
             if (fileNameList == null) {
                 onFinished?.Invoke (false);
                 return;
@@ -60,13 +60,13 @@ namespace HIHIFramework.Asset {
 
         /// <param name="onFinished">bool : isSuccess</param>
         private void UpdateStreamingAssets (AssetEnum.AssetType type, string fileName, bool isNeedUnzip, int version, Action<bool> onFinished = null) {
-            var streamingAssetsFolder = AssetDetails.GetAssetFolderFullPath (AssetFrameworkEnum.AssetCategory.StreamingAssets, type);
-            var persistentDataFolder = AssetDetails.GetAssetFolderFullPath (AssetFrameworkEnum.AssetCategory.PersistentData, type);
+            var streamingAssetsFolder = AssetFrameworkDetails.GetAssetFolderFullPath (AssetFrameworkEnum.AssetCategory.StreamingAssets, type);
+            var persistentDataFolder = AssetFrameworkDetails.GetAssetFolderFullPath (AssetFrameworkEnum.AssetCategory.PersistentData, type);
 
             var sourcePath = Path.Combine (streamingAssetsFolder, fileName);
             var destPath = Path.Combine (persistentDataFolder, fileName);
 
-            var copyDestPath = isNeedUnzip ? AssetDetails.GetIOTempZipFilePath () : destPath;
+            var copyDestPath = isNeedUnzip ? AssetFrameworkDetails.GetIOTempZipFilePath () : destPath;
 
             Action<bool> onCopyFinished = (isSuccess) => {
                 if (isSuccess) {
@@ -219,7 +219,7 @@ namespace HIHIFramework.Asset {
 
         /// <returns>string[] : content by lines, string : errorMsg (<b>null</b> means no error)</returns>
         public (string[] lines, string errorMsg) ReadPersistentDataFileByLines (AssetEnum.AssetType type, string fileName) {
-            var filePath = Path.Combine (AssetDetails.GetAssetFolderFullPath (AssetFrameworkEnum.AssetCategory.PersistentData, type), fileName);
+            var filePath = Path.Combine (AssetFrameworkDetails.GetAssetFolderFullPath (AssetFrameworkEnum.AssetCategory.PersistentData, type), fileName);
             Log.Print ("Start reading persistent data file. filePath : " + filePath);
 
             string[] lines = null;
@@ -271,7 +271,7 @@ namespace HIHIFramework.Asset {
         /// <param name="onFinished">int : version no (<b>-1</b> means there is error while getting the version no)</param>
         private void GetStreamingAssetsVersion (AssetEnum.AssetType type, string fileName, Action<int> onFinished) {
 
-            var versionFilePath = AssetDetails.GetStreamingAssetsVersionFileFullPath (type, fileName);
+            var versionFilePath = AssetFrameworkDetails.GetStreamingAssetsVersionFileFullPath (type, fileName);
 
             Action<string[], string> onReadFinished = (lines, errorMsg) => {
                 if (!string.IsNullOrEmpty (errorMsg)) {
@@ -300,17 +300,17 @@ namespace HIHIFramework.Asset {
 
         /// <returns>Current asset version (<b>-1</b> means cannot find any version of this asset)</returns>
         private int GetCurrentAssetVersion (AssetEnum.AssetType type, string fileName) {
-            var playerPrefsKey = AssetDetails.GetAssetVersionPlayerPrefsKey (type, fileName);
+            var playerPrefsKey = AssetFrameworkDetails.GetAssetVersionPlayerPrefsKey (type, fileName);
             return PlayerPrefs.GetInt (playerPrefsKey, -1);
         }
 
         private void SetCurrentAssetVersion (AssetEnum.AssetType type, string fileName, int version) {
-            var playerPrefsKey = AssetDetails.GetAssetVersionPlayerPrefsKey (type, fileName);
+            var playerPrefsKey = AssetFrameworkDetails.GetAssetVersionPlayerPrefsKey (type, fileName);
             PlayerPrefs.SetInt (playerPrefsKey, version);
         }
 
         private void ClearCurrentAssetVersion (AssetEnum.AssetType type, string fileName) {
-            var playerPrefsKey = AssetDetails.GetAssetVersionPlayerPrefsKey (type, fileName);
+            var playerPrefsKey = AssetFrameworkDetails.GetAssetVersionPlayerPrefsKey (type, fileName);
             PlayerPrefs.DeleteKey (playerPrefsKey);
         }
 
@@ -343,7 +343,7 @@ namespace HIHIFramework.Asset {
         /// <param name="onFinished">string : checksum value (<b>null</b> means cannot get the checksum)</param>
         private void GetStreamingAssetsChecksum (AssetEnum.AssetType type, string fileName, Action<string> onFinished) {
 
-            var checksumFilePath = AssetDetails.GetStreamingAssetsChecksumFileFullPath (type, fileName);
+            var checksumFilePath = AssetFrameworkDetails.GetStreamingAssetsChecksumFileFullPath (type, fileName);
 
             Action<string[], string> onReadFinished = (lines, errorMsg) => {
                 if (errorMsg != null) {

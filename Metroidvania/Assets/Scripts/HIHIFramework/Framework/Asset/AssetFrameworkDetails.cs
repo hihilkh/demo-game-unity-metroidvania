@@ -6,7 +6,7 @@ using HIHIFramework.Core;
 using UnityEngine;
 
 namespace HIHIFramework.Asset {
-    public static class AssetDetails {
+    public static class AssetFrameworkDetails {
 
         public static string GetIOTempZipFilePath () {
             var ioTempFolderPath = Path.Combine (Application.persistentDataPath, FrameworkVariable.IOTempFolderName);
@@ -18,7 +18,7 @@ namespace HIHIFramework.Asset {
         #region AssetFolderFullPath
 
         public static string GetAssetFolderFullPath (AssetFrameworkEnum.AssetCategory category, AssetEnum.AssetType type) {
-            var folderName = AssetMapping.GetAssetFolderName (type);
+            var folderName = AssetDetails.GetAssetFolderName (type);
 
             string fullPath = null;
             switch (category) {
@@ -54,7 +54,7 @@ namespace HIHIFramework.Asset {
         }
 
         public static string GetAssetVersionPlayerPrefsKey (AssetEnum.AssetType type, string fileName) {
-            var folderName = AssetMapping.GetAssetFolderName (type);
+            var folderName = AssetDetails.GetAssetFolderName (type);
 
             if (string.IsNullOrEmpty (folderName)) {
                 Log.PrintError ("GetAssetVersionPlayerPrefsKey Failed. AssetType : " + type);
