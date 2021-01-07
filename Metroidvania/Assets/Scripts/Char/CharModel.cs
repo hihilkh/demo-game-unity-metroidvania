@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using HIHIFramework.Core;
 using System;
+using UnityEngine.SceneManagement;
 
 public class CharModel : MonoBehaviour {
     private Dictionary<CharEnum.CommandSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.CommandSituation, CharEnum.Command> ();
@@ -60,7 +61,7 @@ public class CharModel : MonoBehaviour {
     private bool isJustTouchWall;
     private bool isTouchingWall;
 
-    void Start () {
+    private void Awake () {
         if (controller == null) {
             controller = GetComponent<CharController> ();
         }
@@ -77,13 +78,15 @@ public class CharModel : MonoBehaviour {
             controller.StoppedHoldEvent += StopHoldAction;
         }
 
-        InitPlayer ();
+        // Dev only
+        if (SceneManager.GetActiveScene ().name == "Testing") {
+            InitChar (transform.position, CharEnum.Direction.Right, true);
+        }
     }
 
-    private void InitPlayer () {
-        facingDirection = CharEnum.Direction.Right;
-        movingDirection = facingDirection;
-        SetAllowMove (true);
+    public void InitChar (Vector3 pos, CharEnum.Direction direction, bool isAllowMove) {
+        SetPosAndDirection (pos, direction);
+        SetAllowMove (isAllowMove);
         currentLocation = CharEnum.Location.Ground;
         currentHitType = null;
         currentArrowType = null;
@@ -156,6 +159,12 @@ public class CharModel : MonoBehaviour {
             ResetAllUpdateControlFlags ();
             StartIdling ();
         }
+    }
+
+    public void SetPosAndDirection (Vector3 pos, CharEnum.Direction direction) {
+        transform.position = pos;
+        facingDirection = direction;
+        movingDirection = facingDirection;
     }
 
     #region Body Parts

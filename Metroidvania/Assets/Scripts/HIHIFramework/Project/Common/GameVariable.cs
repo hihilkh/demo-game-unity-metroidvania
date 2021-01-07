@@ -22,6 +22,12 @@ public static partial class GameVariable {
 
     #endregion
 
+    #region Char
+
+    public const string CharPrefabResourcesName = "Char/Character";
+
+    #endregion
+
     #region Player Pref Key
 
     // GameConfig

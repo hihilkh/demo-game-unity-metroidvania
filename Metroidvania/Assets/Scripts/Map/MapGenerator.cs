@@ -8,19 +8,13 @@ public class MapGenerator : MonoBehaviour {
     [SerializeField] private Tilemap groundTileMap;
     [SerializeField] private Tilemap wallTileMap;
 
-    private void Start () {
-        var json = "{\"tiles\":[{\"x\":0,\"y\":-1,\"tileType\":0,\"tileTag\":0},{\"x\":-1,\"y\":-1,\"tileType\":0,\"tileTag\":0},{\"x\":1,\"y\":-1,\"tileType\":0,\"tileTag\":0}]}";
-        var mapData = JsonUtility.FromJson<MapData> (json);
-        GenerateMap (mapData);
-    }
-
-    public void GenerateMap (MapData mapData) {
-        if (mapData == null || mapData.tiles == null) {
+    public void GenerateMap (List<MapData.TileData> tileDataList) {
+        if (tileDataList == null) {
             Log.PrintWarning ("mapData is null. Please check.");
             return;
         }
 
-        foreach (var tileData in mapData.tiles) {
+        foreach (var tileData in tileDataList) {
             var tileType = tileData.GetTileType ();
             var resourcesName = TileMapping.GetTileResourcesName (tileType);
             if (resourcesName != null) {
