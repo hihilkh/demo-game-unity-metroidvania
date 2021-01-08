@@ -19,12 +19,16 @@ public static partial class GameVariable {
     public const string LandingSceneName = "Landing";
     public const string MainMenuSceneName = "MainMenu";
     public const string GameSceneName = "Game";
+    public const string MapEditorSceneName = "MapEditor";
 
     #endregion
 
-    #region Char
+    #region Map Related
 
     public const string CharPrefabResourcesName = "Char/Character";
+
+    public const int CharPosZ = 0;
+    public const int TilePosZ = 0;
 
     #endregion
 

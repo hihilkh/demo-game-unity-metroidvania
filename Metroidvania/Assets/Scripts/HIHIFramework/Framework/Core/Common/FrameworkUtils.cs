@@ -45,10 +45,12 @@ namespace HIHIFramework.Core {
             return !(Debug.isDebugBuild || GameVariable.IsBuildForDevelopment);
         }
 
+        /// <returns>Timestamp in second</returns>
         public static long ConvertDateTimeToTimestamp (DateTime dateTime) {
             return ConvertDateTimeToTimestampMS (dateTime) / 1000;
         }
 
+        /// <returns>Timestamp in millisecond</returns>
         public static long ConvertDateTimeToTimestampMS (DateTime dateTime) {
             return (dateTime.ToUniversalTime ().Ticks - 621355968000000000) / 10000;
         }
@@ -77,7 +79,7 @@ namespace HIHIFramework.Core {
                 }
             }
 
-            return StringReplace (FrameworkVariable.ProgressPercentFormat, progressPercentInt.ToString());
+            return StringReplace (FrameworkVariable.ProgressPercentFormat, progressPercentInt.ToString ());
         }
 
         /// <summary>
@@ -253,6 +255,40 @@ namespace HIHIFramework.Core {
             }
             File.Delete (filePath);
             Log.Print ("Finish delete file. filePath : " + filePath);
+        }
+
+        /// <summary>
+        /// Create a file in <paramref name="fullFilePath"/> with contents <paramref name="lines"/>.
+        /// If <paramref name="isOverwrite"/> = false, it will return false if file already exists.
+        /// <br></br><b>Currently only available for UnityEditor.</b>
+        /// </summary>
+        /// <returns>isSuccess</returns>
+        public static bool CreateFile (string fullFilePath, bool isOverwrite, params string[] lines) {
+            // TODO : Implement logic for other platform
+#if UNITY_EDITOR
+            var destFolder = Path.GetDirectoryName (fullFilePath);
+
+            if (!string.IsNullOrEmpty (destFolder)) {
+                if (!Directory.Exists (destFolder)) {
+                    Directory.CreateDirectory (destFolder);
+                }
+            }
+
+            if (File.Exists (fullFilePath) && !isOverwrite) {
+                Log.PrintWarning ("File already exists. Do not overwrite. Path : " + fullFilePath);
+                return false;
+            } else {
+                try {
+                    File.WriteAllLines (fullFilePath, lines);
+                    return true;
+                } catch (Exception ex) {
+                    Log.PrintError ("Error occur : " + ex.Message);
+                    return false;
+                }
+            }
+#else
+            return false;
+#endif
         }
 
         #endregion

@@ -9,14 +9,29 @@ public class MapData {
     public CharData charData;
     public List<TileData> tiles;
 
+    public MapData () { }
+
+    public MapData (CharData charData, List<TileData> tiles) {
+        this.charData = charData;
+        this.tiles = tiles;
+    }
+
     [Serializable]
     public class CharData {
         public float x;
         public float y;
         public bool isFacingRight;
 
+        public CharData () { }
+
+        public CharData (float x, float y, bool isFacingRight) {
+            this.x = x;
+            this.y = y;
+            this.isFacingRight = isFacingRight;
+        }
+
         public Vector3 GetPos () {
-            return new Vector3 (x, y, 0);
+            return new Vector3 (x, y, GameVariable.CharPosZ);
         }
 
         public CharEnum.Direction GetDirection () {
@@ -31,8 +46,17 @@ public class MapData {
         public int tileType;
         public int tileTag;
 
+        public TileData () { }
+
+        public TileData (int x, int y, MapEnum.TileType tileType, MapEnum.TileTag tileTag) {
+            this.x = x;
+            this.y = y;
+            this.tileType = (int)tileType;
+            this.tileTag = (int)tileTag;
+        }
+
         public Vector3Int GetPos () {
-            return new Vector3Int (x, y, 0);
+            return new Vector3Int (x, y, GameVariable.TilePosZ);
         }
 
         public MapEnum.TileType GetTileType () {

@@ -79,7 +79,7 @@ public class CharModel : MonoBehaviour {
         }
 
         // Dev only
-        if (SceneManager.GetActiveScene ().name == "Testing") {
+        if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName) {
             InitChar (transform.position, CharEnum.Direction.Right, true);
         }
     }
