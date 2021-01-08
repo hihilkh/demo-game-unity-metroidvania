@@ -15,8 +15,9 @@ public class MapDataExporter : MonoBehaviour {
     [SerializeField] private Vector2Int lowerBound;
     [SerializeField] private Vector2Int upperBound;
     [SerializeField] private string exportRootFolderPath;
+    [SerializeField] private int missionId;
 
-    private const string ExportFileNameFormat = "map_data_{0}.json";
+    private const string ExportFileNameFormat = "{0}.{1}";  // fileName.timestamp
 
     private void OnGUI () {
         if (GUI.Button (new Rect (10, 10, 150, 50), "Export MapData")) {
@@ -59,7 +60,7 @@ public class MapDataExporter : MonoBehaviour {
 
         var mapData = new MapData (charData, tiles);
         var json = JsonUtility.ToJson (mapData);
-        var fileName = FrameworkUtils.StringReplace (ExportFileNameFormat, FrameworkUtils.ConvertDateTimeToTimestampMS (System.DateTime.Now).ToString ());
+        var fileName = FrameworkUtils.StringReplace (ExportFileNameFormat, AssetDetails.GetMapDataJSONFileName (missionId), FrameworkUtils.ConvertDateTimeToTimestampMS (System.DateTime.Now).ToString ());
         var filePath = Path.Combine (exportRootFolderPath, fileName);
 
         var isSuccess = FrameworkUtils.CreateFile (filePath, false, json);

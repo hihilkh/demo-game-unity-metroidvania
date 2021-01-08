@@ -758,6 +758,7 @@ MonoBehaviour:
   lowerBound: {x: -8, y: -1}
   upperBound: {x: 8, y: 5}
   exportRootFolderPath: /Users/hihilkh/Desktop/Test
+  missionId: 1
 --- !u!4 &987509333
 Transform:
   m_ObjectHideFlags: 0
