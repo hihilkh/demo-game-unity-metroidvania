@@ -212,7 +212,7 @@ TilemapRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0.13999999, y: 0.13999999, z: 0}
+  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
@@ -447,28 +447,20 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 71658758}
     m_ColliderPaths:
-    - - X: -89600100
-        Y: 12800041
-      - X: -89600100
-        Y: -41
-      - X: -89600041
-        Y: -100
-      - X: 89600041
-        Y: -100
-      - X: 89600100
-        Y: -41
-      - X: 89600100
-        Y: 12800041
-      - X: 89600041
-        Y: 12800100
-      - X: -89600041
-        Y: 12800100
+    - - X: -70000000
+        Y: 0
+      - X: 70000000
+        Y: 0
+      - X: 70000000
+        Y: 10000000
+      - X: -70000000
+        Y: 10000000
   m_CompositePaths:
     m_Paths:
-    - - {x: 8.959974, y: -0.00001}
-      - {x: 8.959974, y: 1.28001}
-      - {x: -8.96001, y: 1.2799748}
-      - {x: -8.959974, y: -0.00001}
+    - - {x: 6.9999704, y: 0}
+      - {x: 6.9999704, y: 1}
+      - {x: -7, y: 0.99997073}
+      - {x: -6.9999704, y: 0}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
 --- !u!50 &71658762
@@ -609,7 +601,7 @@ Grid:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 381395296}
   m_Enabled: 1
-  m_CellSize: {x: 1.28, y: 1.28, z: 0}
+  m_CellSize: {x: 1, y: 1, z: 0}
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
@@ -798,7 +790,7 @@ Grid:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1026064072}
   m_Enabled: 1
-  m_CellSize: {x: 1.28, y: 1.28, z: 0}
+  m_CellSize: {x: 1, y: 1, z: 0}
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
@@ -908,7 +900,7 @@ TilemapRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0.13999999, y: 0.13999999, z: 0}
+  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
@@ -1077,48 +1069,32 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 1877591126}
     m_ColliderPaths:
-    - - X: 89600100
-        Y: 12799959
-      - X: 89600100
-        Y: 64000037
-      - X: 89600041
-        Y: 64000096
-      - X: 76799959
-        Y: 64000096
-      - X: 76799900
-        Y: 64000037
-      - X: 76799900
-        Y: 12799959
-      - X: 76799959
-        Y: 12799900
-      - X: 89600041
-        Y: 12799900
-    - - X: -76799900
-        Y: 12799959
-      - X: -76799900
-        Y: 64000037
-      - X: -76799959
-        Y: 64000096
-      - X: -89600041
-        Y: 64000096
-      - X: -89600100
-        Y: 64000037
-      - X: -89600100
-        Y: 12799959
-      - X: -89600041
-        Y: 12799900
-      - X: -76799959
-        Y: 12799900
+    - - X: -60000000
+        Y: 50000000
+      - X: -70000000
+        Y: 50000000
+      - X: -70000000
+        Y: 10000000
+      - X: -60000000
+        Y: 10000000
+    - - X: 70000000
+        Y: 50000000
+      - X: 60000000
+        Y: 50000000
+      - X: 60000000
+        Y: 10000000
+      - X: 70000000
+        Y: 10000000
   m_CompositePaths:
     m_Paths:
-    - - {x: -7.6800256, y: 1.27999}
-      - {x: -7.6800256, y: 6.4000096}
-      - {x: -8.96001, y: 6.3999743}
-      - {x: -8.959974, y: 1.27999}
-    - - {x: 8.959974, y: 1.27999}
-      - {x: 8.959974, y: 6.4000096}
-      - {x: 7.6799903, y: 6.3999743}
-      - {x: 7.6800256, y: 1.27999}
+    - - {x: 6.9999704, y: 1}
+      - {x: 6.9999704, y: 5}
+      - {x: 6, y: 4.999971}
+      - {x: 6.000029, y: 1}
+    - - {x: -6.000029, y: 1}
+      - {x: -6.000029, y: 5}
+      - {x: -7, y: 4.999971}
+      - {x: -6.9999704, y: 1}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
 --- !u!50 &1877591130
@@ -1162,7 +1138,7 @@ PrefabInstance:
     - target: {fileID: 351095058075983932, guid: 4676e5a53e18047d58f62835a4a19ac6,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.294
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 351095058075983932, guid: 4676e5a53e18047d58f62835a4a19ac6,
         type: 3}
