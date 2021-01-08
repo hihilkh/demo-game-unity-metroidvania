@@ -7,6 +7,9 @@ TagManager:
   - Ground
   - Wall
   - Attack
+  - SlippyWall
+  - Roof
+  - Death
   layers:
   - Default
   - TransparentFX

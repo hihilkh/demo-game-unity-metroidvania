@@ -11,6 +11,9 @@ public class MapDataExporter : MonoBehaviour {
     [SerializeField] private CharModel charModel;
     [SerializeField] private Tilemap groundTileMap;
     [SerializeField] private Tilemap wallTileMap;
+    [SerializeField] private Tilemap slippyWallTileMap;
+    [SerializeField] private Tilemap roofTileMap;
+    [SerializeField] private Tilemap deathTileMap;
 
     [SerializeField] private Vector2Int lowerBound;
     [SerializeField] private Vector2Int upperBound;
@@ -31,6 +34,9 @@ public class MapDataExporter : MonoBehaviour {
         var tileMapDict = new Dictionary<MapEnum.TileTag, Tilemap> {
             { MapEnum.TileTag.Ground, groundTileMap},
             { MapEnum.TileTag.Wall, wallTileMap},
+            { MapEnum.TileTag.SlippyWall, slippyWallTileMap},
+            { MapEnum.TileTag.Roof, roofTileMap},
+            { MapEnum.TileTag.Death, deathTileMap }
         };
 
         var charData = new MapData.CharData (charModel.transform.position.x, charModel.transform.position.y, true);

@@ -9,7 +9,11 @@ public static class TileMapping {
     // Remarks : Only File name
     private static Dictionary<MapEnum.TileType, string> TileResourcesNameDict = new Dictionary<MapEnum.TileType, string> () {
         { MapEnum.TileType.Dirt, "Dirt" },
-        { MapEnum.TileType.Grass, "Grass" }
+        { MapEnum.TileType.GroundTag, "GroundTag" },
+        { MapEnum.TileType.WallTag, "WallTag" },
+        { MapEnum.TileType.RoofTag, "RoofTag" },
+        { MapEnum.TileType.SlippyWallTag, "SlippyWallTag" },
+        { MapEnum.TileType.DeathTag, "DeathTag" }
     };
 
     public static string GetTileResourcesName (MapEnum.TileType tileType) {
