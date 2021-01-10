@@ -22,43 +22,56 @@ public class MapDataExporter : MonoBehaviour {
     private const string ExportFileNameFormat = "{0}.{1}";  // fileName.timestamp
 
     private void OnGUI () {
-        if (GUI.Button (new Rect (10, 10, 150, 50), "Export MapData")) {
+        if (GUI.Button (new Rect (10, 10, 150, 50), "Check Map Design")) {
+            CheckMapDesign ();
+        }
+
+        if (GUI.Button (new Rect (180, 10, 150, 50), "Export MapData")) {
             ExportMapData ();
         }
     }
 
-    private void ExportMapData () {
-        Log.Print ("Start export MapData", LogType.MapData);
-
+    private MapDataTileExportIterator GetMapDataTileExportIterator () {
         var tileMapDict = new Dictionary<MapEnum.TileTag, Tilemap> {
             { MapEnum.TileTag.Ground, groundTileMap},
             { MapEnum.TileTag.Wall, wallTileMap},
             { MapEnum.TileTag.SlippyWall, slippyWallTileMap},
-            { MapEnum.TileTag.Death, deathTileMap }
+            { MapEnum.TileTag.Death, deathTileMap },
         };
+
+        return new MapDataTileExportIterator (tileMapDict, lowerBound, upperBound); ;
+    }
+
+    private void CheckMapDesign () {
+        Log.PrintWarning ("Start Check Map Design", LogType.MapData);
+
+        var iterator = GetMapDataTileExportIterator ();
+        while (iterator.MoveNext ()) {
+            var tileData = iterator.Current;
+            if (tileData != null) {
+                var mapDesignTileType = TileMapping.GetMapDesignTileType (tileData.GetTileTag ());
+                if (mapDesignTileType == null || mapDesignTileType != tileData.GetTileType ()) {
+                    Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.GetPos () + ", tileType : " + tileData.GetTileType () + " , added to tileTag : " + tileData.GetTileTag (), LogType.MapData);
+                    return;
+                }
+            }
+        }
+
+        Log.PrintWarning ("Check Map Design finished : All match!", LogType.MapData);
+    }
+
+    private void ExportMapData () {
+        Log.PrintWarning ("Start export MapData", LogType.MapData);
 
         var charData = new MapData.CharData (charModel.transform.position.x, charModel.transform.position.y, true);
 
+        var iterator = GetMapDataTileExportIterator ();
         var tiles = new List<MapData.TileData> ();
-        for (var x = lowerBound.x; x <= upperBound.x; x++) {
-            for (var y = lowerBound.y; y <= upperBound.y; y++) {
 
-                var pos = new Vector3Int (x, y, GameVariable.TilePosZ);
-
-                foreach (var pair in tileMapDict) {
-                    var tile = pair.Value.GetTile (pos);
-                    if (tile != null) {
-                        var tileType = TileMapping.GetTileType (tile.name);
-                        if (tileType == null) {
-                            Log.PrintError ("Export MapData failed. Cannot get tile type.", LogType.MapData);
-                            return;
-                        }
-
-                        var tileData = new MapData.TileData (x, y, (MapEnum.TileType)tileType, pair.Key);
-                        tiles.Add (tileData);
-                        break;   // Skip other tilemap searching
-                    }
-                }
+        while (iterator.MoveNext ()) {
+            var tileData = iterator.Current;
+            if (tileData != null) {
+                tiles.Add (tileData);
             }
         }
 
@@ -69,7 +82,7 @@ public class MapDataExporter : MonoBehaviour {
 
         var isSuccess = FrameworkUtils.CreateFile (filePath, false, json);
         if (isSuccess) {
-            Log.Print ("Export MapData success. Path : " + filePath, LogType.MapData);
+            Log.PrintWarning ("Export MapData success. Path : " + filePath, LogType.MapData);
         } else {
             Log.PrintError ("Export MapData failed. Path : " + filePath, LogType.MapData);
         }

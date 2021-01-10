@@ -5,7 +5,7 @@ using UnityEngine;
 // TODO
 public class CharCameraController : MonoBehaviour
 {
-    [SerializeField] private Camera camera;
+    [SerializeField] private Camera cam;
     [SerializeField] private CharModel charModel;
     [SerializeField] private CharCameraParams cameraParams;
 }

@@ -15,7 +15,7 @@ MonoBehaviour:
   _gravityScale: 4
   _walkingSpeed: 5
   _slideDownVelocity: -4
-  _normalJumpInitSpeed: 12
+  _normalJumpInitSpeed: 14
   _chargedJumpInitSpeed: 20
   _dashingSpeed: 15
   _oneShotDashPeriod: 0.5
