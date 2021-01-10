@@ -11,7 +11,6 @@ public static class TileMapping {
         { MapEnum.TileType.Dirt, "Dirt" },
         { MapEnum.TileType.GroundTag, "GroundTag" },
         { MapEnum.TileType.WallTag, "WallTag" },
-        { MapEnum.TileType.RoofTag, "RoofTag" },
         { MapEnum.TileType.SlippyWallTag, "SlippyWallTag" },
         { MapEnum.TileType.DeathTag, "DeathTag" }
     };

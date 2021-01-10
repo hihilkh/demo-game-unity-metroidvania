@@ -8,7 +8,6 @@ TagManager:
   - Wall
   - Attack
   - SlippyWall
-  - Roof
   - Death
   layers:
   - Default

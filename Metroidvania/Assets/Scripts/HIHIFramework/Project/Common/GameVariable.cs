@@ -11,7 +11,6 @@ public static partial class GameVariable {
     public const string GroundTag = "Ground";
     public const string WallTag = "Wall";
     public const string SlippyWallTag = "SlippyWall";
-    public const string RoofTag = "Roof";
     public const string DeathTag = "Death";
     public const string AttackTag = "Attack";
 

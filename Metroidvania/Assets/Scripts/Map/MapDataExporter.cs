@@ -12,7 +12,6 @@ public class MapDataExporter : MonoBehaviour {
     [SerializeField] private Tilemap groundTileMap;
     [SerializeField] private Tilemap wallTileMap;
     [SerializeField] private Tilemap slippyWallTileMap;
-    [SerializeField] private Tilemap roofTileMap;
     [SerializeField] private Tilemap deathTileMap;
 
     [SerializeField] private Vector2Int lowerBound;
@@ -35,7 +34,6 @@ public class MapDataExporter : MonoBehaviour {
             { MapEnum.TileTag.Ground, groundTileMap},
             { MapEnum.TileTag.Wall, wallTileMap},
             { MapEnum.TileTag.SlippyWall, slippyWallTileMap},
-            { MapEnum.TileTag.Roof, roofTileMap},
             { MapEnum.TileTag.Death, deathTileMap }
         };
 

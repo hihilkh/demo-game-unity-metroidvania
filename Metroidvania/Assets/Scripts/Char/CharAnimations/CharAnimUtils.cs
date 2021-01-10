@@ -220,6 +220,13 @@ public class CharAnimUtils : MonoBehaviour
         rb.velocity = new Vector3 (velocityX, y);
     }
 
+    /// <param name="x">Input null means determined by model.currentHorizontalSpeed</param>
+    public void SetVelocityX (float? x) {
+        var velocityX = (x == null) ? GetVelocityXByCurrentHorizontalSpeed () : (float)x;
+
+        rb.velocity = new Vector3 (velocityX, rb.velocity.y);
+    }
+
     public void UpdateFacingDirection (bool isNeedOppositeDirection = false) {
         var scale = (model.facingDirection == CharEnum.Direction.Right) ? 1 : -1;
 

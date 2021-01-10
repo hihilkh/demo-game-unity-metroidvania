@@ -60,6 +60,7 @@ public class CharModel : MonoBehaviour {
     private Dictionary<Collider2D, string> currentCollisionDict = new Dictionary<Collider2D, string> ();
     private bool isJustTouchWall;
     private bool isTouchingWall;
+    private const string NoActionColliderType = "NoAction";
 
     private void Awake () {
         if (controller == null) {
@@ -459,8 +460,8 @@ public class CharModel : MonoBehaviour {
 
                 break;
             case CharEnum.Command.Turn:
-                // Do not do turn action if touching wall and not sliding because changing moving direction is trigged while touch wall
-                if (isTouchingWall && currentLocation != CharEnum.Location.Wall) {
+                // Do not do turn action if touching wall and on ground because changing moving direction is trigged while touch wall
+                if (isTouchingWall && currentLocation == CharEnum.Location.Ground) {
                     break;
                 }
 
@@ -515,6 +516,15 @@ public class CharModel : MonoBehaviour {
 
     #endregion
 
+    #region Animtor
+
+    private void SetAnimatorTrigger (string trigger) {
+        Log.PrintDebug (trigger);
+        animator.SetTrigger (trigger);
+    }
+
+    #endregion
+
     #region Idle / Walk
 
     public void StartIdleOrWalk () {
@@ -535,13 +545,13 @@ public class CharModel : MonoBehaviour {
     private void StartIdling () {
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
 
-        animator.SetTrigger (CharAnimConstant.IdleTriggerName);
+        SetAnimatorTrigger (CharAnimConstant.IdleTriggerName);
     }
 
     private void StartWalking () {
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
 
-        animator.SetTrigger (CharAnimConstant.WalkTriggerName);
+        SetAnimatorTrigger (CharAnimConstant.WalkTriggerName);
     }
 
     #endregion
@@ -607,7 +617,7 @@ public class CharModel : MonoBehaviour {
         isDashing = true;
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Dash;
 
-        animator.SetTrigger (CharAnimConstant.DashTriggerName);
+        SetAnimatorTrigger (CharAnimConstant.DashTriggerName);
     }
 
     private IEnumerator OneShotDashCoroutine () {
@@ -668,9 +678,9 @@ public class CharModel : MonoBehaviour {
         }
 
         currentLocation = CharEnum.Location.Air;
-        
 
-        animator.SetTrigger (CharAnimConstant.JumpTriggerName);
+
+        SetAnimatorTrigger (CharAnimConstant.JumpTriggerName);
 
         // Remarks : WaitForEndOfFrame in order to let CharJumpSMB know the jump is charged
         yield return new WaitForEndOfFrame ();
@@ -716,7 +726,7 @@ public class CharModel : MonoBehaviour {
             case CharEnum.HitType.Normal:
             case CharEnum.HitType.Charged:
             case CharEnum.HitType.Finishing:
-                animator.SetTrigger (CharAnimConstant.HitTriggerName);
+                SetAnimatorTrigger (CharAnimConstant.HitTriggerName);
                 attackCoolDownCoroutine = StartCoroutine (HitCoolDownCoroutine (hitType));
                 break;
             case CharEnum.HitType.Drop:
@@ -735,7 +745,7 @@ public class CharModel : MonoBehaviour {
 
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
 
-        animator.SetTrigger (CharAnimConstant.DropHitTriggerName);
+        SetAnimatorTrigger (CharAnimConstant.DropHitTriggerName);
     }
 
     private void FinishDropHit () {
@@ -814,7 +824,7 @@ public class CharModel : MonoBehaviour {
             case CharEnum.ArrowType.Target:
             case CharEnum.ArrowType.Straight:
             case CharEnum.ArrowType.Triple:
-                animator.SetTrigger (CharAnimConstant.ShootTriggerName);
+                SetAnimatorTrigger (CharAnimConstant.ShootTriggerName);
                 attackCoolDownCoroutine = StartCoroutine (ArrowCoolDownCoroutine (arrowType));
                 break;
         }
@@ -888,13 +898,33 @@ public class CharModel : MonoBehaviour {
 
     #endregion
 
+    #region HP related
+
+    private void Die () {
+        // TODO
+        Log.PrintError ("Die");
+    }
+
+    #endregion
+
     #region Collision
+
+    private bool CheckIsTouchingGround () {
+        foreach (var pair in currentCollisionDict) {
+            if (pair.Value == GameVariable.GroundTag) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public void OnCollisionEnter2D (Collision2D collision) {
         var collideType = collision.gameObject.tag;
 
         var collisionNormal = collision.GetContact (0).normal;
-        if (collision.gameObject.tag == GameVariable.WallTag) {
+
+        if (collision.gameObject.tag == GameVariable.WallTag || collision.gameObject.tag == GameVariable.SlippyWallTag) {
             var absX = Mathf.Abs (collisionNormal.x);
             if (collisionNormal.y > 0 && collisionNormal.y > absX) {
                 collideType = GameVariable.GroundTag;
@@ -902,9 +932,15 @@ public class CharModel : MonoBehaviour {
                 collideType = GameVariable.GroundTag;
             }
         }
-        
-        Log.Print ("Char Collision Enter : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType + " ; collisionNormal = " + collisionNormal + " ; movingDirection = " + movingDirection);
 
+        if (collideType == GameVariable.GroundTag && collisionNormal.y < 0) {
+            collideType = NoActionColliderType;
+            Log.Print ("Char Collide to roof. No action is needed.");
+        } else {
+            Log.Print ("Char Collision Enter : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType + " ; collisionNormal = " + collisionNormal + " ; movingDirection = " + movingDirection);
+        }
+
+        var isOriginallyTouchingGround = CheckIsTouchingGround ();
         if (currentCollisionDict.ContainsKey (collision.collider)) {
             currentCollisionDict[collision.collider] = collideType;
         } else {
@@ -918,11 +954,17 @@ public class CharModel : MonoBehaviour {
 
         switch (collideType) {
             case GameVariable.GroundTag:
-                TouchGround ();
+                if (!isOriginallyTouchingGround) {
+                    TouchGround ();
+                }
                 break;
             case GameVariable.WallTag:
+            case GameVariable.SlippyWallTag:
                 var wallPosition = (collisionNormal.x <= 0) ? CharEnum.Direction.Right : CharEnum.Direction.Left;
-                TouchWall (wallPosition);
+                TouchWall (wallPosition, collideType == GameVariable.SlippyWallTag);
+                break;
+            case GameVariable.DeathTag:
+                Die ();
                 break;
         }
     }
@@ -938,11 +980,19 @@ public class CharModel : MonoBehaviour {
         Log.Print ("Char Collision Exit : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType);
 
         switch (collideType) {
+            case NoActionColliderType:
+                // No action is needed.
+                break;
             case GameVariable.GroundTag:
-                LeaveGround ();
+                if (!CheckIsTouchingGround ()) {
+                    LeaveGround ();
+                }
                 break;
             case GameVariable.WallTag:
-                LeaveWall ();
+                LeaveWall (false);
+                break;
+            case GameVariable.SlippyWallTag:
+                LeaveWall (true);
                 break;
         }
     }
@@ -977,7 +1027,7 @@ public class CharModel : MonoBehaviour {
             if (currentLocation == CharEnum.Location.Wall) {
                 StartWalking ();
             } else {
-                animator.SetTrigger (CharAnimConstant.LandingTriggerName);
+                SetAnimatorTrigger (CharAnimConstant.LandingTriggerName);
             }
         }
 
@@ -1015,15 +1065,18 @@ public class CharModel : MonoBehaviour {
         }
     }
 
-    private void TouchWall (CharEnum.Direction wallPosition) {
-        Log.PrintDebug ("TouchWall");
+    private void TouchWall (CharEnum.Direction wallPosition, bool isSlippyWall) {
+        Log.PrintDebug ("TouchWall : isSlippyWall = " + isSlippyWall);
 
         isIgnoreUserInputInThisFrame = true;
         isJustTouchWall = true;
         isTouchingWall = true;
 
         if (wallPosition == movingDirection) {  // Change moving direction only when char originally move towards wall
-            ChangeMovingDirection ();
+            // if it is slippy wall, do not change moving direction when in air
+            if (!isSlippyWall || currentLocation == CharEnum.Location.Ground) {
+                ChangeMovingDirection ();
+            }
         }
 
         if (isDropHitCharging) {     // "AirHold - Hit" command
@@ -1036,8 +1089,17 @@ public class CharModel : MonoBehaviour {
             StopDashing (CharEnum.HorizontalSpeed.Walk, true, currentLocation == CharEnum.Location.Ground);
         }
 
-        if (currentLocation == CharEnum.Location.Air) {
-            SlideOnWall ();
+        if (currentLocation != CharEnum.Location.Ground) {
+            if (isSlippyWall) {
+                currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
+
+                var directionMultiplier = facingDirection == CharEnum.Direction.Right ? -1 : 1;
+                transform.position = transform.position + new Vector3 (charParams.repelFromWallDistByTurn, 0, 0) * directionMultiplier;
+
+                StartFreeFall ();
+            } else {
+                SlideOnWall ();
+            }
         }
 
         if (currentSituation == CharEnum.CommandSituation.GroundHold || currentSituation == CharEnum.CommandSituation.AirHold) {
@@ -1046,7 +1108,7 @@ public class CharModel : MonoBehaviour {
         }
     }
 
-    private void LeaveWall () {
+    private void LeaveWall (bool isSlippyWall) {
         Log.PrintDebug ("LeaveWall");
 
         isTouchingWall = false;
@@ -1060,13 +1122,13 @@ public class CharModel : MonoBehaviour {
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
         isAllowAirJump = true;   // Allow jump in air again
 
-        animator.SetTrigger (CharAnimConstant.SlideTriggerName);
+        SetAnimatorTrigger (CharAnimConstant.SlideTriggerName);
     }
 
     private void StartFreeFall () {
         currentLocation = CharEnum.Location.Air;
 
-        animator.SetTrigger (CharAnimConstant.FreeFallTriggerName);
+        SetAnimatorTrigger (CharAnimConstant.FreeFallTriggerName);
     }
 
     #endregion
