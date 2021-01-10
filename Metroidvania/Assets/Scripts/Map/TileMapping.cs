@@ -19,7 +19,7 @@ public static class TileMapping {
         if (TileResourcesNameDict.ContainsKey(tileType)) {
             return ResourcesFolderName + TileResourcesNameDict[tileType];
         } else {
-            Log.PrintError ("No matched tile resources name for tileType : " + tileType);
+            Log.PrintError ("No matched tile resources name for tileType : " + tileType, LogType.MapData);
             return null;
         }
     }
@@ -31,7 +31,7 @@ public static class TileMapping {
             }
         }
 
-        Log.PrintError ("Cannot get TileType by resourcesName : " + resourcesName);
+        Log.PrintError ("Cannot get TileType by resourcesName : " + resourcesName, LogType.MapData);
         return null;
     }
 }

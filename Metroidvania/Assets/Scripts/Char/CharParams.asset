@@ -40,6 +40,6 @@ MonoBehaviour:
   _groundTapCommand: 1
   _groundHoldCommand: 1
   _groundReleaseCommand: 1
-  _airTapCommand: 4
-  _airHoldCommand: 4
+  _airTapCommand: 1
+  _airHoldCommand: 3
   _airReleaseCommand: 4

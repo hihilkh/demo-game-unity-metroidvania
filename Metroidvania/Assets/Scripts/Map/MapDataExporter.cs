@@ -28,7 +28,7 @@ public class MapDataExporter : MonoBehaviour {
     }
 
     private void ExportMapData () {
-        Log.Print ("Start export MapData");
+        Log.Print ("Start export MapData", LogType.MapData);
 
         var tileMapDict = new Dictionary<MapEnum.TileTag, Tilemap> {
             { MapEnum.TileTag.Ground, groundTileMap},
@@ -50,7 +50,7 @@ public class MapDataExporter : MonoBehaviour {
                     if (tile != null) {
                         var tileType = TileMapping.GetTileType (tile.name);
                         if (tileType == null) {
-                            Log.PrintError ("Export MapData failed. Cannot get tile type.");
+                            Log.PrintError ("Export MapData failed. Cannot get tile type.", LogType.MapData);
                             return;
                         }
 
@@ -69,9 +69,9 @@ public class MapDataExporter : MonoBehaviour {
 
         var isSuccess = FrameworkUtils.CreateFile (filePath, false, json);
         if (isSuccess) {
-            Log.Print ("Export MapData success. Path : " + filePath);
+            Log.Print ("Export MapData success. Path : " + filePath, LogType.MapData);
         } else {
-            Log.PrintError ("Export MapData failed. Path : " + filePath);
+            Log.PrintError ("Export MapData failed. Path : " + filePath, LogType.MapData);
         }
     }
 }

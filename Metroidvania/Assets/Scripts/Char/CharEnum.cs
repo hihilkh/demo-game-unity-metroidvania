@@ -59,10 +59,10 @@ public class CharEnum {
     [Flags]
     public enum BodyPart : short {
         None = 0,
-        Head = 1,
-        Arms = 2,
-        Legs = 4,
-        Thrusters = 8,
-        Arrow = 16
+        Head = 1 << 0,
+        Arms = 1 << 1,
+        Legs = 1 << 2,
+        Thrusters = 1 << 3,
+        Arrow = 1 << 4
     }
 }

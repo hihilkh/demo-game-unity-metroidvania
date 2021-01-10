@@ -63,7 +63,7 @@ public class MapData {
             if (Enum.IsDefined (typeof (MapEnum.TileType), tileType)) {
                 return (MapEnum.TileType)tileType;
             } else {
-                Log.PrintError ("Invalid tileType : " + tileType + " . Pos : (" + x + ", " + y + "). Use default.");
+                Log.PrintError ("Invalid tileType : " + tileType + " . Pos : (" + x + ", " + y + "). Use default.", LogType.MapData);
                 return default;
             }
         }
@@ -72,7 +72,7 @@ public class MapData {
             if (Enum.IsDefined (typeof (MapEnum.TileTag), tileTag)) {
                 return (MapEnum.TileTag)tileTag;
             } else {
-                Log.PrintError ("Invalid tileTag : " + tileTag + " . Pos : (" + x + ", " + y + "). Use default.");
+                Log.PrintError ("Invalid tileTag : " + tileTag + " . Pos : (" + x + ", " + y + "). Use default.", LogType.MapData);
                 return default;
             }
         }

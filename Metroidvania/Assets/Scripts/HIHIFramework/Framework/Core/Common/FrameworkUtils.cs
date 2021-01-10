@@ -59,7 +59,7 @@ namespace HIHIFramework.Core {
             try {
                 return String.Format (stringBase, replaceStrings);
             } catch (Exception ex) {
-                Log.PrintError (ex.Message);
+                Log.PrintError (ex.Message, LogType.General);
             }
 
             return stringBase;
@@ -187,20 +187,22 @@ namespace HIHIFramework.Core {
 
         #endregion
 
+        #region I/O
+
         #region Cryptography
 
         public static string CalculateMD5 (string fileName) {
             using (var md5 = MD5.Create ()) {
                 using (var stream = File.OpenRead (fileName)) {
                     var hash = md5.ComputeHash (stream);
-                    return BitConverter.ToString (hash).Replace ("-", "").ToLowerInvariant ();
+                    var value = BitConverter.ToString (hash).Replace ("-", "").ToLowerInvariant ();
+                    Log.PrintDebug ("MD5 = " + value + " . file : " + fileName, LogType.IO);
+                    return value;
                 }
             }
         }
 
         #endregion
-
-        #region I/O
 
         /// <summary>
         /// This method does <b>not</b> work with getting files under folders of <b>streaming assets on android or WebGL platform</b>
@@ -210,7 +212,7 @@ namespace HIHIFramework.Core {
             try {
                 filePaths = Directory.GetFiles (folderPath, "*." + extension, isRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
             } catch (Exception ex) {
-                Log.PrintWarning (ex.Message);
+                Log.PrintWarning (ex.Message, LogType.IO);
             }
 
             var resultList = new List<string> ();
@@ -238,9 +240,9 @@ namespace HIHIFramework.Core {
         /// It <b>will override</b> original file in destFolder if existed
         /// </summary>
         public static void Unzip (string zipFilePath, string destFolder, bool isDeleteOriginalZipFile = true) {
-            Log.Print ("Start unzip file. zipFilePath : " + zipFilePath + " , exportPath : " + destFolder);
+            Log.Print ("Start unzip file. zipFilePath : " + zipFilePath + " , exportPath : " + destFolder, LogType.IO);
             ZipUtils.Unzip (zipFilePath, destFolder);
-            Log.Print ("Finish unzip file. zipFilePath : " + zipFilePath + " , exportPath : " + destFolder);
+            Log.Print ("Finish unzip file. zipFilePath : " + zipFilePath + " , exportPath : " + destFolder, LogType.IO);
 
             if (isDeleteOriginalZipFile) {
                 DeleteFile (zipFilePath);
@@ -248,13 +250,13 @@ namespace HIHIFramework.Core {
         }
 
         public static void DeleteFile (string filePath) {
-            Log.Print ("Start delete file. filePath : " + filePath);
+            Log.Print ("Start delete file. filePath : " + filePath, LogType.IO);
             if (!File.Exists (filePath)) {
-                Log.Print ("File do not exist. No need to delete. filePath : " + filePath);
+                Log.Print ("File do not exist. No need to delete. filePath : " + filePath, LogType.IO);
                 return;
             }
             File.Delete (filePath);
-            Log.Print ("Finish delete file. filePath : " + filePath);
+            Log.Print ("Finish delete file. filePath : " + filePath, LogType.IO);
         }
 
         /// <summary>
@@ -275,14 +277,14 @@ namespace HIHIFramework.Core {
             }
 
             if (File.Exists (fullFilePath) && !isOverwrite) {
-                Log.PrintWarning ("File already exists. Do not overwrite. Path : " + fullFilePath);
+                Log.PrintWarning ("File already exists. Do not overwrite. Path : " + fullFilePath, LogType.IO);
                 return false;
             } else {
                 try {
                     File.WriteAllLines (fullFilePath, lines);
                     return true;
                 } catch (Exception ex) {
-                    Log.PrintError ("Error occur : " + ex.Message);
+                    Log.PrintError ("Error occur : " + ex.Message, LogType.IO);
                     return false;
                 }
             }

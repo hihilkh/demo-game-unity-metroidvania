@@ -28,7 +28,7 @@ public class CharHitSMBBase : CharSMBBase {
                 refPoint = animUtils.refPoint_DropHit;
                 break;
             default:
-                Log.PrintError ("currentHitType = " + animUtils.model.currentHitType + " . No implementation in CharHitSMBBase. Please check.");
+                Log.PrintError ("currentHitType = " + animUtils.model.currentHitType + " . No implementation in CharHitSMBBase. Please check.", LogType.Animation);
                 return;
         }
 

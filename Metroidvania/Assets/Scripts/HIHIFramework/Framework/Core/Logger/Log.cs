@@ -7,40 +7,40 @@ using UnityEngine;
 namespace HIHIFramework.Core {
     public static class Log {
 
-        public static void PrintDebug (object obj) {
-            Print (obj, LogLevel.Debug);
+        public static void PrintDebug (object obj, LogType logType = LogType.General) {
+            Print (obj, logType, LogLevel.Debug);
         }
 
-        public static void PrintDebug (string message) {
-            Print (message, LogLevel.Debug);
+        public static void PrintDebug (string message, LogType logType = LogType.General) {
+            Print (message, logType, LogLevel.Debug);
         }
 
-        public static void PrintWarning (object obj) {
-            Print (obj, LogLevel.Warning);
+        public static void PrintWarning (object obj, LogType logType = LogType.General) {
+            Print (obj, logType, LogLevel.Warning);
         }
 
-        public static void PrintWarning (string message) {
-            Print (message, LogLevel.Warning);
+        public static void PrintWarning (string message, LogType logType = LogType.General) {
+            Print (message, logType, LogLevel.Warning);
         }
 
-        public static void PrintError (object obj) {
-            Print (obj, LogLevel.Error);
+        public static void PrintError (object obj, LogType logType = LogType.General) {
+            Print (obj, logType, LogLevel.Error);
         }
 
-        public static void PrintError (string message) {
-            Print (message, LogLevel.Error);
+        public static void PrintError (string message, LogType logType = LogType.General) {
+            Print (message, logType, LogLevel.Error);
         }
 
-        public static void Print (object obj, LogLevel logLevel = LogLevel.Info) {
+        public static void Print (object obj, LogType logType = LogType.General, LogLevel logLevel = LogLevel.Info) {
             if (obj == null) {
-                Print ("<null>", logLevel);
+                Print ("<null>", logType, logLevel);
             } else {
-                Print (obj.ToString (), logLevel);
+                Print (obj.ToString (), logType, logLevel);
             }
         }
 
-        public static void Print (string message, LogLevel logLevel = LogLevel.Info) {
-            if (!CheckIsPrintLog (logLevel)) {
+        public static void Print (string message, LogType logType = LogType.General, LogLevel logLevel = LogLevel.Info) {
+            if (!CheckIsPrintLog (logLevel, logType)) {
                 return;
             }
 
@@ -62,12 +62,12 @@ namespace HIHIFramework.Core {
             }
         }
 
-        private static bool CheckIsPrintLog (LogLevel logLevel) {
-            if (logLevel < GameVariable.MinLogLevel) {
+        private static bool CheckIsPrintLog (LogLevel logLevel, LogType logType) {
+            if (!GameVariable.IsLogForReleaseBuild && FrameworkUtils.GetIsReleaseBuild ()) {
                 return false;
             }
 
-            if (!GameVariable.IsLogForReleaseBuild && FrameworkUtils.GetIsReleaseBuild ()) {
+            if (logLevel < GameVariable.GetMinLogLevel (logType)) {
                 return false;
             }
 

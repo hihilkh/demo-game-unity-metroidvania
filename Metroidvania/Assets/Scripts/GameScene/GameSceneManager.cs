@@ -16,12 +16,12 @@ public class GameSceneManager : MonoBehaviour {
         (var lines, var errorMsg) = AssetHandler.Instance.ReadPersistentDataFileByLines (AssetEnum.AssetType.MapData, AssetDetails.GetMapDataJSONFileName (missionId));
 
         if (errorMsg != null) {
-            Log.PrintError ("Read map data Failed. missionId : " + missionId + " , Error : " + errorMsg);
+            Log.PrintError ("Read map data Failed. missionId : " + missionId + " , Error : " + errorMsg, LogType.GameFlow | LogType.Asset);
             return;
         }
 
         if (lines == null || lines.Length <= 0) {
-            Log.PrintError ("Read map data Failed. missionId : " + missionId + " , Error : JSON file is empty");
+            Log.PrintError ("Read map data Failed. missionId : " + missionId + " , Error : JSON file is empty", LogType.GameFlow | LogType.Asset);
             return;
         }
 

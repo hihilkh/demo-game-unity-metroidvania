@@ -23,7 +23,7 @@ public class CharShootSMBBase : CharSMBBase {
                 break;
             case CharEnum.ArrowType.Triple:
                 if (animUtils.model.charParams.tripleArrowShootingAngleList == null || animUtils.model.charParams.tripleArrowShootingAngleList.Count <= 0) {
-                    Log.PrintError ("tripleArrowShootingAngleList has not yet set. Please check.");
+                    Log.PrintError ("tripleArrowShootingAngleList has not yet set. Please check.", LogType.Animation);
                     return;
                 }
 
@@ -33,7 +33,7 @@ public class CharShootSMBBase : CharSMBBase {
                 }
                 break;
             default:
-                Log.PrintError ("currentArrowType = " + animUtils.model.currentHitType + " . No implementation in CharShootSMBBase. Please check.");
+                Log.PrintError ("currentArrowType = " + animUtils.model.currentHitType + " . No implementation in CharShootSMBBase. Please check.", LogType.Animation);
                 return;
         }
     }

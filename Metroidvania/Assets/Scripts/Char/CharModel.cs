@@ -68,7 +68,7 @@ public class CharModel : MonoBehaviour {
         }
 
         if (controller == null) {
-            Log.PrintWarning ("Player controller is not assigned and cannot be found.");
+            Log.PrintWarning ("Player controller is not assigned and cannot be found.", LogType.Char);
         } else {
             // Remarks :
             // Currently do not add StartedLeft, StoppedLeft, StartedRight, StoppedRight handling to prevent complicated code.
@@ -288,7 +288,7 @@ public class CharModel : MonoBehaviour {
         }
 
         if (isDropHitting) {
-            Log.Print ("Ignore command situation due to drop hitting. situation = " + situation);
+            Log.Print ("Ignore command situation due to drop hitting. situation = " + situation, LogType.Char);
             SetCurrentCommandStatus (null, null);
 
             if (situation == CharEnum.CommandSituation.GroundHold || situation == CharEnum.CommandSituation.AirHold) {
@@ -298,7 +298,7 @@ public class CharModel : MonoBehaviour {
         }
 
         var command = GetCommandBySituation (situation);
-        Log.PrintDebug ("Situation : " + situation + "   Command : " + command);
+        Log.PrintDebug ("HandleCommand : Situation : " + situation + "   Command : " + command, LogType.Char);
 
         // Fisish the hold command
         if (situation == CharEnum.CommandSituation.GroundRelease || situation == CharEnum.CommandSituation.AirRelease) {
@@ -490,7 +490,7 @@ public class CharModel : MonoBehaviour {
                         break;
                     case CharEnum.CommandSituation.GroundHold:
                     case CharEnum.CommandSituation.AirHold:
-                        Log.PrintWarning ("No action of Turn command is defined for holding. Please check.");
+                        Log.PrintWarning ("No action of Turn command is defined for holding. Please check.", LogType.Char);
                         break;
                 }
                 
@@ -509,9 +509,7 @@ public class CharModel : MonoBehaviour {
         currentSituation = situation;
         currentCommand = command;
 
-        //if (currentSituation != null) {
-        //    Log.PrintDebug (currentSituation + "  " + currentCommand);
-        //}
+        //Log.PrintDebug ("SetCurrentCommandStatus  : Situation : " + currentSituation + "   Command : " + currentCommand, LogType.Char);
     }
 
     #endregion
@@ -519,7 +517,7 @@ public class CharModel : MonoBehaviour {
     #region Animtor
 
     private void SetAnimatorTrigger (string trigger) {
-        Log.PrintDebug (trigger);
+        Log.PrintDebug ("Char SetAnimatorTrigger : " + trigger, LogType.Char | LogType.Animation);
         animator.SetTrigger (trigger);
     }
 
@@ -536,7 +534,7 @@ public class CharModel : MonoBehaviour {
                 StartWalking ();
                 break;
             default:
-                Log.PrintWarning ("Current horizontal speed is : " + currentHorizontalSpeed + " . It does not match idle or walk. Force to change to walk. Please check.");
+                Log.PrintWarning ("Current horizontal speed is : " + currentHorizontalSpeed + " . It does not match idle or walk. Force to change to walk. Please check.", LogType.Char);
                 StartWalking ();
                 break;
         }
@@ -559,7 +557,7 @@ public class CharModel : MonoBehaviour {
     #region Dash
 
     private void StartDashing (bool isOneShot) {
-        Log.Print ("Dash : isOneShot = " + isOneShot);
+        Log.Print ("Dash : isOneShot = " + isOneShot, LogType.Char);
 
         StopDashing (currentHorizontalSpeed, false, false);  // To ensure do not trigger 2 dash coroutines at the same time
 
@@ -663,7 +661,7 @@ public class CharModel : MonoBehaviour {
     }
 
     private IEnumerator Jump () {
-        Log.Print ("Jump : isCharged = " + isJumpCharging);
+        Log.Print ("Jump : isCharged = " + isJumpCharging, LogType.Char);
 
         StopDashing (currentHorizontalSpeed, false, false);
 
@@ -710,16 +708,16 @@ public class CharModel : MonoBehaviour {
 
     private void Hit (CharEnum.HitType hitType) {
         if (isAttackCoolingDown) {
-            Log.PrintWarning ("isAttackCoolingDown = true. It should not trigger Hit action. Please check.");
+            Log.PrintWarning ("isAttackCoolingDown = true. It should not trigger Hit action. Please check.", LogType.Char);
             return;
         }
 
         if (isDropHitting) {
-            Log.PrintWarning ("isDropHitting = true. It should not trigger Hit action. Please check.");
+            Log.PrintWarning ("isDropHitting = true. It should not trigger Hit action. Please check.", LogType.Char);
             return;
         }
 
-        Log.Print ("Hit : HitType = " + hitType);
+        Log.Print ("Hit : HitType = " + hitType, LogType.Char);
         currentHitType = hitType;
 
         switch (hitType) {
@@ -736,7 +734,7 @@ public class CharModel : MonoBehaviour {
     }
 
     private void DropHit () {
-        Log.Print ("Start DropHit");
+        Log.Print ("Start DropHit", LogType.Char);
 
         StopDropHitCharge ();
         isDropHitting = true;
@@ -749,7 +747,7 @@ public class CharModel : MonoBehaviour {
     }
 
     private void FinishDropHit () {
-        Log.Print ("Finish DropHit");
+        Log.Print ("Finish DropHit", LogType.Char);
 
         isDropHitting = false;
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
@@ -791,7 +789,7 @@ public class CharModel : MonoBehaviour {
                 hitCoolDownPeriod = charParams.hitCoolDownPeriod_Drop;
                 break;
             default:
-                Log.PrintWarning ("Not yet set hit cool down period for HitType : " + hitType + " . Assume cool down period to be 0s");
+                Log.PrintWarning ("Not yet set hit cool down period for HitType : " + hitType + " . Assume cool down period to be 0s", LogType.Char);
                 break;
         }
 
@@ -808,16 +806,16 @@ public class CharModel : MonoBehaviour {
 
     private void ShootArrow (CharEnum.ArrowType arrowType) {
         if (isAttackCoolingDown) {
-            Log.PrintWarning ("isAttackCoolingDown = true. It should not trigger shoot arrow action. Please check.");
+            Log.PrintWarning ("isAttackCoolingDown = true. It should not trigger shoot arrow action. Please check.", LogType.Char);
             return;
         }
 
         if (isDropHitting) {
-            Log.PrintWarning ("isDropHitting = true. It should not trigger shoot arrow action. Please check.");
+            Log.PrintWarning ("isDropHitting = true. It should not trigger shoot arrow action. Please check.", LogType.Char);
             return;
         }
 
-        Log.Print ("Shoot arrow : ArrowType = " + arrowType);
+        Log.Print ("Shoot arrow : ArrowType = " + arrowType, LogType.Char);
         currentArrowType = arrowType;
 
         switch (arrowType) {
@@ -846,7 +844,7 @@ public class CharModel : MonoBehaviour {
                 arrowCoolDownPeriod = charParams.arrowCoolDownPeriod_Triple;
                 break;
             default:
-                Log.PrintWarning ("Not yet set arrow cool down period for ArrowType : " + arrowType + " . Assume cool down period to be 0s");
+                Log.PrintWarning ("Not yet set arrow cool down period for ArrowType : " + arrowType + " . Assume cool down period to be 0s", LogType.Char);
                 break;
         }
 
@@ -867,7 +865,7 @@ public class CharModel : MonoBehaviour {
     #region Change Direction
 
     private void ChangeFacingDirection (bool isAlignMovingDirection) {
-        Log.PrintDebug ("ChangeFacingDirection : isAlignMovingDirection = " + isAlignMovingDirection);
+        Log.PrintDebug ("ChangeFacingDirection : isAlignMovingDirection = " + isAlignMovingDirection, LogType.Char);
         if (facingDirection == CharEnum.Direction.Left) {
             facingDirection = CharEnum.Direction.Right;
         } else {
@@ -882,7 +880,7 @@ public class CharModel : MonoBehaviour {
     private void ChangeMovingDirection () {
         // Remarks : Changing moving direction must also align facing direction
 
-        Log.PrintDebug ("ChangeMovingDirection");
+        Log.PrintDebug ("ChangeMovingDirection", LogType.Char);
         if (movingDirection == CharEnum.Direction.Left) {
             movingDirection = CharEnum.Direction.Right;
         } else {
@@ -902,7 +900,7 @@ public class CharModel : MonoBehaviour {
 
     private void Die () {
         // TODO
-        Log.PrintError ("Die");
+        Log.PrintError ("Die", LogType.Char);
     }
 
     #endregion
@@ -935,9 +933,9 @@ public class CharModel : MonoBehaviour {
 
         if (collideType == GameVariable.GroundTag && collisionNormal.y < 0) {
             collideType = NoActionColliderType;
-            Log.Print ("Char Collide to roof. No action is needed.");
+            Log.Print ("Char Collide to roof. No action is needed.", LogType.Char | LogType.Collision);
         } else {
-            Log.Print ("Char Collision Enter : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType + " ; collisionNormal = " + collisionNormal + " ; movingDirection = " + movingDirection);
+            Log.Print ("Char Collision Enter : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType + " ; collisionNormal = " + collisionNormal + " ; movingDirection = " + movingDirection, LogType.Char | LogType.Collision);
         }
 
         var isOriginallyTouchingGround = CheckIsTouchingGround ();
@@ -971,13 +969,13 @@ public class CharModel : MonoBehaviour {
 
     public void OnCollisionExit2D (Collision2D collision) {
         if (!currentCollisionDict.ContainsKey (collision.collider)) {
-            Log.PrintError ("Missing key in currentCollisionDict. collision name : " + collision.gameObject.name);
+            Log.PrintError ("Missing key in currentCollisionDict. collision name : " + collision.gameObject.name, LogType.Char | LogType.Collision);
             return;
         }
         var collideType = currentCollisionDict[collision.collider];
         currentCollisionDict.Remove (collision.collider);
 
-        Log.Print ("Char Collision Exit : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType);
+        Log.Print ("Char Collision Exit : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType, LogType.Char | LogType.Collision);
 
         switch (collideType) {
             case NoActionColliderType:
@@ -998,7 +996,7 @@ public class CharModel : MonoBehaviour {
     }
 
     private void TouchGround () {
-        Log.PrintDebug ("TouchGround");
+        Log.PrintDebug ("TouchGround", LogType.Char);
 
         isIgnoreUserInputInThisFrame = true;
 
@@ -1042,7 +1040,7 @@ public class CharModel : MonoBehaviour {
     }
 
     private void LeaveGround () {
-        Log.PrintDebug ("LeaveGround");
+        Log.PrintDebug ("LeaveGround", LogType.Char);
 
         isIgnoreUserInputInThisFrame = true;
 
@@ -1066,7 +1064,7 @@ public class CharModel : MonoBehaviour {
     }
 
     private void TouchWall (CharEnum.Direction wallPosition, bool isSlippyWall) {
-        Log.PrintDebug ("TouchWall : isSlippyWall = " + isSlippyWall);
+        Log.PrintDebug ("TouchWall : isSlippyWall = " + isSlippyWall, LogType.Char);
 
         isIgnoreUserInputInThisFrame = true;
         isJustTouchWall = true;
@@ -1109,7 +1107,7 @@ public class CharModel : MonoBehaviour {
     }
 
     private void LeaveWall (bool isSlippyWall) {
-        Log.PrintDebug ("LeaveWall");
+        Log.PrintDebug ("LeaveWall", LogType.Char);
 
         isTouchingWall = false;
         isIgnoreUserInputInThisFrame = true;
@@ -1138,31 +1136,31 @@ public class CharModel : MonoBehaviour {
     private void TriggerStartPressAction () {
         startedPressLocation = currentLocation;
 
-        Log.PrintDebug ("TriggerStartPressAction");
+        Log.PrintDebug ("TriggerStartPressAction", LogType.Char);
     }
 
     private void TriggerTapAction () {
         if (isHolding) {
-            Log.PrintWarning ("Somehow triggered tap while holding. Do not do tap action.");
+            Log.PrintWarning ("Somehow triggered tap while holding. Do not do tap action.", LogType.Char);
             return;
         }
 
-        Log.PrintDebug ("TriggerTapAction");
+        Log.PrintDebug ("TriggerTapAction", LogType.Char);
         isJustTapped = true;
     }
 
     private void StartHoldAction () {
         if (isJustTapped) {
-            Log.PrintWarning ("Somehow triggered hold while just tapped. Do not do hold action.");
+            Log.PrintWarning ("Somehow triggered hold while just tapped. Do not do hold action.", LogType.Char);
             return;
         }
 
-        Log.PrintDebug ("StartHoldAction");
+        Log.PrintDebug ("StartHoldAction", LogType.Char);
         isHolding = true;
     }
 
     private void StopHoldAction () {
-        Log.PrintDebug ("StopHoldAction");
+        Log.PrintDebug ("StopHoldAction", LogType.Char);
         isHolding = false;
         isJustReleaseHold = true;
     }

@@ -70,28 +70,28 @@ public class CharAnimUtils : MonoBehaviour
 
         var normalHeadTransform = animator.transform.Find (MeshName_HeadNormal);
         if (normalHeadTransform == null) {
-            Log.PrintError ("Cannot find normal head of the character.");
+            Log.PrintError ("Cannot find normal head of the character.", LogType.Animation);
         } else {
             faceDict.Add (CharEnum.FaceType.Normal, normalHeadTransform.gameObject);
         }
 
         var normalInversedHeadTransform = animator.transform.Find (MeshName_HeadNormalInversed);
         if (normalInversedHeadTransform == null) {
-            Log.PrintError ("Cannot find normal inversed head of the character.");
+            Log.PrintError ("Cannot find normal inversed head of the character.", LogType.Animation);
         } else {
             faceDict.Add (CharEnum.FaceType.Normal_Inversed, normalInversedHeadTransform.gameObject);
         }
 
         var confusedHeadTransform = animator.transform.Find (MeshName_HeadConfused);
         if (confusedHeadTransform == null) {
-            Log.PrintError ("Cannot find confused head of the character.");
+            Log.PrintError ("Cannot find confused head of the character.", LogType.Animation);
         } else {
             faceDict.Add (CharEnum.FaceType.Confused, confusedHeadTransform.gameObject);
         }
 
         var shockedHeadTransform = animator.transform.Find (MeshName_HeadShocked);
         if (shockedHeadTransform == null) {
-            Log.PrintError ("Cannot find shocked head of the character.");
+            Log.PrintError ("Cannot find shocked head of the character.", LogType.Animation);
         } else {
             faceDict.Add (CharEnum.FaceType.Shocked, shockedHeadTransform.gameObject);
         }
@@ -101,28 +101,28 @@ public class CharAnimUtils : MonoBehaviour
 
         var armsTransform = animator.transform.Find (MeshName_Arms);
         if (armsTransform == null) {
-            Log.PrintError ("Cannot find arms of the character.");
+            Log.PrintError ("Cannot find arms of the character.", LogType.Animation);
         } else {
             bodyPartDict.Add (CharEnum.BodyPart.Arms, armsTransform.gameObject);
         }
 
         var legsTransform = animator.transform.Find (MeshName_Legs);
         if (legsTransform == null) {
-            Log.PrintError ("Cannot find legs of the character.");
+            Log.PrintError ("Cannot find legs of the character.", LogType.Animation);
         } else {
             bodyPartDict.Add (CharEnum.BodyPart.Legs, legsTransform.gameObject);
         }
 
         var thrustersTransform = animator.transform.Find (MeshName_Thrusters);
         if (thrustersTransform == null) {
-            Log.PrintError ("Cannot find thrusters of the character.");
+            Log.PrintError ("Cannot find thrusters of the character.", LogType.Animation);
         } else {
             bodyPartDict.Add (CharEnum.BodyPart.Thrusters, thrustersTransform.gameObject);
         }
 
         var arrowTransform = animator.transform.Find (MeshName_ArrowWeapon);
         if (arrowTransform == null) {
-            Log.PrintError ("Cannot find arrow weapon of the character.");
+            Log.PrintError ("Cannot find arrow weapon of the character.", LogType.Animation);
         } else {
             bodyPartDict.Add (CharEnum.BodyPart.Arrow, arrowTransform.gameObject);
         }
@@ -145,7 +145,7 @@ public class CharAnimUtils : MonoBehaviour
 
     public void SetFace (CharEnum.FaceType faceType) {
         if (faceDict == null) {
-            Log.PrintWarning ("FaceDict is null. Cannot set face.");
+            Log.PrintWarning ("FaceDict is null. Cannot set face.", LogType.Animation);
             return;
         }
 
@@ -169,7 +169,7 @@ public class CharAnimUtils : MonoBehaviour
 
     private void SetBodyParts (CharEnum.BodyPart parts) {
         if (bodyPartDict == null) {
-            Log.PrintWarning ("BodyPartDict is null. Cannot set body parts.");
+            Log.PrintWarning ("BodyPartDict is null. Cannot set body parts.", LogType.Animation);
             return;
         }
 

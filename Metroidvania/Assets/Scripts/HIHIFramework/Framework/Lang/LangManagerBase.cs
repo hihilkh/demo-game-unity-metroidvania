@@ -48,21 +48,21 @@ namespace HIHIFramework.Lang {
         #region Initialization
 
         public static void Init (Action<bool> onFinished = null) {
-            Log.Print ("Start init LangManager");
+            Log.Print ("Start init LangManager", LogType.Lang);
             Action<bool> onInitStreamingAssetsFinished = (isSuccess) => {
                 if (isSuccess) {
                     var isLoadSuccess = LoadLocalizationFileIfMissing (CurrentLang);
 
                     if (isLoadSuccess) {
-                        Log.Print ("Successfully init LangManager");
+                        Log.Print ("Successfully init LangManager", LogType.Lang);
                         IsInitialized = true;
                         onFinished?.Invoke (true);
                     } else {
-                        Log.PrintError ("LangManager init failed. Please check.");
+                        Log.PrintError ("LangManager init failed. Please check.", LogType.Lang);
                         onFinished?.Invoke (false);
                     }
                 } else {
-                    Log.PrintError ("LangManager init failed. Please check.");
+                    Log.PrintError ("LangManager init failed. Please check.", LogType.Lang);
                     onFinished?.Invoke (false);
                 }
             };
@@ -70,11 +70,11 @@ namespace HIHIFramework.Lang {
         }
 
         private static void InitStreamingAssets (Action<bool> onFinished = null) {
-            Log.Print ("Start init language streaming assets.");
+            Log.Print ("Start init language streaming assets.", LogType.Lang | LogType.Asset);
 
             Action<bool> onCopyFinished = (isSuccess) => {
                 if (isSuccess) {
-                    Log.Print ("Successfully init language streaming assets.");
+                    Log.Print ("Successfully init language streaming assets.", LogType.Lang | LogType.Asset);
                 }
 
                 onFinished?.Invoke (isSuccess);
@@ -92,22 +92,22 @@ namespace HIHIFramework.Lang {
                 return true;
             }
 
-            Log.Print ("Start loading localization file. LangType : " + langType);
+            Log.Print ("Start loading localization file. LangType : " + langType, LogType.Lang | LogType.Asset);
 
             var fileName = LangConfig.GetLocalizationFileName (langType);
             if (string.IsNullOrEmpty (fileName)) {
-                Log.PrintError ("Load localization file Failed. langType : " + langType + " , Error : Localization file do not exist.");
+                Log.PrintError ("Load localization file Failed. langType : " + langType + " , Error : Localization file do not exist.", LogType.Lang | LogType.Asset);
                 return false;
             }
 
             (var lines, var errorMsg) = AssetHandler.Instance.ReadPersistentDataFileByLines (AssetEnum.AssetType.Localization, fileName);
             if (errorMsg != null) {
-                Log.PrintError ("Load localization file Failed. langType : " + langType + " , Error : " + errorMsg);
+                Log.PrintError ("Load localization file Failed. langType : " + langType + " , Error : " + errorMsg, LogType.Lang | LogType.Asset);
                 return false;
             }
 
             if (lines == null || lines.Length <= 0) {
-                Log.PrintError ("Load localization file Failed. langType : " + langType + " , Error : Localization file is empty");
+                Log.PrintError ("Load localization file Failed. langType : " + langType + " , Error : Localization file is empty", LogType.Lang | LogType.Asset);
                 return false;
             }
 
@@ -120,7 +120,7 @@ namespace HIHIFramework.Lang {
                 }
 
                 if (keyValueMapping.ContainsKey (pair[0])) {
-                    Log.PrintError ("Load localization file Failed. langType : " + langType + " , Error : Duplicated localization key : " + pair[0]);
+                    Log.PrintError ("Load localization file Failed. langType : " + langType + " , Error : Duplicated localization key : " + pair[0], LogType.Lang | LogType.Asset);
                     return false;
                 }
 
@@ -129,7 +129,7 @@ namespace HIHIFramework.Lang {
 
             LangKeyValueMappingDict.Add (langType, keyValueMapping);
 
-            Log.Print ("Successfully load localization file. LangType : " + langType);
+            Log.Print ("Successfully load localization file. LangType : " + langType, LogType.Lang | LogType.Asset);
 
             return true;
         }
@@ -172,7 +172,7 @@ namespace HIHIFramework.Lang {
                 var resourcesName = LangConfig.GetFontResourcesName (langType);
                 var font = Resources.Load<TMP_FontAsset> (Path.Combine (FrameworkVariable.FontResourcesFolder, resourcesName));
                 if (font == null) {
-                    Log.PrintError ("Get font failed. LangType : " + langType);
+                    Log.PrintError ("Get font failed. LangType : " + langType, LogType.Lang | LogType.Asset);
                 } else {
                     FontDict[langType] = font;
                 }
@@ -200,7 +200,7 @@ namespace HIHIFramework.Lang {
                 if (isFallbackToRootLang) {
                     var rootLang = LangConfig.GetRootLang ();
                     if (langType != rootLang) {
-                        Log.Print ("Try to get word with root lang.");
+                        Log.Print ("Try to get word with root lang.", LogType.Lang);
                         return GetWord (rootLang, key, false);
                     }
                 }
@@ -217,13 +217,13 @@ namespace HIHIFramework.Lang {
 
             // TODO : Think of the bug that if inputting a langType that not yet loaded LocalizationFile, it will fail
             if (!LangKeyValueMappingDict.ContainsKey (langType)) {
-                Log.PrintError ("Cannot get word. LangKeyValueMapping of LangType : " + langType + " is missing.");
+                Log.PrintError ("Cannot get word. LangKeyValueMapping of LangType : " + langType + " is missing.", LogType.Lang);
                 return failedAction ();
             }
 
             var mapping = LangKeyValueMappingDict[langType];
             if (!mapping.ContainsKey (key)) {
-                Log.PrintError ("Cannot get word. The key value mapping is missing. key : " + key + " , LangType : " + langType);
+                Log.PrintError ("Cannot get word. The key value mapping is missing. key : " + key + " , LangType : " + langType, LogType.Lang);
                 return failedAction ();
             }
 
@@ -236,7 +236,7 @@ namespace HIHIFramework.Lang {
         //// Remarks : Use IEnumerable because it is covariance
         public static void SetWords (IEnumerable<BasicLocalizedTextDetails> detailsList, bool isFallbackToRootLang = true) {
             if (detailsList == null) {
-                Log.PrintWarning ("The input detailsList is null. Cannot set words.");
+                Log.PrintWarning ("The input detailsList is null. Cannot set words.", LogType.Lang);
                 return;
             }
 

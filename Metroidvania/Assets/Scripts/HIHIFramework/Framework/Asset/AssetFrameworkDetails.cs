@@ -31,7 +31,7 @@ namespace HIHIFramework.Asset {
             }
 
             if (string.IsNullOrEmpty (fullPath) || string.IsNullOrEmpty (folderName)) {
-                Log.PrintError ("GetAssetFolderFullPath Failed. AssetCategory : " + category + " , AssetType : " + type);
+                Log.PrintError ("GetAssetFolderFullPath Failed. AssetCategory : " + category + " , AssetType : " + type, LogType.Asset);
                 return null;
             }
 
@@ -46,7 +46,7 @@ namespace HIHIFramework.Asset {
             var assetFolderFullPath = GetAssetFolderFullPath (AssetFrameworkEnum.AssetCategory.StreamingAssets, type);
 
             if (string.IsNullOrEmpty (assetFolderFullPath)) {
-                Log.PrintError ("GetStreamingAssetsVersionFileFullPath Failed. AssetType : " + type);
+                Log.PrintError ("GetStreamingAssetsVersionFileFullPath Failed. AssetType : " + type, LogType.Asset);
                 return null;
             }
 
@@ -57,7 +57,7 @@ namespace HIHIFramework.Asset {
             var folderName = AssetDetails.GetAssetFolderName (type);
 
             if (string.IsNullOrEmpty (folderName)) {
-                Log.PrintError ("GetAssetVersionPlayerPrefsKey Failed. AssetType : " + type);
+                Log.PrintError ("GetAssetVersionPlayerPrefsKey Failed. AssetType : " + type, LogType.Asset);
                 return null;
             }
 
@@ -72,7 +72,7 @@ namespace HIHIFramework.Asset {
             var assetFolderFullPath = GetAssetFolderFullPath (AssetFrameworkEnum.AssetCategory.StreamingAssets, type);
 
             if (string.IsNullOrEmpty (assetFolderFullPath)) {
-                Log.PrintError ("GetStreamingAssetsChecksumFileFullPath Failed. AssetType : " + type);
+                Log.PrintError ("GetStreamingAssetsChecksumFileFullPath Failed. AssetType : " + type, LogType.Asset);
                 return null;
             }
 

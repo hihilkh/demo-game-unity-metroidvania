@@ -12,7 +12,7 @@ public static partial class AssetDetails {
             case AssetEnum.AssetType.MapData: return "MapData";
         }
 
-        Log.PrintError ("AssetType : " + type + " has not been assigned folder name. Return null.");
+        Log.PrintError ("AssetType : " + type + " has not been assigned folder name. Return null.", LogType.Asset);
         return null;
     }
 
@@ -32,10 +32,11 @@ public static partial class AssetDetails {
                     }
                 }
                 return nameList;
-            case AssetEnum.AssetType.MapData: return PracticalStreamingAssetsFileNames_MapData;
+            case AssetEnum.AssetType.MapData:
+                return PracticalStreamingAssetsFileNames_MapData;
         }
 
-        Log.PrintError ("AssetType : " + type + " has not been assigned practical streaming assets file names. Return null.");
+        Log.PrintError ("AssetType : " + type + " has not been assigned practical streaming assets file names. Return null.", LogType.Asset);
         return null;
     }
 }

@@ -71,11 +71,11 @@ namespace HIHIFramework.UI {
 
         private void OnClick () {
             if (!Enum.IsDefined (typeof (BtnOnClickType), onClickType)) {
-                Log.PrintError ("HIHIButton onClickType is not yet assigned");
+                Log.PrintError ("HIHIButton onClickType is not yet assigned", LogType.UI | LogType.Input);
                 return;
             }
 
-            Log.Print ("OnClick : " + onClickType);
+            Log.Print ("OnClick : " + onClickType, LogType.UI | LogType.Input);
             if (info == null) {
                 UIEventManager.InvokeEvent (onClickType);
             } else {

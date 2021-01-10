@@ -44,10 +44,10 @@ public class CharTargetArrow : CharArrowBase {
         var deltaY = target.position.y - transform.position.y;
 
         if (facingDirection == CharEnum.Direction.Right && deltaX < 0) {
-            Log.PrintWarning ("Wrong direction. Use default impulse.");
+            Log.PrintWarning ("Wrong direction. Use default impulse.", LogType.Char);
             return GetDefaultImpulseAngle (facingDirection);
         } else if (facingDirection == CharEnum.Direction.Left && deltaX > 0) {
-            Log.PrintWarning ("Wrong direction. Use default impulse.");
+            Log.PrintWarning ("Wrong direction. Use default impulse.", LogType.Char);
             return GetDefaultImpulseAngle (facingDirection);
         }
 
@@ -57,7 +57,7 @@ public class CharTargetArrow : CharArrowBase {
         var cosAngleSum = (deltaY - g * deltaX * deltaX / (charParams.arrowInitialSpeed_Target * charParams.arrowInitialSpeed_Target)) / dist;
 
         if (Mathf.Abs (cosAngleSum) > 1) {
-            Log.Print ("Cannot reach target. Use default impulse.");
+            Log.Print ("Cannot reach target. Use default impulse.", LogType.Char);
             return GetDefaultImpulseAngle (facingDirection);
         }
 
@@ -80,7 +80,7 @@ public class CharTargetArrow : CharArrowBase {
             }
 
             if (theta < lowerLimit) {
-                Log.PrintWarning ("Cannot get impulse within required angle range. Use default impulse.");
+                Log.PrintWarning ("Cannot get impulse within required angle range. Use default impulse.", LogType.Char);
                 return GetDefaultImpulseAngle (facingDirection);
             }
         } else {
@@ -90,7 +90,7 @@ public class CharTargetArrow : CharArrowBase {
             }
 
             if (theta > upperLimit) {
-                Log.PrintWarning ("Cannot get impulse within required angle range. Use default impulse.");
+                Log.PrintWarning ("Cannot get impulse within required angle range. Use default impulse.", LogType.Char);
                 return GetDefaultImpulseAngle (facingDirection);
             }
         }

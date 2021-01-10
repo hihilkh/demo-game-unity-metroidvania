@@ -10,7 +10,7 @@ public class MapGenerator : MonoBehaviour {
 
     public void GenerateMap (List<MapData.TileData> tileDataList) {
         if (tileDataList == null) {
-            Log.PrintWarning ("mapData is null. Please check.");
+            Log.PrintWarning ("mapData is null. Please check.", LogType.MapData);
             return;
         }
 

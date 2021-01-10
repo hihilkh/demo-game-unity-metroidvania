@@ -16,7 +16,7 @@ public static class GameProgress {
     }
 
     private static void LoadProgress () {
-        Log.PrintDebug ("Load Game Progress");
+        Log.PrintDebug ("Load Game Progress", LogType.GameFlow);
         LoadMissionProgressList ();
         LoadEnabledCommandList ();
     }
@@ -117,7 +117,7 @@ public static class GameProgress {
 
         var clearMissionIndex = MissionDetails.OrderedMissionList.FindIndex (x => x.id == missionId);
         if (clearMissionIndex < 0) {
-            Log.PrintWarning ("You has just cleared a mission which is not inside OrderedMissionList. Please check. Mission Id : " + missionId);
+            Log.PrintWarning ("You has just cleared a mission which is not inside OrderedMissionList. Please check. Mission Id : " + missionId, LogType.GameFlow);
         } else {
             if (clearMissionIndex + 1 < MissionDetails.OrderedMissionList.Count) { // Check if there is next mission or not
                 var nextMissionId = MissionDetails.OrderedMissionList[clearMissionIndex + 1].id;

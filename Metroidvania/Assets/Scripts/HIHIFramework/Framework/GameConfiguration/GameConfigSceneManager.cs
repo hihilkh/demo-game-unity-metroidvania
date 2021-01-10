@@ -34,7 +34,7 @@ namespace HIHIFramework.GameConfiguration {
 
         void Awake () {
             var isUseProductionConfig = FrameworkUtils.GetIsReleaseBuild () && !GameVariable.IsShowGameConfigSceneInReleaseBuild;
-            Log.PrintDebug ("isUseProductionConfig :: " + isUseProductionConfig);
+            Log.PrintDebug ("isUseProductionConfig :: " + isUseProductionConfig, LogType.General);
 
             if (isUseProductionConfig) {
                 settingsPanel.SetActive (false);
@@ -72,7 +72,7 @@ namespace HIHIFramework.GameConfiguration {
 
         private void GenerateDropdown () {
             if (allConfigSets == null || allConfigSets.Count == 0) {
-                Log.PrintError ("No config sets are set. Cannot generate the config dropdown. Please check.");
+                Log.PrintError ("No config sets are set. Cannot generate the config dropdown. Please check.", LogType.General);
                 return;
             }
 
@@ -319,7 +319,7 @@ namespace HIHIFramework.GameConfiguration {
 
         private void OnClearPlayerPrefsButtonClick () {
             PlayerPrefs.DeleteAll ();
-            Log.PrintWarning ("PlayerPrefs have been cleared");
+            Log.PrintWarning ("PlayerPrefs have been cleared", LogType.General);
         }
 
         #endregion

@@ -36,7 +36,7 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
     }
 
     public void OnLeft (InputAction.CallbackContext context) {
-        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase);
+        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogType.Input);
         if (context.phase == InputActionPhase.Started) {
             StartedLeftEvent?.Invoke ();
         } else if (context.phase == InputActionPhase.Canceled) {
@@ -45,7 +45,7 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
     }
 
     public void OnRight (InputAction.CallbackContext context) {
-        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase);
+        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogType.Input);
         if (context.phase == InputActionPhase.Started) {
             StartedRightEvent?.Invoke ();
         } else if (context.phase == InputActionPhase.Canceled) {
@@ -54,7 +54,7 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
     }
 
     public void OnTap (InputAction.CallbackContext context) {
-        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase);
+        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogType.Input);
         if (context.phase == InputActionPhase.Performed) {
             TappedEvent?.Invoke ();
         } else if (context.phase == InputActionPhase.Started) {
@@ -63,7 +63,7 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
     }
 
     public void OnHold (InputAction.CallbackContext context) {
-        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase);
+        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogType.Input);
         if (context.phase == InputActionPhase.Performed) {
             isHolding = true;
             StartedHoldEvent?.Invoke ();

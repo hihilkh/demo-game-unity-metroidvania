@@ -36,7 +36,7 @@ public class MainMenuSceneManager : MonoBehaviour {
 
     private void OnSelectMissionItemClick (object info) {
         if (!(info is MissionDetails)) {
-            Log.PrintError ("OnSelectMissionItemClick failed. Getting invalid info type : " + info.GetType ());
+            Log.PrintError ("OnSelectMissionItemClick failed. Getting invalid info type : " + info.GetType (), LogType.UI | LogType.Input | LogType.GameFlow);
             return;
         }
 
