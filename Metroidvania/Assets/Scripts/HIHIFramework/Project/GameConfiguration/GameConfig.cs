@@ -11,14 +11,14 @@ public static partial class GameConfig {
 	private static readonly GameConfigSet SampleGameConfigSet1 = new GameConfigSet (
 		"SampleOnly",                               // gameConfigSetName
 		"www.google.com",                           // baseURL
-		GameConfigEnum.AnalyticsType.None           // analyticsType
+		GameConfigEnum.AnalyticsType.None          // analyticsType
 	);
 
 	// sampleGameConfigSet2
 	private static readonly GameConfigSet SampleGameConfigSet2 = new GameConfigSet (
 		"PleaseDeleteMe",                                   // gameConfigSetName
 		"www.yahoo.com",                                    // baseURL
-		GameConfigEnum.AnalyticsType.Firebase               // analyticsType
+		GameConfigEnum.AnalyticsType.Firebase              // analyticsType
 	);
 
 	#endregion

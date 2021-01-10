@@ -3,19 +3,19 @@
 public class CharEnum {
     public enum Direction {
         Left,
-        Right
+        Right,
     }
 
     public enum HorizontalSpeed {
         Idle,
         Walk,
-        Dash
+        Dash,
     }
 
     public enum Location {
         Ground,
         Air,
-        Wall
+        Wall,
     }
 
     // Remarks: Never change the Command enum int value. It is saved in PlayerPrefs to represent the Command
@@ -24,7 +24,7 @@ public class CharEnum {
         Dash = 2,
         Hit = 3,
         Arrow = 4,
-        Turn = 5
+        Turn = 5,
     }
 
     public enum CommandSituation {
@@ -33,27 +33,27 @@ public class CharEnum {
         GroundRelease,
         AirTap,
         AirHold,
-        AirRelease
+        AirRelease,
     }
 
     public enum HitType {
         Normal,
         Charged,
         Finishing,
-        Drop
+        Drop,
     }
 
     public enum ArrowType {
         Target,
         Straight,
-        Triple
+        Triple,
     }
 
     public enum FaceType {
         Normal,
         Normal_Inversed,
         Confused,
-        Shocked
+        Shocked,
     }
 
     [Flags]
@@ -63,6 +63,6 @@ public class CharEnum {
         Arms = 1 << 1,
         Legs = 1 << 2,
         Thrusters = 1 << 3,
-        Arrow = 1 << 4
+        Arrow = 1 << 4,
     }
 }

@@ -41,7 +41,7 @@ public class MissionDetails {
             Mission_2,
             Mission_3,
             Mission_4,
-            Mission_5
+            Mission_5,
     };
 
     #endregion

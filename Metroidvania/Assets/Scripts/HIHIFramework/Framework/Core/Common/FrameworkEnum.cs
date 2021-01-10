@@ -3,7 +3,7 @@
         public enum FilePathType {
             FullPath,
             FileNameOnly,
-            FileNameOnlyWithoutExtension
+            FileNameOnlyWithoutExtension,
         }
     }
 }

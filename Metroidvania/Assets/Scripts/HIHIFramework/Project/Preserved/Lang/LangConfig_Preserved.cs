@@ -30,7 +30,7 @@ public static partial class LangConfig {
     public static List<LangType> GetSelectableLangTypeList () {
         return new List<LangType> {
                 LangType.TraditionalChinese,
-                LangType.English
+                LangType.English,
             };
     }
 

@@ -8,7 +8,7 @@ public static partial class GameConfig {
 	/// </summary>
 	public static readonly List<GameConfigSet> AllGameConfigSetList = new List<GameConfigSet> {
         SampleGameConfigSet1,
-		SampleGameConfigSet2
+		SampleGameConfigSet2,
 	};
 
 	/// <summary>
