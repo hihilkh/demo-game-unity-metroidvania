@@ -46,12 +46,12 @@ public class MapDataExporter : MonoBehaviour {
         Log.PrintWarning ("Start Check Map Design", LogType.MapData);
 
         var iterator = GetMapDataTileExportIterator ();
-        while (iterator.MoveNext ()) {
-            var tileData = iterator.Current;
+
+        foreach (var tileData in iterator) {
             if (tileData != null) {
                 var mapDesignTileType = TileMapping.GetMapDesignTileType (tileData.GetTileTag ());
                 if (mapDesignTileType == null || mapDesignTileType != tileData.GetTileType ()) {
-                    Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.GetPos () + ", tileType : " + tileData.GetTileType () + " , added to tileTag : " + tileData.GetTileTag (), LogType.MapData);
+                    Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.GetPos () + ", tileType : " + tileData.GetTileType () + " , added to TileMap with tileTag : " + tileData.GetTileTag (), LogType.MapData);
                     return;
                 }
             }
@@ -68,8 +68,7 @@ public class MapDataExporter : MonoBehaviour {
         var iterator = GetMapDataTileExportIterator ();
         var tiles = new List<MapData.TileData> ();
 
-        while (iterator.MoveNext ()) {
-            var tileData = iterator.Current;
+        foreach (var tileData in iterator) {
             if (tileData != null) {
                 tiles.Add (tileData);
             }

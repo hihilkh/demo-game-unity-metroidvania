@@ -4,67 +4,80 @@ using HIHIFramework.Core;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class MapDataTileExportIterator : IEnumerator<MapData.TileData> {
-    private Dictionary<MapEnum.TileTag, Tilemap> tileMapDict;
-    private Vector2Int lowerBound;
-    private Vector2Int upperBound;
-
-    private int currentPosX;
-    private int currentPosY;
+public class MapDataTileExportIterator : IEnumerable<MapData.TileData> {
+    private IEnumerator<MapData.TileData> enumerator;
 
     public MapDataTileExportIterator (Dictionary<MapEnum.TileTag, Tilemap> tileMapDict, Vector2Int lowerBound, Vector2Int upperBound) {
-        this.tileMapDict = tileMapDict;
-        this.lowerBound = lowerBound;
-        this.upperBound = upperBound;
-
-        Reset ();
+        enumerator = new MapDataTileExportEnumerator (tileMapDict, lowerBound, upperBound);
     }
 
-    #region IEnumerator
+    public IEnumerator<MapData.TileData> GetEnumerator () { return enumerator; }
+    IEnumerator IEnumerable.GetEnumerator () { return enumerator; }
 
-    public MapData.TileData Current { get { return GetTileData (currentPosX, currentPosY); } }
-    object IEnumerator.Current { get { return Current; } }
+    #region Enumerator
 
-    public void Dispose () {
-        tileMapDict = null;
-    }
+    private class MapDataTileExportEnumerator : IEnumerator<MapData.TileData> {
+        private Dictionary<MapEnum.TileTag, Tilemap> tileMapDict;
+        private Vector2Int lowerBound;
+        private Vector2Int upperBound;
 
-    public bool MoveNext () {
-        currentPosX++;
-        if (currentPosX > upperBound.x) {
-            currentPosX = lowerBound.x;
-            currentPosY++;
+        private int currentPosX;
+        private int currentPosY;
+
+        public MapDataTileExportEnumerator (Dictionary<MapEnum.TileTag, Tilemap> tileMapDict, Vector2Int lowerBound, Vector2Int upperBound) {
+            this.tileMapDict = tileMapDict;
+            this.lowerBound = lowerBound;
+            this.upperBound = upperBound;
+
+            Reset ();
         }
 
-        if (currentPosY > upperBound.y) {
-            return false;
+        public MapData.TileData Current { get { return GetTileData (currentPosX, currentPosY); } }
+        object IEnumerator.Current { get { return Current; } }
+
+        public void Dispose () {
+            tileMapDict = null;
         }
 
-        return true;
-    }
 
-    public void Reset () {
-        currentPosX = lowerBound.x - 1;
-        currentPosY = lowerBound.y;
-    }
 
-    private MapData.TileData GetTileData (int x, int y) {
-        var pos = new Vector3Int (x, y, GameVariable.TilePosZ);
+        public bool MoveNext () {
+            currentPosX++;
+            if (currentPosX > upperBound.x) {
+                currentPosX = lowerBound.x;
+                currentPosY++;
+            }
 
-        foreach (var pair in tileMapDict) {
-            var tile = pair.Value.GetTile (pos);
-            if (tile != null) {
-                var tileType = TileMapping.GetTileType (tile.name);
-                if (tileType == null) {
-                    Log.PrintError ("GetTileData for export failed. Pos : (" + x + ", " + y + ")", LogType.MapData);
-                    return null;
-                } else {
-                    return new MapData.TileData (x, y, (MapEnum.TileType)tileType, pair.Key);
+            if (currentPosY > upperBound.y) {
+                return false;
+            }
+
+            return true;
+        }
+
+        public void Reset () {
+            currentPosX = lowerBound.x - 1;
+            currentPosY = lowerBound.y;
+        }
+
+        private MapData.TileData GetTileData (int x, int y) {
+            var pos = new Vector3Int (x, y, GameVariable.TilePosZ);
+
+            foreach (var pair in tileMapDict) {
+                var tile = pair.Value.GetTile (pos);
+                if (tile != null) {
+                    var tileType = TileMapping.GetTileType (tile.name);
+                    if (tileType == null) {
+                        Log.PrintError ("GetTileData for export failed. Pos : (" + x + ", " + y + ")", LogType.MapData);
+                        return null;
+                    } else {
+                        return new MapData.TileData (x, y, (MapEnum.TileType)tileType, pair.Key);
+                    }
                 }
             }
-        }
 
-        return null;
+            return null;
+        }
     }
 
     #endregion
