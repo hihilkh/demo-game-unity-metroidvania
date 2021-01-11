@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: CharParams
   m_EditorClassIdentifier: 
   _gravityScale: 4
-  _minFallDownVelocity: -20
+  _minFallDownVelocity: -25
   _walkingSpeed: 5
   _slideDownVelocity: -4
-  _normalJumpInitSpeed: 14
-  _chargedJumpInitSpeed: 20
+  _normalJumpInitSpeed: 19
+  _chargedJumpInitSpeed: 24
   _dashingSpeed: 15
   _oneShotDashPeriod: 0.5
   _dashCoolDownPeriod: 0.2
@@ -39,8 +39,8 @@ MonoBehaviour:
   - 50
   _repelFromWallDistByTurn: 0.05
   _groundTapCommand: 1
-  _groundHoldCommand: 1
-  _groundReleaseCommand: 1
+  _groundHoldCommand: 3
+  _groundReleaseCommand: 3
   _airTapCommand: 1
-  _airHoldCommand: 3
-  _airReleaseCommand: 4
+  _airHoldCommand: 2
+  _airReleaseCommand: 3

@@ -14,8 +14,7 @@ public class MapDataExporter : MonoBehaviour {
     [SerializeField] private Tilemap slippyWallTileMap;
     [SerializeField] private Tilemap deathTileMap;
 
-    [SerializeField] private Vector2Int lowerBound;
-    [SerializeField] private Vector2Int upperBound;
+    [SerializeField] private RectTransform exportRange;
     [SerializeField] private string exportRootFolderPath;
     [SerializeField] private int missionId;
 
@@ -38,6 +37,9 @@ public class MapDataExporter : MonoBehaviour {
             { MapEnum.TileMapType.SlippyWall, slippyWallTileMap},
             { MapEnum.TileMapType.Death, deathTileMap },
         };
+
+        var lowerBound = new Vector2Int (Mathf.FloorToInt (exportRange.position.x), Mathf.FloorToInt (exportRange.position.y));
+        var upperBound = new Vector2Int (Mathf.CeilToInt (exportRange.position.x + exportRange.sizeDelta.x), Mathf.CeilToInt (exportRange.position.y + exportRange.sizeDelta.y));
 
         return new MapDataTileExportIterator (tileMapDict, lowerBound, upperBound); ;
     }
