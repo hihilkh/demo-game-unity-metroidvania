@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: CharParams
   m_EditorClassIdentifier: 
   _gravityScale: 4
+  _minFallDownVelocity: -20
   _walkingSpeed: 5
   _slideDownVelocity: -4
   _normalJumpInitSpeed: 14

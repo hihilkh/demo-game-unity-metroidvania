@@ -137,6 +137,12 @@ public class CharAnimUtils : MonoBehaviour
         SetBodyParts (model.GetObtainedBodyParts ());
     }
 
+    private void Update () {
+        if (rb.velocity.y < model.charParams.minFallDownVelocity) {
+            rb.velocity = new Vector2 (rb.velocity.x, model.charParams.minFallDownVelocity);
+        }
+    }
+
     private void OnDestroy () {
         model.obtainedBodyPartsChangedEvent -= SetBodyParts;
     }

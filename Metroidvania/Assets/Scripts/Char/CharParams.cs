@@ -8,6 +8,9 @@ public class CharParams : ScriptableObject {
     [SerializeField] private float _gravityScale;
     public float gravityScale => _gravityScale;
 
+    [SerializeField] private float _minFallDownVelocity;
+    public float minFallDownVelocity => _minFallDownVelocity;
+
     [Header ("Walk")]
     [SerializeField] private float _walkingSpeed;
     public float walkingSpeed => _walkingSpeed;
