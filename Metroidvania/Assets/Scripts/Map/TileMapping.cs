@@ -10,16 +10,16 @@ public static class TileMapping {
     private static Dictionary<MapEnum.TileType, string> TileResourcesNameDict = new Dictionary<MapEnum.TileType, string> () {
         { MapEnum.TileType.Dirt, "Dirt" },
         { MapEnum.TileType.GroundTag, "GroundTag" },
-        { MapEnum.TileType.WallTag, "WallTag" },
+        { MapEnum.TileType.Ground2Tag, "Ground2Tag" },
         { MapEnum.TileType.SlippyWallTag, "SlippyWallTag" },
         { MapEnum.TileType.DeathTag, "DeathTag" },
     };
 
-    private static Dictionary<MapEnum.TileTag, MapEnum.TileType> MapDesignTileTypeDict = new Dictionary<MapEnum.TileTag, MapEnum.TileType> () {
-        { MapEnum.TileTag.Ground, MapEnum.TileType.GroundTag },
-        { MapEnum.TileTag.Wall, MapEnum.TileType.WallTag },
-        { MapEnum.TileTag.SlippyWall, MapEnum.TileType.SlippyWallTag },
-        { MapEnum.TileTag.Death, MapEnum.TileType.DeathTag },
+    private static Dictionary<MapEnum.TileMapType, MapEnum.TileType> MapDesignTileTypeDict = new Dictionary<MapEnum.TileMapType, MapEnum.TileType> () {
+        { MapEnum.TileMapType.Ground, MapEnum.TileType.GroundTag },
+        { MapEnum.TileMapType.Ground2, MapEnum.TileType.Ground2Tag },
+        { MapEnum.TileMapType.SlippyWall, MapEnum.TileType.SlippyWallTag },
+        { MapEnum.TileMapType.Death, MapEnum.TileType.DeathTag },
     };
 
     public static string GetTileResourcesName (MapEnum.TileType tileType) {
@@ -42,12 +42,12 @@ public static class TileMapping {
         return null;
     }
 
-    public static MapEnum.TileType? GetMapDesignTileType (MapEnum.TileTag tileTag) {
-        if (MapDesignTileTypeDict.ContainsKey (tileTag)) {
-            return MapDesignTileTypeDict[tileTag];
+    public static MapEnum.TileType? GetMapDesignTileType (MapEnum.TileMapType tileMapType) {
+        if (MapDesignTileTypeDict.ContainsKey (tileMapType)) {
+            return MapDesignTileTypeDict[tileMapType];
         }
 
-        Log.PrintError ("MapDesignTileType mapping is not yet assigned. tileTag : " + tileTag, LogType.MapData);
+        Log.PrintError ("MapDesignTileType mapping is not yet assigned. tileMapType : " + tileMapType, LogType.MapData);
         return null;
     }
 }

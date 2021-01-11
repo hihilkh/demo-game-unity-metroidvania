@@ -60,6 +60,7 @@ public class CharModel : MonoBehaviour {
     private Dictionary<Collider2D, string> currentCollisionDict = new Dictionary<Collider2D, string> ();
     private bool isJustTouchWall;
     private bool isTouchingWall;
+    private const string WallColliderType = "Wall";
     private const string NoActionColliderType = "NoAction";
 
     private void Awake () {
@@ -922,12 +923,12 @@ public class CharModel : MonoBehaviour {
 
         var collisionNormal = collision.GetContact (0).normal;
 
-        if (collision.gameObject.tag == GameVariable.WallTag || collision.gameObject.tag == GameVariable.SlippyWallTag) {
+        if (collision.gameObject.tag == GameVariable.GroundTag) {
             var absX = Mathf.Abs (collisionNormal.x);
-            if (collisionNormal.y > 0 && collisionNormal.y > absX) {
-                collideType = GameVariable.GroundTag;
-            } else if (collisionNormal.y < 0 && -collisionNormal.y > absX) {
-                collideType = GameVariable.GroundTag;
+            if (collisionNormal.y >= 0 && collisionNormal.y < absX) {
+                collideType = WallColliderType;
+            } else if (collisionNormal.y < 0 && -collisionNormal.y < absX) {
+                collideType = WallColliderType;
             }
         }
 
@@ -956,7 +957,7 @@ public class CharModel : MonoBehaviour {
                     TouchGround ();
                 }
                 break;
-            case GameVariable.WallTag:
+            case WallColliderType:
             case GameVariable.SlippyWallTag:
                 var wallPosition = (collisionNormal.x <= 0) ? CharEnum.Direction.Right : CharEnum.Direction.Left;
                 TouchWall (wallPosition, collideType == GameVariable.SlippyWallTag);
@@ -986,7 +987,7 @@ public class CharModel : MonoBehaviour {
                     LeaveGround ();
                 }
                 break;
-            case GameVariable.WallTag:
+            case WallColliderType:
                 LeaveWall (false);
                 break;
             case GameVariable.SlippyWallTag:

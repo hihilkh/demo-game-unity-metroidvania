@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 public class MapDataTileExportIterator : IEnumerable<MapData.TileData> {
     private IEnumerator<MapData.TileData> enumerator;
 
-    public MapDataTileExportIterator (Dictionary<MapEnum.TileTag, Tilemap> tileMapDict, Vector2Int lowerBound, Vector2Int upperBound) {
+    public MapDataTileExportIterator (Dictionary<MapEnum.TileMapType, Tilemap> tileMapDict, Vector2Int lowerBound, Vector2Int upperBound) {
         enumerator = new MapDataTileExportEnumerator (tileMapDict, lowerBound, upperBound);
     }
 
@@ -17,14 +17,14 @@ public class MapDataTileExportIterator : IEnumerable<MapData.TileData> {
     #region Enumerator
 
     private class MapDataTileExportEnumerator : IEnumerator<MapData.TileData> {
-        private Dictionary<MapEnum.TileTag, Tilemap> tileMapDict;
+        private Dictionary<MapEnum.TileMapType, Tilemap> tileMapDict;
         private Vector2Int lowerBound;
         private Vector2Int upperBound;
 
         private int currentPosX;
         private int currentPosY;
 
-        public MapDataTileExportEnumerator (Dictionary<MapEnum.TileTag, Tilemap> tileMapDict, Vector2Int lowerBound, Vector2Int upperBound) {
+        public MapDataTileExportEnumerator (Dictionary<MapEnum.TileMapType, Tilemap> tileMapDict, Vector2Int lowerBound, Vector2Int upperBound) {
             this.tileMapDict = tileMapDict;
             this.lowerBound = lowerBound;
             this.upperBound = upperBound;

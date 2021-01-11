@@ -6,7 +6,7 @@ using UnityEngine.Tilemaps;
 
 public class MapGenerator : MonoBehaviour {
     [SerializeField] private Tilemap groundTileMap;
-    [SerializeField] private Tilemap wallTileMap;
+    [SerializeField] private Tilemap ground2TileMap;
 
     public void GenerateMap (List<MapData.TileData> tileDataList) {
         if (tileDataList == null) {
@@ -20,12 +20,12 @@ public class MapGenerator : MonoBehaviour {
             if (resourcesName != null) {
                 var tile = Resources.Load<Tile> (resourcesName);
                 var targetTilemap = groundTileMap;
-                switch (tileData.GetTileTag ()) {
-                    case MapEnum.TileTag.Ground:
+                switch (tileData.GetTileMapType ()) {
+                    case MapEnum.TileMapType.Ground:
                         targetTilemap = groundTileMap;
                         break;
-                    case MapEnum.TileTag.Wall:
-                        targetTilemap = wallTileMap;
+                    case MapEnum.TileMapType.Ground2:
+                        targetTilemap = ground2TileMap;
                         break;
                 }
                 targetTilemap.SetTile (tileData.GetPos (), tile);

@@ -10,7 +10,7 @@ public class MapDataExporter : MonoBehaviour {
 
     [SerializeField] private CharModel charModel;
     [SerializeField] private Tilemap groundTileMap;
-    [SerializeField] private Tilemap wallTileMap;
+    [SerializeField] private Tilemap ground2TileMap;
     [SerializeField] private Tilemap slippyWallTileMap;
     [SerializeField] private Tilemap deathTileMap;
 
@@ -32,11 +32,11 @@ public class MapDataExporter : MonoBehaviour {
     }
 
     private MapDataTileExportIterator GetMapDataTileExportIterator () {
-        var tileMapDict = new Dictionary<MapEnum.TileTag, Tilemap> {
-            { MapEnum.TileTag.Ground, groundTileMap},
-            { MapEnum.TileTag.Wall, wallTileMap},
-            { MapEnum.TileTag.SlippyWall, slippyWallTileMap},
-            { MapEnum.TileTag.Death, deathTileMap },
+        var tileMapDict = new Dictionary<MapEnum.TileMapType, Tilemap> {
+            { MapEnum.TileMapType.Ground, groundTileMap},
+            { MapEnum.TileMapType.Ground2, ground2TileMap},
+            { MapEnum.TileMapType.SlippyWall, slippyWallTileMap},
+            { MapEnum.TileMapType.Death, deathTileMap },
         };
 
         return new MapDataTileExportIterator (tileMapDict, lowerBound, upperBound); ;
@@ -49,9 +49,9 @@ public class MapDataExporter : MonoBehaviour {
 
         foreach (var tileData in iterator) {
             if (tileData != null) {
-                var mapDesignTileType = TileMapping.GetMapDesignTileType (tileData.GetTileTag ());
+                var mapDesignTileType = TileMapping.GetMapDesignTileType (tileData.GetTileMapType ());
                 if (mapDesignTileType == null || mapDesignTileType != tileData.GetTileType ()) {
-                    Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.GetPos () + ", tileType : " + tileData.GetTileType () + " , added to TileMap with tileTag : " + tileData.GetTileTag (), LogType.MapData);
+                    Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.GetPos () + ", tileType : " + tileData.GetTileType () + " , added to TileMapType : " + tileData.GetTileMapType (), LogType.MapData);
                     return;
                 }
             }

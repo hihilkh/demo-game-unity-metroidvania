@@ -44,15 +44,15 @@ public class MapData {
         public int x;
         public int y;
         public int tileType;
-        public int tileTag;
+        public int tileMapType;
 
         public TileData () { }
 
-        public TileData (int x, int y, MapEnum.TileType tileType, MapEnum.TileTag tileTag) {
+        public TileData (int x, int y, MapEnum.TileType tileType, MapEnum.TileMapType tileMapType) {
             this.x = x;
             this.y = y;
             this.tileType = (int)tileType;
-            this.tileTag = (int)tileTag;
+            this.tileMapType = (int)tileMapType;
         }
 
         public Vector3Int GetPos () {
@@ -68,11 +68,11 @@ public class MapData {
             }
         }
 
-        public MapEnum.TileTag GetTileTag () {
-            if (Enum.IsDefined (typeof (MapEnum.TileTag), tileTag)) {
-                return (MapEnum.TileTag)tileTag;
+        public MapEnum.TileMapType GetTileMapType () {
+            if (Enum.IsDefined (typeof (MapEnum.TileMapType), tileMapType)) {
+                return (MapEnum.TileMapType)tileMapType;
             } else {
-                Log.PrintError ("Invalid tileTag : " + tileTag + " . Pos : (" + x + ", " + y + "). Use default.", LogType.MapData);
+                Log.PrintError ("Invalid tileMapType : " + tileMapType + " . Pos : (" + x + ", " + y + "). Use default.", LogType.MapData);
                 return default;
             }
         }
