@@ -251,11 +251,6 @@ public class CharModel : MonoBehaviour {
             return;
         }
 
-        if (isIgnoreUserInputInThisFrame) {
-            SetCurrentCommandStatus (null, null);
-            return;
-        }
-
         var situation = (CharEnum.CommandSituation)optionalSituation;
 
         if (situation == CharEnum.CommandSituation.GroundHold || situation == CharEnum.CommandSituation.AirHold) {
@@ -263,7 +258,17 @@ public class CharModel : MonoBehaviour {
                 SetCurrentCommandStatus (null, null);
                 return;
             } else if (currentSituation != CharEnum.CommandSituation.GroundHold && currentSituation != CharEnum.CommandSituation.AirHold) {
-                // (The situation that it is just triggered hold)
+                // (The situation of just triggered hold)
+
+                if (isIgnoreUserInputInThisFrame) {
+                    // Ignore user input if just trigger hold
+                    // TODO : It may lead to some wired cases, e.g.:
+                    // trigger hold while touch wall -> hold action and release action failed, but
+                    // triggered hold and touch wall later -> hold action and release action success
+                    SetCurrentCommandStatus (null, null);
+                    return;
+                }
+
                 // Hold and release would fail if started to press in air but it is on the ground while triggered hold, or vice versa
                 var isHoldFailed = false;
                 if (situation == CharEnum.CommandSituation.GroundHold && startedPressLocation != CharEnum.Location.Ground) {
@@ -278,6 +283,11 @@ public class CharModel : MonoBehaviour {
                     SetCurrentCommandStatus (null, null);
                     return;
                 }
+            }
+        } else {
+            if (isIgnoreUserInputInThisFrame) {
+                SetCurrentCommandStatus (null, null);
+                return;
             }
         }
 
@@ -299,7 +309,7 @@ public class CharModel : MonoBehaviour {
         }
 
         var command = GetCommandBySituation (situation);
-        Log.PrintDebug ("HandleCommand : Situation : " + situation + "   Command : " + command, LogType.Char);
+        Log.PrintDebug ("Handle/Current : Situation : " + situation + " / " + currentSituation + " ; Command : " + command + " / " + currentCommand, LogType.Char);
 
         // Fisish the hold command
         if (situation == CharEnum.CommandSituation.GroundRelease || situation == CharEnum.CommandSituation.AirRelease) {
@@ -688,6 +698,7 @@ public class CharModel : MonoBehaviour {
 
     private void JumpCharge () {
         if (!isJumpCharging) {
+            Log.Print ("JumpCharge", LogType.Char);
             isJumpCharging = true;
             isIgnoreHold = true;
 
@@ -698,6 +709,8 @@ public class CharModel : MonoBehaviour {
     private void StopJumpCharge () {
         if (isJumpCharging) {
             isJumpCharging = false;
+
+            Log.Print ("StopJumpCharge", LogType.Char);
 
             // TODO : Cancel Jump charge animation
         }
@@ -1113,7 +1126,12 @@ public class CharModel : MonoBehaviour {
         isTouchingWall = false;
         isIgnoreUserInputInThisFrame = true;
 
-        // TODO : Handling of leave wall due to sliding to the end of the wall
+        if (!isSlippyWall) {
+            if (currentLocation == CharEnum.Location.Wall) {
+                ChangeMovingDirection ();
+                StartFreeFall ();
+            }
+        }
     }
 
     private void SlideOnWall () {
