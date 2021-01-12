@@ -936,6 +936,7 @@ public class CharModel : MonoBehaviour {
 
         var collisionNormal = collision.GetContact (0).normal;
 
+        // TODO : Check what happen if touch slippy wall with head (i.e. slippy wall as roof)
         if (collision.gameObject.tag == GameVariable.GroundTag) {
             var absX = Mathf.Abs (collisionNormal.x);
             if (collisionNormal.y >= 0 && collisionNormal.y < absX) {
