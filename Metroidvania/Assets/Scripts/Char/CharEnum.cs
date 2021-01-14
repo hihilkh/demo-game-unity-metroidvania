@@ -1,9 +1,18 @@
 ﻿using System;
 
 public class CharEnum {
-    public enum Direction {
+    public enum HorizontalDirection {
         Left,
         Right,
+    }
+
+    [Flags]
+    public enum LookDirection : short {
+        None = 0,
+        Up = 1 << 0,
+        Down = 1 << 1,
+        Left = 1 << 2,
+        Right = 1 << 3,
     }
 
     public enum HorizontalSpeed {

@@ -23,6 +23,9 @@ public class CharAnimUtils : MonoBehaviour
     [SerializeField] private Rigidbody2D _rb;
     public Rigidbody2D rb => _rb;
 
+    [SerializeField] private Transform _animBaseTransform;
+    public Transform animBaseTransform => _animBaseTransform;
+
     [Header ("Hit Template")]
     [SerializeField] private CharNormalHit _normalHitTemplate;
     public CharNormalHit normalHitTemplate => _normalHitTemplate;
@@ -214,7 +217,7 @@ public class CharAnimUtils : MonoBehaviour
         if (magnitudeOnly) {
             return velocityX;
         } else {
-            var multiplier = (model.movingDirection == CharEnum.Direction.Right) ? 1 : -1;
+            var multiplier = (model.movingDirection == CharEnum.HorizontalDirection.Right) ? 1 : -1;
             return velocityX * multiplier;
         }
     }
@@ -234,13 +237,13 @@ public class CharAnimUtils : MonoBehaviour
     }
 
     public void UpdateFacingDirection (bool isNeedOppositeDirection = false) {
-        var scale = (model.facingDirection == CharEnum.Direction.Right) ? 1 : -1;
+        var scale = (model.facingDirection == CharEnum.HorizontalDirection.Right) ? 1 : -1;
 
         if (isNeedOppositeDirection) {
             scale = scale * -1;
         }
 
-        rb.transform.localScale = new Vector3 (scale, 1, 1);
+        animBaseTransform.localScale = new Vector3 (scale, 1, 1);
     }
 
     public void ResetGravity () {

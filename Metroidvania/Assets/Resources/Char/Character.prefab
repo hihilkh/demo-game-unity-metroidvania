@@ -96,9 +96,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 137bc971ddb3d4343b1ee662c9be5f13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 894378340}
   charModel: {fileID: 351095058075983922}
-  cameraParams: {fileID: 11400000, guid: 7aa77233852a1412ab62007c990d75b0, type: 2}
+  camParams: {fileID: 11400000, guid: 7aa77233852a1412ab62007c990d75b0, type: 2}
+  controller: {fileID: 3404561521971273195}
 --- !u!1 &351095056838418907
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,7 +236,7 @@ GameObject:
   - component: {fileID: 351095058075983929}
   - component: {fileID: 351095058075983928}
   - component: {fileID: 351095058075983922}
-  - component: {fileID: 351095058075983933}
+  - component: {fileID: 3404561521971273195}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -319,10 +319,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d222fa3c6a78d499380cc3d79f4ed94b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 351095058075983933}
+  controller: {fileID: 3404561521971273195}
   animator: {fileID: 6176056532493872824}
   _charParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
---- !u!114 &351095058075983933
+--- !u!114 &3404561521971273195
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -334,6 +334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 562b974926ade410fb33ef634c40226b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraParams: {fileID: 11400000, guid: 7aa77233852a1412ab62007c990d75b0, type: 2}
 --- !u!1 &351095058114005909
 GameObject:
   m_ObjectHideFlags: 0
@@ -439,6 +440,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _model: {fileID: 351095058075983922}
   _rb: {fileID: 351095058075983928}
+  _animBaseTransform: {fileID: 351095058322751770}
   _normalHitTemplate: {fileID: 7143613927472316200, guid: ad821f23cd0ff4300b8560815d9be5d4,
     type: 3}
   _chargedHitTemplate: {fileID: 5143845770374917409, guid: 80a2c83210a8f42c5b57918eb18ffa48,

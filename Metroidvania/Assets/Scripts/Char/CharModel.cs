@@ -18,8 +18,8 @@ public class CharModel : MonoBehaviour {
     public event Action<CharEnum.BodyPart> obtainedBodyPartsChangedEvent;
 
     // Character Situation
-    public CharEnum.Direction facingDirection { get; private set; }
-    public CharEnum.Direction movingDirection { get; private set; }
+    public CharEnum.HorizontalDirection facingDirection { get; private set; }
+    public CharEnum.HorizontalDirection movingDirection { get; private set; }
     public CharEnum.HorizontalSpeed currentHorizontalSpeed { get; private set; }
     public CharEnum.Location currentLocation { get; private set; }
     public CharEnum.HitType? currentHitType { get; private set; }
@@ -65,11 +65,7 @@ public class CharModel : MonoBehaviour {
 
     private void Awake () {
         if (controller == null) {
-            controller = GetComponent<CharController> ();
-        }
-
-        if (controller == null) {
-            Log.PrintWarning ("Player controller is not assigned and cannot be found.", LogType.Char);
+            Log.PrintWarning ("Character controller is not assigned.", LogType.Char);
         } else {
             // Remarks :
             // Currently do not add StartedLeft, StoppedLeft, StartedRight, StoppedRight handling to prevent complicated code.
@@ -80,13 +76,12 @@ public class CharModel : MonoBehaviour {
             controller.StoppedHoldEvent += StopHoldAction;
         }
 
-        // Dev only
         if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName) {
             InitChar (transform.position, charParams.initDirection, true);
         }
     }
 
-    public void InitChar (Vector3 pos, CharEnum.Direction direction, bool isAllowMove) {
+    public void InitChar (Vector3 pos, CharEnum.HorizontalDirection direction, bool isAllowMove) {
         SetPosAndDirection (pos, direction);
         SetAllowMove (isAllowMove);
         currentLocation = CharEnum.Location.Ground;
@@ -163,7 +158,7 @@ public class CharModel : MonoBehaviour {
         }
     }
 
-    public void SetPosAndDirection (Vector3 pos, CharEnum.Direction direction) {
+    public void SetPosAndDirection (Vector3 pos, CharEnum.HorizontalDirection direction) {
         transform.position = pos;
         facingDirection = direction;
         movingDirection = facingDirection;
@@ -490,7 +485,7 @@ public class CharModel : MonoBehaviour {
                     case CharEnum.CommandSituation.AirRelease:
                         if (currentLocation == CharEnum.Location.Wall) {
                             ChangeFacingDirection (true);
-                            var directionMultiplier = facingDirection == CharEnum.Direction.Right ? -1 : 1;
+                            var directionMultiplier = facingDirection == CharEnum.HorizontalDirection.Right ? -1 : 1;
                             transform.position = transform.position + new Vector3 (charParams.repelFromWallDistByTurn, 0, 0) * directionMultiplier;
 
                             StartFreeFall ();
@@ -753,8 +748,6 @@ public class CharModel : MonoBehaviour {
         StopDropHitCharge ();
         isDropHitting = true;
 
-        // TODO : Implementation of actual hit
-
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
 
         SetAnimatorTrigger (CharAnimConstant.DropHitTriggerName);
@@ -880,10 +873,10 @@ public class CharModel : MonoBehaviour {
 
     private void ChangeFacingDirection (bool isAlignMovingDirection) {
         Log.PrintDebug ("ChangeFacingDirection : isAlignMovingDirection = " + isAlignMovingDirection, LogType.Char);
-        if (facingDirection == CharEnum.Direction.Left) {
-            facingDirection = CharEnum.Direction.Right;
+        if (facingDirection == CharEnum.HorizontalDirection.Left) {
+            facingDirection = CharEnum.HorizontalDirection.Right;
         } else {
-            facingDirection = CharEnum.Direction.Left;
+            facingDirection = CharEnum.HorizontalDirection.Left;
         }
 
         if (isAlignMovingDirection) {
@@ -895,10 +888,10 @@ public class CharModel : MonoBehaviour {
         // Remarks : Changing moving direction must also align facing direction
 
         Log.PrintDebug ("ChangeMovingDirection", LogType.Char);
-        if (movingDirection == CharEnum.Direction.Left) {
-            movingDirection = CharEnum.Direction.Right;
+        if (movingDirection == CharEnum.HorizontalDirection.Left) {
+            movingDirection = CharEnum.HorizontalDirection.Right;
         } else {
-            movingDirection = CharEnum.Direction.Left;
+            movingDirection = CharEnum.HorizontalDirection.Left;
         }
 
         facingDirection = movingDirection;
@@ -973,7 +966,7 @@ public class CharModel : MonoBehaviour {
                 break;
             case WallColliderType:
             case GameVariable.SlippyWallTag:
-                var wallPosition = (collisionNormal.x <= 0) ? CharEnum.Direction.Right : CharEnum.Direction.Left;
+                var wallPosition = (collisionNormal.x <= 0) ? CharEnum.HorizontalDirection.Right : CharEnum.HorizontalDirection.Left;
                 TouchWall (wallPosition, collideType == GameVariable.SlippyWallTag);
                 break;
             case GameVariable.DeathTag:
@@ -1078,7 +1071,7 @@ public class CharModel : MonoBehaviour {
         }
     }
 
-    private void TouchWall (CharEnum.Direction wallPosition, bool isSlippyWall) {
+    private void TouchWall (CharEnum.HorizontalDirection wallPosition, bool isSlippyWall) {
         Log.PrintDebug ("TouchWall : isSlippyWall = " + isSlippyWall, LogType.Char);
 
         isIgnoreUserInputInThisFrame = true;
@@ -1106,7 +1099,7 @@ public class CharModel : MonoBehaviour {
             if (isSlippyWall) {
                 currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
 
-                var directionMultiplier = facingDirection == CharEnum.Direction.Right ? -1 : 1;
+                var directionMultiplier = facingDirection == CharEnum.HorizontalDirection.Right ? -1 : 1;
                 transform.position = transform.position + new Vector3 (charParams.repelFromWallDistByTurn, 0, 0) * directionMultiplier;
 
                 StartFreeFall ();

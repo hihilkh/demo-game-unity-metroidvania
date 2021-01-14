@@ -7,6 +7,7 @@ using System;
 
 public class CharController : MonoBehaviour, UserInput.ICharacterActions {
 
+    [SerializeField] private CharCameraParams cameraParams;
     private UserInput userInput;
 
     public event Action StartedLeftEvent;
@@ -17,6 +18,7 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
     public event Action TappedEvent;
     public event Action StartedHoldEvent;
     public event Action StoppedHoldEvent;
+    public event Action<CharEnum.LookDirection> LookEvent;
 
     private bool isHolding = false;
 
@@ -72,6 +74,31 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
                 StoppedHoldEvent?.Invoke ();
             }
             isHolding = false;
+        }
+    }
+
+    public void OnLook (InputAction.CallbackContext context) {
+        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogType.Input);
+
+        if (context.phase == InputActionPhase.Performed) {
+            var value = context.ReadValue<Vector2> ();
+
+            var lookDirection = CharEnum.LookDirection.None;
+            if (value.x >= cameraParams.lookThreshold) {
+                lookDirection = lookDirection | CharEnum.LookDirection.Right;
+            } else if (value.x <= -cameraParams.lookThreshold) {
+                lookDirection = lookDirection | CharEnum.LookDirection.Left;
+            }
+
+            if (value.y >= cameraParams.lookThreshold) {
+                lookDirection = lookDirection | CharEnum.LookDirection.Up;
+            } else if (value.y <= -cameraParams.lookThreshold) {
+                lookDirection = lookDirection | CharEnum.LookDirection.Down;
+            }
+
+            LookEvent?.Invoke (lookDirection);
+        } else if (context.phase == InputActionPhase.Canceled) {
+            LookEvent?.Invoke (CharEnum.LookDirection.None);
         }
     }
 }

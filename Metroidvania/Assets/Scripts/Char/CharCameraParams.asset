@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46b55485583bc4054ab80ef1df4d000b, type: 3}
   m_Name: CharCameraParams
   m_EditorClassIdentifier: 
-  _posOffset: 0
+  _lookThreshold: 0.3
+  _camMaxHorizontalMovement: 3
+  _camMaxVerticalMovement: 3
+  _camHorizontalMoveSpeed: 9
+  _camVerticalMoveSpeed: 9

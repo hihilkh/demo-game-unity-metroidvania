@@ -44,18 +44,26 @@ public class @UserInput : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": ""Hold"",
-                    ""type"": ""Button"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""ff56f1c7-4dc4-4fae-829e-85e859c63c5a"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Hold""
+                },
+                {
+                    ""name"": ""Look"",
+                    ""type"": ""Value"",
+                    ""id"": ""2cae8e21-7ebf-4c5e-a5f1-10de5d76f85f"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
                     ""id"": ""76004bcd-a7b6-43b1-b632-82c757f62ac8"",
-                    ""path"": ""<Keyboard>/a"",
+                    ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -66,7 +74,7 @@ public class @UserInput : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""1f3a251d-14cf-4fce-a43a-69339f96dc1e"",
-                    ""path"": ""<Keyboard>/d"",
+                    ""path"": ""<Keyboard>/g"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -87,12 +95,100 @@ public class @UserInput : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""9c825758-6beb-41e3-835c-a1971f83da2c"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""145f8015-595b-4109-b111-39850daab7a7"",
                     ""path"": ""<Keyboard>/j"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Hold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""65c522ed-b2e6-45b9-9997-ecb505d17760"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Dpad"",
+                    ""id"": ""9d4c9ebd-751c-4767-a157-7f99c9929acb"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""37d1f05f-6bdb-482a-bc5d-1b20d826699c"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""4e50864f-3cff-4cde-aa42-c83d4a7e06af"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""56850f81-77c6-43aa-8b87-f93cec3cbf6a"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""35179f1a-4a62-427a-90ee-6edca9beef06"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c728026b-8565-4c25-bba1-afb97709a947"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -107,6 +203,7 @@ public class @UserInput : IInputActionCollection, IDisposable
         m_Character_Right = m_Character.FindAction("Right", throwIfNotFound: true);
         m_Character_Tap = m_Character.FindAction("Tap", throwIfNotFound: true);
         m_Character_Hold = m_Character.FindAction("Hold", throwIfNotFound: true);
+        m_Character_Look = m_Character.FindAction("Look", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -160,6 +257,7 @@ public class @UserInput : IInputActionCollection, IDisposable
     private readonly InputAction m_Character_Right;
     private readonly InputAction m_Character_Tap;
     private readonly InputAction m_Character_Hold;
+    private readonly InputAction m_Character_Look;
     public struct CharacterActions
     {
         private @UserInput m_Wrapper;
@@ -168,6 +266,7 @@ public class @UserInput : IInputActionCollection, IDisposable
         public InputAction @Right => m_Wrapper.m_Character_Right;
         public InputAction @Tap => m_Wrapper.m_Character_Tap;
         public InputAction @Hold => m_Wrapper.m_Character_Hold;
+        public InputAction @Look => m_Wrapper.m_Character_Look;
         public InputActionMap Get() { return m_Wrapper.m_Character; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -189,6 +288,9 @@ public class @UserInput : IInputActionCollection, IDisposable
                 @Hold.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnHold;
                 @Hold.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnHold;
                 @Hold.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnHold;
+                @Look.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
+                @Look.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
+                @Look.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
             }
             m_Wrapper.m_CharacterActionsCallbackInterface = instance;
             if (instance != null)
@@ -205,6 +307,9 @@ public class @UserInput : IInputActionCollection, IDisposable
                 @Hold.started += instance.OnHold;
                 @Hold.performed += instance.OnHold;
                 @Hold.canceled += instance.OnHold;
+                @Look.started += instance.OnLook;
+                @Look.performed += instance.OnLook;
+                @Look.canceled += instance.OnLook;
             }
         }
     }
@@ -215,5 +320,6 @@ public class @UserInput : IInputActionCollection, IDisposable
         void OnRight(InputAction.CallbackContext context);
         void OnTap(InputAction.CallbackContext context);
         void OnHold(InputAction.CallbackContext context);
+        void OnLook(InputAction.CallbackContext context);
     }
 }

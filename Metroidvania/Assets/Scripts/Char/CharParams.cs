@@ -88,8 +88,8 @@ public class CharParams : ScriptableObject {
     public float repelFromWallDistByTurn => _repelFromWallDistByTurn;
 
     [Header ("Dev Only")]
-    [SerializeField] private CharEnum.Direction _initDirection;
-    public CharEnum.Direction initDirection => _initDirection;
+    [SerializeField] private CharEnum.HorizontalDirection _initDirection;
+    public CharEnum.HorizontalDirection initDirection => _initDirection;
 
     [SerializeField] private CharEnum.Command _groundTapCommand;
     public CharEnum.Command groundTapCommand => _groundTapCommand;
