@@ -63,20 +63,33 @@ public class MapDataTileExportIterator : IEnumerable<MapData.TileData> {
         private MapData.TileData GetTileData (int x, int y) {
             var pos = new Vector3Int (x, y, GameVariable.TilePosZ);
 
+            var result = new List<MapData.TileData> ();
             foreach (var pair in tileMapDict) {
                 var tile = pair.Value.GetTile (pos);
                 if (tile != null) {
                     var tileType = TileMapping.GetTileType (tile.name);
                     if (tileType == null) {
-                        Log.PrintError ("GetTileData for export failed. Pos : (" + x + ", " + y + ")", LogType.MapData);
-                        return null;
+                        Log.PrintError ("GetTileData for export error. Cannot get tileType of " + tile.name + " . Pos : (" + x + ", " + y + ")", LogType.MapData);
                     } else {
-                        return new MapData.TileData (x, y, (MapEnum.TileType)tileType, pair.Key);
+                        result.Add (new MapData.TileData (x, y, (MapEnum.TileType)tileType, pair.Key));
                     }
                 }
             }
 
-            return null;
+            switch (result.Count) {
+                case 0:
+                    return null;
+                case 1:
+                    return result[0];
+                default:
+                    var tileMapTypesStr = "";
+                    foreach (var tileData in result) {
+                        tileMapTypesStr += tileData.GetTileMapType () + "  ";
+                    }
+
+                    Log.PrintError ("GetTileData for export error. Multiple TiieData. Pos : (" + x + ", " + y + ") , TileMapTypes : " + tileMapTypesStr, LogType.MapData);
+                    return null;
+            }
         }
     }
 
