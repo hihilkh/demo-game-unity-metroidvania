@@ -5,7 +5,9 @@ using HIHIFramework.Core;
 using System;
 using UnityEngine.SceneManagement;
 
-public class CharModel : MonoBehaviour {
+public class CharModel : LifeBase {
+    protected override int totalHP => charParams.totalHP;
+
     private Dictionary<CharEnum.CommandSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.CommandSituation, CharEnum.Command> ();
 
     [SerializeField] private CharController controller;
@@ -18,7 +20,6 @@ public class CharModel : MonoBehaviour {
     public event Action<CharEnum.BodyPart> obtainedBodyPartsChangedEvent;
 
     // Character Situation
-    public CharEnum.HorizontalDirection facingDirection { get; private set; }
     public CharEnum.HorizontalDirection movingDirection { get; private set; }
     public CharEnum.HorizontalSpeed currentHorizontalSpeed { get; private set; }
     public CharEnum.Location currentLocation { get; private set; }
@@ -77,13 +78,15 @@ public class CharModel : MonoBehaviour {
         }
 
         if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName) {
-            InitChar (transform.position, charParams.initDirection, true);
+            Init (baseTransform.position, charParams.initDirection);
+            SetAllowMove (true);
         }
     }
 
-    public void InitChar (Vector3 pos, CharEnum.HorizontalDirection direction, bool isAllowMove) {
-        SetPosAndDirection (pos, direction);
-        SetAllowMove (isAllowMove);
+    public override void Init (Vector2 pos, CharEnum.HorizontalDirection direction) {
+        base.Init (pos, direction);
+
+        SetAllowMove (false);
         currentLocation = CharEnum.Location.Ground;
         currentHitType = null;
         currentArrowType = null;
@@ -158,9 +161,8 @@ public class CharModel : MonoBehaviour {
         }
     }
 
-    public void SetPosAndDirection (Vector3 pos, CharEnum.HorizontalDirection direction) {
-        transform.position = pos;
-        facingDirection = direction;
+    public override void SetPosAndDirection (Vector2 pos, CharEnum.HorizontalDirection direction) {
+        base.SetPosAndDirection (pos, direction);
         movingDirection = facingDirection;
     }
 
@@ -486,7 +488,7 @@ public class CharModel : MonoBehaviour {
                         if (currentLocation == CharEnum.Location.Wall) {
                             ChangeFacingDirection (true);
                             var directionMultiplier = facingDirection == CharEnum.HorizontalDirection.Right ? -1 : 1;
-                            transform.position = transform.position + new Vector3 (charParams.repelFromWallDistByTurn, 0, 0) * directionMultiplier;
+                            SetPosByOffset (new Vector2 (charParams.repelFromWallDistByTurn, 0) * directionMultiplier);
 
                             StartFreeFall ();
                         } else {
@@ -905,7 +907,19 @@ public class CharModel : MonoBehaviour {
 
     #region HP related
 
-    private void Die () {
+    public override bool Hurt (int dp) {
+        var isAlive = base.Hurt (dp);
+
+        if (isAlive) {
+            // TODO : Hurt Animation
+        }
+
+        return isAlive;
+    }
+
+    protected override void Die () {
+        base.Die ();
+
         // TODO
         Log.PrintError ("Die", LogType.Char);
     }
@@ -1100,7 +1114,7 @@ public class CharModel : MonoBehaviour {
                 currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
 
                 var directionMultiplier = facingDirection == CharEnum.HorizontalDirection.Right ? -1 : 1;
-                transform.position = transform.position + new Vector3 (charParams.repelFromWallDistByTurn, 0, 0) * directionMultiplier;
+                SetPosByOffset (new Vector2 (charParams.repelFromWallDistByTurn, 0) * directionMultiplier);
 
                 StartFreeFall ();
             } else {

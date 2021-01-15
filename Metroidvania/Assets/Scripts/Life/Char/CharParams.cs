@@ -4,6 +4,10 @@ using UnityEngine;
 
 [CreateAssetMenu (fileName = "CharParams", menuName = "ScriptableObjects/CharParams", order = 1)]
 public class CharParams : ScriptableObject {
+    [Header ("Life")]
+    [SerializeField] private int _totalHP;
+    public int totalHP => _totalHP;
+
     [Header ("Physics")]
     [SerializeField] private float _gravityScale;
     public float gravityScale => _gravityScale;
