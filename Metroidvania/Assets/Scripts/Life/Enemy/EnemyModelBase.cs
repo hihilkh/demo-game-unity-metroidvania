@@ -58,8 +58,6 @@ public abstract class EnemyModelBase : LifeBase {
 
     #region Movement Related
 
-    #region Jump
-
     protected void Jump () {
         Log.PrintDebug (gameObject.name + " : Jump", LogType.Enemy);
 
@@ -73,7 +71,15 @@ public abstract class EnemyModelBase : LifeBase {
         SetAnimatorTrigger (EnemyAnimConstant.JumpTriggerName);
     }
 
-    #endregion
+    protected void ChangeFacingDirection () {
+        if (facingDirection == LifeEnum.HorizontalDirection.Left) {
+            facingDirection = LifeEnum.HorizontalDirection.Right;
+        } else {
+            facingDirection = LifeEnum.HorizontalDirection.Left;
+        }
+
+        facingDirectionChangedEvent?.Invoke (facingDirection);
+    }
 
     #endregion
 
@@ -84,8 +90,8 @@ public abstract class EnemyModelBase : LifeBase {
         lifeCollision.LeftGroundEvent += LeaveGround;
         ////lifeCollision.TouchedRoofEvent    // No action for touch roof
         ////lifeCollision.LeftRoofEvent       // No action for leave roof
-        //lifeCollision.TouchedWallEvent += TouchWall;
-        //lifeCollision.LeftWallEvent += LeaveWall;
+        lifeCollision.TouchedWallEvent += TouchWall;
+        lifeCollision.LeftWallEvent += LeaveWall;
         //lifeCollision.TouchedDeathTagEvent += Die;
     }
 
@@ -94,8 +100,8 @@ public abstract class EnemyModelBase : LifeBase {
         lifeCollision.LeftGroundEvent -= LeaveGround;
         ////lifeCollision.TouchedRoofEvent    // No action for touch roof
         ////lifeCollision.LeftRoofEvent       // No action for leave roof
-        //lifeCollision.TouchedWallEvent -= TouchWall;
-        //lifeCollision.LeftWallEvent -= LeaveWall;
+        lifeCollision.TouchedWallEvent -= TouchWall;
+        lifeCollision.LeftWallEvent -= LeaveWall;
         //lifeCollision.TouchedDeathTagEvent -= Die;
     }
 
@@ -132,9 +138,23 @@ public abstract class EnemyModelBase : LifeBase {
         }
     }
 
+    private void TouchWall (LifeEnum.HorizontalDirection wallPosition, bool isSlippyWall) {
+        Log.PrintDebug (gameObject.name + " : TouchWall : isSlippyWall = " + isSlippyWall, LogType.Char);
+
+        if (wallPosition != facingDirection) {
+            // Somehow touch wall which is back to facing direction
+            return;
+        }
+
+        ChangeFacingDirection ();
+    }
+
+    private void LeaveWall (bool isSlippyWall) {
+        Log.PrintDebug (gameObject.name + " : LeaveWall", LogType.Char);
+    }
+
     private void StartFreeFall () {
         // TODO 
     }
-
     #endregion
 }
