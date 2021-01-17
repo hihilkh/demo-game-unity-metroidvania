@@ -15,3 +15,4 @@ MonoBehaviour:
   _totalHP: 1
   _movementSpeed: 0
   _jumpInitSpeed: 5
+  _recursiveJumpPeriod: 1.5
