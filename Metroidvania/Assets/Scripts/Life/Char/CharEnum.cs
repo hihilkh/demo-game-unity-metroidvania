@@ -1,11 +1,9 @@
 ﻿using System;
 
 public class CharEnum {
-    public enum HorizontalDirection {
-        Left,
-        Right,
-    }
-
+    /// <summary>
+    /// The direction that the player control the camera to look to
+    /// </summary>
     [Flags]
     public enum LookDirection : short {
         None = 0,
@@ -19,12 +17,6 @@ public class CharEnum {
         Idle,
         Walk,
         Dash,
-    }
-
-    public enum Location {
-        Ground,
-        Air,
-        Wall,
     }
 
     // Remarks: Never change the Command enum int value. It is saved in PlayerPrefs to represent the Command

@@ -19,4 +19,5 @@ public enum LogType : long {
 
     Char = 1 << 20,
     MapData = 1 << 21,
+    Enemy = 1 << 22,
 }

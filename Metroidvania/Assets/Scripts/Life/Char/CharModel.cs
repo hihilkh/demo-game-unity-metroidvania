@@ -20,9 +20,8 @@ public class CharModel : LifeBase {
     public event Action<CharEnum.BodyPart> obtainedBodyPartsChangedEvent;
 
     // Character Situation
-    public CharEnum.HorizontalDirection movingDirection { get; private set; }
+    public LifeEnum.HorizontalDirection movingDirection { get; private set; }
     public CharEnum.HorizontalSpeed currentHorizontalSpeed { get; private set; }
-    public CharEnum.Location currentLocation { get; private set; }
     public CharEnum.HitType? currentHitType { get; private set; }
     public CharEnum.ArrowType? currentArrowType { get; private set; }
     private bool isAllowMove;
@@ -37,7 +36,7 @@ public class CharModel : LifeBase {
     // Command Control
     private CharEnum.CommandSituation? currentSituation;
     private CharEnum.Command? currentCommand;
-    private CharEnum.Location startedPressLocation;
+    private LifeEnum.Location startedPressLocation;
     private bool isIgnoreHold;
     private bool isIgnoreRelease;
 
@@ -58,24 +57,17 @@ public class CharModel : LifeBase {
     private Coroutine attackCoolDownCoroutine;
 
     // Collision
-    private Dictionary<Collider2D, string> currentCollisionDict = new Dictionary<Collider2D, string> ();
     private bool isJustTouchWall;
     private bool isTouchingWall;
-    private const string WallColliderType = "Wall";
-    private const string NoActionColliderType = "NoAction";
 
     private void Awake () {
-        if (controller == null) {
-            Log.PrintWarning ("Character controller is not assigned.", LogType.Char);
-        } else {
-            // Remarks :
-            // Currently do not add StartedLeft, StoppedLeft, StartedRight, StoppedRight handling to prevent complicated code.
-            // Add them back if found them to be useful for development or debugging.
-            controller.StartedPressEvent += TriggerStartPressAction;
-            controller.TappedEvent += TriggerTapAction;
-            controller.StartedHoldEvent += StartHoldAction;
-            controller.StoppedHoldEvent += StopHoldAction;
-        }
+        // Remarks :
+        // Currently do not add StartedLeft, StoppedLeft, StartedRight, StoppedRight handling to prevent complicated code.
+        // Add them back if found them to be useful for development or debugging.
+        controller.StartedPressEvent += TriggerStartPressAction;
+        controller.TappedEvent += TriggerTapAction;
+        controller.StartedHoldEvent += StartHoldAction;
+        controller.StoppedHoldEvent += StopHoldAction;
 
         if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName) {
             Init (baseTransform.position, charParams.initDirection);
@@ -83,11 +75,25 @@ public class CharModel : LifeBase {
         }
     }
 
-    public override void Init (Vector2 pos, CharEnum.HorizontalDirection direction) {
-        base.Init (pos, direction);
+    protected override void OnDestroy () {
+        base.OnDestroy ();
+
+        controller.StartedPressEvent -= TriggerStartPressAction;
+        controller.TappedEvent -= TriggerTapAction;
+        controller.StartedHoldEvent -= StartHoldAction;
+        controller.StoppedHoldEvent -= StopHoldAction;
+    }
+
+    // TODO : Handle the case that init / set position in air
+    public override bool Init (Vector2 pos, LifeEnum.HorizontalDirection direction) {
+        var hasInitBefore = base.Init (pos, direction);
+
+        if (hasInitBefore) {
+            return hasInitBefore;
+        }
 
         SetAllowMove (false);
-        currentLocation = CharEnum.Location.Ground;
+        currentLocation = LifeEnum.Location.Ground;
         currentHitType = null;
         currentArrowType = null;
         isAllowAirJump = true;
@@ -107,6 +113,8 @@ public class CharModel : LifeBase {
         isTouchingWall = false;
 
         ResetAllUpdateControlFlags ();
+
+        return hasInitBefore;
     }
 
     private void ResetAllUpdateControlFlags () {
@@ -116,7 +124,7 @@ public class CharModel : LifeBase {
 
         currentSituation = null;
         currentCommand = null;
-        startedPressLocation = CharEnum.Location.Ground;
+        startedPressLocation = LifeEnum.Location.Ground;
         isIgnoreHold = false;
         isIgnoreRelease = false;
 
@@ -161,7 +169,7 @@ public class CharModel : LifeBase {
         }
     }
 
-    public override void SetPosAndDirection (Vector2 pos, CharEnum.HorizontalDirection direction) {
+    public override void SetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         base.SetPosAndDirection (pos, direction);
         movingDirection = facingDirection;
     }
@@ -234,11 +242,11 @@ public class CharModel : LifeBase {
         }
 
         if (isJustTapped) {
-            return currentLocation == CharEnum.Location.Ground ? CharEnum.CommandSituation.GroundTap : CharEnum.CommandSituation.AirTap;
+            return currentLocation == LifeEnum.Location.Ground ? CharEnum.CommandSituation.GroundTap : CharEnum.CommandSituation.AirTap;
         } else if (isHolding) {
-            return currentLocation == CharEnum.Location.Ground ? CharEnum.CommandSituation.GroundHold : CharEnum.CommandSituation.AirHold;
+            return currentLocation == LifeEnum.Location.Ground ? CharEnum.CommandSituation.GroundHold : CharEnum.CommandSituation.AirHold;
         } else {
-            return currentLocation == CharEnum.Location.Ground ? CharEnum.CommandSituation.GroundRelease : CharEnum.CommandSituation.AirRelease;
+            return currentLocation == LifeEnum.Location.Ground ? CharEnum.CommandSituation.GroundRelease : CharEnum.CommandSituation.AirRelease;
         }
     }
 
@@ -268,9 +276,9 @@ public class CharModel : LifeBase {
 
                 // Hold and release would fail if started to press in air but it is on the ground while triggered hold, or vice versa
                 var isHoldFailed = false;
-                if (situation == CharEnum.CommandSituation.GroundHold && startedPressLocation != CharEnum.Location.Ground) {
+                if (situation == CharEnum.CommandSituation.GroundHold && startedPressLocation != LifeEnum.Location.Ground) {
                     isHoldFailed = true;
-                } else if (situation == CharEnum.CommandSituation.AirHold && startedPressLocation == CharEnum.Location.Ground) {
+                } else if (situation == CharEnum.CommandSituation.AirHold && startedPressLocation == LifeEnum.Location.Ground) {
                     isHoldFailed = true;
                 }
 
@@ -469,7 +477,7 @@ public class CharModel : LifeBase {
                 break;
             case CharEnum.Command.Turn:
                 // Do not do turn action if touching wall and on ground because changing moving direction is trigged while touch wall
-                if (isTouchingWall && currentLocation == CharEnum.Location.Ground) {
+                if (isTouchingWall && currentLocation == LifeEnum.Location.Ground) {
                     break;
                 }
 
@@ -485,9 +493,9 @@ public class CharModel : LifeBase {
                         break;
                     case CharEnum.CommandSituation.AirTap:
                     case CharEnum.CommandSituation.AirRelease:
-                        if (currentLocation == CharEnum.Location.Wall) {
+                        if (currentLocation == LifeEnum.Location.Wall) {
                             ChangeFacingDirection (true);
-                            var directionMultiplier = facingDirection == CharEnum.HorizontalDirection.Right ? -1 : 1;
+                            var directionMultiplier = facingDirection == LifeEnum.HorizontalDirection.Right ? -1 : 1;
                             SetPosByOffset (new Vector2 (charParams.repelFromWallDistByTurn, 0) * directionMultiplier);
 
                             StartFreeFall ();
@@ -569,8 +577,8 @@ public class CharModel : LifeBase {
 
         StopDashing (currentHorizontalSpeed, false, false);  // To ensure do not trigger 2 dash coroutines at the same time
 
-        if (currentLocation == CharEnum.Location.Wall) {
-            currentLocation = CharEnum.Location.Air;
+        if (currentLocation == LifeEnum.Location.Wall) {
+            currentLocation = LifeEnum.Location.Air;
         }
 
         if (isOneShot) {
@@ -604,7 +612,7 @@ public class CharModel : LifeBase {
         isDashing = false;
         currentHorizontalSpeed = speedAfterStopDashing;
         if (isNeedToChangeMovementAnim) {
-            if (currentLocation == CharEnum.Location.Ground) {
+            if (currentLocation == LifeEnum.Location.Ground) {
                 StartIdleOrWalk ();
             } else {
                 StartFreeFall ();
@@ -661,7 +669,7 @@ public class CharModel : LifeBase {
     }
 
     private bool CheckIsAllowJump () {
-        if (currentLocation == CharEnum.Location.Ground) {
+        if (currentLocation == LifeEnum.Location.Ground) {
             return true;
         }
 
@@ -673,17 +681,17 @@ public class CharModel : LifeBase {
 
         StopDashing (currentHorizontalSpeed, false, false);
 
-        if (currentLocation == CharEnum.Location.Wall) {
+        if (currentLocation == LifeEnum.Location.Wall) {
             currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
         }
 
-        if (currentLocation == CharEnum.Location.Ground) {
+        if (currentLocation == LifeEnum.Location.Ground) {
             isJustJumpedUp = true;
         } else {
             isAllowAirJump = false;
         }
 
-        currentLocation = CharEnum.Location.Air;
+        currentLocation = LifeEnum.Location.Air;
 
 
         SetAnimatorTrigger (CharAnimConstant.JumpTriggerName);
@@ -875,10 +883,10 @@ public class CharModel : LifeBase {
 
     private void ChangeFacingDirection (bool isAlignMovingDirection) {
         Log.PrintDebug ("ChangeFacingDirection : isAlignMovingDirection = " + isAlignMovingDirection, LogType.Char);
-        if (facingDirection == CharEnum.HorizontalDirection.Left) {
-            facingDirection = CharEnum.HorizontalDirection.Right;
+        if (facingDirection == LifeEnum.HorizontalDirection.Left) {
+            facingDirection = LifeEnum.HorizontalDirection.Right;
         } else {
-            facingDirection = CharEnum.HorizontalDirection.Left;
+            facingDirection = LifeEnum.HorizontalDirection.Left;
         }
 
         if (isAlignMovingDirection) {
@@ -890,10 +898,10 @@ public class CharModel : LifeBase {
         // Remarks : Changing moving direction must also align facing direction
 
         Log.PrintDebug ("ChangeMovingDirection", LogType.Char);
-        if (movingDirection == CharEnum.HorizontalDirection.Left) {
-            movingDirection = CharEnum.HorizontalDirection.Right;
+        if (movingDirection == LifeEnum.HorizontalDirection.Left) {
+            movingDirection = LifeEnum.HorizontalDirection.Right;
         } else {
-            movingDirection = CharEnum.HorizontalDirection.Left;
+            movingDirection = LifeEnum.HorizontalDirection.Left;
         }
 
         facingDirection = movingDirection;
@@ -926,99 +934,36 @@ public class CharModel : LifeBase {
 
     #endregion
 
-    #region Collision
+    #region Collision Event
 
-    private bool CheckIsTouchingGround () {
-        foreach (var pair in currentCollisionDict) {
-            if (pair.Value == GameVariable.GroundTag) {
-                return true;
-            }
-        }
-
-        return false;
+    protected override void RegisterCollisionEventHandler () {
+        lifeCollision.TouchedGroundEvent += TouchGround;
+        lifeCollision.LeftGroundEvent += LeaveGround;
+        //lifeCollision.TouchedRoofEvent    // No action for touch roof
+        //lifeCollision.LeftRoofEvent       // No action for leave roof
+        lifeCollision.TouchedWallEvent += TouchWall;
+        lifeCollision.LeftWallEvent += LeaveWall;
+        lifeCollision.TouchedDeathTagEvent += Die;
     }
 
-    public void OnCollisionEnter2D (Collision2D collision) {
-        var collideType = collision.gameObject.tag;
-
-        var collisionNormal = collision.GetContact (0).normal;
-
-        // TODO : Check what happen if touch slippy wall with head (i.e. slippy wall as roof)
-        if (collision.gameObject.tag == GameVariable.GroundTag) {
-            var absX = Mathf.Abs (collisionNormal.x);
-            if (collisionNormal.y >= 0 && collisionNormal.y < absX) {
-                collideType = WallColliderType;
-            } else if (collisionNormal.y < 0 && -collisionNormal.y < absX) {
-                collideType = WallColliderType;
-            }
-        }
-
-        if (collideType == GameVariable.GroundTag && collisionNormal.y < 0) {
-            collideType = NoActionColliderType;
-            Log.Print ("Char Collide to roof. No action is needed.", LogType.Char | LogType.Collision);
-        } else {
-            Log.Print ("Char Collision Enter : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType + " ; collisionNormal = " + collisionNormal + " ; movingDirection = " + movingDirection, LogType.Char | LogType.Collision);
-        }
-
-        var isOriginallyTouchingGround = CheckIsTouchingGround ();
-        if (currentCollisionDict.ContainsKey (collision.collider)) {
-            currentCollisionDict[collision.collider] = collideType;
-        } else {
-            currentCollisionDict.Add (collision.collider, collideType);
-        }
-
-        if (Time.time == 0) {
-            // Do not do collide action for time = 0
-            return;
-        }
-
-        switch (collideType) {
-            case GameVariable.GroundTag:
-                if (!isOriginallyTouchingGround) {
-                    TouchGround ();
-                }
-                break;
-            case WallColliderType:
-            case GameVariable.SlippyWallTag:
-                var wallPosition = (collisionNormal.x <= 0) ? CharEnum.HorizontalDirection.Right : CharEnum.HorizontalDirection.Left;
-                TouchWall (wallPosition, collideType == GameVariable.SlippyWallTag);
-                break;
-            case GameVariable.DeathTag:
-                Die ();
-                break;
-        }
-    }
-
-    public void OnCollisionExit2D (Collision2D collision) {
-        if (!currentCollisionDict.ContainsKey (collision.collider)) {
-            Log.PrintError ("Missing key in currentCollisionDict. collision name : " + collision.gameObject.name, LogType.Char | LogType.Collision);
-            return;
-        }
-        var collideType = currentCollisionDict[collision.collider];
-        currentCollisionDict.Remove (collision.collider);
-
-        Log.Print ("Char Collision Exit : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType, LogType.Char | LogType.Collision);
-
-        switch (collideType) {
-            case NoActionColliderType:
-                // No action is needed.
-                break;
-            case GameVariable.GroundTag:
-                if (!CheckIsTouchingGround ()) {
-                    LeaveGround ();
-                }
-                break;
-            case WallColliderType:
-                LeaveWall (false);
-                break;
-            case GameVariable.SlippyWallTag:
-                LeaveWall (true);
-                break;
-        }
+    protected override void UnregisterCollisionEventHandler () {
+        lifeCollision.TouchedGroundEvent -= TouchGround;
+        lifeCollision.LeftGroundEvent -= LeaveGround;
+        //lifeCollision.TouchedRoofEvent    // No action for touch roof
+        //lifeCollision.LeftRoofEvent       // No action for leave roof
+        lifeCollision.TouchedWallEvent -= TouchWall;
+        lifeCollision.LeftWallEvent -= LeaveWall;
+        lifeCollision.TouchedDeathTagEvent -= Die;
     }
 
     private void TouchGround () {
         Log.PrintDebug ("TouchGround", LogType.Char);
+
+        // Touch ground while init / set position
+        if (currentLocation == LifeEnum.Location.Unknown) {
+            currentLocation = LifeEnum.Location.Ground;
+            return;
+        }
 
         isIgnoreUserInputInThisFrame = true;
 
@@ -1044,16 +989,21 @@ public class CharModel : LifeBase {
                 AlignMovingWithFacingDirection ();
             }
 
-            if (currentLocation == CharEnum.Location.Wall) {
-                StartWalking ();
-            } else {
-                SetAnimatorTrigger (CharAnimConstant.LandingTriggerName);
+            switch (currentLocation) {
+                case LifeEnum.Location.Wall:
+                    StartWalking ();
+                    break;
+                case LifeEnum.Location.Air:
+                    SetAnimatorTrigger (CharAnimConstant.LandingTriggerName);
+                    break;
+                default:
+                    // Do nothing
+                    break;
             }
         }
 
-        isJustJumpedUp = false;
         isAllowAirJump = true;
-        currentLocation = CharEnum.Location.Ground;
+        currentLocation = LifeEnum.Location.Ground;
 
         if (currentSituation == CharEnum.CommandSituation.AirHold) {
             isIgnoreHold = true;
@@ -1066,7 +1016,7 @@ public class CharModel : LifeBase {
 
         isIgnoreUserInputInThisFrame = true;
 
-        currentLocation = CharEnum.Location.Air;
+        currentLocation = LifeEnum.Location.Air;
 
         // Special Handling
         if (isJumpCharging) {         // "GroundHold - Jump" command
@@ -1080,12 +1030,14 @@ public class CharModel : LifeBase {
             isIgnoreRelease = true;
         }
 
-        if (!isJustJumpedUp) {
+        if (isJustJumpedUp) {
+            isJustJumpedUp = false;
+        } else {
             StartFreeFall ();
         }
     }
 
-    private void TouchWall (CharEnum.HorizontalDirection wallPosition, bool isSlippyWall) {
+    private void TouchWall (LifeEnum.HorizontalDirection wallPosition, bool isSlippyWall) {
         Log.PrintDebug ("TouchWall : isSlippyWall = " + isSlippyWall, LogType.Char);
 
         isIgnoreUserInputInThisFrame = true;
@@ -1094,7 +1046,7 @@ public class CharModel : LifeBase {
 
         if (wallPosition == movingDirection) {  // Change moving direction only when char originally move towards wall
             // if it is slippy wall, do not change moving direction when in air
-            if (!isSlippyWall || currentLocation == CharEnum.Location.Ground) {
+            if (!isSlippyWall || currentLocation == LifeEnum.Location.Ground) {
                 ChangeMovingDirection ();
             }
         }
@@ -1106,14 +1058,14 @@ public class CharModel : LifeBase {
         }
 
         if (isDashing) {
-            StopDashing (CharEnum.HorizontalSpeed.Walk, true, currentLocation == CharEnum.Location.Ground);
+            StopDashing (CharEnum.HorizontalSpeed.Walk, true, currentLocation == LifeEnum.Location.Ground);
         }
 
-        if (currentLocation != CharEnum.Location.Ground) {
+        if (currentLocation != LifeEnum.Location.Ground) {
             if (isSlippyWall) {
                 currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
 
-                var directionMultiplier = facingDirection == CharEnum.HorizontalDirection.Right ? -1 : 1;
+                var directionMultiplier = facingDirection == LifeEnum.HorizontalDirection.Right ? -1 : 1;
                 SetPosByOffset (new Vector2 (charParams.repelFromWallDistByTurn, 0) * directionMultiplier);
 
                 StartFreeFall ();
@@ -1135,7 +1087,7 @@ public class CharModel : LifeBase {
         isIgnoreUserInputInThisFrame = true;
 
         if (!isSlippyWall) {
-            if (currentLocation == CharEnum.Location.Wall) {
+            if (currentLocation == LifeEnum.Location.Wall) {
                 ChangeMovingDirection ();
                 StartFreeFall ();
             }
@@ -1143,7 +1095,7 @@ public class CharModel : LifeBase {
     }
 
     private void SlideOnWall () {
-        currentLocation = CharEnum.Location.Wall;
+        currentLocation = LifeEnum.Location.Wall;
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
         isAllowAirJump = true;   // Allow jump in air again
 
@@ -1151,14 +1103,14 @@ public class CharModel : LifeBase {
     }
 
     private void StartFreeFall () {
-        currentLocation = CharEnum.Location.Air;
+        currentLocation = LifeEnum.Location.Air;
 
         SetAnimatorTrigger (CharAnimConstant.FreeFallTriggerName);
     }
 
     #endregion
 
-    #region Event Handler
+    #region Controller Event
 
     private void TriggerStartPressAction () {
         startedPressLocation = currentLocation;

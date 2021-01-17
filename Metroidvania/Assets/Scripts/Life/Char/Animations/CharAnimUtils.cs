@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using HIHIFramework.Core;
 using UnityEngine;
 
-public class CharAnimUtils : MonoBehaviour
-{
+public class CharAnimUtils : MonoBehaviour {
     private Dictionary<CharEnum.FaceType, GameObject> faceDict;
     private const string MeshName_HeadNormal = "Meshes/Head/head.normal";
     private const string MeshName_HeadNormalInversed = "Meshes/Head/head.normal_inversed";
@@ -66,33 +65,31 @@ public class CharAnimUtils : MonoBehaviour
     public Transform refPoint_SlideShoot => _refPoint_SlideShoot;
 
     private void Awake () {
-        var animator = GetComponent<Animator> ();
-
         // faceDict
         faceDict = new Dictionary<CharEnum.FaceType, GameObject> ();
 
-        var normalHeadTransform = animator.transform.Find (MeshName_HeadNormal);
+        var normalHeadTransform = transform.Find (MeshName_HeadNormal);
         if (normalHeadTransform == null) {
             Log.PrintError ("Cannot find normal head of the character.", LogType.Animation);
         } else {
             faceDict.Add (CharEnum.FaceType.Normal, normalHeadTransform.gameObject);
         }
 
-        var normalInversedHeadTransform = animator.transform.Find (MeshName_HeadNormalInversed);
+        var normalInversedHeadTransform = transform.Find (MeshName_HeadNormalInversed);
         if (normalInversedHeadTransform == null) {
             Log.PrintError ("Cannot find normal inversed head of the character.", LogType.Animation);
         } else {
             faceDict.Add (CharEnum.FaceType.Normal_Inversed, normalInversedHeadTransform.gameObject);
         }
 
-        var confusedHeadTransform = animator.transform.Find (MeshName_HeadConfused);
+        var confusedHeadTransform = transform.Find (MeshName_HeadConfused);
         if (confusedHeadTransform == null) {
             Log.PrintError ("Cannot find confused head of the character.", LogType.Animation);
         } else {
             faceDict.Add (CharEnum.FaceType.Confused, confusedHeadTransform.gameObject);
         }
 
-        var shockedHeadTransform = animator.transform.Find (MeshName_HeadShocked);
+        var shockedHeadTransform = transform.Find (MeshName_HeadShocked);
         if (shockedHeadTransform == null) {
             Log.PrintError ("Cannot find shocked head of the character.", LogType.Animation);
         } else {
@@ -102,28 +99,28 @@ public class CharAnimUtils : MonoBehaviour
         // bodyPartDict
         bodyPartDict = new Dictionary<CharEnum.BodyPart, GameObject> ();
 
-        var armsTransform = animator.transform.Find (MeshName_Arms);
+        var armsTransform = transform.Find (MeshName_Arms);
         if (armsTransform == null) {
             Log.PrintError ("Cannot find arms of the character.", LogType.Animation);
         } else {
             bodyPartDict.Add (CharEnum.BodyPart.Arms, armsTransform.gameObject);
         }
 
-        var legsTransform = animator.transform.Find (MeshName_Legs);
+        var legsTransform = transform.Find (MeshName_Legs);
         if (legsTransform == null) {
             Log.PrintError ("Cannot find legs of the character.", LogType.Animation);
         } else {
             bodyPartDict.Add (CharEnum.BodyPart.Legs, legsTransform.gameObject);
         }
 
-        var thrustersTransform = animator.transform.Find (MeshName_Thrusters);
+        var thrustersTransform = transform.Find (MeshName_Thrusters);
         if (thrustersTransform == null) {
             Log.PrintError ("Cannot find thrusters of the character.", LogType.Animation);
         } else {
             bodyPartDict.Add (CharEnum.BodyPart.Thrusters, thrustersTransform.gameObject);
         }
 
-        var arrowTransform = animator.transform.Find (MeshName_ArrowWeapon);
+        var arrowTransform = transform.Find (MeshName_ArrowWeapon);
         if (arrowTransform == null) {
             Log.PrintError ("Cannot find arrow weapon of the character.", LogType.Animation);
         } else {
@@ -134,8 +131,7 @@ public class CharAnimUtils : MonoBehaviour
         model.obtainedBodyPartsChangedEvent += SetBodyParts;
     }
 
-    private void Start()
-    {
+    private void Start () {
         ResetGravity ();
         SetBodyParts (model.GetObtainedBodyParts ());
     }
@@ -217,7 +213,7 @@ public class CharAnimUtils : MonoBehaviour
         if (magnitudeOnly) {
             return velocityX;
         } else {
-            var multiplier = (model.movingDirection == CharEnum.HorizontalDirection.Right) ? 1 : -1;
+            var multiplier = (model.movingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
             return velocityX * multiplier;
         }
     }
@@ -237,7 +233,7 @@ public class CharAnimUtils : MonoBehaviour
     }
 
     public void UpdateFacingDirection (bool isNeedOppositeDirection = false) {
-        var scale = (model.facingDirection == CharEnum.HorizontalDirection.Right) ? 1 : -1;
+        var scale = (model.facingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
 
         if (isNeedOppositeDirection) {
             scale = scale * -1;

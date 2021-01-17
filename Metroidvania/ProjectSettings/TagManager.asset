@@ -8,6 +8,7 @@ TagManager:
   - Attack
   - SlippyWall
   - Death
+  - Enemy
   layers:
   - Default
   - TransparentFX

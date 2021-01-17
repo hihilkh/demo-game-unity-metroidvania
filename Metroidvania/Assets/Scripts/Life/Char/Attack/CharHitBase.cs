@@ -8,7 +8,7 @@ public abstract class CharHitBase : MonoBehaviour {
     [SerializeField] protected Rigidbody2D rb;
     [SerializeField] protected ParticleSystem ps;
 
-    public abstract void StartAttack (Transform refPoint, CharEnum.HorizontalDirection direction, float charHorizontalSpeed);
+    public abstract void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed);
 
     protected void SetInitPos (Vector3 pos) {
         // keep posZ so that it render on top

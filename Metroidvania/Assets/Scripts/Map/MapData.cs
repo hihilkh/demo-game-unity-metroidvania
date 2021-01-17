@@ -34,8 +34,8 @@ public class MapData {
             return new Vector3 (x, y, GameVariable.CharPosZ);
         }
 
-        public CharEnum.HorizontalDirection GetDirection () {
-            return isFacingRight ? CharEnum.HorizontalDirection.Right : CharEnum.HorizontalDirection.Left;
+        public LifeEnum.HorizontalDirection GetDirection () {
+            return isFacingRight ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
         }
     }
 

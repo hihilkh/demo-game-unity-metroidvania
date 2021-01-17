@@ -4,11 +4,11 @@ using UnityEngine;
 
 // Remarks: It is to control only one of the arrows of the Triple ArrowType
 public class CharTripleArrow : CharArrowBase {
-    public void StartAttack (Transform refPoint, CharEnum.HorizontalDirection facingDirection, float shootingAngle) {
+    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, float shootingAngle) {
         SetInitPos (refPoint.position);
 
         var angleRadian = shootingAngle * Mathf.Deg2Rad;
-        if (facingDirection == CharEnum.HorizontalDirection.Left) {
+        if (facingDirection == LifeEnum.HorizontalDirection.Left) {
             angleRadian = Mathf.PI - angleRadian;
         }
 

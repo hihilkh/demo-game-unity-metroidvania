@@ -9,7 +9,7 @@ public partial class GameUtils : Singleton<GameUtils> {
 
         if (charModel == null) {
             charModel = Instantiate (Resources.Load<CharModel> (GameVariable.CharPrefabResourcesName));
-            charModel.Init (Vector3.zero, CharEnum.HorizontalDirection.Right);
+            charModel.Init (Vector3.zero, LifeEnum.HorizontalDirection.Right);
             DontDestroyOnLoad (charModel);
         }
 

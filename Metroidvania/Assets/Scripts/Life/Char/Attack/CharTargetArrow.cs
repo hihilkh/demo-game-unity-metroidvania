@@ -6,7 +6,7 @@ using UnityEngine;
 public class CharTargetArrow : CharArrowBase {
     private const float DefaultImpulseAngleInRadian = Mathf.PI / 6;
 
-    public void StartAttack (Transform refPoint, CharEnum.HorizontalDirection facingDirection, Transform target) {
+    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, Transform target) {
         SetInitPos (refPoint.position);
 
         var impulse = CalculateInitialImpulse (facingDirection, target);
@@ -21,7 +21,7 @@ public class CharTargetArrow : CharArrowBase {
 
     #region Calculation
 
-    private Vector2 CalculateInitialImpulse (CharEnum.HorizontalDirection facingDirection, Transform target) {
+    private Vector2 CalculateInitialImpulse (LifeEnum.HorizontalDirection facingDirection, Transform target) {
         var theta = CalculateInitialImpulseAngle (facingDirection, target);
 
         var cos = Mathf.Cos (theta);
@@ -30,7 +30,7 @@ public class CharTargetArrow : CharArrowBase {
         return new Vector2 (charParams.arrowInitialSpeed_Target * cos, charParams.arrowInitialSpeed_Target * sin);
     }
 
-    private float CalculateInitialImpulseAngle (CharEnum.HorizontalDirection facingDirection, Transform target) {
+    private float CalculateInitialImpulseAngle (LifeEnum.HorizontalDirection facingDirection, Transform target) {
         // Remarks :
         // Details calculation refer to : https://www.youtube.com/watch?app=desktop&v=bqYtNrhdDAY
         // h of video -> -deltaY below
@@ -43,10 +43,10 @@ public class CharTargetArrow : CharArrowBase {
         var deltaX = target.position.x - transform.position.x;
         var deltaY = target.position.y - transform.position.y;
 
-        if (facingDirection == CharEnum.HorizontalDirection.Right && deltaX < 0) {
+        if (facingDirection == LifeEnum.HorizontalDirection.Right && deltaX < 0) {
             Log.PrintWarning ("Wrong direction. Use default impulse.", LogType.Char);
             return GetDefaultImpulseAngle (facingDirection);
-        } else if (facingDirection == CharEnum.HorizontalDirection.Left && deltaX > 0) {
+        } else if (facingDirection == LifeEnum.HorizontalDirection.Left && deltaX > 0) {
             Log.PrintWarning ("Wrong direction. Use default impulse.", LogType.Char);
             return GetDefaultImpulseAngle (facingDirection);
         }
@@ -70,8 +70,8 @@ public class CharTargetArrow : CharArrowBase {
         var index = 0;
         var theta = (GetGeneralSolutionOfCos (acos, index) + phi) / 2;
 
-        var lowerLimit = facingDirection == CharEnum.HorizontalDirection.Right ? -Mathf.PI / 2 : Mathf.PI / 2;
-        var upperLimit = facingDirection == CharEnum.HorizontalDirection.Right ? Mathf.PI / 2 : 3 * Mathf.PI / 2;
+        var lowerLimit = facingDirection == LifeEnum.HorizontalDirection.Right ? -Mathf.PI / 2 : Mathf.PI / 2;
+        var upperLimit = facingDirection == LifeEnum.HorizontalDirection.Right ? Mathf.PI / 2 : 3 * Mathf.PI / 2;
 
         if (theta > upperLimit) {
             while (theta > upperLimit) {
@@ -96,7 +96,7 @@ public class CharTargetArrow : CharArrowBase {
         }
 
         // Try to get a more prefered angle
-        if (facingDirection == CharEnum.HorizontalDirection.Right) {
+        if (facingDirection == LifeEnum.HorizontalDirection.Right) {
             index--;
             var temp = (GetGeneralSolutionOfCos (acos, index) + phi) / 2;
             if (temp >= lowerLimit) {
@@ -113,8 +113,8 @@ public class CharTargetArrow : CharArrowBase {
         return theta;
     }
 
-    private float GetDefaultImpulseAngle (CharEnum.HorizontalDirection facingDirection) {
-        if (facingDirection == CharEnum.HorizontalDirection.Right) {
+    private float GetDefaultImpulseAngle (LifeEnum.HorizontalDirection facingDirection) {
+        if (facingDirection == LifeEnum.HorizontalDirection.Right) {
             return DefaultImpulseAngleInRadian;
         } else {
             return Mathf.PI - DefaultImpulseAngleInRadian;
