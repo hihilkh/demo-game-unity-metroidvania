@@ -17,5 +17,14 @@ public class EnemyParams : ScriptableObject {
 
     [Header ("Jump")]
     [SerializeField] private float _jumpInitSpeed;
+    /// <summary>
+    /// Only work in Walking MovementType.
+    /// </summary>
     public float jumpInitSpeed => _jumpInitSpeed;
+
+    [SerializeField] private float _recursiveJumpPeriod;
+    /// <summary>
+    /// In second. Smaller than zero means do not jump recursively. Only work in Walking MovementType.
+    /// </summary>
+    public float recursiveJumpPeriod => _recursiveJumpPeriod;
 }

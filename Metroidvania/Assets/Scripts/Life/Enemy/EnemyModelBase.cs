@@ -13,7 +13,9 @@ public abstract class EnemyModelBase : LifeBase {
 
     public abstract EnemyEnum.MovementType movementType { get; }
 
+    // Jump
     private bool isJustJumpedUp;
+    private bool isJumpRecursively;
 
     public override bool Init (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         var hasInitBefore = base.Init (pos, direction);
@@ -22,7 +24,7 @@ public abstract class EnemyModelBase : LifeBase {
             return hasInitBefore;
         }
 
-        isJustJumpedUp = false;
+        SetJumpSettings ();
 
         return hasInitBefore;
     }
@@ -58,6 +60,29 @@ public abstract class EnemyModelBase : LifeBase {
 
     #region Movement Related
 
+    #region Jump
+
+    private void SetJumpSettings () {
+        isJustJumpedUp = false;
+
+        if (movementType == EnemyEnum.MovementType.Walking) {
+            isJumpRecursively = enemyParams.recursiveJumpPeriod >= 0;
+        } else {
+            isJumpRecursively = false;
+        }
+
+        if (isJumpRecursively) {
+            StartCoroutine (JumpAfter (enemyParams.recursiveJumpPeriod));
+        }
+        
+    }
+
+    protected IEnumerator JumpAfter (float second) {
+        yield return new WaitForSeconds (second);
+
+        Jump ();
+    }
+
     protected void Jump () {
         Log.PrintDebug (gameObject.name + " : Jump", LogType.Enemy);
 
@@ -71,6 +96,10 @@ public abstract class EnemyModelBase : LifeBase {
         SetAnimatorTrigger (EnemyAnimConstant.JumpTriggerName);
     }
 
+    #endregion
+
+    #region Facing Direction
+
     protected void ChangeFacingDirection () {
         if (facingDirection == LifeEnum.HorizontalDirection.Left) {
             facingDirection = LifeEnum.HorizontalDirection.Right;
@@ -80,6 +109,8 @@ public abstract class EnemyModelBase : LifeBase {
 
         facingDirectionChangedEvent?.Invoke (facingDirection);
     }
+
+    #endregion
 
     #endregion
 
@@ -117,11 +148,17 @@ public abstract class EnemyModelBase : LifeBase {
         switch (currentLocation) {
             case LifeEnum.Location.Air:
                 SetAnimatorTrigger (EnemyAnimConstant.LandingTriggerName);
+
+                if (isJumpRecursively) {
+                    StartCoroutine (JumpAfter (enemyParams.recursiveJumpPeriod));
+                }
                 break;
             default:
                 // Do nothing
                 break;
         }
+
+        currentLocation = LifeEnum.Location.Ground;
     }
 
     private void LeaveGround () {
