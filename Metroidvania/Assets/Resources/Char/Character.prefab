@@ -320,7 +320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d222fa3c6a78d499380cc3d79f4ed94b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _baseTransform: {fileID: 351095058075983932}
+  baseTransform: {fileID: 351095058075983932}
   lifeCollision: {fileID: 5102995114009958925}
   controller: {fileID: 3404561521971273195}
   animator: {fileID: 6176056532493872824}

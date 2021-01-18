@@ -240,7 +240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eafb0724e544941549056e466204c64f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _baseTransform: {fileID: 10309772558803204}
+  baseTransform: {fileID: 10309772558803204}
   lifeCollision: {fileID: 984584669}
   animator: {fileID: 10309772558803205}
   _enemyParams: {fileID: 11400000, guid: d29fa61aeba4448b0bc8fd74ba0108b3, type: 2}

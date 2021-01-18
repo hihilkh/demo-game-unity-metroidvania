@@ -8,9 +8,7 @@ public abstract class LifeBase : MonoBehaviour {
     protected abstract int totalHP { get; }
     protected int currentHP;
 
-    [SerializeField] private Transform _baseTransform;
-    public Transform baseTransform { get => _baseTransform; }
-
+    [SerializeField] protected Transform baseTransform;
     [SerializeField] protected LifeCollision lifeCollision;
     public LifeEnum.HorizontalDirection facingDirection { get; protected set; }
     public virtual LifeEnum.Location currentLocation { get; protected set; }

@@ -8,9 +8,10 @@ public class CharAttackTrigger : MonoBehaviour {
     /// <summary>
     /// Input :<br />
     /// LifeBase : the LifeBase that the attack has hit<br />
-    /// bool : IsInvincible
+    /// Transform : colliderTransform<br />
+    /// bool : isInvincible
     /// </summary>
-    public event Action<LifeBase, bool> HitEvent;
+    public event Action<LifeBase, Transform, bool> HitEvent;
 
     private void OnTriggerEnter2D (Collider2D collision) {
         if (collision.tag == GameVariable.PlayerTag || collision.tag == GameVariable.AttackTag) {
@@ -30,7 +31,7 @@ public class CharAttackTrigger : MonoBehaviour {
                 return;
             }
 
-            HitEvent?.Invoke (lifeBase, lifeBase.GetIsCurrentlyInvincible ());
+            HitEvent?.Invoke (lifeBase, collision.transform, lifeBase.GetIsCurrentlyInvincible ());
         }
     }
 }

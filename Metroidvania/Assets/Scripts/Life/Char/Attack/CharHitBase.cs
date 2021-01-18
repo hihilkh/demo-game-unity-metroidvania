@@ -40,7 +40,7 @@ public abstract class CharHitBase : MonoBehaviour {
         shape.rotation = -shape.rotation;
     }
 
-    protected virtual void Hit (LifeBase lifeBase, bool isInvincible) {
+    protected virtual void Hit (LifeBase lifeBase, Transform colliderTransform, bool isInvincible) {
         if (!isInvincible) {
             lifeBase.Hurt (dp, direction);
         }

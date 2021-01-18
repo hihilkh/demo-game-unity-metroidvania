@@ -57,11 +57,11 @@ public abstract class CharArrowBase : MonoBehaviour
         }
     }
 
-    protected virtual void Hit (LifeBase lifeBase, bool isInvincible) {
+    protected virtual void Hit (LifeBase lifeBase, Transform colliderTransform, bool isInvincible) {
         if (!isInvincible) {
             lifeBase.Hurt (dp, direction);
         }
 
-        Hit (lifeBase.baseTransform);
+        Hit (colliderTransform);
     }
 }
