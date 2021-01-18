@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 717099a6ef1484bb5960ccb3d73a9db1, type: 3}
   m_Name: CharParams
   m_EditorClassIdentifier: 
+  _totalHP: 0
   _gravityScale: 4
   _minFallDownVelocity: -25
   _walkingSpeed: 5
@@ -25,6 +26,10 @@ MonoBehaviour:
   _hitCoolDownPeriod_Charged: 0.3
   _hitCoolDownPeriod_Finishing: 0.5
   _hitCoolDownPeriod_Drop: 0.5
+  _hit_dp_Normal: 2
+  _hit_dp_Charged: 4
+  _hit_dp_Finishing: 4
+  _hit_dp_Drop: 5
   _dropHitVelocity: -15
   _arrowCoolDownPeriod_Target: 0.4
   _arrowCoolDownPeriod_Straight: 0.4
@@ -32,16 +37,19 @@ MonoBehaviour:
   _arrowInitialSpeed_Target: 15
   _arrowInitialSpeed_Straight: 20
   _arrowInitialSpeed_Triple: 15
+  _arrow_dp_Target: 1
+  _arrow_dp_Straight: 3
+  _arrow_dp_Triple: 1
   _targetArrowMaxElevationAngle: 60
   _tripleArrowShootingAngleList:
   - 30
   - 40
   - 50
   _repelFromWallDistByTurn: 0.05
-  _initDirection: 0
-  _groundTapCommand: 1
-  _groundHoldCommand: 1
-  _groundReleaseCommand: 1
+  _initDirection: 1
+  _groundTapCommand: 4
+  _groundHoldCommand: 4
+  _groundReleaseCommand: 4
   _airTapCommand: 1
   _airHoldCommand: 3
   _airReleaseCommand: 3

@@ -915,8 +915,18 @@ public class CharModel : LifeBase {
 
     #region HP related
 
-    public override bool Hurt (int dp) {
-        var isAlive = base.Hurt (dp);
+    // TODO
+    public override bool GetIsCurrentlyBeatingBack () {
+        return false;
+    }
+
+    // TODO
+    public override bool GetIsCurrentlyInvincible () {
+        return false;
+    }
+
+    public override bool Hurt (int dp, LifeEnum.HorizontalDirection hurtDirection) {
+        var isAlive = base.Hurt (dp, hurtDirection);
 
         if (isAlive) {
             // TODO : Hurt Animation

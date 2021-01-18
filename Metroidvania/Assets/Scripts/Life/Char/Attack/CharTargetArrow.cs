@@ -4,9 +4,13 @@ using HIHIFramework.Core;
 using UnityEngine;
 
 public class CharTargetArrow : CharArrowBase {
+    protected override int dp => charParams.arrow_dp_Target;
+
     private const float DefaultImpulseAngleInRadian = Mathf.PI / 6;
 
     public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, Transform target) {
+        Init (facingDirection);
+
         SetInitPos (refPoint.position);
 
         var impulse = CalculateInitialImpulse (facingDirection, target);

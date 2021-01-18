@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3466689531986376995}
   - component: {fileID: 3466689531986377007}
   - component: {fileID: 6871684591903549134}
+  - component: {fileID: 8693601085556598654}
   m_Layer: 0
   m_Name: FinishingHit
   m_TagString: Attack
@@ -4809,3 +4810,16 @@ MonoBehaviour:
   charParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
   rb: {fileID: 3466689531986377007}
   ps: {fileID: 3466689531986376994}
+  attackTrigger: {fileID: 8693601085556598654}
+--- !u!114 &8693601085556598654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3466689531986376997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f0f53e92dd2347b180a556b369d5238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

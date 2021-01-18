@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CharFinishingHit : CharHitBase {
+    protected override int dp => charParams.hit_dp_Finishing;
+
     public override void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed) {
+        base.StartAttack (refPoint, direction, charHorizontalSpeed);
+
         SetInitPos (refPoint.position);
 
         var velocity = charHorizontalSpeed;

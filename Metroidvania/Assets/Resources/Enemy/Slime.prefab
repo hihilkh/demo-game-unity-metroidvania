@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 984584667}
   - component: {fileID: 984584666}
   - component: {fileID: 984584669}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sprite
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -172,7 +172,7 @@ GameObject:
   - component: {fileID: 10309772558803205}
   - component: {fileID: 2486223528832975864}
   - component: {fileID: 540585090}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Slime
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -240,7 +240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eafb0724e544941549056e466204c64f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseTransform: {fileID: 10309772558803204}
+  _baseTransform: {fileID: 10309772558803204}
   lifeCollision: {fileID: 984584669}
   animator: {fileID: 10309772558803205}
   _enemyParams: {fileID: 11400000, guid: d29fa61aeba4448b0bc8fd74ba0108b3, type: 2}

@@ -4,7 +4,11 @@ using UnityEngine;
 
 // Remarks: It is to control only one of the arrows of the Triple ArrowType
 public class CharTripleArrow : CharArrowBase {
+    protected override int dp => charParams.arrow_dp_Triple;
+
     public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, float shootingAngle) {
+        Init (facingDirection);
+
         SetInitPos (refPoint.position);
 
         var angleRadian = shootingAngle * Mathf.Deg2Rad;

@@ -7,8 +7,15 @@ public abstract class CharHitBase : MonoBehaviour {
     [SerializeField] protected CharParams charParams;
     [SerializeField] protected Rigidbody2D rb;
     [SerializeField] protected ParticleSystem ps;
+    [SerializeField] protected CharAttackTrigger attackTrigger;
 
-    public abstract void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed);
+    protected LifeEnum.HorizontalDirection direction;
+    protected abstract int dp { get; }
+
+    public virtual void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed) {
+        this.direction = direction;
+        attackTrigger.HitEvent += Hit;
+    }
 
     protected void SetInitPos (Vector3 pos) {
         // keep posZ so that it render on top
@@ -33,7 +40,9 @@ public abstract class CharHitBase : MonoBehaviour {
         shape.rotation = -shape.rotation;
     }
 
-    protected virtual void OnTriggerEnter2D (Collider2D collision) {
-        // TODO
+    protected virtual void Hit (LifeBase lifeBase, bool isInvincible) {
+        if (!isInvincible) {
+            lifeBase.Hurt (dp, direction);
+        }
     }
 }

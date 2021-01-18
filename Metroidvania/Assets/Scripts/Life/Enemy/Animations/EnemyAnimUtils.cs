@@ -15,30 +15,24 @@ public class EnemyAnimUtils : MonoBehaviour {
 
     private void Awake () {
         // event handler
-        model.facingDirectionChangedEvent += UpdateFacingDirectionAndVelocity;
-    }
-
-    private void Start () {
-        // Start movement
-        switch (model.movementType) {
-            case EnemyEnum.MovementType.Walking:
-                UpdateHorizontalVelocity (model.facingDirection);
-                break;
-        }
+        model.facingDirectionChangedEvent += FacingDirectionChangedAction;
     }
 
     private void OnDestroy () {
-        model.facingDirectionChangedEvent -= UpdateFacingDirectionAndVelocity;
+        model.facingDirectionChangedEvent -= FacingDirectionChangedAction;
     }
 
     #region Movement Related
 
-    private void UpdateFacingDirectionAndVelocity (LifeEnum.HorizontalDirection facingDirection) {
+    private void FacingDirectionChangedAction (LifeEnum.HorizontalDirection facingDirection) {
         UpdateFacingDirection (facingDirection);
 
         switch (model.movementType) {
             case EnemyEnum.MovementType.Walking:
-                UpdateHorizontalVelocity (facingDirection);
+                // if beating back, just leave the velocity controlled by physics
+                if (!model.GetIsCurrentlyBeatingBack ()) {
+                    UpdateHorizontalVelocity (facingDirection);
+                }
                 break;
             case EnemyEnum.MovementType.Flying:
                 // TODO
@@ -55,10 +49,13 @@ public class EnemyAnimUtils : MonoBehaviour {
         animBaseTransform.localScale = new Vector3 (scale, 1, 1);
     }
 
+    public void UpdateHorizontalVelocity () {
+        UpdateHorizontalVelocity (model.facingDirection);
+    }
+
     private void UpdateHorizontalVelocity (LifeEnum.HorizontalDirection facingDirection) {
         var scale = (facingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
         var velocityX = model.enemyParams.movementSpeed * scale;
-
         rb.velocity = new Vector3 (velocityX, rb.velocity.y);
     }
 

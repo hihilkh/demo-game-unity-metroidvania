@@ -16,6 +16,14 @@ public static partial class GameVariable {
 
     #endregion
 
+    #region Layer
+
+    public const int PlayerLayer = 8;
+    public const int EnemyLayer = 9;
+    public const int InvincibleLayer = 10;
+
+    #endregion
+
     #region Scene
 
     public const string LandingSceneName = "Landing";

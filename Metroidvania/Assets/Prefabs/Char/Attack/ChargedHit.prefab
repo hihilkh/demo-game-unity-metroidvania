@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6378167172035650670}
   - component: {fileID: 6378167172035650656}
   - component: {fileID: 5143845770374917409}
+  - component: {fileID: 3992539947984451592}
   m_Layer: 0
   m_Name: ChargedHit
   m_TagString: Attack
@@ -4819,3 +4820,16 @@ MonoBehaviour:
   charParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
   rb: {fileID: 6378167172035650656}
   ps: {fileID: 6378167172035650669}
+  attackTrigger: {fileID: 3992539947984451592}
+--- !u!114 &3992539947984451592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6378167172035650666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f0f53e92dd2347b180a556b369d5238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

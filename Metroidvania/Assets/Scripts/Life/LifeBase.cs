@@ -8,10 +8,12 @@ public abstract class LifeBase : MonoBehaviour {
     protected abstract int totalHP { get; }
     protected int currentHP;
 
-    [SerializeField] protected Transform baseTransform;
+    [SerializeField] private Transform _baseTransform;
+    public Transform baseTransform { get => _baseTransform; }
+
     [SerializeField] protected LifeCollision lifeCollision;
     public LifeEnum.HorizontalDirection facingDirection { get; protected set; }
-    public LifeEnum.Location currentLocation { get; protected set; }
+    public virtual LifeEnum.Location currentLocation { get; protected set; }
 
     private bool isInitialized = false;
 
@@ -31,6 +33,8 @@ public abstract class LifeBase : MonoBehaviour {
         isInitialized = true;
         currentHP = totalHP;
         SetPosAndDirection (pos, direction);
+
+        lifeCollision.SetLifeBase (this);
         RegisterCollisionEventHandler ();
 
         return false;
@@ -54,11 +58,15 @@ public abstract class LifeBase : MonoBehaviour {
 
     #region HP
 
+    public abstract bool GetIsCurrentlyBeatingBack ();
+
+    public abstract bool GetIsCurrentlyInvincible ();
+
     /// <summary>
     /// Hurt the life by <paramref name="dp"/> (damage point) and if hp come to zero, it calls Die ()
     /// </summary>
     /// <returns>isAlive</returns>
-    public virtual bool Hurt (int dp) {
+    public virtual bool Hurt (int dp, LifeEnum.HorizontalDirection hurtDirection) {
         currentHP = Mathf.Max (0, currentHP - dp);
 
         if (currentHP == 0) {

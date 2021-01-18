@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7106301825483575275}
   - component: {fileID: 7106301825483575276}
   - component: {fileID: 3793835525634486067}
+  - component: {fileID: 4310104139451615936}
   m_Layer: 0
   m_Name: StraightArrow
   m_TagString: Attack
@@ -146,3 +147,16 @@ MonoBehaviour:
   charParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
   arrowSprite: {fileID: 7106301825483575274}
   rb: {fileID: 7106301825483575276}
+  attackTrigger: {fileID: 4310104139451615936}
+--- !u!114 &4310104139451615936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7106301825483575278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f0f53e92dd2347b180a556b369d5238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

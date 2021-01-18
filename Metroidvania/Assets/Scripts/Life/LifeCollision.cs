@@ -27,6 +27,35 @@ public class LifeCollision : MonoBehaviour {
     public event Action<bool> LeftWallEvent;
     public event Action TouchedDeathTagEvent;
 
+    private LifeBase lifeBase;
+    private int originalLayer;
+
+    private void Awake () {
+        originalLayer = gameObject.layer;
+    }
+
+    #region LifeBase
+
+    public void SetLifeBase (LifeBase lifeBase) {
+        this.lifeBase = lifeBase;
+    }
+
+    public LifeBase GetLifeBase () {
+        return lifeBase;
+    }
+
+    #endregion
+
+    #region Layer
+
+    public void SetLayer (bool isInvincible) {
+        gameObject.layer = isInvincible ? GameVariable.InvincibleLayer : originalLayer;
+    }
+
+    #endregion
+
+    #region Collision Event
+
     private bool CheckIsTouchingGround () {
         foreach (var pair in currentCollisionDict) {
             if (pair.Value == GameVariable.GroundTag) {
@@ -118,4 +147,6 @@ public class LifeCollision : MonoBehaviour {
                 break;
         }
     }
+
+    #endregion
 }

@@ -8,6 +8,5 @@ public class SlimeModel : EnemyModelBase {
 
     private void Start () {
         Init (baseTransform.position, LifeEnum.HorizontalDirection.Right);
-
     }
 }

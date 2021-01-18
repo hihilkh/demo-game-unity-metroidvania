@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 858284693220932098}
   - component: {fileID: 858284693220932101}
   - component: {fileID: 858284693220932100}
+  - component: {fileID: 2322343721057824326}
   m_Layer: 0
   m_Name: TargetArrow
   m_TagString: Attack
@@ -146,3 +147,16 @@ MonoBehaviour:
   charParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
   arrowSprite: {fileID: 858284693220932099}
   rb: {fileID: 858284693220932101}
+  attackTrigger: {fileID: 2322343721057824326}
+--- !u!114 &2322343721057824326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 858284693220932103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f0f53e92dd2347b180a556b369d5238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

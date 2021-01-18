@@ -53,6 +53,18 @@ public class CharParams : ScriptableObject {
     [SerializeField] private float _hitCoolDownPeriod_Drop;
     public float hitCoolDownPeriod_Drop => _hitCoolDownPeriod_Drop;
 
+    [SerializeField] private int _hit_dp_Normal;
+    public int hit_dp_Normal => _hit_dp_Normal;
+
+    [SerializeField] private int _hit_dp_Charged;
+    public int hit_dp_Charged => _hit_dp_Charged;
+
+    [SerializeField] private int _hit_dp_Finishing;
+    public int hit_dp_Finishing => _hit_dp_Finishing;
+
+    [SerializeField] private int _hit_dp_Drop;
+    public int hit_dp_Drop => _hit_dp_Drop;
+
     [SerializeField] private float _dropHitVelocity;
     public float dropHitVelocity => _dropHitVelocity;
 
@@ -74,6 +86,15 @@ public class CharParams : ScriptableObject {
 
     [SerializeField] private float _arrowInitialSpeed_Triple;
     public float arrowInitialSpeed_Triple => _arrowInitialSpeed_Triple;
+
+    [SerializeField] private int _arrow_dp_Target;
+    public int arrow_dp_Target => _arrow_dp_Target;
+
+    [SerializeField] private int _arrow_dp_Straight;
+    public int arrow_dp_Straight => _arrow_dp_Straight;
+
+    [SerializeField] private int _arrow_dp_Triple;
+    public int arrow_dp_Triple => _arrow_dp_Triple;
 
     [SerializeField] private float _targetArrowMaxElevationAngle;
     /// <summary>

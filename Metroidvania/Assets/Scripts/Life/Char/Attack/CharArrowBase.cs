@@ -8,9 +8,18 @@ public abstract class CharArrowBase : MonoBehaviour
     [SerializeField] protected CharParams charParams;
     [SerializeField] protected SpriteRenderer arrowSprite;
     [SerializeField] protected Rigidbody2D rb;
+    [SerializeField] protected CharAttackTrigger attackTrigger;
 
     protected bool hasHitAnything = false;
     private const float VanishPeriod = 1f;
+
+    protected LifeEnum.HorizontalDirection direction;
+    protected abstract int dp { get; }
+
+    protected void Init (LifeEnum.HorizontalDirection direction) {
+        this.direction = direction;
+        attackTrigger.HitEvent += Hit;
+    }
 
     protected void SetInitPos (Vector3 pos) {
         // keep posZ so that it render on top
@@ -48,12 +57,11 @@ public abstract class CharArrowBase : MonoBehaviour
         }
     }
 
-    protected virtual void OnTriggerEnter2D (Collider2D collision) {
-        if (collision.tag == GameVariable.PlayerTag || collision.tag == GameVariable.AttackTag) {
-            return;
+    protected virtual void Hit (LifeBase lifeBase, bool isInvincible) {
+        if (!isInvincible) {
+            lifeBase.Hurt (dp, direction);
         }
 
-        Hit (collision.transform);
-        // TODO
+        Hit (lifeBase.baseTransform);
     }
 }
