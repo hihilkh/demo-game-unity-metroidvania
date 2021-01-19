@@ -19,7 +19,7 @@ public class EnemyJumpSMB : EnemySMBBase {
                 isAnimFinished = true;
 
                 if (animator.GetNextAnimatorClipInfo (0).Length == 0) {
-                    animUtils.rb.velocity = new Vector2 (animUtils.rb.velocity.x, animUtils.model.enemyParams.jumpInitSpeed);
+                    animUtils.rb.velocity = new Vector2 (animUtils.rb.velocity.x, animUtils.model.GetParams ().jumpInitSpeed);
                 }
             }
         }

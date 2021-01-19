@@ -137,8 +137,8 @@ public class CharAnimUtils : MonoBehaviour {
     }
 
     private void Update () {
-        if (rb.velocity.y < model.charParams.minFallDownVelocity) {
-            rb.velocity = new Vector2 (rb.velocity.x, model.charParams.minFallDownVelocity);
+        if (rb.velocity.y < model.GetParams ().minFallDownVelocity) {
+            rb.velocity = new Vector2 (rb.velocity.x, model.GetParams ().minFallDownVelocity);
         }
     }
 
@@ -203,10 +203,10 @@ public class CharAnimUtils : MonoBehaviour {
                 velocityX = 0;
                 break;
             case CharEnum.HorizontalSpeed.Walk:
-                velocityX = model.charParams.walkingSpeed;
+                velocityX = model.GetParams ().walkingSpeed;
                 break;
             case CharEnum.HorizontalSpeed.Dash:
-                velocityX = model.charParams.dashingSpeed;
+                velocityX = model.GetParams ().dashingSpeed;
                 break;
         }
 
@@ -243,7 +243,7 @@ public class CharAnimUtils : MonoBehaviour {
     }
 
     public void ResetGravity () {
-        rb.gravityScale = model.charParams.gravityScale;
+        rb.gravityScale = model.GetParams ().gravityScale;
     }
 
     public void RemoveGravity () {

@@ -322,9 +322,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseTransform: {fileID: 351095058075983932}
   lifeCollision: {fileID: 5102995114009958925}
+  lifeParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
   controller: {fileID: 3404561521971273195}
   animator: {fileID: 6176056532493872824}
-  _charParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
 --- !u!114 &3404561521971273195
 MonoBehaviour:
   m_ObjectHideFlags: 0

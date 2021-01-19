@@ -26,8 +26,20 @@ public class LifeCollision : MonoBehaviour {
     /// </summary>
     public event Action<bool> LeftWallEvent;
     public event Action TouchedDeathTagEvent;
+    /// <summary>
+    /// Input :<br />
+    /// CharModel : The CharModel of touched character<br />
+    /// Vector2 : collisionNormal
+    /// </summary>
+    public event Action<CharModel, Vector2> TouchedCharEvent;
+    /// <summary>
+    /// Input :<br />
+    /// CharModel : The EnemyModelBase of touched enemy<br />
+    /// Vector2 : collisionNormal
+    /// </summary>
+    public event Action<EnemyModelBase, Vector2> TouchedEnemyEvent;
 
-    private LifeBase lifeBase;
+    private object lifeBase;
     private int originalLayer;
 
     private void Awake () {
@@ -36,11 +48,11 @@ public class LifeCollision : MonoBehaviour {
 
     #region LifeBase
 
-    public void SetLifeBase (LifeBase lifeBase) {
+    public void SetLifeBase<T> (LifeBase<T> lifeBase) where T : LifeParams {
         this.lifeBase = lifeBase;
     }
 
-    public LifeBase GetLifeBase () {
+    public object GetLifeBase () {
         return lifeBase;
     }
 
@@ -109,6 +121,26 @@ public class LifeCollision : MonoBehaviour {
                 break;
             case GameVariable.DeathTag:
                 TouchedDeathTagEvent?.Invoke ();
+                break;
+            case GameVariable.PlayerTag:
+            case GameVariable.EnemyTag:
+                var lifeCollision = collision.gameObject.GetComponent<LifeCollision> ();
+                if (lifeCollision == null) {
+                    Log.PrintWarning ("No LifeCollision script for collider : " + collision.gameObject.name + " . Please check.");
+                    break;
+                }
+
+                var lifeBase = lifeCollision.GetLifeBase ();
+                if (lifeBase == null) {
+                    Log.PrintWarning ("No LifeBase attached to LifeCollision : " + lifeCollision.gameObject.name + " . Please check.");
+                    break;
+                }
+
+                if (collideType == GameVariable.PlayerTag) {
+                    TouchedCharEvent?.Invoke ((CharModel)lifeBase, collisionNormal);
+                } else {
+                    TouchedEnemyEvent?.Invoke ((EnemyModelBase)lifeBase, collisionNormal);
+                }
                 break;
             default:
                 Log.PrintDebug (gameObject.name + " : No event is implemented for Collision Enter of collideType : " + collideType, LogType.Collision);

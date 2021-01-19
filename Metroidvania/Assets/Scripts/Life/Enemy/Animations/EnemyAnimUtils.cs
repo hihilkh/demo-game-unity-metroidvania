@@ -30,7 +30,7 @@ public class EnemyAnimUtils : MonoBehaviour {
         switch (model.movementType) {
             case EnemyEnum.MovementType.Walking:
                 // if beating back, just leave the velocity controlled by physics
-                if (!model.GetIsCurrentlyBeatingBack ()) {
+                if (!model.GetIsBeatingBack ()) {
                     UpdateHorizontalVelocity (facingDirection);
                 }
                 break;
@@ -55,7 +55,7 @@ public class EnemyAnimUtils : MonoBehaviour {
 
     private void UpdateHorizontalVelocity (LifeEnum.HorizontalDirection facingDirection) {
         var scale = (facingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
-        var velocityX = model.enemyParams.movementSpeed * scale;
+        var velocityX = model.GetParams ().movementSpeed * scale;
         rb.velocity = new Vector3 (velocityX, rb.velocity.y);
     }
 

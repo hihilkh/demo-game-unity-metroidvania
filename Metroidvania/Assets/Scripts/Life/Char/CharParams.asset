@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 717099a6ef1484bb5960ccb3d73a9db1, type: 3}
   m_Name: CharParams
   m_EditorClassIdentifier: 
-  _totalHP: 0
+  _totalHP: 3
+  _invincibleTime: 2
+  _beatBackInitSpeed: 10
   _gravityScale: 4
   _minFallDownVelocity: -25
   _walkingSpeed: 5

@@ -18,3 +18,4 @@ MonoBehaviour:
   _movementSpeed: 0
   _jumpInitSpeed: 5
   _recursiveJumpPeriod: 1.5
+  _collisionDP: 1

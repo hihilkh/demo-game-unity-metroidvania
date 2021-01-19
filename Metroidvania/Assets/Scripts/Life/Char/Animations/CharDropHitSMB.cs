@@ -6,7 +6,7 @@ public class CharDropHitSMB : CharHitSMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        animUtils.SetVelocity (0, animUtils.model.charParams.dropHitVelocity);
+        animUtils.SetVelocity (0, animUtils.model.GetParams ().dropHitVelocity);
         animUtils.RemoveGravity ();
     }
 

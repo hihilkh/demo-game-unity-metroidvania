@@ -22,12 +22,12 @@ public class CharShootSMBBase : CharSMBBase {
                 straightArrowClone.StartAttack (shootRefPoint, animUtils.model.facingDirection);
                 break;
             case CharEnum.ArrowType.Triple:
-                if (animUtils.model.charParams.tripleArrowShootingAngleList == null || animUtils.model.charParams.tripleArrowShootingAngleList.Count <= 0) {
+                if (animUtils.model.GetParams ().tripleArrowShootingAngleList == null || animUtils.model.GetParams ().tripleArrowShootingAngleList.Count <= 0) {
                     Log.PrintError ("tripleArrowShootingAngleList has not yet set. Please check.", LogType.Animation);
                     return;
                 }
 
-                foreach (var angle in animUtils.model.charParams.tripleArrowShootingAngleList) {
+                foreach (var angle in animUtils.model.GetParams ().tripleArrowShootingAngleList) {
                     var tripleArrowClone = Instantiate (animUtils.tripleArrowTemplate);
                     tripleArrowClone.StartAttack (shootRefPoint, animUtils.model.facingDirection, angle);
                 }

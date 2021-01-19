@@ -242,5 +242,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseTransform: {fileID: 10309772558803204}
   lifeCollision: {fileID: 984584669}
+  lifeParams: {fileID: 11400000, guid: d29fa61aeba4448b0bc8fd74ba0108b3, type: 2}
   animator: {fileID: 10309772558803205}
-  _enemyParams: {fileID: 11400000, guid: d29fa61aeba4448b0bc8fd74ba0108b3, type: 2}

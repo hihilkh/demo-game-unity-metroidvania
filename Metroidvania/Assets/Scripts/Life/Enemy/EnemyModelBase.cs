@@ -7,8 +7,13 @@ using UnityEngine;
 // TODO : Use Update to control enemy actions
 // TODO : Ensure during beat back and die, no other action
 // TODO : Ensure no action go after die
-public abstract class EnemyModelBase : LifeBase {
+public abstract class EnemyModelBase : LifeBase<EnemyParams> {
 
+    [SerializeField] private Animator animator;
+
+    public event Action<LifeEnum.HorizontalDirection> facingDirectionChangedEvent;
+
+    public abstract EnemyEnum.MovementType movementType { get; }
     private LifeEnum.Location _currentLocation;
     public override LifeEnum.Location currentLocation {
         get {
@@ -24,21 +29,7 @@ public abstract class EnemyModelBase : LifeBase {
         }
     }
 
-    [SerializeField] private Animator animator;
-    [SerializeField] private EnemyParams _enemyParams;
-    public EnemyParams enemyParams { get => _enemyParams; }
-
-    public event Action<LifeEnum.HorizontalDirection> facingDirectionChangedEvent;
-
-    public abstract EnemyEnum.MovementType movementType { get; }
-    protected EnemyEnum.Status currentStatus;
-
-    // Delay Action Coroutines
-    protected Coroutine delayJumpCoroutine;
-
-    // Jump
-    private bool isJustJumpedUp;
-    private bool isJumpRecursively;
+    public int collisionDP => GetParams ().collisionDP;
 
     // Beat Back
     /// <summary>
@@ -48,6 +39,13 @@ public abstract class EnemyModelBase : LifeBase {
     private static Vector2 WalkingBeatBackDirection_Right = new Vector2 (1, 0.577f).normalized;    // About 30 degree elevation
     private static Vector2 WalkingBeatBackDirection_Left = Vector2.Scale (WalkingBeatBackDirection_Right, new Vector2 (-1, 1));
 
+    // Jump
+    private bool isJustJumpedUp;
+    private bool isJumpRecursively;
+
+    // Delay Action Coroutines
+    protected Coroutine delayJumpCoroutine;
+
     public override bool Init (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         var hasInitBefore = base.Init (pos, direction);
 
@@ -55,7 +53,6 @@ public abstract class EnemyModelBase : LifeBase {
             return hasInitBefore;
         }
 
-        currentStatus = EnemyEnum.Status.Normal;
         SetJumpSettings ();
 
         delayJumpCoroutine = null;
@@ -86,21 +83,10 @@ public abstract class EnemyModelBase : LifeBase {
 
     #region HP related
 
-    public override bool GetIsCurrentlyBeatingBack () {
-        return (currentStatus & EnemyEnum.Status.BeatingBack) == EnemyEnum.Status.BeatingBack;
-    }
-
-    public override bool GetIsCurrentlyInvincible () {
-        return (currentStatus & EnemyEnum.Status.Invincible) == EnemyEnum.Status.Invincible;
-    }
-
     public override bool Hurt (int dp, LifeEnum.HorizontalDirection hurtDirection) {
         var isAlive = base.Hurt (dp, hurtDirection);
+
         Log.Print (gameObject.name + " : Hurt! dp : " + dp + " , hurtDirection : " + hurtDirection + " , remain HP : " + currentHP, LogType.Enemy);
-        if (isAlive) {
-            StartBeatingBack (hurtDirection, false);
-            StartCoroutine (SetInvincible (false));
-        }
 
         return isAlive;
     }
@@ -113,18 +99,12 @@ public abstract class EnemyModelBase : LifeBase {
         base.Die (dieDirection);
 
         Log.Print (gameObject.name + " : Die!", LogType.Enemy);
-
-        StartBeatingBack (dieDirection, true);
-        StartCoroutine (SetInvincible (true));
+        SetAnimatorTrigger (EnemyAnimConstant.DieTriggerName);
     }
 
-    public virtual void DestroySelf () {
-        if (baseTransform.gameObject != null) {
-            Destroy (baseTransform.gameObject);
-        }
-    }
+    protected override void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection) {
+        base.StartBeatingBack (hurtDirection);
 
-    protected void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection, bool isDie) {
         ClearAllDelayActions ();
 
         switch (movementType) {
@@ -137,31 +117,37 @@ public abstract class EnemyModelBase : LifeBase {
                 break;
         }
 
-        SetAnimatorTrigger (isDie ? EnemyAnimConstant.DieTriggerName : EnemyAnimConstant.BeatBackTriggerName);
-        currentStatus = currentStatus | EnemyEnum.Status.BeatingBack;
-    }
-
-    protected void StopBeatingBack () {
-        SetAnimatorTrigger (EnemyAnimConstant.DefaultTriggerName);
-        currentStatus = currentStatus & ~EnemyEnum.Status.BeatingBack;
-    }
-
-    protected IEnumerator SetInvincible (bool isDie) {
-        lifeCollision.SetLayer (true);
-        currentStatus = currentStatus | EnemyEnum.Status.Invincible;
-
-        if (isDie) {
-            yield break;
+        // If dying, dominated by die animation
+        if (!GetIsDying ()) {
+            SetAnimatorTrigger (EnemyAnimConstant.BeatBackTriggerName);
         }
+    }
 
-        SetAnimatorBool (EnemyAnimConstant.InvincibleBoolName, true);
+    protected override void StopBeatingBack () {
+        base.StopBeatingBack ();
 
+        SetAnimatorTrigger (EnemyAnimConstant.DefaultTriggerName);
+    }
 
-        yield return new WaitForSeconds (enemyParams.invincibleTime);
+    protected override void StartInvincible () {
+        base.StartInvincible ();
 
-        lifeCollision.SetLayer (false);
-        currentStatus = currentStatus & ~EnemyEnum.Status.Invincible;
+        // If dying, dominated by die animation
+        if (!GetIsDying ()) {
+            SetAnimatorBool (EnemyAnimConstant.InvincibleBoolName, true);
+        }
+    }
+
+    protected override void StopInvincible () {
+        base.StopInvincible ();
+
         SetAnimatorBool (EnemyAnimConstant.InvincibleBoolName, false);
+    }
+
+    public virtual void DestroySelf () {
+        if (baseTransform.gameObject != null) {
+            Destroy (baseTransform.gameObject);
+        }
     }
 
     #endregion
@@ -196,10 +182,10 @@ public abstract class EnemyModelBase : LifeBase {
 
     private void SetJumpSettings () {
         isJustJumpedUp = false;
-        isJumpRecursively = enemyParams.recursiveJumpPeriod >= 0;
+        isJumpRecursively = GetParams ().recursiveJumpPeriod >= 0;
 
         if (isJumpRecursively) {
-            JumpAfter (enemyParams.recursiveJumpPeriod);
+            JumpAfter (GetParams ().recursiveJumpPeriod);
         }
     }
 
@@ -240,8 +226,6 @@ public abstract class EnemyModelBase : LifeBase {
     protected override void RegisterCollisionEventHandler () {
         lifeCollision.TouchedGroundEvent += TouchGround;
         lifeCollision.LeftGroundEvent += LeaveGround;
-        ////lifeCollision.TouchedRoofEvent    // No action for touch roof
-        ////lifeCollision.LeftRoofEvent       // No action for leave roof
         lifeCollision.TouchedWallEvent += TouchWall;
         lifeCollision.LeftWallEvent += LeaveWall;
         lifeCollision.TouchedDeathTagEvent += DieByTouchedDeathTag;
@@ -250,8 +234,6 @@ public abstract class EnemyModelBase : LifeBase {
     protected override void UnregisterCollisionEventHandler () {
         lifeCollision.TouchedGroundEvent -= TouchGround;
         lifeCollision.LeftGroundEvent -= LeaveGround;
-        ////lifeCollision.TouchedRoofEvent    // No action for touch roof
-        ////lifeCollision.LeftRoofEvent       // No action for leave roof
         lifeCollision.TouchedWallEvent -= TouchWall;
         lifeCollision.LeftWallEvent -= LeaveWall;
         lifeCollision.TouchedDeathTagEvent -= DieByTouchedDeathTag;
@@ -269,14 +251,16 @@ public abstract class EnemyModelBase : LifeBase {
         switch (currentLocation) {
             case LifeEnum.Location.Air:
                 if (movementType == EnemyEnum.MovementType.Walking) {
-                    if ((currentStatus & EnemyEnum.Status.BeatingBack) == EnemyEnum.Status.BeatingBack) {
+                    if (GetIsDying ()) {
+                        // Do nothing
+                    } else if (GetIsBeatingBack ()) {
                         StopBeatingBack ();
                     } else {
                         SetAnimatorTrigger (EnemyAnimConstant.LandingTriggerName);
                     }
 
                     if (isJumpRecursively) {
-                        JumpAfter (enemyParams.recursiveJumpPeriod);
+                        JumpAfter (GetParams ().recursiveJumpPeriod);
                     }
                 }
                 break;
@@ -297,7 +281,7 @@ public abstract class EnemyModelBase : LifeBase {
             if (isJustJumpedUp) {
                 isJustJumpedUp = false;
             } else {
-                if (!GetIsCurrentlyBeatingBack ()) {
+                if (!GetIsBeatingBack ()) {
                     StartFreeFall ();
                 }
             }

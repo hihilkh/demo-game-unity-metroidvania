@@ -3,23 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu (fileName = "EnemyParams", menuName = "ScriptableObjects/EnemyParams", order = 1)]
-public class EnemyParams : ScriptableObject {
-    [Header ("Life")]
-    [SerializeField] private int _totalHP;
-    public int totalHP => _totalHP;
-
-    [SerializeField] private float _invincibleTime;
-    /// <summary>
-    /// In second.
-    /// </summary>
-    public float invincibleTime => _invincibleTime;
-
-    [SerializeField] private float _beatBackInitSpeed;
-    /// <summary>
-    /// Magnitude only. The direction is base on MovementType and collisionNormal
-    /// </summary>
-    public float beatBackInitSpeed => _beatBackInitSpeed;
-
+public class EnemyParams : LifeParams {
     [Header ("Movement")]
     [SerializeField] private float _movementSpeed;
     /// <summary>
@@ -39,4 +23,8 @@ public class EnemyParams : ScriptableObject {
     /// In second. Smaller than zero means do not jump recursively. Only work in Walking MovementType.
     /// </summary>
     public float recursiveJumpPeriod => _recursiveJumpPeriod;
+
+    [Header ("Attack")]
+    [SerializeField] private int _collisionDP;
+    public int collisionDP => _collisionDP;
 }

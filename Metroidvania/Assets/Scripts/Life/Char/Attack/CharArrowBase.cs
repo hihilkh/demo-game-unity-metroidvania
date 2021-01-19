@@ -18,7 +18,7 @@ public abstract class CharArrowBase : MonoBehaviour
 
     protected void Init (LifeEnum.HorizontalDirection direction) {
         this.direction = direction;
-        attackTrigger.HitEvent += Hit;
+        attackTrigger.HitEnemyEvent += Hit;
     }
 
     protected void SetInitPos (Vector3 pos) {
@@ -57,7 +57,7 @@ public abstract class CharArrowBase : MonoBehaviour
         }
     }
 
-    protected virtual void Hit (LifeBase lifeBase, Transform colliderTransform, bool isInvincible) {
+    protected virtual void Hit<T> (LifeBase<T> lifeBase, Transform colliderTransform, bool isInvincible) where T : LifeParams {
         if (!isInvincible) {
             lifeBase.Hurt (dp, direction);
         }

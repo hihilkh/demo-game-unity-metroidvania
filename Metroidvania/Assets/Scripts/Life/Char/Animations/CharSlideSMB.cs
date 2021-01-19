@@ -9,7 +9,7 @@ public class CharSlideSMB : CharSMBBase {
         animator.SetBool (CharAnimConstant.SlidingBoolName, true);
 
         
-        animUtils.SetVelocity (0, animUtils.model.charParams.slideDownVelocity);
+        animUtils.SetVelocity (0, animUtils.model.GetParams ().slideDownVelocity);
         animUtils.RemoveGravity ();     // Slide down with constant speed
 
         animUtils.SetFace (CharEnum.FaceType.Normal_Inversed);

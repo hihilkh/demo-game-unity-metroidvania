@@ -10,6 +10,9 @@
     public const string DropHitTriggerName = "DropHit";
     public const string ShootTriggerName = "Shoot";
     public const string SlideTriggerName = "Slide";
+    public const string BeatBackTriggerName = "BeatBack";
+    public const string DieTriggerName = "Die";
 
     public const string SlidingBoolName = "IsSliding";
+    public const string InvincibleBoolName = "IsInvincible";
 }

@@ -5,15 +5,11 @@ using HIHIFramework.Core;
 using System;
 using UnityEngine.SceneManagement;
 
-public class CharModel : LifeBase {
-    protected override int totalHP => charParams.totalHP;
-
+public class CharModel : LifeBase<CharParams> {
     private Dictionary<CharEnum.CommandSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.CommandSituation, CharEnum.Command> ();
 
     [SerializeField] private CharController controller;
     [SerializeField] private Animator animator;
-    [SerializeField] private CharParams _charParams;
-    public CharParams charParams { get => _charParams; }
 
     // Body Parts
     public CharEnum.BodyPart obtainedBodyParts { get; private set; } = CharEnum.BodyPart.Head | CharEnum.BodyPart.Arms | CharEnum.BodyPart.Legs | CharEnum.BodyPart.Thrusters | CharEnum.BodyPart.Arrow;
@@ -60,6 +56,14 @@ public class CharModel : LifeBase {
     private bool isJustTouchWall;
     private bool isTouchingWall;
 
+    // Beat Back
+    /// <summary>
+    /// Normalized.
+    /// </summary>
+    public Vector2 beatBackDirection { get; private set; } = Vector2.one;
+    private static Vector2 BeatBackDirection_Right = new Vector2 (1, 0.577f).normalized;    // About 30 degree elevation
+    private static Vector2 BeatBackDirection_Left = Vector2.Scale (BeatBackDirection_Right, new Vector2 (-1, 1));
+
     private void Awake () {
         // Remarks :
         // Currently do not add StartedLeft, StoppedLeft, StartedRight, StoppedRight handling to prevent complicated code.
@@ -70,7 +74,7 @@ public class CharModel : LifeBase {
         controller.StoppedHoldEvent += StopHoldAction;
 
         if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName) {
-            Init (baseTransform.position, charParams.initDirection);
+            Init (baseTransform.position, GetParams ().initDirection);
             SetAllowMove (true);
         }
     }
@@ -217,17 +221,17 @@ public class CharModel : LifeBase {
             // TODO : Dev only
             switch (situation) {
                 case CharEnum.CommandSituation.GroundTap:
-                    return charParams.groundTapCommand;
+                    return GetParams ().groundTapCommand;
                 case CharEnum.CommandSituation.GroundHold:
-                    return charParams.groundHoldCommand;
+                    return GetParams ().groundHoldCommand;
                 case CharEnum.CommandSituation.GroundRelease:
-                    return charParams.groundReleaseCommand;
+                    return GetParams ().groundReleaseCommand;
                 case CharEnum.CommandSituation.AirTap:
-                    return charParams.airTapCommand;
+                    return GetParams ().airTapCommand;
                 case CharEnum.CommandSituation.AirHold:
-                    return charParams.airHoldCommand;
+                    return GetParams ().airHoldCommand;
                 case CharEnum.CommandSituation.AirRelease:
-                    return charParams.airReleaseCommand;
+                    return GetParams ().airReleaseCommand;
             }
 
             return null;
@@ -496,7 +500,7 @@ public class CharModel : LifeBase {
                         if (currentLocation == LifeEnum.Location.Wall) {
                             ChangeFacingDirection (true);
                             var directionMultiplier = facingDirection == LifeEnum.HorizontalDirection.Right ? -1 : 1;
-                            SetPosByOffset (new Vector2 (charParams.repelFromWallDistByTurn, 0) * directionMultiplier);
+                            SetPosByOffset (new Vector2 (GetParams ().repelFromWallDistByTurn, 0) * directionMultiplier);
 
                             StartFreeFall ();
                         } else {
@@ -535,6 +539,11 @@ public class CharModel : LifeBase {
     private void SetAnimatorTrigger (string trigger) {
         Log.PrintDebug ("Char SetAnimatorTrigger : " + trigger, LogType.Char | LogType.Animation);
         animator.SetTrigger (trigger);
+    }
+
+    protected void SetAnimatorBool (string boolName, bool value) {
+        Log.PrintDebug ("Char SetAnimatorBool : " + boolName + " ; Value : " + value, LogType.Char | LogType.Animation);
+        animator.SetBool (boolName, value);
     }
 
     #endregion
@@ -639,7 +648,7 @@ public class CharModel : LifeBase {
 
         var startTime = Time.time;
 
-        while (Time.time - startTime < charParams.oneShotDashPeriod) {
+        while (Time.time - startTime < GetParams ().oneShotDashPeriod) {
             if (isJustTouchWall) {
                 break;
             }
@@ -654,7 +663,7 @@ public class CharModel : LifeBase {
     private IEnumerator DashCoolDownCoroutine () {
         isDashCoolingDown = true;
 
-        yield return new WaitForSeconds (charParams.dashCoolDownPeriod);
+        yield return new WaitForSeconds (GetParams ().dashCoolDownPeriod);
 
         isDashCoolingDown = false;
         dashCoolDownCoroutine = null;
@@ -665,7 +674,7 @@ public class CharModel : LifeBase {
     #region Jump
 
     public float GetCurrentJumpInitSpeed () {
-        return isJumpCharging ? charParams.chargeJumpInitSpeed : charParams.normalJumpInitSpeed;
+        return isJumpCharging ? GetParams ().chargeJumpInitSpeed : GetParams ().normalJumpInitSpeed;
     }
 
     private bool CheckIsAllowJump () {
@@ -794,16 +803,16 @@ public class CharModel : LifeBase {
 
         switch (hitType) {
             case CharEnum.HitType.Normal:
-                hitCoolDownPeriod = charParams.hitCoolDownPeriod_Normal;
+                hitCoolDownPeriod = GetParams ().hitCoolDownPeriod_Normal;
                 break;
             case CharEnum.HitType.Charged:
-                hitCoolDownPeriod = charParams.hitCoolDownPeriod_Charged;
+                hitCoolDownPeriod = GetParams ().hitCoolDownPeriod_Charged;
                 break;
             case CharEnum.HitType.Finishing:
-                hitCoolDownPeriod = charParams.hitCoolDownPeriod_Finishing;
+                hitCoolDownPeriod = GetParams ().hitCoolDownPeriod_Finishing;
                 break;
             case CharEnum.HitType.Drop:
-                hitCoolDownPeriod = charParams.hitCoolDownPeriod_Drop;
+                hitCoolDownPeriod = GetParams ().hitCoolDownPeriod_Drop;
                 break;
             default:
                 Log.PrintWarning ("Not yet set hit cool down period for HitType : " + hitType + " . Assume cool down period to be 0s", LogType.Char);
@@ -852,13 +861,13 @@ public class CharModel : LifeBase {
 
         switch (arrowType) {
             case CharEnum.ArrowType.Target:
-                arrowCoolDownPeriod = charParams.arrowCoolDownPeriod_Target;
+                arrowCoolDownPeriod = GetParams ().arrowCoolDownPeriod_Target;
                 break;
             case CharEnum.ArrowType.Straight:
-                arrowCoolDownPeriod = charParams.arrowCoolDownPeriod_Straight;
+                arrowCoolDownPeriod = GetParams ().arrowCoolDownPeriod_Straight;
                 break;
             case CharEnum.ArrowType.Triple:
-                arrowCoolDownPeriod = charParams.arrowCoolDownPeriod_Triple;
+                arrowCoolDownPeriod = GetParams ().arrowCoolDownPeriod_Triple;
                 break;
             default:
                 Log.PrintWarning ("Not yet set arrow cool down period for ArrowType : " + arrowType + " . Assume cool down period to be 0s", LogType.Char);
@@ -913,24 +922,12 @@ public class CharModel : LifeBase {
 
     #endregion
 
-    #region HP related
-
-    // TODO
-    public override bool GetIsCurrentlyBeatingBack () {
-        return false;
-    }
-
-    // TODO
-    public override bool GetIsCurrentlyInvincible () {
-        return false;
-    }
+    #region HP
 
     public override bool Hurt (int dp, LifeEnum.HorizontalDirection hurtDirection) {
         var isAlive = base.Hurt (dp, hurtDirection);
 
-        if (isAlive) {
-            // TODO : Hurt Animation
-        }
+        Log.Print ("Char : Hurt! dp : " + dp + " , hurtDirection : " + hurtDirection + " , remain HP : " + currentHP, LogType.Char);
 
         return isAlive;
     }
@@ -942,8 +939,49 @@ public class CharModel : LifeBase {
     protected override void Die (LifeEnum.HorizontalDirection dieDirection) {
         base.Die (dieDirection);
 
+        Log.Print ("Char : Die!", LogType.Char);
+        SetAnimatorTrigger (CharAnimConstant.DieTriggerName);
+    }
+
+    protected override void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection) {
+        base.StartBeatingBack (hurtDirection);
+
         // TODO
-        Log.PrintError ("Die", LogType.Char);
+        //ClearAllDelayActions ();
+
+        beatBackDirection = hurtDirection == LifeEnum.HorizontalDirection.Left ? BeatBackDirection_Left : BeatBackDirection_Right;
+
+        // If dying, dominated by die animation
+        if (!GetIsDying ()) {
+            SetAnimatorTrigger (CharAnimConstant.BeatBackTriggerName);
+        }
+    }
+
+    protected override void StopBeatingBack () {
+        base.StopBeatingBack ();
+
+        // TODO : Set animation by location
+    }
+
+    protected override void StartInvincible () {
+        base.StartInvincible ();
+
+        // If dying, dominated by die animation
+        if (!GetIsDying ()) {
+            SetAnimatorBool (CharAnimConstant.InvincibleBoolName, true);
+        }
+    }
+
+    protected override void StopInvincible () {
+        base.StopInvincible ();
+
+        SetAnimatorBool (CharAnimConstant.InvincibleBoolName, false);
+    }
+
+    private void CollideToEnemy (EnemyModelBase enemy, Vector2 collisionNormal) {
+        Log.Print ("CollideToEnemy : " + enemy.gameObject.name + " , collisionNormal : " + collisionNormal, LogType.Char);
+        var hurtDirection = collisionNormal.x < 0 ? LifeEnum.HorizontalDirection.Left : LifeEnum.HorizontalDirection.Right;
+        Hurt (enemy.collisionDP, hurtDirection);
     }
 
     #endregion
@@ -953,25 +991,23 @@ public class CharModel : LifeBase {
     protected override void RegisterCollisionEventHandler () {
         lifeCollision.TouchedGroundEvent += TouchGround;
         lifeCollision.LeftGroundEvent += LeaveGround;
-        //lifeCollision.TouchedRoofEvent    // No action for touch roof
-        //lifeCollision.LeftRoofEvent       // No action for leave roof
         lifeCollision.TouchedWallEvent += TouchWall;
         lifeCollision.LeftWallEvent += LeaveWall;
         lifeCollision.TouchedDeathTagEvent += DieByTouchedDeathTag;
+        lifeCollision.TouchedEnemyEvent += CollideToEnemy;
     }
 
     protected override void UnregisterCollisionEventHandler () {
         lifeCollision.TouchedGroundEvent -= TouchGround;
         lifeCollision.LeftGroundEvent -= LeaveGround;
-        //lifeCollision.TouchedRoofEvent    // No action for touch roof
-        //lifeCollision.LeftRoofEvent       // No action for leave roof
         lifeCollision.TouchedWallEvent -= TouchWall;
         lifeCollision.LeftWallEvent -= LeaveWall;
         lifeCollision.TouchedDeathTagEvent -= DieByTouchedDeathTag;
+        lifeCollision.TouchedEnemyEvent -= CollideToEnemy;
     }
 
     private void TouchGround () {
-        Log.PrintDebug ("TouchGround", LogType.Char);
+        Log.PrintDebug ("Char : TouchGround", LogType.Char);
 
         // Touch ground while init / set position
         if (currentLocation == LifeEnum.Location.Unknown) {
@@ -1026,7 +1062,7 @@ public class CharModel : LifeBase {
     }
 
     private void LeaveGround () {
-        Log.PrintDebug ("LeaveGround", LogType.Char);
+        Log.PrintDebug ("Char : LeaveGround", LogType.Char);
 
         isIgnoreUserInputInThisFrame = true;
 
@@ -1052,7 +1088,7 @@ public class CharModel : LifeBase {
     }
 
     private void TouchWall (LifeEnum.HorizontalDirection wallPosition, bool isSlippyWall) {
-        Log.PrintDebug ("TouchWall : isSlippyWall = " + isSlippyWall, LogType.Char);
+        Log.PrintDebug ("Char : TouchWall : isSlippyWall = " + isSlippyWall, LogType.Char);
 
         isIgnoreUserInputInThisFrame = true;
         isJustTouchWall = true;
@@ -1080,7 +1116,7 @@ public class CharModel : LifeBase {
                 currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
 
                 var directionMultiplier = facingDirection == LifeEnum.HorizontalDirection.Right ? -1 : 1;
-                SetPosByOffset (new Vector2 (charParams.repelFromWallDistByTurn, 0) * directionMultiplier);
+                SetPosByOffset (new Vector2 (GetParams ().repelFromWallDistByTurn, 0) * directionMultiplier);
 
                 StartFreeFall ();
             } else {
@@ -1095,7 +1131,7 @@ public class CharModel : LifeBase {
     }
 
     private void LeaveWall (bool isSlippyWall) {
-        Log.PrintDebug ("LeaveWall", LogType.Char);
+        Log.PrintDebug ("Char : LeaveWall : isSlippyWall = " + isSlippyWall, LogType.Char);
 
         isTouchingWall = false;
         isIgnoreUserInputInThisFrame = true;

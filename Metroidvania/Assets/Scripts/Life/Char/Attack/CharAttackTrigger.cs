@@ -11,7 +11,7 @@ public class CharAttackTrigger : MonoBehaviour {
     /// Transform : colliderTransform<br />
     /// bool : isInvincible
     /// </summary>
-    public event Action<LifeBase, Transform, bool> HitEvent;
+    public event Action<EnemyModelBase, Transform, bool> HitEnemyEvent;
 
     private void OnTriggerEnter2D (Collider2D collision) {
         if (collision.tag == GameVariable.PlayerTag || collision.tag == GameVariable.AttackTag) {
@@ -31,7 +31,9 @@ public class CharAttackTrigger : MonoBehaviour {
                 return;
             }
 
-            HitEvent?.Invoke (lifeBase, collision.transform, lifeBase.GetIsCurrentlyInvincible ());
+            var convert = (EnemyModelBase)lifeBase;
+
+            HitEnemyEvent?.Invoke (convert, collision.transform, convert.GetIsInvincible ());
         }
     }
 }
