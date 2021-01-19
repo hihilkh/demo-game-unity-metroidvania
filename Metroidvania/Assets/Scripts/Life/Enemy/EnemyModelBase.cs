@@ -16,8 +16,10 @@ public abstract class EnemyModelBase : LifeBase {
         }
         protected set {
             if (_currentLocation != value) {
-                CurrentLocationChangedAction (_currentLocation, value);
+                // Set _currentLocation first to prevent infinite loop
+                var previousLocation = _currentLocation;
                 _currentLocation = value;
+                CurrentLocationChangedAction (previousLocation, _currentLocation);
             }
         }
     }
@@ -167,7 +169,11 @@ public abstract class EnemyModelBase : LifeBase {
     #region Location
 
     protected virtual void CurrentLocationChangedAction (LifeEnum.Location fromLocation, LifeEnum.Location toLocation) {
-        // Do nothing. For override.
+        if (movementType == EnemyEnum.MovementType.Walking) {
+            if (fromLocation == LifeEnum.Location.Unknown && toLocation == LifeEnum.Location.Air) {
+                StartFreeFall ();
+            }
+        }
     }
 
     #endregion
