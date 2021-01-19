@@ -935,8 +935,12 @@ public class CharModel : LifeBase {
         return isAlive;
     }
 
-    protected override void Die () {
-        base.Die ();
+    private void DieByTouchedDeathTag () {
+        Die (movingDirection);
+    }
+
+    protected override void Die (LifeEnum.HorizontalDirection dieDirection) {
+        base.Die (dieDirection);
 
         // TODO
         Log.PrintError ("Die", LogType.Char);
@@ -953,7 +957,7 @@ public class CharModel : LifeBase {
         //lifeCollision.LeftRoofEvent       // No action for leave roof
         lifeCollision.TouchedWallEvent += TouchWall;
         lifeCollision.LeftWallEvent += LeaveWall;
-        lifeCollision.TouchedDeathTagEvent += Die;
+        lifeCollision.TouchedDeathTagEvent += DieByTouchedDeathTag;
     }
 
     protected override void UnregisterCollisionEventHandler () {
@@ -963,7 +967,7 @@ public class CharModel : LifeBase {
         //lifeCollision.LeftRoofEvent       // No action for leave roof
         lifeCollision.TouchedWallEvent -= TouchWall;
         lifeCollision.LeftWallEvent -= LeaveWall;
-        lifeCollision.TouchedDeathTagEvent -= Die;
+        lifeCollision.TouchedDeathTagEvent -= DieByTouchedDeathTag;
     }
 
     private void TouchGround () {

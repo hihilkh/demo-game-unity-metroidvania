@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _totalHP: 10
   _invincibleTime: 1
-  _beatBackInitSpeed: 7
+  _beatBackInitSpeed: 9
   _movementSpeed: 0
   _jumpInitSpeed: 5
   _recursiveJumpPeriod: 1.5

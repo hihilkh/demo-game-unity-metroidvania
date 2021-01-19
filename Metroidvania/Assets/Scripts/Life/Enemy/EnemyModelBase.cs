@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using HIHIFramework.Core;
 using UnityEngine;
 
+// TODO : Use Update to control enemy actions
+// TODO : Ensure during beat back and die, no other action
+// TODO : Ensure no action go after die
 public abstract class EnemyModelBase : LifeBase {
 
     private LifeEnum.Location _currentLocation;
@@ -12,8 +15,10 @@ public abstract class EnemyModelBase : LifeBase {
             return _currentLocation;
         }
         protected set {
-            CurrentLocationChangedAction (_currentLocation, value);
-            _currentLocation = value;
+            if (_currentLocation != value) {
+                CurrentLocationChangedAction (_currentLocation, value);
+                _currentLocation = value;
+            }
         }
     }
 
@@ -91,21 +96,33 @@ public abstract class EnemyModelBase : LifeBase {
         var isAlive = base.Hurt (dp, hurtDirection);
         Log.Print (gameObject.name + " : Hurt! dp : " + dp + " , hurtDirection : " + hurtDirection + " , remain HP : " + currentHP, LogType.Enemy);
         if (isAlive) {
-            StartBeatingBack (hurtDirection);
-            StartCoroutine (SetInvincible ());
+            StartBeatingBack (hurtDirection, false);
+            StartCoroutine (SetInvincible (false));
         }
 
         return isAlive;
     }
 
-    protected override void Die () {
-        base.Die ();
-
-        Log.Print (gameObject.name + " : Die!", LogType.Enemy);
-        // TODO
+    private void DieByTouchedDeathTag () {
+        Die (facingDirection);
     }
 
-    protected void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection) {
+    protected override void Die (LifeEnum.HorizontalDirection dieDirection) {
+        base.Die (dieDirection);
+
+        Log.Print (gameObject.name + " : Die!", LogType.Enemy);
+
+        StartBeatingBack (dieDirection, true);
+        StartCoroutine (SetInvincible (true));
+    }
+
+    public virtual void DestroySelf () {
+        if (baseTransform.gameObject != null) {
+            Destroy (baseTransform.gameObject);
+        }
+    }
+
+    protected void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection, bool isDie) {
         ClearAllDelayActions ();
 
         switch (movementType) {
@@ -118,7 +135,7 @@ public abstract class EnemyModelBase : LifeBase {
                 break;
         }
 
-        SetAnimatorTrigger (EnemyAnimConstant.BeatBackTriggerName);
+        SetAnimatorTrigger (isDie ? EnemyAnimConstant.DieTriggerName : EnemyAnimConstant.BeatBackTriggerName);
         currentStatus = currentStatus | EnemyEnum.Status.BeatingBack;
     }
 
@@ -127,16 +144,22 @@ public abstract class EnemyModelBase : LifeBase {
         currentStatus = currentStatus & ~EnemyEnum.Status.BeatingBack;
     }
 
-    protected IEnumerator SetInvincible () {
-        SetAnimatorBool (EnemyAnimConstant.InvincibleBoolName, true);
+    protected IEnumerator SetInvincible (bool isDie) {
         lifeCollision.SetLayer (true);
         currentStatus = currentStatus | EnemyEnum.Status.Invincible;
 
+        if (isDie) {
+            yield break;
+        }
+
+        SetAnimatorBool (EnemyAnimConstant.InvincibleBoolName, true);
+
+
         yield return new WaitForSeconds (enemyParams.invincibleTime);
 
-        SetAnimatorBool (EnemyAnimConstant.InvincibleBoolName, false);
         lifeCollision.SetLayer (false);
         currentStatus = currentStatus & ~EnemyEnum.Status.Invincible;
+        SetAnimatorBool (EnemyAnimConstant.InvincibleBoolName, false);
     }
 
     #endregion
@@ -189,7 +212,7 @@ public abstract class EnemyModelBase : LifeBase {
         Log.PrintDebug (gameObject.name + " : Jump", LogType.Enemy);
 
         if (currentLocation != LifeEnum.Location.Ground) {
-            Log.PrintWarning (gameObject.name + " : Jump failed. It is not in ground", LogType.Enemy);
+            Log.Print (gameObject.name + " : Do not Jump. It is not in ground", LogType.Enemy);
             return;
         }
 
@@ -199,7 +222,9 @@ public abstract class EnemyModelBase : LifeBase {
     }
 
     private void StartFreeFall () {
-        // TODO 
+        currentLocation = LifeEnum.Location.Air;
+
+        SetAnimatorTrigger (EnemyAnimConstant.FreeFallTriggerName);
     }
 
     #endregion
@@ -213,7 +238,7 @@ public abstract class EnemyModelBase : LifeBase {
         ////lifeCollision.LeftRoofEvent       // No action for leave roof
         lifeCollision.TouchedWallEvent += TouchWall;
         lifeCollision.LeftWallEvent += LeaveWall;
-        //lifeCollision.TouchedDeathTagEvent += Die;
+        lifeCollision.TouchedDeathTagEvent += DieByTouchedDeathTag;
     }
 
     protected override void UnregisterCollisionEventHandler () {
@@ -223,7 +248,7 @@ public abstract class EnemyModelBase : LifeBase {
         ////lifeCollision.LeftRoofEvent       // No action for leave roof
         lifeCollision.TouchedWallEvent -= TouchWall;
         lifeCollision.LeftWallEvent -= LeaveWall;
-        //lifeCollision.TouchedDeathTagEvent -= Die;
+        lifeCollision.TouchedDeathTagEvent -= DieByTouchedDeathTag;
     }
 
     private void TouchGround () {
@@ -266,7 +291,9 @@ public abstract class EnemyModelBase : LifeBase {
             if (isJustJumpedUp) {
                 isJustJumpedUp = false;
             } else {
-                StartFreeFall ();
+                if (!GetIsCurrentlyBeatingBack ()) {
+                    StartFreeFall ();
+                }
             }
         }
     }

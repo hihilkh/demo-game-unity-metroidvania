@@ -68,14 +68,14 @@ public abstract class LifeBase : MonoBehaviour {
         currentHP = Mathf.Max (0, currentHP - dp);
 
         if (currentHP == 0) {
-            Die ();
+            Die (hurtDirection);
             return false;
         } else {
             return true;
         }
     }
 
-    protected virtual void Die () {
+    protected virtual void Die (LifeEnum.HorizontalDirection dieDirection) {
         currentHP = 0;
     }
 
