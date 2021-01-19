@@ -25,7 +25,9 @@ public abstract class EnemyModelBase : LifeBase {
 
     public abstract EnemyEnum.MovementType movementType { get; }
     protected EnemyEnum.Status currentStatus;
-    protected List<Coroutine> delayActionCoroutines = new List<Coroutine> ();
+
+    // Delay Action Coroutines
+    protected Coroutine delayJumpCoroutine;
 
     // Jump
     private bool isJustJumpedUp;
@@ -49,15 +51,16 @@ public abstract class EnemyModelBase : LifeBase {
         currentStatus = EnemyEnum.Status.Normal;
         SetJumpSettings ();
 
+        delayJumpCoroutine = null;
+
         return hasInitBefore;
     }
 
-    protected void ClearAllDelayActions () {
-        foreach (var coroutine in delayActionCoroutines) {
-            StopCoroutine (coroutine);
+    protected virtual void ClearAllDelayActions () {
+        if (delayJumpCoroutine != null) {
+            StopCoroutine (delayJumpCoroutine);
+            delayJumpCoroutine = null;
         }
-
-        delayActionCoroutines.Clear ();
     }
 
     #region Animtor
@@ -172,13 +175,14 @@ public abstract class EnemyModelBase : LifeBase {
     }
 
     protected void JumpAfter (float second) {
-        delayActionCoroutines.Add (StartCoroutine (DelayJumpCoroutine (second)));
+        delayJumpCoroutine = StartCoroutine (DelayJump (second));
     }
 
-    private IEnumerator DelayJumpCoroutine (float second) {
+    private IEnumerator DelayJump (float second) {
         yield return new WaitForSeconds (second);
 
         Jump ();
+        delayJumpCoroutine = null;
     }
 
     protected void Jump () {
