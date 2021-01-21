@@ -457,6 +457,7 @@ MonoBehaviour:
   _model: {fileID: 351095058075983922}
   _rb: {fileID: 351095058075983928}
   _animBaseTransform: {fileID: 351095058322751770}
+  charMaterialToClone: {fileID: 2100000, guid: 2c1d1f2e0198a42d6ace0544e30bc16d, type: 2}
   _normalHitTemplate: {fileID: 7143613927472316200, guid: ad821f23cd0ff4300b8560815d9be5d4,
     type: 3}
   _chargedHitTemplate: {fileID: 5143845770374917409, guid: 80a2c83210a8f42c5b57918eb18ffa48,
