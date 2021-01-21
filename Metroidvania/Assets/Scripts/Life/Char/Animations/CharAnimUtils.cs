@@ -25,6 +25,11 @@ public class CharAnimUtils : MonoBehaviour {
     [SerializeField] private Transform _animBaseTransform;
     public Transform animBaseTransform => _animBaseTransform;
 
+    [Header ("Material")]
+    [SerializeField] private Material charMaterialToClone;
+    private Material charMaterial;
+    private const string CharMaterialAlphaFloatName = "_alpha";
+
     [Header ("Hit Template")]
     [SerializeField] private CharNormalHit _normalHitTemplate;
     public CharNormalHit normalHitTemplate => _normalHitTemplate;
@@ -65,7 +70,32 @@ public class CharAnimUtils : MonoBehaviour {
     public Transform refPoint_SlideShoot => _refPoint_SlideShoot;
 
     private void Awake () {
-        // faceDict
+        InitFaceDict ();
+        InitBodyPartDict ();
+        InitCharMaterial ();
+
+        // event handler
+        model.obtainedBodyPartsChangedEvent += SetBodyParts;
+    }
+
+    private void Start () {
+        ResetGravity ();
+        SetBodyParts (model.GetObtainedBodyParts ());
+    }
+
+    private void Update () {
+        if (rb.velocity.y < model.GetParams ().minFallDownVelocity) {
+            rb.velocity = new Vector2 (rb.velocity.x, model.GetParams ().minFallDownVelocity);
+        }
+    }
+
+    private void OnDestroy () {
+        model.obtainedBodyPartsChangedEvent -= SetBodyParts;
+    }
+
+    #region Face related
+
+    private void InitFaceDict () {
         faceDict = new Dictionary<CharEnum.FaceType, GameObject> ();
 
         var normalHeadTransform = transform.Find (MeshName_HeadNormal);
@@ -95,8 +125,33 @@ public class CharAnimUtils : MonoBehaviour {
         } else {
             faceDict.Add (CharEnum.FaceType.Shocked, shockedHeadTransform.gameObject);
         }
+    }
 
-        // bodyPartDict
+    public void SetFace (CharEnum.FaceType faceType) {
+        if (faceDict == null) {
+            Log.PrintWarning ("FaceDict is null. Cannot set face.", LogType.Animation);
+            return;
+        }
+
+        foreach (var pair in faceDict) {
+            pair.Value.SetActive (pair.Key == faceType);
+        }
+    }
+
+    public void SetDefaultFace () {
+        var faceType = CharEnum.FaceType.Normal;
+        if ((model.GetObtainedBodyParts () & ~CharEnum.BodyPart.Head) == CharEnum.BodyPart.None) {  // Only have head
+            faceType = CharEnum.FaceType.Confused;
+        }
+
+        SetFace (faceType);
+    }
+
+    #endregion
+
+    #region Body Parts
+
+    private void InitBodyPartDict () {
         bodyPartDict = new Dictionary<CharEnum.BodyPart, GameObject> ();
 
         var armsTransform = transform.Find (MeshName_Arms);
@@ -126,51 +181,7 @@ public class CharAnimUtils : MonoBehaviour {
         } else {
             bodyPartDict.Add (CharEnum.BodyPart.Arrow, arrowTransform.gameObject);
         }
-
-        // event handler
-        model.obtainedBodyPartsChangedEvent += SetBodyParts;
     }
-
-    private void Start () {
-        ResetGravity ();
-        SetBodyParts (model.GetObtainedBodyParts ());
-    }
-
-    private void Update () {
-        if (rb.velocity.y < model.GetParams ().minFallDownVelocity) {
-            rb.velocity = new Vector2 (rb.velocity.x, model.GetParams ().minFallDownVelocity);
-        }
-    }
-
-    private void OnDestroy () {
-        model.obtainedBodyPartsChangedEvent -= SetBodyParts;
-    }
-
-    #region Face related
-
-    public void SetFace (CharEnum.FaceType faceType) {
-        if (faceDict == null) {
-            Log.PrintWarning ("FaceDict is null. Cannot set face.", LogType.Animation);
-            return;
-        }
-
-        foreach (var pair in faceDict) {
-            pair.Value.SetActive (pair.Key == faceType);
-        }
-    }
-
-    public void SetDefaultFace () {
-        var faceType = CharEnum.FaceType.Normal;
-        if ((model.GetObtainedBodyParts () & ~CharEnum.BodyPart.Head) == CharEnum.BodyPart.None) {  // Only have head
-            faceType = CharEnum.FaceType.Confused;
-        }
-
-        SetFace (faceType);
-    }
-
-    #endregion
-
-    #region Body Parts
 
     private void SetBodyParts (CharEnum.BodyPart parts) {
         if (bodyPartDict == null) {
@@ -183,6 +194,28 @@ public class CharAnimUtils : MonoBehaviour {
         }
 
         SetDefaultFace ();
+    }
+
+    #endregion
+
+    #region Material
+
+    private void InitCharMaterial () {
+        var renderers = GetComponentsInChildren<SkinnedMeshRenderer> ();
+
+        if (renderers == null || renderers.Length <= 0) {
+            Log.PrintError ("Cannot find SkinnedMeshRenderer of the character.", LogType.Animation);
+            return;
+        }
+
+        charMaterial = new Material (charMaterialToClone);
+        foreach (var renderer in renderers) {
+            renderer.material = charMaterial;
+        }
+    }
+
+    public void SetCharAlpha (float alpha) {
+        charMaterial.SetFloat (CharMaterialAlphaFloatName, alpha);
     }
 
     #endregion
