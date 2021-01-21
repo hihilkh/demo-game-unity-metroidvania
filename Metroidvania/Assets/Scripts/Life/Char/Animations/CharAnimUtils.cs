@@ -25,6 +25,8 @@ public class CharAnimUtils : MonoBehaviour {
     [SerializeField] private Transform _animBaseTransform;
     public Transform animBaseTransform => _animBaseTransform;
 
+    [SerializeField] private List<ParticleSystem> thrusterPSList;
+
     private Animator animator;
 
     [Header ("Material")]
@@ -310,5 +312,11 @@ public class CharAnimUtils : MonoBehaviour {
         rb.gravityScale = 0;
     }
 
+    public void SetThrusterPS (bool isOn) {
+        foreach (var ps in thrusterPSList) {
+            ps.gameObject.SetActive (isOn);
+        }
+        
+    }
     #endregion
 }
