@@ -15,7 +15,7 @@ public class CharDashSMB : CharSMBBase {
         animUtils.RemoveGravity ();
 
         if (dashCount == 0) {
-            animUtils.SetThrusterPS (true);
+            animUtils.model.psHandler.SetThrusterPS (true);
         }
 
         dashCount++;
@@ -33,7 +33,7 @@ public class CharDashSMB : CharSMBBase {
         dashCount--;
 
         if (dashCount <= 0) {
-            animUtils.SetThrusterPS (false);
+            animUtils.model.psHandler.SetThrusterPS (false);
             dashCount = 0;
         }
     }

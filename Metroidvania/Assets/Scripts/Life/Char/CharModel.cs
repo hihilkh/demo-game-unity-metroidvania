@@ -10,6 +10,8 @@ public class CharModel : LifeBase<CharParams> {
 
     [SerializeField] private CharController controller;
     [SerializeField] private Animator animator;
+    [SerializeField] private CharPSHandler _psHandler;
+    public CharPSHandler psHandler => _psHandler;
 
     // Body Parts
     public CharEnum.BodyPart obtainedBodyParts { get; private set; } = CharEnum.BodyPart.Head | CharEnum.BodyPart.Arms | CharEnum.BodyPart.Legs | CharEnum.BodyPart.Thrusters | CharEnum.BodyPart.Arrow;
@@ -723,11 +725,11 @@ public class CharModel : LifeBase<CharParams> {
 
     private void JumpCharge () {
         if (!isJumpCharging) {
-            Log.Print ("JumpCharge", LogType.Char);
+            Log.PrintDebug ("JumpCharge", LogType.Char);
             isJumpCharging = true;
             isIgnoreHold = true;
 
-            // TODO : Jump charge animation
+            psHandler.SetJumpChargePS (true);
         }
     }
 
@@ -735,9 +737,9 @@ public class CharModel : LifeBase<CharParams> {
         if (isJumpCharging) {
             isJumpCharging = false;
 
-            Log.Print ("StopJumpCharge", LogType.Char);
+            Log.PrintDebug ("StopJumpCharge", LogType.Char);
 
-            // TODO : Cancel Jump charge animation
+            psHandler.SetJumpChargePS (false);
         }
     }
 
@@ -795,7 +797,8 @@ public class CharModel : LifeBase<CharParams> {
     private void DropHitCharge () {
         if (!isDropHitCharging) {
             isDropHitCharging = true;
-            // TODO : drop hit charge animation
+
+            psHandler.SetDropHitChargePS (true);
         }
     }
 
@@ -803,7 +806,7 @@ public class CharModel : LifeBase<CharParams> {
         if (isDropHitCharging) {
             isDropHitCharging = false;
 
-            // TODO : cancel drop hit charge animation
+            psHandler.SetDropHitChargePS (false);
         }
     }
 
@@ -959,7 +962,8 @@ public class CharModel : LifeBase<CharParams> {
         base.StartBeatingBack (hurtDirection);
 
         // TODO
-        //ClearAllDelayActions ();
+        // Clear all input action (e.g. charging, hold / release action)
+        // Do not allow input while beating back
 
         // If dying, dominated by die animation
         if (!GetIsDying ()) {
@@ -1098,7 +1102,7 @@ public class CharModel : LifeBase<CharParams> {
         }
 
         // Special Handling
-        if (isJumpCharging) {         // "GroundHold - Jump" command
+        if (isJumpCharging) {         // "GroundHold - Jump" command (e.g. holding jump but then free fall)
             StopJumpCharge ();
         } else if (currentSituation == CharEnum.CommandSituation.GroundHold && isDashing) {         // "GroundHold - Dash" command
             StopDashing (CharEnum.HorizontalSpeed.Walk, true, false);
