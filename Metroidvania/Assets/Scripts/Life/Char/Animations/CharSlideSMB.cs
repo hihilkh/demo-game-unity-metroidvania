@@ -5,14 +5,11 @@ using UnityEngine;
 public class CharSlideSMB : CharSMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
-
-        animator.SetBool (CharAnimConstant.SlidingBoolName, true);
-
         
         animUtils.SetVelocity (0, animUtils.model.GetParams ().slideDownVelocity);
         animUtils.RemoveGravity ();     // Slide down with constant speed
 
-        animUtils.SetFace (CharEnum.FaceType.Normal_Inversed);
+        animUtils.SetSlidingBoolAndUpdateFace (true);
         animUtils.UpdateFacingDirection (true);
     }
 
@@ -20,8 +17,7 @@ public class CharSlideSMB : CharSMBBase {
         base.OnStateExit (animator, stateInfo, layerIndex);
 
         if (animUtils.model.currentLocation != LifeEnum.Location.Wall) {
-            animUtils.SetDefaultFace ();
-            animator.SetBool (CharAnimConstant.SlidingBoolName, false);
+            animUtils.SetSlidingBoolAndUpdateFace (false);
         }
     }
 }

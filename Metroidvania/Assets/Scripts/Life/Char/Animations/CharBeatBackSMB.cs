@@ -9,12 +9,5 @@ public class CharBeatBackSMB : CharSMBBase {
         animUtils.ResetGravity ();
 
         animUtils.rb.velocity = animUtils.model.beatBackDirection * animUtils.model.GetParams ().beatBackInitSpeed;
-        animUtils.SetFace (CharEnum.FaceType.Confused);
-    }
-
-    public override void OnStateExit (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-        base.OnStateExit (animator, stateInfo, layerIndex);
-
-        animUtils.SetDefaultFace ();
     }
 }

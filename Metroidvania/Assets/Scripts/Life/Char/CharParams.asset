@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _totalHP: 3
   _invincibleTime: 2
-  _beatBackInitSpeed: 10
+  _beatBackInitSpeed: 13
+  _beatBackPeriod: 0.5
+  _dyingPeriod: 1
   _gravityScale: 4
   _minFallDownVelocity: -25
   _walkingSpeed: 5
@@ -48,10 +50,10 @@ MonoBehaviour:
   - 40
   - 50
   _repelFromWallDistByTurn: 0.05
-  _initDirection: 1
-  _groundTapCommand: 3
-  _groundHoldCommand: 3
-  _groundReleaseCommand: 3
+  _initDirection: 0
+  _groundTapCommand: 1
+  _groundHoldCommand: 1
+  _groundReleaseCommand: 1
   _airTapCommand: 1
   _airHoldCommand: 3
-  _airReleaseCommand: 3
+  _airReleaseCommand: 5

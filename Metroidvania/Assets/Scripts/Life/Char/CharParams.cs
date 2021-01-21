@@ -4,6 +4,18 @@ using UnityEngine;
 
 [CreateAssetMenu (fileName = "CharParams", menuName = "ScriptableObjects/CharParams", order = 1)]
 public class CharParams : LifeParams {
+    [SerializeField] private float _beatBackPeriod;
+    /// <summary>
+    /// In second.
+    /// </summary>
+    public float beatBackPeriod => _beatBackPeriod;
+
+    [SerializeField] private float _dyingPeriod;
+    /// <summary>
+    /// In second.
+    /// </summary>
+    public float dyingPeriod => _dyingPeriod;
+
     [Header ("Physics")]
     [SerializeField] private float _gravityScale;
     public float gravityScale => _gravityScale;

@@ -25,6 +25,8 @@ public class CharAnimUtils : MonoBehaviour {
     [SerializeField] private Transform _animBaseTransform;
     public Transform animBaseTransform => _animBaseTransform;
 
+    private Animator animator;
+
     [Header ("Material")]
     [SerializeField] private Material charMaterialToClone;
     private Material charMaterial;
@@ -70,12 +72,15 @@ public class CharAnimUtils : MonoBehaviour {
     public Transform refPoint_SlideShoot => _refPoint_SlideShoot;
 
     private void Awake () {
+        animator = GetComponent<Animator> ();
+
         InitFaceDict ();
         InitBodyPartDict ();
         InitCharMaterial ();
 
         // event handler
         model.obtainedBodyPartsChangedEvent += SetBodyParts;
+        model.statusChangedEvent += ModelStatusChangedAction;
     }
 
     private void Start () {
@@ -91,6 +96,7 @@ public class CharAnimUtils : MonoBehaviour {
 
     private void OnDestroy () {
         model.obtainedBodyPartsChangedEvent -= SetBodyParts;
+        model.statusChangedEvent -= ModelStatusChangedAction;
     }
 
     #region Face related
@@ -127,7 +133,29 @@ public class CharAnimUtils : MonoBehaviour {
         }
     }
 
-    public void SetFace (CharEnum.FaceType faceType) {
+    public void SetSlidingBoolAndUpdateFace (bool isSliding) {
+        animator.SetBool (CharAnimConstant.SlidingBoolName, isSliding);
+        UpdateFace ();
+    }
+
+    private void UpdateFace () {
+        var isBeatingBack = model.GetIsBeatingBack ();
+        var isDying = model.GetIsDying ();
+        if (isBeatingBack || isDying) {
+            SetFace (CharEnum.FaceType.Confused);
+        } else if (animator.GetBool (CharAnimConstant.SlidingBoolName)) {
+            SetFace (CharEnum.FaceType.Normal_Inversed);
+        } else {
+            var faceType = CharEnum.FaceType.Normal;
+            if ((model.GetObtainedBodyParts () & ~CharEnum.BodyPart.Head) == CharEnum.BodyPart.None) {  // Only have head
+                faceType = CharEnum.FaceType.Confused;
+            }
+
+            SetFace (faceType);
+        }
+    }
+
+    private void SetFace (CharEnum.FaceType faceType) {
         if (faceDict == null) {
             Log.PrintWarning ("FaceDict is null. Cannot set face.", LogType.Animation);
             return;
@@ -136,15 +164,6 @@ public class CharAnimUtils : MonoBehaviour {
         foreach (var pair in faceDict) {
             pair.Value.SetActive (pair.Key == faceType);
         }
-    }
-
-    public void SetDefaultFace () {
-        var faceType = CharEnum.FaceType.Normal;
-        if ((model.GetObtainedBodyParts () & ~CharEnum.BodyPart.Head) == CharEnum.BodyPart.None) {  // Only have head
-            faceType = CharEnum.FaceType.Confused;
-        }
-
-        SetFace (faceType);
     }
 
     #endregion
@@ -193,7 +212,15 @@ public class CharAnimUtils : MonoBehaviour {
             pair.Value.SetActive (parts.HasFlag (pair.Key));
         }
 
-        SetDefaultFace ();
+        UpdateFace ();
+    }
+
+    #endregion
+
+    #region Model Status
+
+    private void ModelStatusChangedAction (LifeEnum.Status status) {
+        UpdateFace ();
     }
 
     #endregion

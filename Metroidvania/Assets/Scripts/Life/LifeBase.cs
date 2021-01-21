@@ -9,7 +9,7 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
     [SerializeField] private T lifeParams;
     public LifeEnum.HorizontalDirection facingDirection { get; protected set; }
     public virtual LifeEnum.Location currentLocation { get; protected set; }
-    protected LifeEnum.Status currentStatus;
+    protected virtual LifeEnum.Status currentStatus { get; set; }
 
     protected virtual int zLayer => 0;
     protected int totalHP => lifeParams.totalHP;

@@ -15,6 +15,21 @@ public class CharModel : LifeBase<CharParams> {
     public CharEnum.BodyPart obtainedBodyParts { get; private set; } = CharEnum.BodyPart.Head | CharEnum.BodyPart.Arms | CharEnum.BodyPart.Legs | CharEnum.BodyPart.Thrusters | CharEnum.BodyPart.Arrow;
     public event Action<CharEnum.BodyPart> obtainedBodyPartsChangedEvent;
 
+    // Status
+    public event Action<LifeEnum.Status> statusChangedEvent;
+    private LifeEnum.Status _currentStatus;
+    protected override LifeEnum.Status currentStatus {
+        get {
+            return _currentStatus;
+        }
+        set {
+            if (_currentStatus != value) {
+                _currentStatus = value;
+                statusChangedEvent?.Invoke (_currentStatus);
+            }
+        }
+    }
+
     // Character Situation
     public LifeEnum.HorizontalDirection movingDirection { get; private set; }
     public CharEnum.HorizontalSpeed currentHorizontalSpeed { get; private set; }
@@ -61,7 +76,7 @@ public class CharModel : LifeBase<CharParams> {
     /// Normalized.
     /// </summary>
     public Vector2 beatBackDirection { get; private set; } = Vector2.one;
-    private static Vector2 BeatBackDirection_Right = new Vector2 (1, 0.577f).normalized;    // About 30 degree elevation
+    private static Vector2 BeatBackDirection_Right = new Vector2 (1, 1).normalized;    // About 45 degree elevation
     private static Vector2 BeatBackDirection_Left = Vector2.Scale (BeatBackDirection_Right, new Vector2 (-1, 1));
 
     private void Awake () {
@@ -498,11 +513,7 @@ public class CharModel : LifeBase<CharParams> {
                     case CharEnum.CommandSituation.AirTap:
                     case CharEnum.CommandSituation.AirRelease:
                         if (currentLocation == LifeEnum.Location.Wall) {
-                            ChangeFacingDirection (true);
-                            var directionMultiplier = facingDirection == LifeEnum.HorizontalDirection.Right ? -1 : 1;
-                            SetPosByOffset (new Vector2 (GetParams ().repelFromWallDistByTurn, 0) * directionMultiplier);
-
-                            StartFreeFall ();
+                            RepelFromWallAndStartFreeFall (true);
                         } else {
                             ChangeFacingDirection (false);
                         }
@@ -941,6 +952,7 @@ public class CharModel : LifeBase<CharParams> {
 
         Log.Print ("Char : Die!", LogType.Char);
         SetAnimatorTrigger (CharAnimConstant.DieTriggerName);
+        StartCoroutine (WaitAndFinishDying ());
     }
 
     protected override void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection) {
@@ -949,18 +961,19 @@ public class CharModel : LifeBase<CharParams> {
         // TODO
         //ClearAllDelayActions ();
 
-        beatBackDirection = hurtDirection == LifeEnum.HorizontalDirection.Left ? BeatBackDirection_Left : BeatBackDirection_Right;
-
         // If dying, dominated by die animation
         if (!GetIsDying ()) {
-            SetAnimatorTrigger (CharAnimConstant.BeatBackTriggerName);
+            if (currentLocation == LifeEnum.Location.Wall) {
+                RepelFromWallAndStartFreeFall (true);
+            } else {
+                beatBackDirection = hurtDirection == LifeEnum.HorizontalDirection.Left ? BeatBackDirection_Left : BeatBackDirection_Right;
+                movingDirection = hurtDirection;
+
+                SetAnimatorTrigger (CharAnimConstant.BeatBackTriggerName);
+            }
         }
-    }
 
-    protected override void StopBeatingBack () {
-        base.StopBeatingBack ();
-
-        // TODO : Set animation by location
+        StartCoroutine (WaitAndFinishBeatingBack ());
     }
 
     protected override void StartInvincible () {
@@ -984,6 +997,17 @@ public class CharModel : LifeBase<CharParams> {
         Hurt (enemy.collisionDP, hurtDirection);
     }
 
+    private IEnumerator WaitAndFinishBeatingBack () {
+        yield return new WaitForSeconds (GetParams ().beatBackPeriod);
+
+        StopBeatingBack ();
+    }
+
+    private IEnumerator WaitAndFinishDying () {
+        yield return new WaitForSeconds (GetParams ().dyingPeriod);
+
+        // TODO
+    }
     #endregion
 
     #region Collision Event
@@ -1009,13 +1033,13 @@ public class CharModel : LifeBase<CharParams> {
     private void TouchGround () {
         Log.PrintDebug ("Char : TouchGround", LogType.Char);
 
+        isIgnoreUserInputInThisFrame = true;
+
         // Touch ground while init / set position
         if (currentLocation == LifeEnum.Location.Unknown) {
             currentLocation = LifeEnum.Location.Ground;
             return;
         }
-
-        isIgnoreUserInputInThisFrame = true;
 
         if (isDashing) {
             if (currentSituation == CharEnum.CommandSituation.AirHold) {         // "AirHold - Dash" command
@@ -1068,6 +1092,11 @@ public class CharModel : LifeBase<CharParams> {
 
         currentLocation = LifeEnum.Location.Air;
 
+        if (GetIsBeatingBack ()) {
+            // Dominate by beat back handling
+            return;
+        }
+
         // Special Handling
         if (isJumpCharging) {         // "GroundHold - Jump" command
             StopJumpCharge ();
@@ -1115,10 +1144,7 @@ public class CharModel : LifeBase<CharParams> {
             if (isSlippyWall) {
                 currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
 
-                var directionMultiplier = facingDirection == LifeEnum.HorizontalDirection.Right ? -1 : 1;
-                SetPosByOffset (new Vector2 (GetParams ().repelFromWallDistByTurn, 0) * directionMultiplier);
-
-                StartFreeFall ();
+                RepelFromWallAndStartFreeFall (false);
             } else {
                 SlideOnWall ();
             }
@@ -1150,6 +1176,16 @@ public class CharModel : LifeBase<CharParams> {
         isAllowAirJump = true;   // Allow jump in air again
 
         SetAnimatorTrigger (CharAnimConstant.SlideTriggerName);
+    }
+
+    private void RepelFromWallAndStartFreeFall (bool isChangeMovingDirection) {
+        if (isChangeMovingDirection) {
+            ChangeMovingDirection ();
+        }
+        var directionMultiplier = facingDirection == LifeEnum.HorizontalDirection.Right ? -1 : 1;
+        SetPosByOffset (new Vector2 (GetParams ().repelFromWallDistByTurn, 0) * directionMultiplier);
+
+        StartFreeFall ();
     }
 
     private void StartFreeFall () {

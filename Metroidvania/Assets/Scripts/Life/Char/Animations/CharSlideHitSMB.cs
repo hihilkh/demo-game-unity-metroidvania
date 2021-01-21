@@ -9,8 +9,7 @@ public class CharSlideHitSMB : CharHitSMBBase {
         base.OnStateExit (animator, stateInfo, layerIndex);
 
         if (animUtils.model.currentLocation != LifeEnum.Location.Wall) {
-            animUtils.SetDefaultFace ();
-            animator.SetBool (CharAnimConstant.SlidingBoolName, false);
+            animUtils.SetSlidingBoolAndUpdateFace (false);
         }
     }
 }
