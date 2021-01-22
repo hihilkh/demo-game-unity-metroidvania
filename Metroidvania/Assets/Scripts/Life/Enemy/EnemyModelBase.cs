@@ -15,11 +15,11 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
 
     public abstract EnemyEnum.MovementType movementType { get; }
     private LifeEnum.Location _currentLocation;
-    protected override LifeEnum.Location currentLocation {
+    public override LifeEnum.Location currentLocation {
         get {
             return _currentLocation;
         }
-        set {
+        protected set {
             if (_currentLocation != value) {
                 // Set _currentLocation first to prevent infinite loop
                 var previousLocation = _currentLocation;

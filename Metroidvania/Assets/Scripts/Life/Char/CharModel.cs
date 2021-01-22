@@ -113,7 +113,6 @@ public class CharModel : LifeBase<CharParams> {
         controller.StoppedHoldEvent -= StopHoldAction;
     }
 
-    // TODO : Handle the case that init / set position in air
     public override bool Init (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         var hasInitBefore = base.Init (pos, direction);
 
@@ -155,6 +154,18 @@ public class CharModel : LifeBase<CharParams> {
 
         isJustTouchWall = false;
         isIgnoreUserInputInThisFrame = false;
+    }
+
+    protected override IEnumerator ResetCurrentLocation () {
+        yield return StartCoroutine (base.ResetCurrentLocation ());
+
+        // To prevent error if the character is initialized in air. Mainly for development convenience.
+        if (currentLocation == LifeEnum.Location.Air) {
+            ResetAnimatorTrigger (CharAnimConstant.IdleTriggerName);
+            ResetAnimatorTrigger (CharAnimConstant.WalkTriggerName);
+            currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
+            StartFreeFall ();
+        }
     }
 
     // Remarks :
@@ -364,8 +375,14 @@ public class CharModel : LifeBase<CharParams> {
             if (currentInputSituation == CharEnum.InputSituation.GroundHold || currentInputSituation == CharEnum.InputSituation.AirHold) {
                 switch (currentCommand) {
                     case CharEnum.Command.Dash:
-                        if (command == CharEnum.Command.Jump || command == CharEnum.Command.Dash) {
+                        if (command == CharEnum.Command.Dash) {
                             StopDashing (currentHorizontalSpeed, false, false);
+                        } else if (command == CharEnum.Command.Jump) {
+                            if (CheckIsAllowJump ()) {
+                                StopDashing (currentHorizontalSpeed, false, false);
+                            } else {
+                                StopDashing (CharEnum.HorizontalSpeed.Walk, true, true);
+                            }
                         } else {
                             StopDashing (CharEnum.HorizontalSpeed.Walk, true, true);
                         }
@@ -538,7 +555,8 @@ public class CharModel : LifeBase<CharParams> {
                     case CharEnum.InputSituation.AirTap:
                     case CharEnum.InputSituation.AirRelease:
                         if (GetIsInStatus (CharEnum.Status.Sliding)) {
-                            RepelFromWallAndStartFreeFall (true);
+                            var wallDirection = facingDirection == LifeEnum.HorizontalDirection.Left ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
+                            RepelFromWall (wallDirection, true);
                         } else {
                             ChangeFacingDirection (false);
                         }
@@ -600,6 +618,11 @@ public class CharModel : LifeBase<CharParams> {
         animator.SetTrigger (trigger);
     }
 
+    private void ResetAnimatorTrigger (string trigger) {
+        Log.PrintDebug ("Char ResetAnimatorTrigger : " + trigger, LogType.Char | LogType.Animation);
+        animator.ResetTrigger (trigger);
+    }
+    
     protected void SetAnimatorBool (string boolName, bool value) {
         Log.PrintDebug ("Char SetAnimatorBool : " + boolName + " ; Value : " + value, LogType.Char | LogType.Animation);
         animator.SetBool (boolName, value);
@@ -698,6 +721,7 @@ public class CharModel : LifeBase<CharParams> {
     private void SetDashing () {
         SetStatus (CharEnum.Status.Dashing, true);
         currentHorizontalSpeed = CharEnum.HorizontalSpeed.Dash;
+        AlignMovingWithFacingDirection ();
 
         SetAnimatorTrigger (CharAnimConstant.DashTriggerName);
     }
@@ -756,6 +780,7 @@ public class CharModel : LifeBase<CharParams> {
         if (currentHorizontalSpeed == CharEnum.HorizontalSpeed.Idle) {
             currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
         }
+        AlignMovingWithFacingDirection ();
 
         if (currentLocation == LifeEnum.Location.Ground) {
             isJustJumpedUp = true;
@@ -821,6 +846,11 @@ public class CharModel : LifeBase<CharParams> {
 
     private void DropHit () {
         Log.Print ("Start DropHit", LogType.Char);
+
+        if (GetIsInStatus (CharEnum.Status.Sliding)) {
+            var wallDirection = facingDirection == LifeEnum.HorizontalDirection.Left ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
+            RepelFromWall (wallDirection, true);
+        }
 
         StopDropHitCharge ();
         SetStatus (CharEnum.Status.DropHitting, true);
@@ -978,6 +1008,12 @@ public class CharModel : LifeBase<CharParams> {
         facingDirection = movingDirection;
     }
 
+    private void SetMovingDirection (LifeEnum.HorizontalDirection direction) {
+        // Remarks : Changing moving direction must also align facing direction
+        movingDirection = direction;
+        facingDirection = movingDirection;
+    }
+
     private void AlignMovingWithFacingDirection () {
         movingDirection = facingDirection;
     }
@@ -1015,7 +1051,8 @@ public class CharModel : LifeBase<CharParams> {
         // If dying, dominated by die animation
         if (!isDying) {
             if (GetIsInStatus (CharEnum.Status.Sliding)) {
-                RepelFromWallAndStartFreeFall (true);
+                var wallDirection = facingDirection == LifeEnum.HorizontalDirection.Left ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
+                RepelFromWall (wallDirection, true);
             } else {
                 beatBackDirection = hurtDirection == LifeEnum.HorizontalDirection.Left ? BeatBackDirection_Left : BeatBackDirection_Right;
                 movingDirection = hurtDirection;
@@ -1102,13 +1139,13 @@ public class CharModel : LifeBase<CharParams> {
         if (!GetIsInStatus (CharEnum.Status.Dashing)) {
             currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
             AlignMovingWithFacingDirection ();
-        }
 
-        if (GetIsInStatus (CharEnum.Status.Sliding)) {
-            SetStatus (CharEnum.Status.Sliding, false);
-            StartWalking ();
-        } else if (currentLocation == LifeEnum.Location.Air) {
-            SetAnimatorTrigger (CharAnimConstant.LandingTriggerName);
+            if (GetIsInStatus (CharEnum.Status.Sliding)) {
+                SetStatus (CharEnum.Status.Sliding, false);
+                StartWalking ();
+            } else if (currentLocation == LifeEnum.Location.Air) {
+                SetAnimatorTrigger (CharAnimConstant.LandingTriggerName);
+            }
         }
 
         isAllowAirJump = true;
@@ -1169,8 +1206,7 @@ public class CharModel : LifeBase<CharParams> {
         if (currentLocation == LifeEnum.Location.Air) {
             if (isSlippyWall) {
                 currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
-
-                RepelFromWallAndStartFreeFall (false);
+                RepelFromWall (facingDirection, true);
             } else {
                 StartSliding ();
             }
@@ -1198,14 +1234,17 @@ public class CharModel : LifeBase<CharParams> {
         SetAnimatorTrigger (CharAnimConstant.SlideTriggerName);
     }
 
-    private void RepelFromWallAndStartFreeFall (bool isChangeMovingDirection) {
+    private void RepelFromWall (LifeEnum.HorizontalDirection wallDirection, bool isFinallyFacingWall) {
         SetStatus (CharEnum.Status.Sliding, false);
 
-        if (isChangeMovingDirection) {
-            ChangeMovingDirection ();
-        }
-        var directionMultiplier = facingDirection == LifeEnum.HorizontalDirection.Right ? -1 : 1;
+        var directionMultiplier = wallDirection == LifeEnum.HorizontalDirection.Left ? 1 : -1;
         SetPosByOffset (new Vector2 (GetParams ().repelFromWallDistByTurn, 0) * directionMultiplier);
+
+        if (isFinallyFacingWall) {
+            SetMovingDirection (wallDirection);
+        } else {
+            SetMovingDirection (wallDirection == LifeEnum.HorizontalDirection.Left ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left);
+        }
 
         StartFreeFall ();
     }

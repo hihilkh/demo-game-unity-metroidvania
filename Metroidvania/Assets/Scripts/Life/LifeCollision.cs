@@ -83,8 +83,7 @@ public class LifeCollision : MonoBehaviour {
 
         var collisionNormal = collision.GetContact (0).normal;
 
-        // TODO : Check what happen if touch slippy wall with head (i.e. slippy wall as roof)
-        if (collision.gameObject.tag == GameVariable.GroundTag) {
+        if (collideType == GameVariable.GroundTag) {
             var absX = Mathf.Abs (collisionNormal.x);
             if (collisionNormal.y >= 0 && collisionNormal.y < absX) {
                 collideType = WallColliderType;
@@ -93,7 +92,7 @@ public class LifeCollision : MonoBehaviour {
             }
         }
 
-        if (collideType == GameVariable.GroundTag && collisionNormal.y < 0) {
+        if ((collideType == GameVariable.GroundTag || collideType == GameVariable.SlippyWallTag) && collisionNormal.y < 0) {
             collideType = RoofColliderType;
         }
         Log.Print (gameObject.name + " : Life Collision Enter : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType + " ; collisionNormal = " + collisionNormal, LogType.Collision);

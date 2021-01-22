@@ -25,10 +25,15 @@ public class CharLandingSMB : CharSMBBase {
             if (stateInfo.normalizedTime >= 1) {
                 isAnimFinished = true;
 
-                // Do not StartIdleOrWalk if there is next action, e.g., dash / free fall
-                if (animator.GetNextAnimatorClipInfo (0).Length == 0) {
-                    animUtils.model.StartIdleOrWalk ();
+                if (animUtils.model.currentLocation == LifeEnum.Location.Air) {
+                    return;
                 }
+
+                if (animUtils.model.GetIsInStatus (CharEnum.Status.Dashing)) {
+                    return;
+                }
+
+                animUtils.model.StartIdleOrWalk ();
             }
         }
     }

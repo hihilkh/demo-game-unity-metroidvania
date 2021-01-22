@@ -13,6 +13,12 @@ public class CharAttackTrigger : MonoBehaviour {
     /// </summary>
     public event Action<EnemyModelBase, Transform, bool> HitEnemyEvent;
 
+    /// <summary>
+    /// Input :<br />
+    /// Transform : colliderTransform
+    /// </summary>
+    public event Action<Transform> HitEnvironmentEvent;
+
     private void OnTriggerEnter2D (Collider2D collision) {
         if (collision.tag == GameVariable.PlayerTag || collision.tag == GameVariable.AttackTag) {
             return;
@@ -34,6 +40,8 @@ public class CharAttackTrigger : MonoBehaviour {
             var convert = (EnemyModelBase)lifeBase;
 
             HitEnemyEvent?.Invoke (convert, collision.transform, convert.isInvincible);
+        } else {
+            HitEnvironmentEvent?.Invoke (collision.transform);
         }
     }
 }

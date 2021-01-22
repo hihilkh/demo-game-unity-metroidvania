@@ -8,7 +8,7 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
     [SerializeField] protected LifeCollision lifeCollision;
     [SerializeField] private T lifeParams;
     public LifeEnum.HorizontalDirection facingDirection { get; protected set; }
-    [SerializeField] protected virtual LifeEnum.Location currentLocation { get; set; }
+    [SerializeField] public virtual LifeEnum.Location currentLocation { get; protected set; }
 
     protected virtual int zLayer => 0;
     protected int totalHP => lifeParams.totalHP;
@@ -126,7 +126,7 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
 
     #region Location
 
-    private IEnumerator ResetCurrentLocation () {
+    protected virtual IEnumerator ResetCurrentLocation () {
         currentLocation = LifeEnum.Location.Unknown;
 
         yield return null;
