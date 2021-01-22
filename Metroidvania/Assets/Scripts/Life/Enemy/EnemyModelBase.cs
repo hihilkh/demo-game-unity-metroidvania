@@ -15,11 +15,11 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
 
     public abstract EnemyEnum.MovementType movementType { get; }
     private LifeEnum.Location _currentLocation;
-    public override LifeEnum.Location currentLocation {
+    protected override LifeEnum.Location currentLocation {
         get {
             return _currentLocation;
         }
-        protected set {
+        set {
             if (_currentLocation != value) {
                 // Set _currentLocation first to prevent infinite loop
                 var previousLocation = _currentLocation;
@@ -30,6 +30,48 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
     }
 
     public int collisionDP => GetParams ().collisionDP;
+
+    // Status
+    protected EnemyEnum.Status currentStatus;
+
+    public override bool isBeatingBack {
+        get {
+            return (currentStatus & EnemyEnum.Status.BeatingBack) == EnemyEnum.Status.BeatingBack;
+        }
+        protected set {
+            if (value) {
+                currentStatus = currentStatus | EnemyEnum.Status.BeatingBack;
+            } else {
+                currentStatus = currentStatus & ~EnemyEnum.Status.BeatingBack;
+            }
+        }
+    }
+
+    public override bool isInvincible {
+        get {
+            return (currentStatus & EnemyEnum.Status.Invincible) == EnemyEnum.Status.Invincible;
+        }
+        protected set {
+            if (value) {
+                currentStatus = currentStatus | EnemyEnum.Status.Invincible;
+            } else {
+                currentStatus = currentStatus & ~EnemyEnum.Status.Invincible;
+            }
+        }
+    }
+
+    public override bool isDying {
+        get {
+            return (currentStatus & EnemyEnum.Status.Dying) == EnemyEnum.Status.Dying;
+        }
+        protected set {
+            if (value) {
+                currentStatus = currentStatus | EnemyEnum.Status.Dying;
+            } else {
+                currentStatus = currentStatus & ~EnemyEnum.Status.Dying;
+            }
+        }
+    }
 
     // Beat Back
     /// <summary>
@@ -53,6 +95,7 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
             return hasInitBefore;
         }
 
+        currentStatus = EnemyEnum.Status.Normal;
         SetJumpSettings ();
 
         delayJumpCoroutine = null;
@@ -118,7 +161,7 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
         }
 
         // If dying, dominated by die animation
-        if (!GetIsDying ()) {
+        if (!isDying) {
             SetAnimatorTrigger (EnemyAnimConstant.BeatBackTriggerName);
         }
     }
@@ -133,7 +176,7 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
         base.StartInvincible ();
 
         // If dying, dominated by die animation
-        if (!GetIsDying ()) {
+        if (!isDying) {
             SetAnimatorBool (EnemyAnimConstant.InvincibleBoolName, true);
         }
     }
@@ -251,9 +294,9 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
         switch (currentLocation) {
             case LifeEnum.Location.Air:
                 if (movementType == EnemyEnum.MovementType.Walking) {
-                    if (GetIsDying ()) {
+                    if (isDying) {
                         // Do nothing
-                    } else if (GetIsBeatingBack ()) {
+                    } else if (isBeatingBack) {
                         StopBeatingBack ();
                     } else {
                         SetAnimatorTrigger (EnemyAnimConstant.LandingTriggerName);
@@ -281,7 +324,7 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
             if (isJustJumpedUp) {
                 isJustJumpedUp = false;
             } else {
-                if (!GetIsBeatingBack ()) {
+                if (!isBeatingBack) {
                     StartFreeFall ();
                 }
             }

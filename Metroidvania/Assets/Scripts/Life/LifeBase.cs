@@ -8,12 +8,16 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
     [SerializeField] protected LifeCollision lifeCollision;
     [SerializeField] private T lifeParams;
     public LifeEnum.HorizontalDirection facingDirection { get; protected set; }
-    public virtual LifeEnum.Location currentLocation { get; protected set; }
-    protected virtual LifeEnum.Status currentStatus { get; set; }
+    [SerializeField] protected virtual LifeEnum.Location currentLocation { get; set; }
 
     protected virtual int zLayer => 0;
     protected int totalHP => lifeParams.totalHP;
     protected int currentHP;
+
+    // Status
+    public abstract bool isBeatingBack { get; protected set; }
+    public abstract bool isInvincible { get; protected set; }
+    public abstract bool isDying { get; protected set; }
 
     private bool isInitialized = false;
 
@@ -37,7 +41,6 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
         isInitialized = true;
         currentHP = totalHP;
         SetPosAndDirection (pos, direction);
-        currentStatus = LifeEnum.Status.Normal;
 
         lifeCollision.SetLifeBase (this);
         RegisterCollisionEventHandler ();
@@ -83,30 +86,18 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
 
     protected virtual void Die (LifeEnum.HorizontalDirection dieDirection) {
         currentHP = 0;
-        currentStatus = currentStatus | LifeEnum.Status.Dying;
+        isDying = true;
 
         StartBeatingBack (dieDirection);
         StartCoroutine (SetInvincible (false));
     }
 
-    public bool GetIsBeatingBack () {
-        return (currentStatus & LifeEnum.Status.BeatingBack) == LifeEnum.Status.BeatingBack;
-    }
-
-    public bool GetIsInvincible () {
-        return (currentStatus & LifeEnum.Status.Invincible) == LifeEnum.Status.Invincible;
-    }
-
-    public bool GetIsDying () {
-        return (currentStatus & LifeEnum.Status.Dying) == LifeEnum.Status.Dying;
-    }
-
     protected virtual void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection) {
-        currentStatus = currentStatus | LifeEnum.Status.BeatingBack;
+        isBeatingBack = true;
     }
 
     protected virtual void StopBeatingBack () {
-        currentStatus = currentStatus & ~LifeEnum.Status.BeatingBack;
+        isBeatingBack = false;
     }
 
     protected IEnumerator SetInvincible (bool isTempInvincible) {
@@ -123,12 +114,12 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
 
     protected virtual void StartInvincible () {
         lifeCollision.SetLayer (true);
-        currentStatus = currentStatus | LifeEnum.Status.Invincible;
+        isInvincible = true;
     }
 
     protected virtual void StopInvincible () {
         lifeCollision.SetLayer (false);
-        currentStatus = currentStatus & ~LifeEnum.Status.Invincible;
+        isInvincible = false;
     }
 
     #endregion

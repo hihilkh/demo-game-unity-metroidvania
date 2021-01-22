@@ -33,7 +33,7 @@ public class CharAttackTrigger : MonoBehaviour {
 
             var convert = (EnemyModelBase)lifeBase;
 
-            HitEnemyEvent?.Invoke (convert, collision.transform, convert.GetIsInvincible ());
+            HitEnemyEvent?.Invoke (convert, collision.transform, convert.isInvincible);
         }
     }
 }

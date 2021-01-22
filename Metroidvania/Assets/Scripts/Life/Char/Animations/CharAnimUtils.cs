@@ -27,10 +27,17 @@ public class CharAnimUtils : MonoBehaviour {
 
     private Animator animator;
 
+    private bool isModelStatusChanged = false;
+
     [Header ("Material")]
     [SerializeField] private Material charMaterialToClone;
     private Material charMaterial;
     private const string CharMaterialAlphaFloatName = "_alpha";
+
+    [Header ("Particle System")]
+    [SerializeField] private List<ParticleSystem> thrusterPSList;
+    [SerializeField] private ParticleSystem jumpChargePS;
+    [SerializeField] private ParticleSystem dropHitChargePS;
 
     [Header ("Hit Template")]
     [SerializeField] private CharNormalHit _normalHitTemplate;
@@ -92,6 +99,13 @@ public class CharAnimUtils : MonoBehaviour {
         if (rb.velocity.y < model.GetParams ().minFallDownVelocity) {
             rb.velocity = new Vector2 (rb.velocity.x, model.GetParams ().minFallDownVelocity);
         }
+
+        // Do update on Update () to prevent more than 1 update within a frame
+        if (isModelStatusChanged) {
+            isModelStatusChanged = false;
+            UpdateFace ();
+            UpdatePS ();
+        }
     }
 
     private void OnDestroy () {
@@ -133,17 +147,10 @@ public class CharAnimUtils : MonoBehaviour {
         }
     }
 
-    public void SetSlidingBoolAndUpdateFace (bool isSliding) {
-        animator.SetBool (CharAnimConstant.SlidingBoolName, isSliding);
-        UpdateFace ();
-    }
-
     private void UpdateFace () {
-        var isBeatingBack = model.GetIsBeatingBack ();
-        var isDying = model.GetIsDying ();
-        if (isBeatingBack || isDying) {
+        if (model.isBeatingBack || model.isDying) {
             SetFace (CharEnum.FaceType.Confused);
-        } else if (animator.GetBool (CharAnimConstant.SlidingBoolName)) {
+        } else if (model.GetIsInStatus (CharEnum.Status.Sliding)) {
             SetFace (CharEnum.FaceType.Normal_Inversed);
         } else {
             var faceType = CharEnum.FaceType.Normal;
@@ -219,8 +226,8 @@ public class CharAnimUtils : MonoBehaviour {
 
     #region Model Status
 
-    private void ModelStatusChangedAction (LifeEnum.Status status) {
-        UpdateFace ();
+    private void ModelStatusChangedAction (CharEnum.Status status) {
+        isModelStatusChanged = true;
     }
 
     #endregion
@@ -245,6 +252,29 @@ public class CharAnimUtils : MonoBehaviour {
         charMaterial.SetFloat (CharMaterialAlphaFloatName, alpha);
     }
 
+    #endregion
+
+    #region Particle System
+
+    public void SetThrusterPS (bool isOn) {
+        foreach (var ps in thrusterPSList) {
+            ps.gameObject.SetActive (isOn);
+        }
+    }
+
+    private void SetJumpChargePS (bool isOn) {
+        jumpChargePS.gameObject.SetActive (isOn);
+    }
+
+    private void SetDropHitChargePS (bool isOn) {
+        dropHitChargePS.gameObject.SetActive (isOn);
+    }
+
+    private void UpdatePS () {
+        SetThrusterPS (model.GetIsInStatus (CharEnum.Status.Dashing));
+        SetJumpChargePS (model.GetIsInStatus (CharEnum.Status.JumpCharging));
+        SetDropHitChargePS (model.GetIsInStatus (CharEnum.Status.DropHitCharging));
+    }
     #endregion
 
     #region Movement Related

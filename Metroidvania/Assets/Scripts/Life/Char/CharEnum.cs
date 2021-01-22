@@ -66,4 +66,19 @@ public class CharEnum {
         Thrusters = 1 << 3,
         Arrow = 1 << 4,
     }
+
+    [Flags]
+    public enum Status : int {
+        Normal = 0,         // status that is no special handling, e.g. idling, walking, free falling, jumping
+        BeatingBack = 1 << 0,
+        Invincible = 1 << 1,
+        Dying = 1 << 2,
+        Dashing = 1 << 3,
+        DashCollingDown = 1 << 4,
+        Sliding = 1 << 5,       // not yet
+        JumpCharging = 1 << 6,
+        AttackCoolingDown = 1 << 7,
+        DropHitCharging = 1 << 8,
+        DropHitting = 1 << 9,
+    }
 }

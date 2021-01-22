@@ -8,8 +8,8 @@ public class CharSlideHitSMB : CharHitSMBBase {
     public override void OnStateExit (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateExit (animator, stateInfo, layerIndex);
 
-        if (animUtils.model.currentLocation != LifeEnum.Location.Wall) {
-            animUtils.SetSlidingBoolAndUpdateFace (false);
+        if (!animUtils.model.GetIsInStatus (CharEnum.Status.Sliding)) {
+            animator.SetBool (CharAnimConstant.SlidingBoolName, false);
         }
     }
 }
