@@ -1010,9 +1010,7 @@ public class CharModel : LifeBase<CharParams> {
         base.StartBeatingBack (hurtDirection);
 
         BreakInProgressAction (false, false);
-
-        // TODO
-        // Do not allow input while beating back
+        controller.enabled = false;
 
         // If dying, dominated by die animation
         if (!isDying) {
@@ -1026,7 +1024,14 @@ public class CharModel : LifeBase<CharParams> {
             }
         }
 
+
         StartCoroutine (WaitAndFinishBeatingBack ());
+    }
+
+    protected override void StopBeatingBack () {
+        base.StopBeatingBack ();
+
+        controller.enabled = true;
     }
 
     protected override void StartInvincible () {
