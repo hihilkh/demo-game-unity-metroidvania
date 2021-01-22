@@ -21,10 +21,6 @@ public class CharLandingSMB : CharSMBBase {
         animUtils.UpdateHorizontalVelocity ();
         animUtils.UpdateFacingDirection ();
 
-        // TODO : cancel jump charge
-        // TODO : cancel drop hit charge
-        // TODO : cancel drop hit
-
         if (!isAnimFinished) {
             if (stateInfo.normalizedTime >= 1) {
                 isAnimFinished = true;

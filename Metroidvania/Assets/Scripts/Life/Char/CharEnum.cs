@@ -28,7 +28,7 @@ public class CharEnum {
         Turn = 5,
     }
 
-    public enum CommandSituation {
+    public enum InputSituation {
         GroundTap,
         GroundHold,
         GroundRelease,
@@ -75,7 +75,7 @@ public class CharEnum {
         Dying = 1 << 2,
         Dashing = 1 << 3,
         DashCollingDown = 1 << 4,
-        Sliding = 1 << 5,       // not yet
+        Sliding = 1 << 5,
         JumpCharging = 1 << 6,
         AttackCoolingDown = 1 << 7,
         DropHitCharging = 1 << 8,

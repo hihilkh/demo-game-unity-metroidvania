@@ -14,8 +14,5 @@ public class CharJumpSMB : CharSMBBase {
         base.OnStateUpdate (animator, stateInfo, layerIndex);
 
         animUtils.UpdateFacingDirection ();
-
-        // TODO : Jump charge / cancel jump charge
-        // TODO : Drop Hit charging
     }
 }
