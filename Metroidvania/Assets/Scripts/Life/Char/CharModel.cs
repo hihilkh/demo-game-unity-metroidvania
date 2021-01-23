@@ -63,7 +63,6 @@ public class CharModel : LifeBase<CharParams> {
     // Command Control
     private CharEnum.InputSituation? currentInputSituation;
     private CharEnum.Command? currentCommand;
-    private LifeEnum.Location startedPressLocation;
     private bool isIgnoreHold;
     private bool isIgnoreRelease;
 
@@ -93,7 +92,6 @@ public class CharModel : LifeBase<CharParams> {
         // Remarks :
         // Currently do not add StartedLeft, StoppedLeft, StartedRight, StoppedRight handling to prevent complicated code.
         // Add them back if found them to be useful for development or debugging.
-        controller.StartedPressEvent += TriggerStartPressAction;
         controller.TappedEvent += TriggerTapAction;
         controller.StartedHoldEvent += StartHoldAction;
         controller.StoppedHoldEvent += StopHoldAction;
@@ -107,7 +105,6 @@ public class CharModel : LifeBase<CharParams> {
     protected override void OnDestroy () {
         base.OnDestroy ();
 
-        controller.StartedPressEvent -= TriggerStartPressAction;
         controller.TappedEvent -= TriggerTapAction;
         controller.StartedHoldEvent -= StartHoldAction;
         controller.StoppedHoldEvent -= StopHoldAction;
@@ -148,7 +145,6 @@ public class CharModel : LifeBase<CharParams> {
 
         currentInputSituation = null;
         currentCommand = null;
-        startedPressLocation = LifeEnum.Location.Ground;
         isIgnoreHold = false;
         isIgnoreRelease = false;
 
@@ -323,21 +319,6 @@ public class CharModel : LifeBase<CharParams> {
                     // TODO : It may lead to some wired cases, e.g.:
                     // trigger hold while touch wall -> hold action and release action failed, but
                     // triggered hold and touch wall later -> hold action and release action success
-                    SetCurrentCommandStatus (null, null);
-                    return;
-                }
-
-                // Hold and release would fail if started to press in air but it is on the ground while triggered hold, or vice versa
-                var isHoldFailed = false;
-                if (situation == CharEnum.InputSituation.GroundHold && startedPressLocation != LifeEnum.Location.Ground) {
-                    isHoldFailed = true;
-                } else if (situation == CharEnum.InputSituation.AirHold && startedPressLocation == LifeEnum.Location.Ground) {
-                    isHoldFailed = true;
-                }
-
-                if (isHoldFailed) {
-                    isIgnoreHold = true;
-                    isIgnoreRelease = true;
                     SetCurrentCommandStatus (null, null);
                     return;
                 }
@@ -1194,11 +1175,10 @@ public class CharModel : LifeBase<CharParams> {
         if (GetIsInStatus (CharEnum.Status.Dashing)) {
             StopDashing (CharEnum.HorizontalSpeed.Walk, true, currentLocation == LifeEnum.Location.Ground);
 
-            // Break hold and release input if "GroundHold - Dash" or "AirHold - Dash"
+            // Break hold input if "GroundHold - Dash" or "AirHold - Dash"
             if (currentInputSituation == CharEnum.InputSituation.GroundHold || currentInputSituation == CharEnum.InputSituation.AirHold) {
                 if (currentCommand == CharEnum.Command.Dash) {
                     isIgnoreHold = true;
-                    isIgnoreRelease = true;
                 }
             }
         }
@@ -1256,12 +1236,6 @@ public class CharModel : LifeBase<CharParams> {
     #endregion
 
     #region Controller Event
-
-    private void TriggerStartPressAction () {
-        startedPressLocation = currentLocation;
-
-        Log.PrintDebug ("TriggerStartPressAction", LogType.Char);
-    }
 
     private void TriggerTapAction () {
         if (isHolding) {

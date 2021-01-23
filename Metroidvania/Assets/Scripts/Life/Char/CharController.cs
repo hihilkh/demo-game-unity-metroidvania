@@ -14,7 +14,6 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
     public event Action StoppedLeftEvent;
     public event Action StartedRightEvent;
     public event Action StoppedRightEvent;
-    public event Action StartedPressEvent;
     public event Action TappedEvent;
     public event Action StartedHoldEvent;
     public event Action StoppedHoldEvent;
@@ -59,8 +58,6 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
         Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogType.Input);
         if (context.phase == InputActionPhase.Performed) {
             TappedEvent?.Invoke ();
-        } else if (context.phase == InputActionPhase.Started) {
-            StartedPressEvent?.Invoke ();
         }
     }
 

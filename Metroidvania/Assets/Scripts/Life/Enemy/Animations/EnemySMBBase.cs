@@ -9,13 +9,13 @@ public class EnemySMBBase : StateMachineBehaviour {
     override public void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        Log.PrintDebug ("Enemy OnStateEnter : " + this, LogType.Animation);
+        Log.PrintDebug ("Enemy OnStateEnter : " + this, LogType.Animation | LogType.Enemy);
 
         if (animUtils == null) {
             animUtils = animator.GetComponentInChildren<EnemyAnimUtils> ();
 
             if (animUtils == null) {
-                Log.PrintError ("Cannot find corresponding EnemyAnimUtils script.", LogType.Animation);
+                Log.PrintError ("Cannot find corresponding EnemyAnimUtils script.", LogType.Animation | LogType.Enemy);
             }
         }
     }

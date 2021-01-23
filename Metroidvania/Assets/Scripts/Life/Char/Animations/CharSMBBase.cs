@@ -9,13 +9,13 @@ public class CharSMBBase : StateMachineBehaviour {
     override public void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        Log.PrintDebug ("Char OnStateEnter : " + this, LogType.Animation);
+        Log.PrintDebug ("Char OnStateEnter : " + this, LogType.Animation | LogType.Char);
 
         if (animUtils == null) {
             animUtils = animator.GetComponent<CharAnimUtils> ();
 
             if (animUtils == null) {
-                Log.PrintError ("Cannot find corresponding CharAnimUtils script.", LogType.Animation);
+                Log.PrintError ("Cannot find corresponding CharAnimUtils script.", LogType.Animation | LogType.Char);
             }
         }
     }
