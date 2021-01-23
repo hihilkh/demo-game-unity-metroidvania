@@ -27,7 +27,7 @@ public class CharAnimUtils : MonoBehaviour {
 
     private Animator animator;
 
-    private bool isModelStatusChanged = false;
+    private bool isNeedCommonUpdate = false;
 
     [Header ("Material")]
     [SerializeField] private Material charMaterialToClone;
@@ -87,7 +87,9 @@ public class CharAnimUtils : MonoBehaviour {
 
         // event handler
         model.obtainedBodyPartsChangedEvent += SetBodyParts;
-        model.statusChangedEvent += ModelStatusChangedAction;
+        model.statusChangedEvent += NeedCommonUpdateAction;
+        model.facingDirectionChangedEvent += NeedCommonUpdateAction;
+        model.movingDirectionChangedEvent += NeedCommonUpdateAction;
     }
 
     private void Start () {
@@ -96,21 +98,32 @@ public class CharAnimUtils : MonoBehaviour {
     }
 
     private void Update () {
-        if (rb.velocity.y < model.GetParams ().minFallDownVelocity) {
-            rb.velocity = new Vector2 (rb.velocity.x, model.GetParams ().minFallDownVelocity);
-        }
-
-        // Do update on Update () to prevent more than 1 update within a frame
-        if (isModelStatusChanged) {
-            isModelStatusChanged = false;
+        // Do update on Update ()
+        // - to prevent more than 1 update within a frame
+        // - to delay the update (from event handlers) so that all parameters from CharModel is set
+        // - Hence, no need to deal with the ordering of setting the parameters in CharModel
+        if (isNeedCommonUpdate) {
+            isNeedCommonUpdate = false;
             UpdateFace ();
             UpdatePS ();
+            UpdateFacingDirection ();
+            UpdateHorizontalVelocity ();
+        }
+
+        if (rb.velocity.y < model.GetParams ().minFallDownVelocity) {
+            rb.velocity = new Vector2 (rb.velocity.x, model.GetParams ().minFallDownVelocity);
         }
     }
 
     private void OnDestroy () {
         model.obtainedBodyPartsChangedEvent -= SetBodyParts;
-        model.statusChangedEvent -= ModelStatusChangedAction;
+        model.statusChangedEvent -= NeedCommonUpdateAction;
+        model.facingDirectionChangedEvent -= NeedCommonUpdateAction;
+        model.movingDirectionChangedEvent -= NeedCommonUpdateAction;
+    }
+
+    private void NeedCommonUpdateAction () {
+        isNeedCommonUpdate = true;
     }
 
     #region Face related
@@ -224,14 +237,6 @@ public class CharAnimUtils : MonoBehaviour {
 
     #endregion
 
-    #region Model Status
-
-    private void ModelStatusChangedAction (CharEnum.Status status) {
-        isModelStatusChanged = true;
-    }
-
-    #endregion
-
     #region Material
 
     private void InitCharMaterial () {
@@ -279,7 +284,7 @@ public class CharAnimUtils : MonoBehaviour {
 
     #region Movement Related
 
-    public void UpdateHorizontalVelocity () {
+    private void UpdateHorizontalVelocity () {
         var velocityX = GetVelocityXByCurrentHorizontalSpeed ();
 
         rb.velocity = new Vector3 (velocityX, rb.velocity.y);
@@ -322,10 +327,10 @@ public class CharAnimUtils : MonoBehaviour {
         rb.velocity = new Vector3 (velocityX, rb.velocity.y);
     }
 
-    public void UpdateFacingDirection (bool isNeedOppositeDirection = false) {
+    private void UpdateFacingDirection () {
         var scale = (model.facingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
 
-        if (isNeedOppositeDirection) {
+        if (model.GetIsInStatus (CharEnum.Status.Sliding)) {
             scale = scale * -1;
         }
 

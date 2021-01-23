@@ -23,9 +23,13 @@ public static partial class GameVariable {
     public const string LogTag = "Metroidvania";
     public const bool IsLogForReleaseBuild = false;
     public static LogLevel GetMinLogLevel (LogType logType) {
+        //if ((logType & LogType.Enemy) == LogType.Enemy) {
+        //    return LogLevel.Error;
+        //}
         //if ((logType & LogType.Animation) == LogType.Animation) {
         //    return LogLevel.Debug;
         //}
+
         return LogLevel.Info;
     }
 

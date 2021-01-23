@@ -10,13 +10,6 @@ public class CharDropHitSMB : CharHitSMBBase {
         animUtils.RemoveGravity ();
     }
 
-    public override void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-        base.OnStateUpdate (animator, stateInfo, layerIndex);
-
-        // DropHitting would not allow any other user input, so no need to update facing direction
-        // UpdateFacingDirection ();
-    }
-
     public override void OnStateExit (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateExit (animator, stateInfo, layerIndex);
 

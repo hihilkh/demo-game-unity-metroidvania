@@ -12,6 +12,7 @@
     public const string SlideTriggerName = "Slide";
     public const string BeatBackTriggerName = "BeatBack";
     public const string DieTriggerName = "Die";
+    public const string StopUpperPartTriggerName = "StopUpperPart";
 
     public const string SlidingBoolName = "IsSliding";
     public const string InvincibleBoolName = "IsInvincible";

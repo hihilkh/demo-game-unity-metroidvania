@@ -9,10 +9,4 @@ public class CharFreeFallSMB : CharSMBBase {
         animUtils.SetVelocityX (null);
         animUtils.ResetGravity ();
     }
-
-    public override void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-        base.OnStateUpdate (animator, stateInfo, layerIndex);
-
-        animUtils.UpdateFacingDirection ();
-    }
 }

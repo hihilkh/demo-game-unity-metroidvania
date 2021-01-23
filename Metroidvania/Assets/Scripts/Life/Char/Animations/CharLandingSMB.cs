@@ -17,10 +17,6 @@ public class CharLandingSMB : CharSMBBase {
     public override void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateUpdate (animator, stateInfo, layerIndex);
 
-        // It may touch wall and change direction while landing, so it needs to update horizontal velocity and facing direction at OnStateUpdate
-        animUtils.UpdateHorizontalVelocity ();
-        animUtils.UpdateFacingDirection ();
-
         if (!isAnimFinished) {
             if (stateInfo.normalizedTime >= 1) {
                 isAnimFinished = true;

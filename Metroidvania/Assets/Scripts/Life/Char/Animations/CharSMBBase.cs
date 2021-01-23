@@ -6,7 +6,7 @@ using HIHIFramework.Core;
 public class CharSMBBase : StateMachineBehaviour {
     protected CharAnimUtils animUtils { get; private set; }
 
-    override public void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+    public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
         Log.PrintDebug ("Char OnStateEnter : " + this, LogType.Animation | LogType.Char);
@@ -18,5 +18,11 @@ public class CharSMBBase : StateMachineBehaviour {
                 Log.PrintError ("Cannot find corresponding CharAnimUtils script.", LogType.Animation | LogType.Char);
             }
         }
+    }
+
+    public override void OnStateExit (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+        base.OnStateExit (animator, stateInfo, layerIndex);
+
+        Log.PrintDebug ("Char OnStateExit : " + this, LogType.Animation | LogType.Char);
     }
 }

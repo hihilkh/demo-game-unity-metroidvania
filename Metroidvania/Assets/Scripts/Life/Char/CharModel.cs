@@ -6,6 +6,12 @@ using System;
 using UnityEngine.SceneManagement;
 
 public class CharModel : LifeBase<CharParams> {
+    // event
+    public event Action<CharEnum.BodyPart> obtainedBodyPartsChangedEvent;
+    public event Action statusChangedEvent;
+    public event Action facingDirectionChangedEvent;
+    public event Action movingDirectionChangedEvent;
+
     private Dictionary<CharEnum.InputSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
 
     [SerializeField] private CharController controller;
@@ -13,12 +19,9 @@ public class CharModel : LifeBase<CharParams> {
 
     // Body Parts
     public CharEnum.BodyPart obtainedBodyParts { get; private set; } = CharEnum.BodyPart.Head | CharEnum.BodyPart.Arms | CharEnum.BodyPart.Legs | CharEnum.BodyPart.Thrusters | CharEnum.BodyPart.Arrow;
-    public event Action<CharEnum.BodyPart> obtainedBodyPartsChangedEvent;
 
     // Status
-    public event Action<CharEnum.Status> statusChangedEvent;
-
-    private CharEnum.Status _currentStatus;
+    private CharEnum.Status _currentStatus = CharEnum.Status.Normal;
     protected CharEnum.Status currentStatus {
         get {
             return _currentStatus;
@@ -26,7 +29,7 @@ public class CharModel : LifeBase<CharParams> {
         set {
             if (_currentStatus != value) {
                 _currentStatus = value;
-                statusChangedEvent?.Invoke (_currentStatus);
+                statusChangedEvent?.Invoke ();
             }
         }
     }
@@ -47,7 +50,29 @@ public class CharModel : LifeBase<CharParams> {
     }
 
     // Character Situation
-    public LifeEnum.HorizontalDirection movingDirection { get; private set; }
+    private LifeEnum.HorizontalDirection? _facingDirection = null;
+    public override LifeEnum.HorizontalDirection facingDirection {
+        get { return (LifeEnum.HorizontalDirection)_facingDirection; }
+        protected set {
+            if (_facingDirection != value) {
+                _facingDirection = value;
+                SetAnimatorTrigger (CharAnimConstant.StopUpperPartTriggerName);
+                facingDirectionChangedEvent?.Invoke ();
+            }
+        }
+    }
+
+    private LifeEnum.HorizontalDirection? _movingDirection = null;
+    public LifeEnum.HorizontalDirection movingDirection {
+        get { return (LifeEnum.HorizontalDirection)_movingDirection; }
+        protected set {
+            if (_movingDirection != value) {
+                _movingDirection = value;
+                movingDirectionChangedEvent?.Invoke ();
+            }
+        }
+    }
+
     public CharEnum.HorizontalSpeed currentHorizontalSpeed { get; private set; }
     public CharEnum.HitType? currentHitType { get; private set; }
     public CharEnum.ArrowType? currentArrowType { get; private set; }

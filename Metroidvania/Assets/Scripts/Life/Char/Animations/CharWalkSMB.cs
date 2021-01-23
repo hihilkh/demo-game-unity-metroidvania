@@ -8,11 +8,4 @@ public class CharWalkSMB : CharSMBBase {
 
         animUtils.ResetGravity ();
     }
-
-    public override void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-        base.OnStateUpdate (animator, stateInfo, layerIndex);
-
-        animUtils.UpdateHorizontalVelocity ();
-        animUtils.UpdateFacingDirection ();
-    }
 }

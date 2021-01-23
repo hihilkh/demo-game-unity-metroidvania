@@ -7,7 +7,7 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
     [SerializeField] protected Transform baseTransform;
     [SerializeField] protected LifeCollision lifeCollision;
     [SerializeField] private T lifeParams;
-    public LifeEnum.HorizontalDirection facingDirection { get; protected set; }
+    public virtual LifeEnum.HorizontalDirection facingDirection { get; protected set; }
     [SerializeField] public virtual LifeEnum.Location currentLocation { get; protected set; }
 
     protected virtual int zLayer => 0;

@@ -9,10 +9,4 @@ public class CharDashSMB : CharSMBBase {
         animUtils.SetVelocity (null, 0);
         animUtils.RemoveGravity ();
     }
-
-    public override void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-        base.OnStateUpdate (animator, stateInfo, layerIndex);
-
-        animUtils.UpdateFacingDirection ();
-    }
 }

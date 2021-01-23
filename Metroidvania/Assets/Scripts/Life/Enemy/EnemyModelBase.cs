@@ -13,8 +13,20 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
 
     public event Action<LifeEnum.HorizontalDirection> facingDirectionChangedEvent;
 
+    private LifeEnum.HorizontalDirection? _facingDirection = null;
+    public override LifeEnum.HorizontalDirection facingDirection {
+        get { return (LifeEnum.HorizontalDirection)_facingDirection; }
+        protected set {
+            if (_facingDirection != value) {
+                _facingDirection = value;
+                facingDirectionChangedEvent?.Invoke (value);
+            }
+        }
+    }
+
     public abstract EnemyEnum.MovementType movementType { get; }
-    private LifeEnum.Location _currentLocation;
+
+    private LifeEnum.Location _currentLocation = LifeEnum.Location.Unknown;
     public override LifeEnum.Location currentLocation {
         get {
             return _currentLocation;
@@ -215,8 +227,6 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
         } else {
             facingDirection = LifeEnum.HorizontalDirection.Left;
         }
-
-        facingDirectionChangedEvent?.Invoke (facingDirection);
     }
 
     #endregion
