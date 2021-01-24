@@ -95,7 +95,7 @@ public class LifeCollision : MonoBehaviour {
         if ((collideType == GameVariable.GroundTag || collideType == GameVariable.SlippyWallTag) && collisionNormal.y < 0) {
             collideType = RoofColliderType;
         }
-        Log.Print (gameObject.name + " : Life Collision Enter : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType + " ; collisionNormal = " + collisionNormal, LogType.Collision);
+        Log.Print (gameObject.name + " : Life Collision Enter : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType + " ; collisionNormal = " + collisionNormal, LogType.Collision | LogType.Life);
 
         var isOriginallyTouchingGround = CheckIsTouchingGround ();  // Remarks : Check before amending currentCollisionDict
         if (currentCollisionDict.ContainsKey (collision.collider)) {
@@ -123,15 +123,15 @@ public class LifeCollision : MonoBehaviour {
                 break;
             case GameVariable.PlayerTag:
             case GameVariable.EnemyTag:
-                var lifeCollision = collision.gameObject.GetComponent<LifeCollision> ();
+                var lifeCollision = collision.gameObject.GetComponentInChildren<LifeCollision> ();
                 if (lifeCollision == null) {
-                    Log.PrintWarning ("No LifeCollision script for collider : " + collision.gameObject.name + " . Please check.");
+                    Log.PrintWarning ("No LifeCollision script for collider : " + collision.gameObject.name + " . Please check.", LogType.Collision | LogType.Life);
                     break;
                 }
 
                 var lifeBase = lifeCollision.GetLifeBase ();
                 if (lifeBase == null) {
-                    Log.PrintWarning ("No LifeBase attached to LifeCollision : " + lifeCollision.gameObject.name + " . Please check.");
+                    Log.PrintWarning ("No LifeBase attached to LifeCollision : " + lifeCollision.gameObject.name + " . Please check.", LogType.Collision | LogType.Life);
                     break;
                 }
 
@@ -142,21 +142,21 @@ public class LifeCollision : MonoBehaviour {
                 }
                 break;
             default:
-                Log.PrintDebug (gameObject.name + " : No event is implemented for Collision Enter of collideType : " + collideType, LogType.Collision);
+                Log.PrintDebug (gameObject.name + " : No event is implemented for Collision Enter of collideType : " + collideType, LogType.Collision | LogType.Life);
                 break;
         }
     }
 
     public void OnCollisionExit2D (Collision2D collision) {
         if (!currentCollisionDict.ContainsKey (collision.collider)) {
-            Log.PrintError (gameObject.name + " : Missing key in currentCollisionDict. collision name : " + collision.gameObject.name, LogType.Collision);
+            Log.PrintError (gameObject.name + " : Missing key in currentCollisionDict. collision name : " + collision.gameObject.name, LogType.Collision | LogType.Life);
             return;
         }
 
         var collideType = currentCollisionDict[collision.collider];
         currentCollisionDict.Remove (collision.collider);
 
-        Log.Print (gameObject.name + " : Life Collision Exit : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType, LogType.Collision);
+        Log.Print (gameObject.name + " : Life Collision Exit : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType, LogType.Collision | LogType.Life);
 
         switch (collideType) {
             case GameVariable.GroundTag:
@@ -174,7 +174,7 @@ public class LifeCollision : MonoBehaviour {
                 LeftWallEvent?.Invoke (true);
                 break;
             default:
-                Log.PrintDebug (gameObject.name + " : No event is implemented for Collision Exit of collideType : " + collideType, LogType.Collision);
+                Log.PrintDebug (gameObject.name + " : No event is implemented for Collision Exit of collideType : " + collideType, LogType.Collision | LogType.Life);
                 break;
         }
     }

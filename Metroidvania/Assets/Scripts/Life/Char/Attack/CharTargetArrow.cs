@@ -4,7 +4,7 @@ using HIHIFramework.Core;
 using UnityEngine;
 
 public class CharTargetArrow : CharArrowBase {
-    protected override int dp => charParams.arrow_dp_Target;
+    protected override int dp => charParams.arrowDP_Target;
 
     private const float DefaultImpulseAngleInRadian = Mathf.PI / 6;
 

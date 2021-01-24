@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CharStraightArrow : CharArrowBase {
-    protected override int dp => charParams.arrow_dp_Straight;
+    protected override int dp => charParams.arrowDP_Straight;
 
     public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection) {
         Init (facingDirection);

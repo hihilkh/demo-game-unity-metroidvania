@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using HIHIFramework.Core;
 using UnityEngine;
@@ -7,12 +8,22 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
     [SerializeField] protected Transform baseTransform;
     [SerializeField] protected LifeCollision lifeCollision;
     [SerializeField] private T lifeParams;
+    [SerializeField] private LifeHPView hpView;
     public virtual LifeEnum.HorizontalDirection facingDirection { get; protected set; }
     [SerializeField] public virtual LifeEnum.Location currentLocation { get; protected set; }
 
     protected virtual int zLayer => 0;
     protected int totalHP => lifeParams.totalHP;
-    protected int currentHP;
+    private int _currentHP;
+    protected int currentHP {
+        get { return _currentHP; }
+        set {
+            if (_currentHP != value) {
+                _currentHP = value;
+                hpView.UpdateView (totalHP, value);
+            }
+        }
+    }
 
     // Status
     public abstract bool isBeatingBack { get; protected set; }
@@ -34,11 +45,12 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
     /// <returns>has initialized before</returns>
     public virtual bool Init (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         if (isInitialized) {
-            Log.PrintWarning (gameObject.name + " is already initialized. Do not initialize again. Please check.", LogType.General);
+            Log.PrintWarning (gameObject.name + " is already initialized. Do not initialize again. Please check.", LogType.Life);
             return true;
         }
 
         isInitialized = true;
+
         currentHP = totalHP;
         SetPosAndDirection (pos, direction);
 

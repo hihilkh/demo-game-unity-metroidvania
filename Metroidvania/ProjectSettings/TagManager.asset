@@ -46,3 +46,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: HP
+    uniqueID: 2633481435
+    locked: 0

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CharNormalHit : CharHitBase {
-    protected override int dp => charParams.hit_dp_Normal;
+    protected override int dp => charParams.hitDP_Normal;
 
     public override void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed) {
         base.StartAttack (refPoint, direction, charHorizontalSpeed);

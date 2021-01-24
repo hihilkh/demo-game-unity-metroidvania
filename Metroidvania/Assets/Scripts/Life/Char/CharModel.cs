@@ -49,6 +49,17 @@ public class CharModel : LifeBase<CharParams> {
         protected set { SetStatus (CharEnum.Status.Dying, value); }
     }
 
+    // Beat Back
+    /// <summary>
+    /// Normalized.
+    /// </summary>
+    public Vector2 beatBackDirection { get; private set; } = Vector2.one;
+    private static Vector2 BeatBackDirection_Right = new Vector2 (1, 1).normalized;    // About 45 degree elevation
+    private static Vector2 BeatBackDirection_Left = Vector2.Scale (BeatBackDirection_Right, new Vector2 (-1, 1));
+
+    // HP Recovery
+    private Coroutine hpRecoveryCoroutine;
+
     // Character Situation
     private LifeEnum.HorizontalDirection? _facingDirection = null;
     public override LifeEnum.HorizontalDirection facingDirection {
@@ -105,14 +116,6 @@ public class CharModel : LifeBase<CharParams> {
     private bool isJustTouchWall;
     private bool isTouchingWall;
 
-    // Beat Back
-    /// <summary>
-    /// Normalized.
-    /// </summary>
-    public Vector2 beatBackDirection { get; private set; } = Vector2.one;
-    private static Vector2 BeatBackDirection_Right = new Vector2 (1, 1).normalized;    // About 45 degree elevation
-    private static Vector2 BeatBackDirection_Left = Vector2.Scale (BeatBackDirection_Right, new Vector2 (-1, 1));
-
     private void Awake () {
         // Remarks :
         // Currently do not add StartedLeft, StoppedLeft, StartedRight, StoppedRight handling to prevent complicated code.
@@ -157,6 +160,8 @@ public class CharModel : LifeBase<CharParams> {
         attackCoolDownCoroutine = null;
 
         isTouchingWall = false;
+
+        hpRecoveryCoroutine = null;
 
         ResetAllUpdateControlFlags ();
 
@@ -636,6 +641,33 @@ public class CharModel : LifeBase<CharParams> {
 
     #endregion
 
+    #region HP recovery
+
+    private void SetHPRecovery (bool isActive) {
+        if (isActive) {
+            if (hpRecoveryCoroutine == null) {
+                hpRecoveryCoroutine = StartCoroutine (HPRecoveryCoroutine ());
+            }
+        } else {
+            if (hpRecoveryCoroutine != null) {
+                StopCoroutine (hpRecoveryCoroutine);
+                hpRecoveryCoroutine = null;
+            }
+        }
+    }
+
+    private IEnumerator HPRecoveryCoroutine () {
+        while (currentHP != totalHP) {
+            yield return new WaitForSeconds (GetParams ().hpRecoveryPeriod);
+
+            currentHP++;
+        }
+
+        SetHPRecovery (false);
+    }
+
+    #endregion
+
     #region Idle / Walk
 
     public void StartIdleOrWalk () {
@@ -1033,6 +1065,8 @@ public class CharModel : LifeBase<CharParams> {
 
         Log.Print ("Char : Hurt! dp : " + dp + " , hurtDirection : " + hurtDirection + " , remain HP : " + currentHP, LogType.Char);
 
+        SetHPRecovery (true);
+
         return isAlive;
     }
 
@@ -1044,6 +1078,9 @@ public class CharModel : LifeBase<CharParams> {
         base.Die (dieDirection);
 
         Log.Print ("Char : Die!", LogType.Char);
+
+        SetHPRecovery (false);
+
         SetAnimatorTrigger (CharAnimConstant.DieTriggerName);
         StartCoroutine (WaitAndFinishDying ());
     }
