@@ -29,7 +29,8 @@ public class GameSceneManager : MonoBehaviour {
         mapGenerator.GenerateMap (mapData.tiles);
 
         charModel = GameUtils.FindOrSpawnChar ();
-        charModel.SetPosAndDirection (mapData.charData.GetPos (), mapData.charData.GetDirection ());
+        // TODO
+        charModel.SetPosAndDirection (mapData.entries[0].GetPos (), mapData.entries[0].GetDirection ());
         charModel.SetAllowMove (true);
     }
 }

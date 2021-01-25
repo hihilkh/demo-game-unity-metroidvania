@@ -50,4 +50,14 @@ public static class TileMapping {
         Log.PrintError ("MapDesignTileType mapping is not yet assigned. tileMapType : " + tileMapType, LogType.MapData);
         return null;
     }
+
+    public static bool CheckIsMapDesignTileType (MapEnum.TileType tileType) {
+        foreach (var pair in MapDesignTileTypeDict) {
+            if (pair.Value == tileType) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

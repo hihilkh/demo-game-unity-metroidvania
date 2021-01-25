@@ -51,7 +51,7 @@ MonoBehaviour:
   - 40
   - 50
   _repelFromWallDistByTurn: 0.05
-  _initDirection: 1
+  _initDirection: 0
   _groundTapCommand: 3
   _groundHoldCommand: 2
   _groundReleaseCommand: 4

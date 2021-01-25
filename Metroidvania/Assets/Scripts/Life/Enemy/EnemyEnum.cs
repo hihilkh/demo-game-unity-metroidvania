@@ -1,6 +1,12 @@
 ﻿using System;
 
 public class EnemyEnum {
+
+    // Remarks: Never change the EnemyType enum int value. It is used in map json data.
+    public enum EnemyType : int {
+        Slime = 0,   // The default value 0 is used for any fallback cases
+    }
+
     public enum MovementType {
         Walking,
         Flying,

@@ -28,7 +28,7 @@ public class MissionDetails {
 
     #region All Missions
 
-    private static readonly MissionDetails Mission_Tutorial = new MissionDetails (1, "Mission_Tutorial", "Map_Tutorial", MissionCollectable.Type.Key_Walk, MissionCollectable.Type.Command_Hit);
+    private static readonly MissionDetails Mission_1 = new MissionDetails (1, "Mission_Tutorial", "Map_Tutorial", MissionCollectable.Type.Command_Hit);
 
     // TODO : Naming without order
     private static readonly MissionDetails Mission_2 = new MissionDetails (2, "Mission_2", "Map_2");
@@ -37,7 +37,7 @@ public class MissionDetails {
     private static readonly MissionDetails Mission_5 = new MissionDetails (5, "Mission_5", "Map_5");
 
     public static List<MissionDetails> OrderedMissionList { get; private set; } = new List<MissionDetails> {
-            Mission_Tutorial,
+            Mission_1,
             Mission_2,
             Mission_3,
             Mission_4,

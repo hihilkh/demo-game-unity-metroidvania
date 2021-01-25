@@ -3,25 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class MissionCollectable {
-    // Remarks: Never change the Type enum int value. It is saved in PlayerPrefs
+    // Remarks: Never change the Type enum int value. It is used in PlayerPrefs and map json data.
     public enum Type : int {
-        // Key Item
-        Key_Walk = 1,
-
         // Command
-        Command_Jump = 101,
-        Command_Dash = 102,
-        Command_Hit = 103,
-        Command_Arrow = 104,
-        Command_Turn = 105,
+        Command_Hit = 0,   // The default value 0 is used for any fallback cases
+        Command_Jump = 1,
+        Command_Dash = 2,
+        Command_Arrow = 3,
+        Command_Turn = 4,
 
         // Plot
-        Plot_1 = 201,
-        Plot_2 = 202,
-        Plot_3 = 203,
-        Plot_4 = 204,
-        Plot_5 = 205,
-
+        Plot_1 = 101,
+        Plot_2 = 102,
+        Plot_3 = 103,
+        Plot_4 = 104,
+        Plot_5 = 105,
 
     }
 

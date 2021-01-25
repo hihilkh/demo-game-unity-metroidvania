@@ -13,6 +13,7 @@ public class MapDataExporter : MonoBehaviour {
     [SerializeField] private Tilemap ground2TileMap;
     [SerializeField] private Tilemap slippyWallTileMap;
     [SerializeField] private Tilemap deathTileMap;
+    [SerializeField] private Tilemap bgTileMap;
 
     [SerializeField] private RectTransform exportRange;
     [SerializeField] private string exportRootFolderPath;
@@ -36,12 +37,13 @@ public class MapDataExporter : MonoBehaviour {
             { MapEnum.TileMapType.Ground2, ground2TileMap},
             { MapEnum.TileMapType.SlippyWall, slippyWallTileMap},
             { MapEnum.TileMapType.Death, deathTileMap },
+            { MapEnum.TileMapType.Background, bgTileMap },
         };
 
         var lowerBound = new Vector2Int (Mathf.FloorToInt (exportRange.position.x), Mathf.FloorToInt (exportRange.position.y));
         var upperBound = new Vector2Int (Mathf.CeilToInt (exportRange.position.x + exportRange.sizeDelta.x), Mathf.CeilToInt (exportRange.position.y + exportRange.sizeDelta.y));
 
-        return new MapDataTileExportIterator (tileMapDict, lowerBound, upperBound); ;
+        return new MapDataTileExportIterator (tileMapDict, lowerBound, upperBound);
     }
 
     private void CheckMapDesign () {
@@ -51,10 +53,18 @@ public class MapDataExporter : MonoBehaviour {
 
         foreach (var tileData in iterator) {
             if (tileData != null) {
-                var mapDesignTileType = TileMapping.GetMapDesignTileType (tileData.GetTileMapType ());
-                if (mapDesignTileType == null || mapDesignTileType != tileData.GetTileType ()) {
-                    Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.GetPos () + ", tileType : " + tileData.GetTileType () + " , added to TileMapType : " + tileData.GetTileMapType (), LogType.MapData);
-                    return;
+                var tileMapType = tileData.GetTileMapType ();
+                if (tileMapType == MapEnum.TileMapType.Background) {
+                    if (TileMapping.CheckIsMapDesignTileType (tileData.GetTileType ())) {
+                        Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.GetPos () + ", background tile using map design tile type", LogType.MapData);
+                        return;
+                    }
+                } else {
+                    var mapDesignTileType = TileMapping.GetMapDesignTileType (tileMapType);
+                    if (mapDesignTileType == null || mapDesignTileType != tileData.GetTileType ()) {
+                        Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.GetPos () + ", tileType : " + tileData.GetTileType () + " , added to TileMapType : " + tileData.GetTileMapType (), LogType.MapData);
+                        return;
+                    }
                 }
             }
         }
@@ -65,8 +75,6 @@ public class MapDataExporter : MonoBehaviour {
     private void ExportMapData () {
         Log.PrintWarning ("Start export MapData", LogType.MapData);
 
-        var charData = new MapData.CharData (charModel.transform.position.x, charModel.transform.position.y, true);
-
         var iterator = GetMapDataTileExportIterator ();
         var tiles = new List<MapData.TileData> ();
 
@@ -76,7 +84,7 @@ public class MapDataExporter : MonoBehaviour {
             }
         }
 
-        var mapData = new MapData (charData, tiles);
+        var mapData = new MapData (tiles);
         var json = JsonUtility.ToJson (mapData);
         var fileName = FrameworkUtils.StringReplace (ExportFileNameFormat, AssetDetails.GetMapDataJSONFileName (missionId), FrameworkUtils.ConvertDateTimeToTimestampMS (System.DateTime.Now).ToString ());
         var filePath = Path.Combine (exportRootFolderPath, fileName);

@@ -40,7 +40,7 @@ public class CharCameraModel : MonoBehaviour
 
     private void Start () {
         // TODO : Set with MapData
-        SetMissionBoundaries (new Vector2 (-25, -22), new Vector2 (210, 35));
+        SetMissionBoundaries (new Vector2 (-35, -22), new Vector2 (210, 35));
     }
 
     private void LateUpdate () {
