@@ -14,7 +14,7 @@ public abstract class CharHitBase : MonoBehaviour {
 
     public virtual void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed) {
         this.direction = direction;
-        attackTrigger.HitEnemyEvent += Hit;
+        attackTrigger.HitLifeEvent += HitLife;
     }
 
     protected void SetInitPos (Vector3 pos) {
@@ -40,7 +40,7 @@ public abstract class CharHitBase : MonoBehaviour {
         shape.rotation = -shape.rotation;
     }
 
-    protected virtual void Hit<T> (LifeBase<T> lifeBase, Transform colliderTransform, bool isInvincible) where T : LifeParams {
+    protected virtual void HitLife (LifeBase lifeBase, Transform colliderTransform, bool isInvincible) {
         if (!isInvincible) {
             lifeBase.Hurt (dp, direction);
         }

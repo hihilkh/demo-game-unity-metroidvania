@@ -4,16 +4,17 @@ using System.Collections.Generic;
 using HIHIFramework.Core;
 using UnityEngine;
 
-public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
+public abstract class LifeBase : MonoBehaviour {
     [SerializeField] protected Transform baseTransform;
     [SerializeField] protected LifeCollision lifeCollision;
-    [SerializeField] private T lifeParams;
     [SerializeField] private LifeHPView hpView;
     public virtual LifeEnum.HorizontalDirection facingDirection { get; protected set; }
     [SerializeField] public virtual LifeEnum.Location currentLocation { get; protected set; }
 
     protected abstract int posZ { get; }
-    protected int totalHP => lifeParams.totalHP;
+    protected abstract int invincibleLayer { get; }
+    protected abstract int totalHP { get; }
+
     private int _currentHP;
     protected int currentHP {
         get { return _currentHP; }
@@ -30,11 +31,9 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
     public abstract bool isInvincible { get; protected set; }
     public abstract bool isDying { get; protected set; }
 
-    private bool isInitialized = false;
+    protected abstract float invinciblePeriod { get; }
 
-    public T GetParams () {
-        return lifeParams;
-    }
+    private bool isInitialized = false;
 
     protected virtual void OnDestroy () {
         if (isInitialized) {
@@ -54,7 +53,7 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
         currentHP = totalHP;
         SetPosAndDirection (pos, direction);
 
-        lifeCollision.SetLifeBase (this);
+        lifeCollision.Init (invincibleLayer);
         RegisterCollisionEventHandler ();
 
         return false;
@@ -119,7 +118,7 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
             yield break;
         }
 
-        yield return new WaitForSeconds (lifeParams.invincibleTime);
+        yield return new WaitForSeconds (invinciblePeriod);
 
         StopInvincible ();
     }

@@ -8,6 +8,6 @@ public class CharBeatBackSMB : CharSMBBase {
 
         animUtils.ResetGravity ();
 
-        animUtils.rb.velocity = animUtils.model.beatBackDirection * animUtils.model.GetParams ().beatBackInitSpeed;
+        animUtils.rb.velocity = animUtils.model.beatBackDirection * animUtils.model.param.beatBackInitSpeed;
     }
 }

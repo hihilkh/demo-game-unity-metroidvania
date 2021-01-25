@@ -39,29 +39,21 @@ public class LifeCollision : MonoBehaviour {
     /// </summary>
     public event Action<EnemyModelBase, Vector2> TouchedEnemyEvent;
 
-    private object lifeBase;
     private int originalLayer;
+    private int invincibleLayer;
 
     private void Awake () {
         originalLayer = gameObject.layer;
     }
 
-    #region LifeBase
-
-    public void SetLifeBase<T> (LifeBase<T> lifeBase) where T : LifeParams {
-        this.lifeBase = lifeBase;
+    public void Init (int invincibleLayer) {
+        this.invincibleLayer = invincibleLayer;
     }
-
-    public object GetLifeBase () {
-        return lifeBase;
-    }
-
-    #endregion
 
     #region Layer
 
     public void SetLayer (bool isInvincible) {
-        gameObject.layer = isInvincible ? GameVariable.InvincibleLayer : originalLayer;
+        gameObject.layer = isInvincible ? invincibleLayer : originalLayer;
     }
 
     #endregion
@@ -123,15 +115,9 @@ public class LifeCollision : MonoBehaviour {
                 break;
             case GameVariable.PlayerTag:
             case GameVariable.EnemyTag:
-                var lifeCollision = collision.gameObject.GetComponentInChildren<LifeCollision> ();
-                if (lifeCollision == null) {
-                    Log.PrintWarning ("No LifeCollision script for collider : " + collision.gameObject.name + " . Please check.", LogType.Collision | LogType.Life);
-                    break;
-                }
-
-                var lifeBase = lifeCollision.GetLifeBase ();
+                var lifeBase = collision.gameObject.GetComponentInParent<LifeBase> ();
                 if (lifeBase == null) {
-                    Log.PrintWarning ("No LifeBase attached to LifeCollision : " + lifeCollision.gameObject.name + " . Please check.", LogType.Collision | LogType.Life);
+                    Log.PrintWarning ("No LifeBase is found : " + collision.gameObject.name + " . Please check.", LogType.Collision | LogType.Life);
                     break;
                 }
 

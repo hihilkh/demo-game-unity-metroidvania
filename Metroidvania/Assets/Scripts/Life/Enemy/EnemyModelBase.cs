@@ -7,13 +7,17 @@ using UnityEngine;
 // TODO : Use Update to control enemy actions
 // TODO : Ensure during beat back and die, no other action
 // TODO : Ensure no action go after die
-public abstract class EnemyModelBase : LifeBase<EnemyParams> {
+public abstract class EnemyModelBase : LifeBase {
 
+    [SerializeField] private EnemyParams _param;
+    public EnemyParams param => _param;
     [SerializeField] private Animator animator;
 
     public event Action<LifeEnum.HorizontalDirection> facingDirectionChangedEvent;
 
     protected override int posZ => GameVariable.EnemyPosZ;
+    protected override int invincibleLayer => GameVariable.EnemyInvincibleLayer;
+    protected override int totalHP => param.totalHP;
 
     private LifeEnum.HorizontalDirection? _facingDirection = null;
     public override LifeEnum.HorizontalDirection facingDirection {
@@ -43,7 +47,7 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
         }
     }
 
-    public int collisionDP => GetParams ().collisionDP;
+    public int collisionDP => param.collisionDP;
 
     // Status
     protected EnemyEnum.Status currentStatus;
@@ -86,6 +90,8 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
             }
         }
     }
+
+    protected override float invinciblePeriod => param.invinciblePeriod;
 
     // Beat Back
     /// <summary>
@@ -237,10 +243,10 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
 
     private void SetJumpSettings () {
         isJustJumpedUp = false;
-        isJumpRecursively = GetParams ().recursiveJumpPeriod >= 0;
+        isJumpRecursively = param.recursiveJumpPeriod >= 0;
 
         if (isJumpRecursively) {
-            JumpAfter (GetParams ().recursiveJumpPeriod);
+            JumpAfter (param.recursiveJumpPeriod);
         }
     }
 
@@ -315,7 +321,7 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
                     }
 
                     if (isJumpRecursively) {
-                        JumpAfter (GetParams ().recursiveJumpPeriod);
+                        JumpAfter (param.recursiveJumpPeriod);
                     }
                 }
                 break;

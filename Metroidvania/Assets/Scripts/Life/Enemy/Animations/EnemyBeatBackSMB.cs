@@ -6,6 +6,6 @@ public class EnemyBeatBackSMB : EnemySMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        animUtils.rb.velocity = animUtils.model.beatBackDirection * animUtils.model.GetParams ().beatBackInitSpeed;
+        animUtils.rb.velocity = animUtils.model.beatBackDirection * animUtils.model.param.beatBackInitSpeed;
     }
 }

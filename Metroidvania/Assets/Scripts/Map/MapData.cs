@@ -18,6 +18,8 @@ public class MapData {
     private const float TilePosToWorldPosOffsetX = 0.5f;
     private const float TilePosToWorldPosOffsetY = 0.5f;
 
+    private const float SwitchColliderSize = 1.1f;
+
     public MapData () { }
 
     public MapData (List<TileData> tiles) {
@@ -89,7 +91,7 @@ public class MapData {
         }
 
         public ColliderData GetColliderData () {
-            return new ColliderData (pos[0] + TilePosToWorldPosOffsetX, pos[1] + TilePosToWorldPosOffsetY, 1, 1);
+            return new ColliderData (pos[0] + TilePosToWorldPosOffsetX, pos[1] + TilePosToWorldPosOffsetY, SwitchColliderSize, SwitchColliderSize);
         }
     }
 

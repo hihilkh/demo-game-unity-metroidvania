@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CharParams
   m_EditorClassIdentifier: 
   _totalHP: 60
-  _invincibleTime: 2
+  _invinciblePeriod: 2
   _beatBackInitSpeed: 13
   _beatBackPeriod: 0.5
   _dyingPeriod: 1

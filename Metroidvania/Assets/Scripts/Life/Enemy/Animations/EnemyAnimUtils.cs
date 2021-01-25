@@ -55,7 +55,7 @@ public class EnemyAnimUtils : MonoBehaviour {
 
     private void UpdateHorizontalVelocity (LifeEnum.HorizontalDirection facingDirection) {
         var scale = (facingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
-        var velocityX = model.GetParams ().movementSpeed * scale;
+        var velocityX = model.param.movementSpeed * scale;
         rb.velocity = new Vector3 (velocityX, rb.velocity.y);
     }
 

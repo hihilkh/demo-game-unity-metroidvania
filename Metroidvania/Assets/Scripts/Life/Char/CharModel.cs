@@ -5,7 +5,7 @@ using HIHIFramework.Core;
 using System;
 using UnityEngine.SceneManagement;
 
-public class CharModel : LifeBase<CharParams> {
+public class CharModel : LifeBase {
     // event
     public event Action<CharEnum.BodyPart> obtainedBodyPartsChangedEvent;
     public event Action statusChangedEvent;
@@ -14,6 +14,8 @@ public class CharModel : LifeBase<CharParams> {
 
     private Dictionary<CharEnum.InputSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
 
+    [SerializeField] private CharParams _param;
+    public CharParams param => _param;
     [SerializeField] private CharController controller;
     [SerializeField] private Animator animator;
 
@@ -21,6 +23,8 @@ public class CharModel : LifeBase<CharParams> {
     public CharEnum.BodyPart obtainedBodyParts { get; private set; } = CharEnum.BodyPart.Head | CharEnum.BodyPart.Arms | CharEnum.BodyPart.Legs | CharEnum.BodyPart.Thrusters | CharEnum.BodyPart.Arrow;
 
     protected override int posZ => GameVariable.CharPosZ;
+    protected override int invincibleLayer => GameVariable.PlayerInvincibleLayer;
+    protected override int totalHP => param.totalHP;
 
     // Status
     private CharEnum.Status _currentStatus = CharEnum.Status.Normal;
@@ -50,6 +54,8 @@ public class CharModel : LifeBase<CharParams> {
         get { return GetIsInStatus (CharEnum.Status.Dying); }
         protected set { SetStatus (CharEnum.Status.Dying, value); }
     }
+
+    protected override float invinciblePeriod => param.invinciblePeriod;
 
     // Beat Back
     /// <summary>
@@ -127,7 +133,7 @@ public class CharModel : LifeBase<CharParams> {
         controller.StoppedHoldEvent += StopHoldAction;
 
         if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName) {
-            Init (baseTransform.position, GetParams ().initDirection);
+            Init (baseTransform.position, param.initDirection);
             SetAllowMove (true);
         }
     }
@@ -298,17 +304,17 @@ public class CharModel : LifeBase<CharParams> {
             // TODO : Dev only
             switch (situation) {
                 case CharEnum.InputSituation.GroundTap:
-                    return GetParams ().groundTapCommand;
+                    return param.groundTapCommand;
                 case CharEnum.InputSituation.GroundHold:
-                    return GetParams ().groundHoldCommand;
+                    return param.groundHoldCommand;
                 case CharEnum.InputSituation.GroundRelease:
-                    return GetParams ().groundReleaseCommand;
+                    return param.groundReleaseCommand;
                 case CharEnum.InputSituation.AirTap:
-                    return GetParams ().airTapCommand;
+                    return param.airTapCommand;
                 case CharEnum.InputSituation.AirHold:
-                    return GetParams ().airHoldCommand;
+                    return param.airHoldCommand;
                 case CharEnum.InputSituation.AirRelease:
-                    return GetParams ().airReleaseCommand;
+                    return param.airReleaseCommand;
             }
 
             return null;
@@ -660,7 +666,7 @@ public class CharModel : LifeBase<CharParams> {
 
     private IEnumerator HPRecoveryCoroutine () {
         while (currentHP != totalHP) {
-            yield return new WaitForSeconds (GetParams ().hpRecoveryPeriod);
+            yield return new WaitForSeconds (param.hpRecoveryPeriod);
 
             currentHP++;
         }
@@ -771,7 +777,7 @@ public class CharModel : LifeBase<CharParams> {
 
         var startTime = Time.time;
 
-        while (Time.time - startTime < GetParams ().oneShotDashPeriod) {
+        while (Time.time - startTime < param.oneShotDashPeriod) {
             if (isJustTouchWall) {
                 break;
             }
@@ -786,7 +792,7 @@ public class CharModel : LifeBase<CharParams> {
     private IEnumerator DashCoolDownCoroutine () {
         SetStatus (CharEnum.Status.DashCollingDown, true);
 
-        yield return new WaitForSeconds (GetParams ().dashCoolDownPeriod);
+        yield return new WaitForSeconds (param.dashCoolDownPeriod);
 
         SetStatus (CharEnum.Status.DashCollingDown, false);
         dashCoolDownCoroutine = null;
@@ -797,7 +803,7 @@ public class CharModel : LifeBase<CharParams> {
     #region Jump
 
     public float GetCurrentJumpInitSpeed () {
-        return GetIsInStatus (CharEnum.Status.JumpCharging) ? GetParams ().chargeJumpInitSpeed : GetParams ().normalJumpInitSpeed;
+        return GetIsInStatus (CharEnum.Status.JumpCharging) ? param.chargeJumpInitSpeed : param.normalJumpInitSpeed;
     }
 
     private bool CheckIsAllowJump () {
@@ -935,16 +941,16 @@ public class CharModel : LifeBase<CharParams> {
 
         switch (hitType) {
             case CharEnum.HitType.Normal:
-                hitCoolDownPeriod = GetParams ().hitCoolDownPeriod_Normal;
+                hitCoolDownPeriod = param.hitCoolDownPeriod_Normal;
                 break;
             case CharEnum.HitType.Charged:
-                hitCoolDownPeriod = GetParams ().hitCoolDownPeriod_Charged;
+                hitCoolDownPeriod = param.hitCoolDownPeriod_Charged;
                 break;
             case CharEnum.HitType.Finishing:
-                hitCoolDownPeriod = GetParams ().hitCoolDownPeriod_Finishing;
+                hitCoolDownPeriod = param.hitCoolDownPeriod_Finishing;
                 break;
             case CharEnum.HitType.Drop:
-                hitCoolDownPeriod = GetParams ().hitCoolDownPeriod_Drop;
+                hitCoolDownPeriod = param.hitCoolDownPeriod_Drop;
                 break;
             default:
                 Log.PrintWarning ("Not yet set hit cool down period for HitType : " + hitType + " . Assume cool down period to be 0s", LogType.Char);
@@ -993,13 +999,13 @@ public class CharModel : LifeBase<CharParams> {
 
         switch (arrowType) {
             case CharEnum.ArrowType.Target:
-                arrowCoolDownPeriod = GetParams ().arrowCoolDownPeriod_Target;
+                arrowCoolDownPeriod = param.arrowCoolDownPeriod_Target;
                 break;
             case CharEnum.ArrowType.Straight:
-                arrowCoolDownPeriod = GetParams ().arrowCoolDownPeriod_Straight;
+                arrowCoolDownPeriod = param.arrowCoolDownPeriod_Straight;
                 break;
             case CharEnum.ArrowType.Triple:
-                arrowCoolDownPeriod = GetParams ().arrowCoolDownPeriod_Triple;
+                arrowCoolDownPeriod = param.arrowCoolDownPeriod_Triple;
                 break;
             default:
                 Log.PrintWarning ("Not yet set arrow cool down period for ArrowType : " + arrowType + " . Assume cool down period to be 0s", LogType.Char);
@@ -1138,13 +1144,13 @@ public class CharModel : LifeBase<CharParams> {
     }
 
     private IEnumerator WaitAndFinishBeatingBack () {
-        yield return new WaitForSeconds (GetParams ().beatBackPeriod);
+        yield return new WaitForSeconds (param.beatBackPeriod);
 
         StopBeatingBack ();
     }
 
     private IEnumerator WaitAndFinishDying () {
-        yield return new WaitForSeconds (GetParams ().dyingPeriod);
+        yield return new WaitForSeconds (param.dyingPeriod);
 
         // TODO
     }
@@ -1282,7 +1288,7 @@ public class CharModel : LifeBase<CharParams> {
         SetStatus (CharEnum.Status.Sliding, false);
 
         var directionMultiplier = wallDirection == LifeEnum.HorizontalDirection.Left ? 1 : -1;
-        SetPosByOffset (new Vector2 (GetParams ().repelFromWallDistByTurn, 0) * directionMultiplier);
+        SetPosByOffset (new Vector2 (param.repelFromWallDistByTurn, 0) * directionMultiplier);
 
         if (isFinallyFacingWall) {
             SetMovingDirection (wallDirection);

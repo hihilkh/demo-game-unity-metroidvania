@@ -11,7 +11,7 @@ public class CharAttackTrigger : MonoBehaviour {
     /// Transform : colliderTransform<br />
     /// bool : isInvincible
     /// </summary>
-    public event Action<EnemyModelBase, Transform, bool> HitEnemyEvent;
+    public event Action<LifeBase, Transform, bool> HitLifeEvent;
 
     /// <summary>
     /// Input :<br />
@@ -25,21 +25,13 @@ public class CharAttackTrigger : MonoBehaviour {
         }
 
         if (collision.tag == GameVariable.EnemyTag) {
-            var lifeCollision = collision.GetComponent<LifeCollision> ();
-            if (lifeCollision == null) {
-                Log.PrintWarning ("No LifeCollision script for collider : " + collision.gameObject.name + " . Please check.");
-                return;
-            }
-
-            var lifeBase = lifeCollision.GetLifeBase ();
+            var lifeBase = collision.GetComponentInParent<LifeBase> ();
             if (lifeBase == null) {
-                Log.PrintWarning ("No LifeBase attached to LifeCollision : " + lifeCollision.gameObject.name + " . Please check.");
+                Log.PrintWarning ("No LifeBase is found : " + collision.gameObject.name + " . Please check.");
                 return;
             }
 
-            var convert = (EnemyModelBase)lifeBase;
-
-            HitEnemyEvent?.Invoke (convert, collision.transform, convert.isInvincible);
+            HitLifeEvent?.Invoke (lifeBase, collision.transform, lifeBase.isInvincible);
         } else {
             HitEnvironmentEvent?.Invoke (collision.transform);
         }

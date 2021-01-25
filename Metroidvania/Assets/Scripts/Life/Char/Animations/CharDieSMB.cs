@@ -24,7 +24,7 @@ public class CharDieSMB : CharSMBBase {
         }
 
         var deltaTime = Time.time - startDieTime;
-        var period = animUtils.model.GetParams ().dyingPeriod;
+        var period = animUtils.model.param.dyingPeriod;
 
         var alpha = Mathf.Lerp (1, 0, Mathf.Min (deltaTime / period, 1));
         animUtils.SetCharAlpha (alpha);

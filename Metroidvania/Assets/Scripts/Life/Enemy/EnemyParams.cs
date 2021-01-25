@@ -3,7 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu (fileName = "EnemyParams", menuName = "ScriptableObjects/EnemyParams", order = 1)]
-public class EnemyParams : LifeParams {
+public class EnemyParams : ScriptableObject {
+    [Header ("Life")]
+    [SerializeField] private int _totalHP;
+    public int totalHP => _totalHP;
+
+    [SerializeField] private float _invinciblePeriod;
+    /// <summary>
+    /// In second.
+    /// </summary>
+    public float invinciblePeriod => _invinciblePeriod;
+
+    [SerializeField] private float _beatBackInitSpeed;
+    /// <summary>
+    /// Magnitude only. The direction is base on hurt direction and derived LifeBase class
+    /// </summary>
+    public float beatBackInitSpeed => _beatBackInitSpeed;
+
     [Header ("Movement")]
     [SerializeField] private float _movementSpeed;
     /// <summary>

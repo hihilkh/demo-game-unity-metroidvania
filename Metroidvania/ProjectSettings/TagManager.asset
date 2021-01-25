@@ -20,9 +20,9 @@ TagManager:
   - 
   - Player
   - Enemy
-  - Invincible
-  - 
-  - 
+  - PlayerInvincible
+  - EnemyInvincible
+  - PlayerInteractable
   - 
   - 
   - 

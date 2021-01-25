@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SlimeParams
   m_EditorClassIdentifier: 
   _totalHP: 4
-  _invincibleTime: 1.3
+  _invinciblePeriod: 1.3
   _beatBackInitSpeed: 9
   _movementSpeed: 0
   _jumpInitSpeed: 5
