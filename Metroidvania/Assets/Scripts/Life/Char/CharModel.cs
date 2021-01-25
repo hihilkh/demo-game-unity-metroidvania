@@ -20,6 +20,8 @@ public class CharModel : LifeBase<CharParams> {
     // Body Parts
     public CharEnum.BodyPart obtainedBodyParts { get; private set; } = CharEnum.BodyPart.Head | CharEnum.BodyPart.Arms | CharEnum.BodyPart.Legs | CharEnum.BodyPart.Thrusters | CharEnum.BodyPart.Arrow;
 
+    protected override int posZ => GameVariable.CharPosZ;
+
     // Status
     private CharEnum.Status _currentStatus = CharEnum.Status.Normal;
     protected CharEnum.Status currentStatus {

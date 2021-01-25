@@ -37,8 +37,10 @@ public static partial class GameVariable {
 
     public const string CharPrefabResourcesName = "Char/Character";
 
-    public const int CharPosZ = 0;
+    public const int CharPosZ = -1;
+    public const int EnemyPosZ = 0;
     public const int TilePosZ = 0;
+    public const int GeneralMapItemPosZ = 0;
 
     #endregion
 

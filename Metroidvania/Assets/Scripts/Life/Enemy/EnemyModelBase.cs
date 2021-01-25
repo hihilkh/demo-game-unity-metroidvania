@@ -13,6 +13,8 @@ public abstract class EnemyModelBase : LifeBase<EnemyParams> {
 
     public event Action<LifeEnum.HorizontalDirection> facingDirectionChangedEvent;
 
+    protected override int posZ => GameVariable.EnemyPosZ;
+
     private LifeEnum.HorizontalDirection? _facingDirection = null;
     public override LifeEnum.HorizontalDirection facingDirection {
         get { return (LifeEnum.HorizontalDirection)_facingDirection; }

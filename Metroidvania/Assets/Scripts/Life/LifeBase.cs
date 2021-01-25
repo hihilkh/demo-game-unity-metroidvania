@@ -12,7 +12,7 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
     public virtual LifeEnum.HorizontalDirection facingDirection { get; protected set; }
     [SerializeField] public virtual LifeEnum.Location currentLocation { get; protected set; }
 
-    protected virtual int zLayer => 0;
+    protected abstract int posZ { get; }
     protected int totalHP => lifeParams.totalHP;
     private int _currentHP;
     protected int currentHP {
@@ -69,7 +69,7 @@ public abstract class LifeBase<T> : MonoBehaviour where T : LifeParams {
     }
 
     public virtual void SetPos (Vector2 pos) {
-        baseTransform.position = new Vector3 (pos.x, pos.y, zLayer);
+        baseTransform.position = new Vector3 (pos.x, pos.y, posZ);
     }
 
     public virtual void SetPosByOffset (Vector2 offset) {
