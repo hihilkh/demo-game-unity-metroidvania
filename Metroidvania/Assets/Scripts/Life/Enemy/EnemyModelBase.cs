@@ -102,11 +102,10 @@ public abstract class EnemyModelBase : LifeBase {
     private static Vector2 WalkingBeatBackDirection_Left = Vector2.Scale (WalkingBeatBackDirection_Right, new Vector2 (-1, 1));
 
     // Jump
-    private bool isJustJumpedUp;
-    private bool isJumpRecursively;
-
-    // Delay Action Coroutines
-    protected Coroutine delayJumpCoroutine;
+    private bool isJumpRecursively => param.recursiveJumpPeriod >= 0;
+    private bool isJustJumpedUp = false;
+    private bool isPreparingToRecursiveJump = false;
+    private float startPrepareRecursiveJumpTime = -1;
 
     public override bool Init (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         var hasInitBefore = base.Init (pos, direction);
@@ -116,17 +115,37 @@ public abstract class EnemyModelBase : LifeBase {
         }
 
         currentStatus = EnemyEnum.Status.Normal;
-        SetJumpSettings ();
-
-        delayJumpCoroutine = null;
+        CheckAndPrepareRecursiveJump ();
 
         return hasInitBefore;
     }
 
-    protected virtual void ClearAllDelayActions () {
-        if (delayJumpCoroutine != null) {
-            StopCoroutine (delayJumpCoroutine);
-            delayJumpCoroutine = null;
+    private void Update () {
+        if (!isInitialized) {
+            return;
+        }
+
+        if (isBeatingBack || isDying) {
+            return;
+        }
+
+        DecideAction ();
+    }
+
+    /// <summary>
+    /// Call at every frame after the script is initialized (except while beating back or dying)
+    /// </summary>
+    protected virtual void DecideAction () {
+        // Jump
+        if (isPreparingToRecursiveJump) {
+            if (Time.time - startPrepareRecursiveJumpTime >= param.recursiveJumpPeriod) {
+                if (Jump ()) {
+                    isPreparingToRecursiveJump = false;
+                } else {
+                    // Try to jump again at next period
+                    startPrepareRecursiveJumpTime = Time.time;
+                }
+            }
         }
     }
 
@@ -167,8 +186,6 @@ public abstract class EnemyModelBase : LifeBase {
 
     protected override void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection) {
         base.StartBeatingBack (hurtDirection);
-
-        ClearAllDelayActions ();
 
         switch (movementType) {
             case EnemyEnum.MovementType.Walking:
@@ -241,37 +258,27 @@ public abstract class EnemyModelBase : LifeBase {
 
     #region Jump
 
-    private void SetJumpSettings () {
-        isJustJumpedUp = false;
-        isJumpRecursively = param.recursiveJumpPeriod >= 0;
-
-        if (isJumpRecursively) {
-            JumpAfter (param.recursiveJumpPeriod);
+    private void CheckAndPrepareRecursiveJump () {
+        if (movementType == EnemyEnum.MovementType.Walking && isJumpRecursively) {
+            isPreparingToRecursiveJump = true;
+            startPrepareRecursiveJumpTime = Time.time;
         }
     }
 
-    protected void JumpAfter (float second) {
-        delayJumpCoroutine = StartCoroutine (DelayJump (second));
-    }
-
-    private IEnumerator DelayJump (float second) {
-        yield return new WaitForSeconds (second);
-
-        Jump ();
-        delayJumpCoroutine = null;
-    }
-
-    protected void Jump () {
+    /// <returns>Is jump success</returns>
+    protected bool Jump () {
         Log.PrintDebug (gameObject.name + " : Jump", LogType.Enemy);
 
         if (currentLocation != LifeEnum.Location.Ground) {
             Log.Print (gameObject.name + " : Do not Jump. It is not in ground", LogType.Enemy);
-            return;
+            return false;
         }
 
         isJustJumpedUp = true;
         currentLocation = LifeEnum.Location.Air;
         SetAnimatorTrigger (EnemyAnimConstant.JumpTriggerName);
+
+        return true;
     }
 
     private void StartFreeFall () {
@@ -320,9 +327,7 @@ public abstract class EnemyModelBase : LifeBase {
                         SetAnimatorTrigger (EnemyAnimConstant.LandingTriggerName);
                     }
 
-                    if (isJumpRecursively) {
-                        JumpAfter (param.recursiveJumpPeriod);
-                    }
+                    CheckAndPrepareRecursiveJump ();
                 }
                 break;
             default:

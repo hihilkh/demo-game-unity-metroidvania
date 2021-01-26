@@ -33,7 +33,7 @@ public abstract class LifeBase : MonoBehaviour {
 
     protected abstract float invinciblePeriod { get; }
 
-    private bool isInitialized = false;
+    protected bool isInitialized = false;
 
     protected virtual void OnDestroy () {
         if (isInitialized) {
