@@ -99,6 +99,36 @@ namespace HIHIFramework.Core {
 
         #endregion
 
+        #region Enum
+
+        /// <summary>
+        /// If failed, <paramref name="enumValue"/> will be assigned default enum value
+        /// </summary>
+        /// <returns>Is success</returns>
+        public static bool TryParseToEnum<TEnum> (object value, out TEnum enumValue) where TEnum : Enum {
+            var underlyingType = Enum.GetUnderlyingType (typeof (TEnum));
+
+            object convertedValue = null;
+            try {
+                convertedValue = Convert.ChangeType (value, underlyingType);
+            } catch (Exception ex) {
+                Log.PrintError ("TryParseIntToEnum failed. " + ex.Message, LogType.General);
+                enumValue = default;
+                return false;
+            }
+
+            if (Enum.IsDefined (typeof (TEnum), convertedValue)) {
+                enumValue = (TEnum)convertedValue;
+                return true;
+            } else {
+                Log.PrintWarning ("TryParseIntToEnum failed. EnumType : " + typeof (TEnum) + " , value : " + value, LogType.General);
+                enumValue = default;
+                return false;
+            }
+        }
+
+        #endregion
+
         #region Parent/Child GameObject
 
         public static void InsertChildrenToParent (Transform parentTransform, List<Transform> childrenList, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) {

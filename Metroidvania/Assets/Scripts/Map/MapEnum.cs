@@ -24,6 +24,7 @@
     public enum SwitchType : int {
         Normal = 0,   // The default value 0 is used for any fallback cases
         Arrow = 1,
+        DropHit = 2,
     }
 
     // Remarks: Never change the HiddenPathOpenType enum int value. It is used in map json data.

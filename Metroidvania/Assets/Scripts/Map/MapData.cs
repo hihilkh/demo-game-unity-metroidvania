@@ -22,28 +22,24 @@ public class MapData {
 
     public MapData () { }
 
-    public MapData (List<TileData> tiles) {
-        this.tiles = tiles;
-    }
-
     [Serializable]
     public class Boundary {
-        public float[] lowerBound;
-        public float[] upperBound;
+        public int[] lowerBound;
+        public int[] upperBound;
 
         public Boundary () { }
 
-        public Boundary (float minX, float minY, float maxX, float maxY) {
-            this.lowerBound = new float[] { minX, minY };
-            this.upperBound = new float[] { maxX, maxY };
+        public Boundary (Vector2Int lowerBound, Vector2Int upperBound) {
+            this.lowerBound = new int[] { lowerBound.x, lowerBound.y };
+            this.upperBound = new int[] { upperBound.x, upperBound.y };
         }
 
-        public Vector2 GetLowerBound () {
-            return new Vector2 (lowerBound[0], lowerBound[1]);
+        public Vector2Int GetLowerBound () {
+            return new Vector2Int (lowerBound[0], lowerBound[1]);
         }
 
-        public Vector2 GetUpperBound () {
-            return new Vector2 (upperBound[0], upperBound[1]);
+        public Vector2Int GetUpperBound () {
+            return new Vector2Int (upperBound[0], upperBound[1]);
         }
     }
 
@@ -60,21 +56,21 @@ public class MapData {
         }
 
         public MapEnum.TileType GetTileType () {
-            if (Enum.IsDefined (typeof (MapEnum.TileType), tileType)) {
-                return (MapEnum.TileType)tileType;
-            } else {
+            MapEnum.TileType result;
+            if (!FrameworkUtils.TryParseToEnum (tileType, out result)) {
                 Log.PrintError ("Invalid TileType : " + tileType + " . Pos : " + GetPos () + ". Use default.", LogType.MapData);
-                return default;
             }
+
+            return result;
         }
 
         public MapEnum.TileMapType GetTileMapType () {
-            if (Enum.IsDefined (typeof (MapEnum.TileMapType), tileMapType)) {
-                return (MapEnum.TileMapType)tileMapType;
-            } else {
+            MapEnum.TileMapType result;
+            if (!FrameworkUtils.TryParseToEnum (tileMapType, out result)) {
                 Log.PrintError ("Invalid TileMapType : " + tileMapType + " . Pos : " + GetPos () + ". Use default.", LogType.MapData);
-                return default;
             }
+
+            return result;
         }
     }
 
@@ -85,9 +81,9 @@ public class MapData {
 
         public SwitchData () { }
 
-        public SwitchData (int x, int y, MapEnum.SwitchType switchType, MapEnum.HiddenPathOpenType openType, List<Vector2Int> hiddenPathTilesPos) : base (x, y) {
+        public SwitchData (int x, int y, MapEnum.SwitchType switchType, MapEnum.HiddenPathOpenType hiddenPathOpenType, List<Vector2Int> hiddenPathTilesPos) : base (x, y) {
             this.switchType = (int)switchType;
-            this.hiddenPath = new HiddenPathData (openType, hiddenPathTilesPos);
+            this.hiddenPath = new HiddenPathData (hiddenPathOpenType, hiddenPathTilesPos);
         }
 
         public ColliderData GetColliderData () {
@@ -109,28 +105,32 @@ public class MapData {
 
     [Serializable]
     public class EnemyData : WorldPosDirectionData {
+        public int id;
         public int type;
         protected override float posZ => GameVariable.EnemyPosZ;
 
         public EnemyData () { }
 
-        public EnemyData (float x, float y, LifeEnum.HorizontalDirection direction, EnemyEnum.EnemyType type) : base (x, y, direction) {
+        public EnemyData (float x, float y, LifeEnum.HorizontalDirection direction, int id, EnemyEnum.EnemyType type) : base (x, y, direction) {
+            this.id = id;
             this.type = (int)type;
         }
 
         public EnemyEnum.EnemyType GetEnemyType () {
-            if (Enum.IsDefined (typeof (EnemyEnum.EnemyType), type)) {
-                return (EnemyEnum.EnemyType)type;
-            } else {
+            EnemyEnum.EnemyType result;
+            if (!FrameworkUtils.TryParseToEnum (type, out result)) {
                 Log.PrintError ("Invalid EnemyType : " + type + " . Pos : " + GetPos () + ". Use default.", LogType.MapData);
-                return default;
             }
+
+            return result;
         }
     }
 
     [Serializable]
     public class CollectableData : WorldPosData {
         public int type;
+        public int fromEnemyId = -1;
+        public bool isFromEnemy => fromEnemyId > -1;
 
         public CollectableData () { }
 
@@ -138,13 +138,17 @@ public class MapData {
             this.type = (int)type;
         }
 
+        public CollectableData (float x, float y, MissionCollectable.Type type, int fromEnemyId) : this (x, y, type) {
+            this.fromEnemyId = fromEnemyId;
+        }
+
         public MissionCollectable.Type GetCollectableType () {
-            if (Enum.IsDefined (typeof (MissionCollectable.Type), type)) {
-                return (MissionCollectable.Type)type;
-            } else {
+            MissionCollectable.Type result;
+            if (!FrameworkUtils.TryParseToEnum (type, out result)) {
                 Log.PrintError ("Invalid MissionCollectable.Type : " + type + " . Pos : " + GetPos () + ". Use default.", LogType.MapData);
-                return default;
             }
+
+            return result;
         }
     }
 
@@ -170,12 +174,12 @@ public class MapData {
         }
 
         public TutorialEnum.GameTutorialType GetTutorialType () {
-            if (Enum.IsDefined (typeof (TutorialEnum.GameTutorialType), type)) {
-                return (TutorialEnum.GameTutorialType)type;
-            } else {
+            TutorialEnum.GameTutorialType result;
+            if (!FrameworkUtils.TryParseToEnum (type, out result)) {
                 Log.PrintError ("Invalid GameTutorialType : " + type + " . Use default.", LogType.MapData);
-                return default;
             }
+
+            return result;
         }
     }
 
@@ -223,12 +227,12 @@ public class MapData {
         }
 
         public LifeEnum.HorizontalDirection GetDirection () {
-            if (Enum.IsDefined (typeof (LifeEnum.HorizontalDirection), direction)) {
-                return (LifeEnum.HorizontalDirection)direction;
-            } else {
+            LifeEnum.HorizontalDirection result;
+            if (!FrameworkUtils.TryParseToEnum (direction, out result)) {
                 Log.PrintError ("Invalid HorizontalDirection : " + direction + " . Pos : " + GetPos () + ". Use default.", LogType.MapData);
-                return default;
             }
+
+            return result;
         }
     }
 
@@ -275,8 +279,8 @@ public class MapData {
 
         public HiddenPathData () { }
 
-        public HiddenPathData (MapEnum.HiddenPathOpenType type, List<Vector2Int> tilesPos) {
-            this.type = (int)type;
+        public HiddenPathData (MapEnum.HiddenPathOpenType openType, List<Vector2Int> tilesPos) {
+            this.type = (int)openType;
             this.tilesPos = new List<int[]> ();
 
             foreach (var pos in tilesPos) {
@@ -285,12 +289,12 @@ public class MapData {
         }
 
         private MapEnum.HiddenPathOpenType GetOpenType () {
-            if (Enum.IsDefined (typeof (MapEnum.HiddenPathOpenType), type)) {
-                return (MapEnum.HiddenPathOpenType)type;
-            } else {
+            MapEnum.HiddenPathOpenType result;
+            if (!FrameworkUtils.TryParseToEnum (type, out result)) {
                 Log.PrintError ("Invalid HiddenPathOpenType : " + type + " . Use default.", LogType.MapData);
-                return default;
             }
+
+            return result;
         }
 
         public List<List<Vector3Int>> GetTilesPosByOpenOrder () {
