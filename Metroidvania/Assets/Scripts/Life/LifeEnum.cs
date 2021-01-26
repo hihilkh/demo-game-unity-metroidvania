@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class LifeEnum {
     // Remarks: Never change the HorizontalDirection enum int value. It is used in map json data.
-    public enum HorizontalDirection : short {
+    public enum HorizontalDirection {
         Left = 0,       // The default value 0 is used for any fallback cases
         Right = 1,
     }

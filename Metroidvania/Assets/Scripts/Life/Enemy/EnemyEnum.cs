@@ -14,7 +14,7 @@ public class EnemyEnum {
     }
 
     [Flags]
-    public enum Status : short {
+    public enum Status {
         Normal = 0,
         BeatingBack = 1 << 0,
         Invincible = 1 << 1,

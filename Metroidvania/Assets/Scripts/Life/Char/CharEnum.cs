@@ -5,7 +5,7 @@ public class CharEnum {
     /// The direction that the player control the camera to look to
     /// </summary>
     [Flags]
-    public enum LookDirection : short {
+    public enum LookDirection {
         None = 0,
         Up = 1 << 0,
         Down = 1 << 1,
@@ -58,7 +58,7 @@ public class CharEnum {
     }
 
     [Flags]
-    public enum BodyPart : short {
+    public enum BodyPart {
         None = 0,
         Head = 1 << 0,
         Arms = 1 << 1,

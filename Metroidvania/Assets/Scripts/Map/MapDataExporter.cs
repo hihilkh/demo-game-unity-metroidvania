@@ -163,11 +163,11 @@ public class MapDataExporter : MonoBehaviour {
 
             var switchName = array[0];
             MapEnum.SwitchType switchType;
-            if (!FrameworkUtils.TryParseToEnum (int.Parse (array[1]), out switchType)) {
+            if (!FrameworkUtils.TryParseToEnum (array[1], out switchType)) {
                 throw new Exception ("Export SwitchData failed. Invalid SwitchType : " + array[1]);
             }
             MapEnum.HiddenPathOpenType hiddenPathOpenType;
-            if (!FrameworkUtils.TryParseToEnum (int.Parse (array[2]), out hiddenPathOpenType)) {
+            if (!FrameworkUtils.TryParseToEnum (array[2], out hiddenPathOpenType)) {
                 throw new Exception ("Export SwitchData failed. Invalid HiddenPathOpenType : " + array[2]);
             }
 
@@ -218,7 +218,7 @@ public class MapDataExporter : MonoBehaviour {
 
             var entryId = int.Parse (array[0]);
             LifeEnum.HorizontalDirection direction;
-            if (!FrameworkUtils.TryParseToEnum (int.Parse (array[1]), out direction)) {
+            if (!FrameworkUtils.TryParseToEnum (array[1], out direction)) {
                 throw new Exception ("Export EntryData failed. Invalid HorizontalDirection : " + array[1]);
             }
 
@@ -246,11 +246,11 @@ public class MapDataExporter : MonoBehaviour {
 
             var enemyId = int.Parse (array[0]);
             EnemyEnum.EnemyType enemyType;
-            if (!FrameworkUtils.TryParseToEnum (int.Parse (array[1]), out enemyType)) {
+            if (!FrameworkUtils.TryParseToEnum (array[1], out enemyType)) {
                 throw new Exception ("Export EnemyData failed. Invalid EnemyType : " + array[1]);
             }
             LifeEnum.HorizontalDirection direction;
-            if (!FrameworkUtils.TryParseToEnum (int.Parse (array[2]), out direction)) {
+            if (!FrameworkUtils.TryParseToEnum (array[2], out direction)) {
                 throw new Exception ("Export EnemyData failed. Invalid HorizontalDirection : " + array[2]);
             }
 
@@ -277,7 +277,7 @@ public class MapDataExporter : MonoBehaviour {
             }
 
             MissionCollectable.Type collectableType;
-            if (!FrameworkUtils.TryParseToEnum (int.Parse (array[0]), out collectableType)) {
+            if (!FrameworkUtils.TryParseToEnum (array[0], out collectableType)) {
                 throw new Exception ("Export CollectableData failed. Invalid MissionCollectable.Type : " + array[0]);
             }
 
@@ -350,7 +350,7 @@ public class MapDataExporter : MonoBehaviour {
             }
 
             TutorialEnum.GameTutorialType tutorialType;
-            if (!FrameworkUtils.TryParseToEnum (int.Parse (array[0]), out tutorialType)) {
+            if (!FrameworkUtils.TryParseToEnum (array[0], out tutorialType)) {
                 throw new Exception ("Export TutorialData failed. Invalid TutorialEnum.GameTutorialType : " + array[0]);
             }
 
