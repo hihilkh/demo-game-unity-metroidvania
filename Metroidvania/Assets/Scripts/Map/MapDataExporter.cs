@@ -27,6 +27,7 @@ public class MapDataExporter : MonoBehaviour {
     private const string ExportFileNameFormat = "{0}.{1}";  // fileName.timestamp
 
     private const string SwitchesBaseTransformName = "Switches";
+    private const string HiddenPathsBaseTransformName = "HiddenPaths";
     private const string EntriesBaseTransformName = "Entries";
     private const string EnemiesBaseTransformName = "Enemies";
     private const string CollectablesBaseTransformName = "Collectables";
@@ -148,9 +149,14 @@ public class MapDataExporter : MonoBehaviour {
             throw new Exception ("Export SwitchData failed. Cannot find the base transform.");
         }
 
+        var hiddenPathsBaseTransform = baseTransform.Find (HiddenPathsBaseTransformName);
+        if (hiddenPathsBaseTransform == null) {
+            throw new Exception ("Export SwitchData failed. Cannot find the hidden paths base transform.");
+        }
+
         var switchTransformList = new List<Transform> ();
         foreach (Transform child in baseTransform) {
-            if (child.name.Contains (FrameworkVariable.DefaultDelimiter)) {
+            if (child != hiddenPathsBaseTransform) {
                 switchTransformList.Add (child);
             }
         }
@@ -171,14 +177,18 @@ public class MapDataExporter : MonoBehaviour {
                 throw new Exception ("Export SwitchData failed. Invalid HiddenPathOpenType : " + array[2]);
             }
 
-            var hiddenPathTransformName = switchName + HiddenPathSuffix;
-            var hiddenPathTransform = baseTransform.Find (hiddenPathTransformName);
+            var collider = switchTransform.GetComponent<BoxCollider2D> ();
+            if (collider == null) {
+                throw new Exception ("Export SwitchData failed. Cannot find BoxCollider2D : " + switchName);
+            }
+
+            var hiddenPathTransform = hiddenPathsBaseTransform.Find (switchName);
             if (baseTransform == null) {
-                throw new Exception ("Export SwitchData failed. Cannot find hiddenPathTransform : " + hiddenPathTransformName);
+                throw new Exception ("Export SwitchData failed. Cannot find hiddenPathTransform : " + switchName);
             }
             var spriteRenderer = hiddenPathTransform.GetComponent<SpriteRenderer> ();
             if (spriteRenderer == null) {
-                throw new Exception ("Export SwitchData failed. Cannot find spriteRenderer : " + hiddenPathTransformName);
+                throw new Exception ("Export SwitchData failed. Cannot find spriteRenderer : " + switchName);
             }
 
             // Remarks :
@@ -193,7 +203,7 @@ public class MapDataExporter : MonoBehaviour {
                 }
             }
 
-            result.Add (new MapData.SwitchData ((int)switchTransform.localPosition.x, (int)switchTransform.localPosition.y, switchType, hiddenPathOpenType, hiddenPathTilesPos));
+            result.Add (new MapData.SwitchData (switchTransform.position.x, switchTransform.position.y, collider.size.x, collider.size.y, switchType, hiddenPathOpenType, hiddenPathTilesPos));
         }
 
 

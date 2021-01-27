@@ -8,17 +8,12 @@ using UnityEngine;
 public class MapData {
     public Boundary boundary;
     public List<TileData> tiles;                // TilePosData
-    public List<SwitchData> switches;           // TilePosData
+    public List<SwitchData> switches;           // InvisibleTriggerData
     public List<EntryData> entries;             // WorldPosDirectionData
     public List<EnemyData> enemies;             // WorldPosDirectionData
     public List<CollectableData> collectables;  // WorldPosData
     public List<ExitData> exits;                // InvisibleTriggerData
     public List<TutorialData> tutorials;        // InvisibleTriggerData
-
-    private const float TilePosToWorldPosOffsetX = 0.5f;
-    private const float TilePosToWorldPosOffsetY = 0.5f;
-
-    private const float GeneralSwitchColliderSize = 0.5f;
 
     public MapData () { }
 
@@ -75,19 +70,15 @@ public class MapData {
     }
 
     [Serializable]
-    public class SwitchData : TilePosData {
+    public class SwitchData : InvisibleTriggerData {
         public int switchType;
         public HiddenPathData hiddenPath;
 
         public SwitchData () { }
 
-        public SwitchData (int x, int y, MapEnum.SwitchType switchType, MapEnum.HiddenPathOpenType hiddenPathOpenType, List<Vector2Int> hiddenPathTilesPos) : base (x, y) {
+        public SwitchData (float x, float y, float sizeX, float sizeY, MapEnum.SwitchType switchType, MapEnum.HiddenPathOpenType hiddenPathOpenType, List<Vector2Int> hiddenPathTilesPos) : base (x, y, sizeX, sizeY) {
             this.switchType = (int)switchType;
             this.hiddenPath = new HiddenPathData (hiddenPathOpenType, hiddenPathTilesPos);
-        }
-
-        public ColliderData GetColliderData () {
-            return new ColliderData (pos[0] + TilePosToWorldPosOffsetX, pos[1] + TilePosToWorldPosOffsetY, GeneralSwitchColliderSize, GeneralSwitchColliderSize);
         }
     }
 
