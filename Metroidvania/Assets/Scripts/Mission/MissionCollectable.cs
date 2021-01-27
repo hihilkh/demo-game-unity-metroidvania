@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class MissionCollectable {
+public static class MapCollectable {
     // Remarks: Never change the Type enum int value. It is used in PlayerPrefs and map json data.
     public enum Type : int {
         // Command

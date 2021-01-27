@@ -14,6 +14,7 @@ public abstract class EnemyModelBase : LifeBase {
     [SerializeField] private Animator animator;
 
     public event Action<LifeEnum.HorizontalDirection> facingDirectionChangedEvent;
+    public event Action diedEvent;
 
     protected override int posZ => GameVariable.EnemyPosZ;
     protected override int invincibleLayer => GameVariable.EnemyInvincibleLayer;
@@ -225,6 +226,8 @@ public abstract class EnemyModelBase : LifeBase {
     }
 
     public virtual void DestroySelf () {
+        diedEvent?.Invoke ();
+
         if (baseTransform.gameObject != null) {
             Destroy (baseTransform.gameObject);
         }

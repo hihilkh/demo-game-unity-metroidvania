@@ -9,6 +9,8 @@ TagManager:
   - SlippyWall
   - Death
   - Enemy
+  - ArrowSwitch
+  - DropHitSwitch
   layers:
   - Default
   - TransparentFX

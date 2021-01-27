@@ -7,12 +7,15 @@ public static partial class GameVariable {
 
     #region Tag
 
+    public const string DefaultTag = "Untagged";
     public const string PlayerTag = "Player";
     public const string EnemyTag = "Enemy";
     public const string GroundTag = "Ground";
     public const string SlippyWallTag = "SlippyWall";
     public const string DeathTag = "Death";
     public const string AttackTag = "Attack";
+    public const string ArrowSwitchTag = "ArrowSwitch";
+    public const string DropHitSwitchTag = "DropHitSwitch";
 
     #endregion
 

@@ -286,7 +286,7 @@ public class MapDataExporter : MonoBehaviour {
                 throw new Exception ("Export CollectableData failed. Invalid transform name : " + child.name);
             }
 
-            MissionCollectable.Type collectableType;
+            MapCollectable.Type collectableType;
             if (!FrameworkUtils.TryParseToEnum (array[0], out collectableType)) {
                 throw new Exception ("Export CollectableData failed. Invalid MissionCollectable.Type : " + array[0]);
             }

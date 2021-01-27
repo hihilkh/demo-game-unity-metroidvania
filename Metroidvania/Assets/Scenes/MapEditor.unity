@@ -37775,9 +37775,10 @@ GameObject:
   - component: {fileID: 965746720}
   - component: {fileID: 965746722}
   - component: {fileID: 965746721}
+  - component: {fileID: 965746723}
   m_Layer: 12
   m_Name: ArrowSwitch|1|3|(RightToLeft)
-  m_TagString: Untagged
+  m_TagString: ArrowSwitch
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -37872,6 +37873,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &965746723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 965746719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 497b475cabde8412aadac4a5c3a21e5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &971894213
 GameObject:
   m_ObjectHideFlags: 0

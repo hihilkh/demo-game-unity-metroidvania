@@ -129,7 +129,7 @@ public static class GameProgress {
         SaveMissionProgressList ();
     }
 
-    public static void CollectedCollectable (int missionId, MissionCollectable.Type collectable) {
+    public static void CollectedCollectable (int missionId, MapCollectable.Type collectable) {
         var missionProgress = GetMissionProgress (missionId);
         missionProgress.AddCollectedCollectable (collectable);
 

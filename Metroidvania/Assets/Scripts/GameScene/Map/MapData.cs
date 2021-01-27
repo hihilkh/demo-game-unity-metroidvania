@@ -80,6 +80,15 @@ public class MapData {
             this.switchType = (int)switchType;
             this.hiddenPath = new HiddenPathData (hiddenPathOpenType, hiddenPathTilesPos);
         }
+
+        public MapEnum.SwitchType GetSwitchType () {
+            MapEnum.SwitchType result;
+            if (!FrameworkUtils.TryParseToEnum (switchType, out result)) {
+                Log.PrintError ("Invalid SwitchType : " + switchType + " . Pos : " + collider.GetPos () + ". Use default.", LogType.MapData);
+            }
+
+            return result;
+        }
     }
 
     [Serializable]
@@ -125,16 +134,16 @@ public class MapData {
 
         public CollectableData () { }
 
-        public CollectableData (float x, float y, MissionCollectable.Type type) : base (x, y) {
+        public CollectableData (float x, float y, MapCollectable.Type type) : base (x, y) {
             this.type = (int)type;
         }
 
-        public CollectableData (float x, float y, MissionCollectable.Type type, int fromEnemyId) : this (x, y, type) {
+        public CollectableData (float x, float y, MapCollectable.Type type, int fromEnemyId) : this (x, y, type) {
             this.fromEnemyId = fromEnemyId;
         }
 
-        public MissionCollectable.Type GetCollectableType () {
-            MissionCollectable.Type result;
+        public MapCollectable.Type GetCollectableType () {
+            MapCollectable.Type result;
             if (!FrameworkUtils.TryParseToEnum (type, out result)) {
                 Log.PrintError ("Invalid MissionCollectable.Type : " + type + " . Pos : " + GetPos () + ". Use default.", LogType.MapData);
             }
