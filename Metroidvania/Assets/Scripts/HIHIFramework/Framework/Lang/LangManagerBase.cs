@@ -100,9 +100,10 @@ namespace HIHIFramework.Lang {
                 return false;
             }
 
-            (var lines, var errorMsg) = AssetHandler.Instance.ReadPersistentDataFileByLines (AssetEnum.AssetType.Localization, fileName);
-            if (errorMsg != null) {
-                Log.PrintError ("Load localization file Failed. langType : " + langType + " , Error : " + errorMsg, LogType.Lang | LogType.Asset);
+            string[] lines = null;
+            var isSuccess = AssetHandler.Instance.TryReadPersistentDataFileByLines (AssetEnum.AssetType.Localization, fileName, out lines);
+            if (!isSuccess) {
+                Log.PrintError ("Load localization file Failed. langType : " + langType, LogType.Lang | LogType.Asset);
                 return false;
             }
 

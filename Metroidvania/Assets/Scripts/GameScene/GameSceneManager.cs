@@ -26,10 +26,11 @@ public class GameSceneManager : MonoBehaviour {
         var missionId = 1;
         var entryId = 1;
 
-        (var lines, var errorMsg) = AssetHandler.Instance.ReadPersistentDataFileByLines (AssetEnum.AssetType.MapData, AssetDetails.GetMapDataJSONFileName (missionId));
+        string[] lines = null;
+        var isSuccess = AssetHandler.Instance.TryReadPersistentDataFileByLines (AssetEnum.AssetType.MapData, AssetDetails.GetMapDataJSONFileName (missionId), out lines);
 
-        if (errorMsg != null) {
-            Log.PrintError ("Read map data Failed. missionId : " + missionId + " , Error : " + errorMsg, LogType.GameFlow | LogType.Asset);
+        if (!isSuccess) {
+            Log.PrintError ("Read map data Failed. missionId : " + missionId, LogType.GameFlow | LogType.Asset);
             return;
         }
 

@@ -164,13 +164,13 @@ namespace HIHIFramework.Asset {
 
         }
 
-        /// <param name="onFinished">string[] : content by lines, string : errorMsg (<b>null</b> means no error)</param>
-        private void ReadStreamingAssetsFile (string filePath, Action<string[], string> onFinished) {
+        /// <param name="onFinished">bool : isSuccess, string[] : content by lines(if not success, it would be null)</param>
+        private void ReadStreamingAssetsFile (string filePath, Action<bool, string[]> onFinished) {
             StartCoroutine (ReadStreamingAssetsFileCoroutine (filePath, onFinished));
         }
 
-        /// <param name="onFinished">string[] : content by lines, string : errorMsg (<b>null</b> means no error)</param>
-        private IEnumerator ReadStreamingAssetsFileCoroutine (string filePath, Action<string[], string> onFinished) {
+        /// <param name="onFinished">bool : isSuccess, string[] : content by lines(if not success, it would be null)</param>
+        private IEnumerator ReadStreamingAssetsFileCoroutine (string filePath, Action<bool, string[]> onFinished) {
             Log.Print ("Start reading streaming assets file. filePath : " + filePath, LogType.Asset | LogType.IO);
             string[] lines = null;
             string errorMsg = null;
@@ -206,23 +206,27 @@ namespace HIHIFramework.Asset {
 
             if (errorMsg == null) {
                 Log.Print ("Finished reading streaming assets file. filePath : " + filePath, LogType.Asset | LogType.IO);
+                onFinished?.Invoke (true, lines);
             } else {
                 Log.PrintError ("Failed to read streaming assets file. filePath : " + filePath + " , error : " + errorMsg, LogType.Asset | LogType.IO);
+                onFinished?.Invoke (false, null);
             }
 
-            onFinished?.Invoke (lines, errorMsg);
         }
 
         #endregion
 
         #region Persistent Data I/O
 
-        /// <returns>string[] : content by lines, string : errorMsg (<b>null</b> means no error)</returns>
-        public (string[] lines, string errorMsg) ReadPersistentDataFileByLines (AssetEnum.AssetType type, string fileName) {
+        /// <summary>
+        /// If failed, <paramref name="lines"/> will be assigned to null
+        /// </summary>
+        /// <returns>Is success</returns>
+        public bool TryReadPersistentDataFileByLines (AssetEnum.AssetType type, string fileName, out string[] lines) {
             var filePath = Path.Combine (AssetFrameworkDetails.GetAssetFolderFullPath (AssetFrameworkEnum.AssetCategory.PersistentData, type), fileName);
             Log.Print ("Start reading persistent data file. filePath : " + filePath, LogType.Asset | LogType.IO);
 
-            string[] lines = null;
+            lines = null;
             string errorMsg = null;
 
             if (File.Exists (filePath)) {
@@ -237,11 +241,11 @@ namespace HIHIFramework.Asset {
 
             if (errorMsg == null) {
                 Log.Print ("Finished reading persistent data file. filePath : " + filePath, LogType.Asset | LogType.IO);
+                return true;
             } else {
                 Log.PrintError ("Failed to read persistent data file. filePath : " + filePath + " , error : " + errorMsg, LogType.Asset | LogType.IO);
+                return false;
             }
-
-            return (lines, errorMsg);
         }
 
         #endregion
@@ -273,9 +277,9 @@ namespace HIHIFramework.Asset {
 
             var versionFilePath = AssetFrameworkDetails.GetStreamingAssetsVersionFileFullPath (type, fileName);
 
-            Action<string[], string> onReadFinished = (lines, errorMsg) => {
-                if (!string.IsNullOrEmpty (errorMsg)) {
-                    Log.PrintError ("Get streaming assets version failed. versionFilePath : " + versionFilePath + " , Error : " + errorMsg, LogType.Asset);
+            Action<bool, string[]> onReadFinished = (isSuccess, lines) => {
+                if (!isSuccess) {
+                    Log.PrintError ("Get streaming assets version failed. versionFilePath : " + versionFilePath, LogType.Asset);
                     onFinished?.Invoke (-1);
                     return;
                 }
@@ -345,9 +349,9 @@ namespace HIHIFramework.Asset {
 
             var checksumFilePath = AssetFrameworkDetails.GetStreamingAssetsChecksumFileFullPath (type, fileName);
 
-            Action<string[], string> onReadFinished = (lines, errorMsg) => {
-                if (errorMsg != null) {
-                    Log.PrintError ("Get streaming assets checksum failed. checksumFilePath : " + checksumFilePath + " , Error : " + errorMsg, LogType.Asset);
+            Action<bool, string[]> onReadFinished = (isSuccess, lines) => {
+                if (!isSuccess) {
+                    Log.PrintError ("Get streaming assets checksum failed. checksumFilePath : " + checksumFilePath, LogType.Asset);
                     onFinished?.Invoke (null);
                     return;
                 }
