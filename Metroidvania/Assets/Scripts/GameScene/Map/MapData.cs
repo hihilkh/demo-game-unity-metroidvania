@@ -8,14 +8,24 @@ using UnityEngine;
 public class MapData {
     public Boundary boundary;
     public List<TileData> tiles;                // TilePosData
-    public List<SwitchData> switches;           // InvisibleTriggerData
     public List<EntryData> entries;             // WorldPosDirectionData
     public List<EnemyData> enemies;             // WorldPosDirectionData
     public List<CollectableData> collectables;  // WorldPosData
+    public List<SwitchData> switches;           // InvisibleTriggerData
     public List<ExitData> exits;                // InvisibleTriggerData
     public List<TutorialData> tutorials;        // InvisibleTriggerData
 
     public MapData () { }
+
+    public EntryData GetEntryData (int entryId) {
+        foreach (var entryData in entries) {
+            if (entryData.id == entryId) {
+                return entryData;
+            }
+        }
+
+        return null;
+    }
 
     [Serializable]
     public class Boundary {

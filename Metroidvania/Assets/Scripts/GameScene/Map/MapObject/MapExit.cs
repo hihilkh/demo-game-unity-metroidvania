@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using HIHIFramework.Core;
 using UnityEngine;
 
-public class MapExitPoint : MapInvisibleTriggerBase<MapData.ExitData> {
+public class MapExit : MapInvisibleTriggerBase<MapData.ExitData> {
     /// <summary>
     /// Input :<br />
     /// int : the entry id that the exit point goes to

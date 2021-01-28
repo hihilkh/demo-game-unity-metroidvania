@@ -22,19 +22,25 @@ public class MapDataExporter : MonoBehaviour {
     [Header ("Mission Related")]
     [SerializeField] private int missionId;
     [SerializeField] private RectTransform exportRange;
-    [SerializeField] private Transform otherStuffsBaseTransform;
+    [SerializeField] private Transform mapObjectsBaseTransform;
+
+    private Dictionary<MapEnum.TileMapType, Tilemap> tileMapDict => new Dictionary<MapEnum.TileMapType, Tilemap> {
+        { MapEnum.TileMapType.Ground, groundTileMap},
+        { MapEnum.TileMapType.Ground2, ground2TileMap},
+        { MapEnum.TileMapType.SlippyWall, slippyWallTileMap},
+        { MapEnum.TileMapType.Death, deathTileMap },
+        { MapEnum.TileMapType.Background, bgTileMap },
+    };
 
     private const string ExportFileNameFormat = "{0}.{1}";  // fileName.timestamp
 
-    private const string SwitchesBaseTransformName = "Switches";
-    private const string HiddenPathsBaseTransformName = "HiddenPaths";
     private const string EntriesBaseTransformName = "Entries";
     private const string EnemiesBaseTransformName = "Enemies";
     private const string CollectablesBaseTransformName = "Collectables";
+    private const string SwitchesBaseTransformName = "Switches";
+    private const string HiddenPathsBaseTransformName = "HiddenPaths";
     private const string ExitsBaseTransformName = "Exits";
     private const string TutorialsBaseTransformName = "Tutorials";
-
-    private const string HiddenPathSuffix = "_HiddenPath";
 
     private void OnGUI () {
         if (GUI.Button (new Rect (10, 10, 150, 50), "Check Map Design")) {
@@ -47,14 +53,6 @@ public class MapDataExporter : MonoBehaviour {
     }
 
     private MapDataTileExportIterator GetMapDataTileExportIterator (MapData.Boundary boundary) {
-        var tileMapDict = new Dictionary<MapEnum.TileMapType, Tilemap> {
-            { MapEnum.TileMapType.Ground, groundTileMap},
-            { MapEnum.TileMapType.Ground2, ground2TileMap},
-            { MapEnum.TileMapType.SlippyWall, slippyWallTileMap},
-            { MapEnum.TileMapType.Death, deathTileMap },
-            { MapEnum.TileMapType.Background, bgTileMap },
-        };
-
         return new MapDataTileExportIterator (tileMapDict, boundary.GetLowerBound (), boundary.GetUpperBound ());
     }
 
@@ -94,10 +92,10 @@ public class MapDataExporter : MonoBehaviour {
         var boundary = ExportBoundary ();
         mapData.boundary = boundary;
         mapData.tiles = ExportTileDataList (boundary);
-        mapData.switches = ExportSwitchDataList ();
         mapData.entries = ExportEntryDataList ();
         mapData.enemies = ExportEnemyDataList ();
         mapData.collectables = ExportCollectableDataList (mapData.enemies);
+        mapData.switches = ExportSwitchDataList ();
         mapData.exits = ExportExitDataList ();
         mapData.tutorials = ExportTutorialDataList ();
 
@@ -140,11 +138,115 @@ public class MapDataExporter : MonoBehaviour {
         return tileDataList;
     }
 
+    private List<MapData.EntryData> ExportEntryDataList () {
+        Log.PrintWarning ("Start export EntryData", LogType.MapData);
+
+        var result = new List<MapData.EntryData> ();
+        var baseTransform = mapObjectsBaseTransform.Find (EntriesBaseTransformName);
+        if (baseTransform == null) {
+            throw new Exception ("Export EntryData failed. Cannot find the base transform.");
+        }
+
+        foreach (Transform child in baseTransform) {
+            var array = child.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
+            if (array.Length < 2) {
+                throw new Exception ("Export EntryData failed. Invalid transform name : " + child.name);
+            }
+
+            var entryId = int.Parse (array[0]);
+            LifeEnum.HorizontalDirection direction;
+            if (!FrameworkUtils.TryParseToEnum (array[1], out direction)) {
+                throw new Exception ("Export EntryData failed. Invalid HorizontalDirection : " + array[1]);
+            }
+
+            result.Add (new MapData.EntryData (child.position.x, child.position.y, direction, entryId));
+        }
+
+        Log.PrintWarning ("Export EntryData success", LogType.MapData);
+        return result;
+    }
+
+    private List<MapData.EnemyData> ExportEnemyDataList () {
+        Log.PrintWarning ("Start export EnemyData", LogType.MapData);
+
+        var result = new List<MapData.EnemyData> ();
+        var baseTransform = mapObjectsBaseTransform.Find (EnemiesBaseTransformName);
+        if (baseTransform == null) {
+            throw new Exception ("Export EnemyData failed. Cannot find the base transform.");
+        }
+
+        foreach (Transform child in baseTransform) {
+            var array = child.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
+            if (array.Length < 3) {
+                throw new Exception ("Export EnemyData failed. Invalid transform name : " + child.name);
+            }
+
+            var enemyId = int.Parse (array[0]);
+            EnemyEnum.EnemyType enemyType;
+            if (!FrameworkUtils.TryParseToEnum (array[1], out enemyType)) {
+                throw new Exception ("Export EnemyData failed. Invalid EnemyType : " + array[1]);
+            }
+            LifeEnum.HorizontalDirection direction;
+            if (!FrameworkUtils.TryParseToEnum (array[2], out direction)) {
+                throw new Exception ("Export EnemyData failed. Invalid HorizontalDirection : " + array[2]);
+            }
+
+            result.Add (new MapData.EnemyData (child.position.x, child.position.y, direction, enemyId, enemyType));
+        }
+
+        Log.PrintWarning ("Export EnemyData success", LogType.MapData);
+        return result;
+    }
+
+    private List<MapData.CollectableData> ExportCollectableDataList (List<MapData.EnemyData> enemies) {
+        Log.PrintWarning ("Start export CollectableData", LogType.MapData);
+
+        var result = new List<MapData.CollectableData> ();
+        var baseTransform = mapObjectsBaseTransform.Find (CollectablesBaseTransformName);
+        if (baseTransform == null) {
+            throw new Exception ("Export CollectableData failed. Cannot find the base transform.");
+        }
+
+        foreach (Transform child in baseTransform) {
+            var array = child.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
+            if (array.Length < 2) {
+                throw new Exception ("Export CollectableData failed. Invalid transform name : " + child.name);
+            }
+
+            MapCollectable.Type collectableType;
+            if (!FrameworkUtils.TryParseToEnum (array[0], out collectableType)) {
+                throw new Exception ("Export CollectableData failed. Invalid MissionCollectable.Type : " + array[0]);
+            }
+
+            if (string.IsNullOrEmpty (array[1])) {
+                result.Add (new MapData.CollectableData (child.position.x, child.position.y, collectableType));
+            } else {
+                var fromEnemyId = int.Parse (array[1]);
+                var isEnemyMatched = false;
+                foreach (var enemy in enemies) {
+                    if (enemy.id == fromEnemyId) {
+                        isEnemyMatched = true;
+                        break;
+                    }
+                }
+
+                if (!isEnemyMatched) {
+                    throw new Exception ("Export CollectableData failed. No matched enemy to fromEnemyId : " + fromEnemyId);
+                }
+
+                result.Add (new MapData.CollectableData (child.position.x, child.position.y, collectableType, fromEnemyId));
+            }
+        }
+
+        Log.PrintWarning ("Export CollectableData success", LogType.MapData);
+        return result;
+    }
+
     private List<MapData.SwitchData> ExportSwitchDataList () {
         Log.PrintWarning ("Start export SwitchData", LogType.MapData);
 
         var result = new List<MapData.SwitchData> ();
-        var baseTransform = otherStuffsBaseTransform.Find (SwitchesBaseTransformName);
+        var baseTransform = mapObjectsBaseTransform.Find (SwitchesBaseTransformName);
         if (baseTransform == null) {
             throw new Exception ("Export SwitchData failed. Cannot find the base transform.");
         }
@@ -211,115 +313,11 @@ public class MapDataExporter : MonoBehaviour {
         return result;
     }
 
-    private List<MapData.EntryData> ExportEntryDataList () {
-        Log.PrintWarning ("Start export EntryData", LogType.MapData);
-
-        var result = new List<MapData.EntryData> ();
-        var baseTransform = otherStuffsBaseTransform.Find (EntriesBaseTransformName);
-        if (baseTransform == null) {
-            throw new Exception ("Export EntryData failed. Cannot find the base transform.");
-        }
-
-        foreach (Transform child in baseTransform) {
-            var array = child.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
-            if (array.Length < 2) {
-                throw new Exception ("Export EntryData failed. Invalid transform name : " + child.name);
-            }
-
-            var entryId = int.Parse (array[0]);
-            LifeEnum.HorizontalDirection direction;
-            if (!FrameworkUtils.TryParseToEnum (array[1], out direction)) {
-                throw new Exception ("Export EntryData failed. Invalid HorizontalDirection : " + array[1]);
-            }
-
-            result.Add (new MapData.EntryData (child.position.x, child.position.y, direction, entryId));
-        }
-
-        Log.PrintWarning ("Export EntryData success", LogType.MapData);
-        return result;
-    }
-
-    private List<MapData.EnemyData> ExportEnemyDataList () {
-        Log.PrintWarning ("Start export EnemyData", LogType.MapData);
-
-        var result = new List<MapData.EnemyData> ();
-        var baseTransform = otherStuffsBaseTransform.Find (EnemiesBaseTransformName);
-        if (baseTransform == null) {
-            throw new Exception ("Export EnemyData failed. Cannot find the base transform.");
-        }
-
-        foreach (Transform child in baseTransform) {
-            var array = child.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
-            if (array.Length < 3) {
-                throw new Exception ("Export EnemyData failed. Invalid transform name : " + child.name);
-            }
-
-            var enemyId = int.Parse (array[0]);
-            EnemyEnum.EnemyType enemyType;
-            if (!FrameworkUtils.TryParseToEnum (array[1], out enemyType)) {
-                throw new Exception ("Export EnemyData failed. Invalid EnemyType : " + array[1]);
-            }
-            LifeEnum.HorizontalDirection direction;
-            if (!FrameworkUtils.TryParseToEnum (array[2], out direction)) {
-                throw new Exception ("Export EnemyData failed. Invalid HorizontalDirection : " + array[2]);
-            }
-
-            result.Add (new MapData.EnemyData (child.position.x, child.position.y, direction, enemyId, enemyType));
-        }
-
-        Log.PrintWarning ("Export EnemyData success", LogType.MapData);
-        return result;
-    }
-
-    private List<MapData.CollectableData> ExportCollectableDataList (List<MapData.EnemyData> enemies) {
-        Log.PrintWarning ("Start export CollectableData", LogType.MapData);
-
-        var result = new List<MapData.CollectableData> ();
-        var baseTransform = otherStuffsBaseTransform.Find (CollectablesBaseTransformName);
-        if (baseTransform == null) {
-            throw new Exception ("Export CollectableData failed. Cannot find the base transform.");
-        }
-
-        foreach (Transform child in baseTransform) {
-            var array = child.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
-            if (array.Length < 2) {
-                throw new Exception ("Export CollectableData failed. Invalid transform name : " + child.name);
-            }
-
-            MapCollectable.Type collectableType;
-            if (!FrameworkUtils.TryParseToEnum (array[0], out collectableType)) {
-                throw new Exception ("Export CollectableData failed. Invalid MissionCollectable.Type : " + array[0]);
-            }
-
-            if (string.IsNullOrEmpty (array[1])) {
-                result.Add (new MapData.CollectableData (child.position.x, child.position.y, collectableType));
-            } else {
-                var fromEnemyId = int.Parse (array[1]);
-                var isEnemyMatched = false;
-                foreach (var enemy in enemies) {
-                    if (enemy.id == fromEnemyId) {
-                        isEnemyMatched = true;
-                        break;
-                    }
-                }
-
-                if (!isEnemyMatched) {
-                    throw new Exception ("Export CollectableData failed. No matched enemy to fromEnemyId : " + fromEnemyId);
-                }
-
-                result.Add (new MapData.CollectableData (child.position.x, child.position.y, collectableType, fromEnemyId));
-            }
-        }
-
-        Log.PrintWarning ("Export CollectableData success", LogType.MapData);
-        return result;
-    }
-
     private List<MapData.ExitData> ExportExitDataList () {
         Log.PrintWarning ("Start export ExitData", LogType.MapData);
 
         var result = new List<MapData.ExitData> ();
-        var baseTransform = otherStuffsBaseTransform.Find (ExitsBaseTransformName);
+        var baseTransform = mapObjectsBaseTransform.Find (ExitsBaseTransformName);
         if (baseTransform == null) {
             throw new Exception ("Export ExitData failed. Cannot find the base transform.");
         }
@@ -348,7 +346,7 @@ public class MapDataExporter : MonoBehaviour {
         Log.PrintWarning ("Start export TutorialData", LogType.MapData);
 
         var result = new List<MapData.TutorialData> ();
-        var baseTransform = otherStuffsBaseTransform.Find (TutorialsBaseTransformName);
+        var baseTransform = mapObjectsBaseTransform.Find (TutorialsBaseTransformName);
         if (baseTransform == null) {
             throw new Exception ("Export TutorialData failed. Cannot find the base transform.");
         }

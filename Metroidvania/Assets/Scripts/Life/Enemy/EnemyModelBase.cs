@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using HIHIFramework.Core;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // TODO : Use Update to control enemy actions
 // TODO : Ensure during beat back and die, no other action
@@ -48,8 +49,6 @@ public abstract class EnemyModelBase : LifeBase {
         }
     }
 
-    public int collisionDP => param.collisionDP;
-
     // Status
     protected EnemyEnum.Status currentStatus;
 
@@ -94,6 +93,9 @@ public abstract class EnemyModelBase : LifeBase {
 
     protected override float invinciblePeriod => param.invinciblePeriod;
 
+    public int id { get; private set; }
+    public int collisionDP => param.collisionDP;
+
     // Beat Back
     /// <summary>
     /// Normalized.
@@ -108,13 +110,24 @@ public abstract class EnemyModelBase : LifeBase {
     private bool isPreparingToRecursiveJump = false;
     private float startPrepareRecursiveJumpTime = -1;
 
-    public override bool Init (Vector2 pos, LifeEnum.HorizontalDirection direction) {
+    private void Start () {
+        if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName) {
+            Init (1, baseTransform.position, LifeEnum.HorizontalDirection.Right);
+        }
+    }
+
+    public bool Init (MapData.EnemyData data) {
+        return Init (data.id, data.GetPos(), data.GetDirection());
+    }
+
+    private bool Init (int id, Vector2 pos, LifeEnum.HorizontalDirection direction) {
         var hasInitBefore = base.Init (pos, direction);
 
         if (hasInitBefore) {
             return hasInitBefore;
         }
 
+        this.id = id;
         currentStatus = EnemyEnum.Status.Normal;
         CheckAndPrepareRecursiveJump ();
 

@@ -11,6 +11,7 @@ public class CharModel : LifeBase {
     public event Action statusChangedEvent;
     public event Action facingDirectionChangedEvent;
     public event Action movingDirectionChangedEvent;
+    public event Action diedEvent;
 
     private Dictionary<CharEnum.InputSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
 
@@ -146,7 +147,11 @@ public class CharModel : LifeBase {
         controller.StoppedHoldEvent -= StopHoldAction;
     }
 
-    public override bool Init (Vector2 pos, LifeEnum.HorizontalDirection direction) {
+    public bool Init () {
+        return Init (Vector3.zero, LifeEnum.HorizontalDirection.Right);
+    }
+
+    protected override bool Init (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         var hasInitBefore = base.Init (pos, direction);
 
         if (hasInitBefore) {
@@ -239,9 +244,13 @@ public class CharModel : LifeBase {
         }
     }
 
-    public override void SetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
+    protected override void SetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         base.SetPosAndDirection (pos, direction);
         movingDirection = facingDirection;
+    }
+
+    public void SetPosAndDirection (MapData.EntryData entryData) {
+        SetPosAndDirection (entryData.GetPos (), entryData.GetDirection ());
     }
 
     private void SetStatus (CharEnum.Status status, bool isOn) {
@@ -1152,7 +1161,7 @@ public class CharModel : LifeBase {
     private IEnumerator WaitAndFinishDying () {
         yield return new WaitForSeconds (param.dyingPeriod);
 
-        // TODO
+        diedEvent?.Invoke ();
     }
     #endregion
 

@@ -42,7 +42,7 @@ public abstract class LifeBase : MonoBehaviour {
     }
 
     /// <returns>has initialized before</returns>
-    public virtual bool Init (Vector2 pos, LifeEnum.HorizontalDirection direction) {
+    protected virtual bool Init (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         if (isInitialized) {
             Log.PrintWarning (gameObject.name + " is already initialized. Do not initialize again. Please check.", LogType.Life);
             return true;
@@ -60,7 +60,7 @@ public abstract class LifeBase : MonoBehaviour {
     }
 
     // TODO : Handle the cases that change pos after init
-    public virtual void SetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
+    protected virtual void SetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         SetPos (pos);
         facingDirection = direction;
 

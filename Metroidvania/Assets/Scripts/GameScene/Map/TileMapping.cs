@@ -7,7 +7,7 @@ public static class TileMapping {
     private const string ResourcesFolderName = "Tiles/";
 
     // Remarks : Only File name
-    private static Dictionary<MapEnum.TileType, string> TileResourcesNameDict = new Dictionary<MapEnum.TileType, string> () {
+    private static readonly Dictionary<MapEnum.TileType, string> TileResourcesNameDict = new Dictionary<MapEnum.TileType, string> () {
         { MapEnum.TileType.Dirt, "Dirt" },
         { MapEnum.TileType.GroundTag, "GroundTag" },
         { MapEnum.TileType.Ground2Tag, "Ground2Tag" },
@@ -15,7 +15,7 @@ public static class TileMapping {
         { MapEnum.TileType.DeathTag, "DeathTag" },
     };
 
-    private static Dictionary<MapEnum.TileMapType, MapEnum.TileType> MapDesignTileTypeDict = new Dictionary<MapEnum.TileMapType, MapEnum.TileType> () {
+    private static readonly Dictionary<MapEnum.TileMapType, MapEnum.TileType> MapDesignTileTypeDict = new Dictionary<MapEnum.TileMapType, MapEnum.TileType> () {
         { MapEnum.TileMapType.Ground, MapEnum.TileType.GroundTag },
         { MapEnum.TileMapType.Ground2, MapEnum.TileType.Ground2Tag },
         { MapEnum.TileMapType.SlippyWall, MapEnum.TileType.SlippyWallTag },

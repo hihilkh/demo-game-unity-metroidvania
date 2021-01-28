@@ -9,7 +9,10 @@ public partial class GameUtils : Singleton<GameUtils> {
 
         if (charModel == null) {
             charModel = Instantiate (Resources.Load<CharModel> (GameVariable.CharPrefabResourcesName));
-            charModel.Init (Vector3.zero, LifeEnum.HorizontalDirection.Right);
+            // Remarks :
+            // Do Init() explicitly instead of doing inside Awake() to ensure after getting the model from this method,
+            // the model is already initialized
+            charModel.Init ();
             DontDestroyOnLoad (charModel);
         }
 

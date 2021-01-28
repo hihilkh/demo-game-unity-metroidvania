@@ -7,12 +7,25 @@ using UnityEngine;
 public class GameSceneManager : MonoBehaviour {
 
     [SerializeField] private GameSceneUIManager uiManager;
-    [SerializeField] private MapGenerator mapGenerator;
+    [SerializeField] private MapManager mapManager;
 
-    private CharModel charModel;
+    private CharModel _charModel = null;
+    private CharModel charModel {
+        get {
+            if (_charModel == null) {
+                _charModel = GameUtils.FindOrSpawnChar ();
+            }
+
+            return _charModel;
+        }
+    }
+
+    private bool isAddedEventListeners = false;
 
     private void Start () {
         var missionId = 1;
+        var entryId = 1;
+
         (var lines, var errorMsg) = AssetHandler.Instance.ReadPersistentDataFileByLines (AssetEnum.AssetType.MapData, AssetDetails.GetMapDataJSONFileName (missionId));
 
         if (errorMsg != null) {
@@ -26,11 +39,66 @@ public class GameSceneManager : MonoBehaviour {
         }
 
         var mapData = JsonUtility.FromJson<MapData> (lines[0]);
-        mapGenerator.GenerateMap (mapData.tiles);
+        mapManager.GenerateMap (mapData);
 
-        charModel = GameUtils.FindOrSpawnChar ();
-        // TODO
-        charModel.SetPosAndDirection (mapData.entries[0].GetPos (), mapData.entries[0].GetDirection ());
+        charModel.SetPosAndDirection (mapData.GetEntryData(entryId));
         charModel.SetAllowMove (true);
+
+        AddEventListeners ();
     }
+
+    private void OnDestroy () {
+        RemoveEventListeners ();
+    }
+
+    #region Events
+
+    private void AddEventListeners () {
+        if (!isAddedEventListeners) {
+            isAddedEventListeners = true;
+
+            MapCollectableObject.CollectedEvent += CollectCollectable;
+            MapExit.ExitedEvent += Exit;
+            MapSwitch.SwitchedOnEvent += OpenHiddenPath;
+            MapTutorialTrigger.TriggeredTutorialEvent += StartTutorial;
+
+            charModel.diedEvent += CharDied;
+        }
+
+    }
+
+    private void RemoveEventListeners () {
+        if (isAddedEventListeners) {
+            MapCollectableObject.CollectedEvent -= CollectCollectable;
+            MapExit.ExitedEvent -= Exit;
+            MapSwitch.SwitchedOnEvent -= OpenHiddenPath;
+            MapTutorialTrigger.TriggeredTutorialEvent -= StartTutorial;
+
+            charModel.diedEvent -= CharDied;
+
+            isAddedEventListeners = false;
+        }
+
+    }
+
+    private void CollectCollectable (MapCollectableObject collectable) {
+        // TODO
+    }
+
+    private void Exit (int toEntryId) {
+        // TODO
+    }
+
+    private void OpenHiddenPath (MapData.HiddenPathData hiddenPath) {
+        // TODO
+    }
+
+    private void StartTutorial (TutorialEnum.GameTutorialType tutorialType) {
+        // TODO
+    }
+
+    private void CharDied () {
+
+    }
+    #endregion
 }

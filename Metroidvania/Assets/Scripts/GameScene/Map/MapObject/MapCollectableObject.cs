@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using HIHIFramework.Core;
 using UnityEngine;
 
 public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
 
-    public static event Action<MapCollectable.Type> CollectedEvent;
+    public static event Action<MapCollectableObject> CollectedEvent;
 
     public override void Init (MapData.CollectableData data) {
+        Init (data, null);
+    }
+
+    public void Init (MapData.CollectableData data, EnemyModelBase enemy) {
         this.data = data;
 
         var spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
@@ -17,10 +22,13 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
 
         // TODO : Set sprite
 
-
         if (data.isFromEnemy) {
             gameObject.SetActive (false);
-            // TODO : Get Enemy and listen to the diedEvent
+            if (enemy == null) {
+                Log.PrintError ("The enemy reference is null. Cannot listen to enemy diedEvent", LogType.MapData);
+            } else {
+                enemy.diedEvent += OnTriggered;
+            }
         } else {
             gameObject.SetActive (true);
             transform.position = data.GetPos ();
@@ -32,7 +40,6 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
 
             collider.isTrigger = true;
         }
-
     }
 
     protected override bool CheckValidTrigger (Collider2D collision) {
@@ -44,6 +51,10 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
     }
 
     protected override void OnTriggered () {
-        CollectedEvent?.Invoke (data.GetCollectableType ());
+        CollectedEvent?.Invoke (this);
+    }
+
+    public MapCollectable.Type GetCollectableType () {
+        return data.GetCollectableType ();
     }
 }
