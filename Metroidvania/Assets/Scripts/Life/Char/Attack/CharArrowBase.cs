@@ -20,6 +20,7 @@ public abstract class CharArrowBase : MonoBehaviour
         this.direction = direction;
         attackTrigger.HitLifeEvent += HitLife;
         attackTrigger.HitEnvironmentEvent += HitEnvironment;
+        attackTrigger.HitArrowSwitchEvent += HitArrowSwitch;
     }
 
     protected void SetInitPos (Vector3 pos) {
@@ -58,7 +59,7 @@ public abstract class CharArrowBase : MonoBehaviour
         }
     }
 
-    protected virtual void HitLife (LifeBase lifeBase, Transform colliderTransform, bool isInvincible) {
+    private void HitLife (LifeBase lifeBase, Transform colliderTransform, bool isInvincible) {
         if (hasHitAnything) {
             return;
         }
@@ -70,11 +71,20 @@ public abstract class CharArrowBase : MonoBehaviour
         Hit (colliderTransform);
     }
 
-    protected virtual void HitEnvironment (Transform colliderTransform) {
+    private void HitEnvironment (Transform colliderTransform) {
         if (hasHitAnything) {
             return;
         }
 
         Hit (colliderTransform);
+    }
+
+    private void HitArrowSwitch (MapSwitch mapSwitch) {
+        if (hasHitAnything) {
+            return;
+        }
+
+        Hit (mapSwitch.transform);
+        mapSwitch.Trigger ();
     }
 }

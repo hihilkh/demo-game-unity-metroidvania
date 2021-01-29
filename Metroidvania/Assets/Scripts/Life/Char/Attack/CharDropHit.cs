@@ -10,5 +10,10 @@ public class CharDropHit : CharHitBase {
         base.StartAttack (refPoint, direction, charHorizontalSpeed);
 
         FrameworkUtils.InsertChildrenToParent (refPoint, gameObject, false, -1, false);
+        attackTrigger.HitDropHitSwitchEvent += HitDropHitSwitch;
+    }
+
+    private void HitDropHitSwitch (MapSwitch mapSwitch) {
+        mapSwitch.Trigger ();
     }
 }
