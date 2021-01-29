@@ -56,7 +56,7 @@ public static partial class GameVariable {
     public const string AnalyticsTypeKey = "ANALYTICS_TYPE";
 
     // Tutorial
-    public const string HasDoneOpeningTutorialKey = "HAS_DONE_OPENING_TUTORIAL";
+    public const string HasDoneGameTutorialKey = "HAS_DONE_GAME_TUTORIAL_{0}";
 
     // Game Progress
     public const string AllMissionProgressKey = "ALL_MISSION_PROGRESS";

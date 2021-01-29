@@ -25,7 +25,7 @@ public class MapManager : MonoBehaviour {
 
     #region Map Generation
 
-    public void GenerateMap (MapData mapData) {
+    public void GenerateMap (int missionId, MapData mapData) {
 
         if (mapData == null) {
             Log.PrintError ("mapData is null. Please check.", LogType.MapData);
@@ -34,7 +34,7 @@ public class MapManager : MonoBehaviour {
 
         GenerateTiles (mapData.tiles);
         var enemyModelList = GenerateEnemy (mapData.enemies);
-        GenerateCollectables (mapData.collectables, enemyModelList);
+        GenerateCollectables (missionId, mapData.collectables, enemyModelList);
         GenerateSwitches (mapData.switches);
         GenerateExits (mapData.exits);
         GenerateTutorials (mapData.tutorials);
@@ -111,8 +111,7 @@ public class MapManager : MonoBehaviour {
     #region Map Trigger
     // TODO : Think if it can be simplied by a generic method
 
-    // TODO : Do not generate collected collectable
-    private void GenerateCollectables (List<MapData.CollectableData> dataList, List<EnemyModelBase> enemyModelList) {
+    private void GenerateCollectables (int missionId, List<MapData.CollectableData> dataList, List<EnemyModelBase> enemyModelList) {
         if (dataList == null || dataList.Count <= 0) {
             Log.Print ("Skip GenerateCollectables : No collectable data.", LogType.MapData);
             return;
@@ -120,7 +119,13 @@ public class MapManager : MonoBehaviour {
             Log.Print ("Start GenerateCollectables", LogType.MapData);
         }
 
+        var collectedCollectableList = GameProgress.GetMissionProgress (missionId).collectedCollectables;
         foreach (var data in dataList) {
+            if (collectedCollectableList.Contains (data.GetCollectableType ())) {
+                // Already collected
+                continue;
+            }
+
             var go = new GameObject ("MapCollectable");
             FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go);
             var script = go.AddComponent<MapCollectableObject> ();
@@ -183,7 +188,6 @@ public class MapManager : MonoBehaviour {
         Log.Print ("Finish GenerateExits", LogType.MapData);
     }
 
-    // TODO : Do not generate finished tutorials
     private void GenerateTutorials (List<MapData.TutorialData> dataList) {
         if (dataList == null || dataList.Count <= 0) {
             Log.Print ("Skip GenerateTutorials : No tutorial data.", LogType.MapData);
@@ -193,6 +197,10 @@ public class MapManager : MonoBehaviour {
         }
 
         foreach (var data in dataList) {
+            if (TutorialManager.GetHasDoneGameTutorial (data.GetTutorialType ())) {
+                // Tutorial already done
+                continue;
+            }
             var go = new GameObject ("MapTutorial");
             FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go);
             var script = go.AddComponent<MapTutorialTrigger> ();

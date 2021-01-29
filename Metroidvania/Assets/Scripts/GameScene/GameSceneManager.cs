@@ -20,27 +20,30 @@ public class GameSceneManager : MonoBehaviour {
         }
     }
 
+    private int currentMissionId = -1;
+
     private bool isAddedEventListeners = false;
 
     private void Start () {
-        var missionId = 1;
+        //TODO
+        currentMissionId = 1;
         var entryId = 1;
 
         string[] lines = null;
-        var isSuccess = AssetHandler.Instance.TryReadPersistentDataFileByLines (AssetEnum.AssetType.MapData, AssetDetails.GetMapDataJSONFileName (missionId), out lines);
+        var isSuccess = AssetHandler.Instance.TryReadPersistentDataFileByLines (AssetEnum.AssetType.MapData, AssetDetails.GetMapDataJSONFileName (currentMissionId), out lines);
 
         if (!isSuccess) {
-            Log.PrintError ("Read map data Failed. missionId : " + missionId, LogType.GameFlow | LogType.Asset);
+            Log.PrintError ("Read map data Failed. missionId : " + currentMissionId, LogType.GameFlow | LogType.Asset);
             return;
         }
 
         if (lines == null || lines.Length <= 0) {
-            Log.PrintError ("Read map data Failed. missionId : " + missionId + " , Error : JSON file is empty", LogType.GameFlow | LogType.Asset);
+            Log.PrintError ("Read map data Failed. missionId : " + currentMissionId + " , Error : JSON file is empty", LogType.GameFlow | LogType.Asset);
             return;
         }
 
         var mapData = JsonUtility.FromJson<MapData> (lines[0]);
-        mapManager.GenerateMap (mapData);
+        mapManager.GenerateMap (currentMissionId, mapData);
 
         charModel.SetPosAndDirection (mapData.GetEntryData(entryId));
         charModel.SetAllowMove (true);
@@ -83,7 +86,9 @@ public class GameSceneManager : MonoBehaviour {
     }
 
     private void CollectCollectable (MapCollectableObject collectable) {
-        // TODO
+        GameProgress.CollectedCollectable (currentMissionId, collectable.GetCollectableType ());
+
+        //TODO
     }
 
     private void Exit (int toEntryId) {
