@@ -64,7 +64,6 @@ public class GameSceneManager : MonoBehaviour {
 
             MapCollectableObject.CollectedEvent += CollectCollectable;
             MapExit.ExitedEvent += Exit;
-            MapSwitch.SwitchedOnEvent += MapSwitchSwitchedOn;
             MapTutorialTrigger.TriggeredTutorialEvent += StartTutorial;
 
             charModel.diedEvent += CharDied;
@@ -75,7 +74,6 @@ public class GameSceneManager : MonoBehaviour {
         if (isAddedEventListeners) {
             MapCollectableObject.CollectedEvent -= CollectCollectable;
             MapExit.ExitedEvent -= Exit;
-            MapSwitch.SwitchedOnEvent -= MapSwitchSwitchedOn;
             MapTutorialTrigger.TriggeredTutorialEvent -= StartTutorial;
 
             charModel.diedEvent -= CharDied;

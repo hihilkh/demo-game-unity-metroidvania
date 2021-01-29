@@ -26,6 +26,7 @@ public class MapManager : MonoBehaviour {
     public List<IMapTarget> arrowTargetList { get; private set; } = new List<IMapTarget> ();
 
     private bool isAddedEventListeners = false;
+    private const float OpenOneHiddenPathLayerPeriod = 0.1f;
 
     private void OnDestroy () {
         RemoveEventListeners ();
@@ -214,6 +215,21 @@ public class MapManager : MonoBehaviour {
 
     #endregion
 
+    #region Getter
+
+    private (Tilemap, TileBase) GetTile (Vector3Int pos) {
+        foreach (var pair in tileMapDict) {
+            var tile = pair.Value.GetTile (pos);
+            if (tile != null) {
+                return (pair.Value, tile);
+            }
+        }
+
+        return (null, null);
+    }
+
+    #endregion
+
     #region Map interaction
 
     private void AddEventListeners () {
@@ -250,8 +266,39 @@ public class MapManager : MonoBehaviour {
             if (target is MapSwitch) {
                 if ((MapSwitch)target == mapSwitch) {
                     arrowTargetList.Remove (target);
-                    return;
+                    break;
                 }
+            }
+        }
+
+        StartCoroutine (OpenHiddenPath (mapSwitch.GetHiddenPathData ()));
+    }
+
+    private IEnumerator OpenHiddenPath (MapData.HiddenPathData pathData) {
+        var tiles = pathData.GetTilesPosByOpenOrder ();
+
+        if (tiles == null || tiles.Count <= 0) {
+            yield break;
+        }
+
+        for (var i = 0; i < tiles.Count; i++) {
+            OpenOneHiddenPathLayer (tiles[i]);
+            yield return new WaitForSeconds (OpenOneHiddenPathLayerPeriod);
+        }
+    }
+
+    private void OpenOneHiddenPathLayer (List<Vector3Int> tilePosList) {
+        if (tilePosList == null || tilePosList.Count <= 0) {
+            return;
+        }
+
+        foreach (var pos in tilePosList) {
+            (var tilemap, var tileBase) = GetTile (pos);
+
+            if (tilemap == null) {
+                Log.PrintWarning ("No coresponding tilemap of hidden path tile is found. Pos : " + pos, LogType.MapData);
+            } else {
+                tilemap.SetTile (pos, null);
             }
         }
     }
