@@ -8,14 +8,20 @@ using UnityEngine.SceneManagement;
 // TODO : Use Update to control enemy actions
 // TODO : Ensure during beat back and die, no other action
 // TODO : Ensure no action go after die
-public abstract class EnemyModelBase : LifeBase {
+public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     [SerializeField] private EnemyParams _param;
     public EnemyParams param => _param;
     [SerializeField] private Animator animator;
+    [SerializeField] private Transform targetRefPoint;
 
+    /// <summary>
+    /// Input :<br />
+    /// int : enemy id
+    /// </summary>
+    public static event Action<int> DiedEvent;
     public event Action<LifeEnum.HorizontalDirection> facingDirectionChangedEvent;
-    public event Action diedEvent;
+
 
     protected override int posZ => GameVariable.EnemyPosZ;
     protected override int invincibleLayer => GameVariable.EnemyInvincibleLayer;
@@ -239,7 +245,7 @@ public abstract class EnemyModelBase : LifeBase {
     }
 
     public virtual void DestroySelf () {
-        diedEvent?.Invoke ();
+        DiedEvent?.Invoke (id);
 
         if (baseTransform.gameObject != null) {
             Destroy (baseTransform.gameObject);
@@ -383,6 +389,14 @@ public abstract class EnemyModelBase : LifeBase {
 
     private void LeaveWall (bool isSlippyWall) {
         Log.PrintDebug (gameObject.name + " : LeaveWall", LogType.Char);
+    }
+
+    #endregion
+
+    #region IMapTarget
+
+    public Vector2 GetTargetPos () {
+        return targetRefPoint.position;
     }
 
     #endregion

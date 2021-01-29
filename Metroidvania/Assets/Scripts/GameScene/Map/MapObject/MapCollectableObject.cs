@@ -8,11 +8,9 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
 
     public static event Action<MapCollectableObject> CollectedEvent;
 
-    public override void Init (MapData.CollectableData data) {
-        Init (data, null);
-    }
+    private bool isAddedEventListeners = false;
 
-    public void Init (MapData.CollectableData data, EnemyModelBase enemy) {
+    public override void Init (MapData.CollectableData data) {
         this.data = data;
 
         var spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
@@ -24,10 +22,9 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
 
         if (data.isFromEnemy) {
             gameObject.SetActive (false);
-            if (enemy == null) {
-                Log.PrintError ("The enemy reference is null. Cannot listen to enemy diedEvent", LogType.MapData);
-            } else {
-                enemy.diedEvent += OnTriggered;
+            if (!isAddedEventListeners) {
+                isAddedEventListeners = true;
+                EnemyModelBase.DiedEvent += EnemyDied;
             }
         } else {
             gameObject.SetActive (true);
@@ -42,6 +39,12 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
         }
     }
 
+    private void OnDestroy () {
+        if (isAddedEventListeners) {
+            EnemyModelBase.DiedEvent -= EnemyDied;
+        }
+    }
+
     protected override bool CheckValidTrigger (Collider2D collision) {
         if (collision.tag != GameVariable.PlayerTag) {
             return false;
@@ -52,6 +55,12 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
 
     protected override void OnTriggered () {
         CollectedEvent?.Invoke (this);
+    }
+
+    private void EnemyDied (int enemyId) {
+        if (data.isFromEnemy && data.fromEnemyId == enemyId) {
+            OnTriggered ();
+        }
     }
 
     public MapCollectable.Type GetCollectableType () {

@@ -126,11 +126,14 @@ public class CharParams : ScriptableObject {
     [SerializeField] private int _arrowDP_Triple;
     public int arrowDP_Triple => _arrowDP_Triple;
 
-    [SerializeField] private float _targetArrowMaxElevationAngle;
+    [SerializeField] private float _targetArrowMaxInitShootGradient;
     /// <summary>
-    /// In degree
+    /// tan(theta)
     /// </summary>
-    public float targetArrowMaxElevationAngle => _targetArrowMaxElevationAngle;
+    public float targetArrowMaxInitShootGradient => _targetArrowMaxInitShootGradient;
+
+    [SerializeField] private float _targetArrowMaxTargetDistanceSquare;
+    public float targetArrowMaxTargetDistanceSquare => _targetArrowMaxTargetDistanceSquare;
 
     [SerializeField] private List<float> _tripleArrowShootingAngleList;
     /// <summary>

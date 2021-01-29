@@ -8,12 +8,12 @@ public class CharTargetArrow : CharArrowBase {
 
     private const float DefaultImpulseAngleInRadian = Mathf.PI / 6;
 
-    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, Transform target) {
+    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, Vector2? targetPos) {
         Init (facingDirection);
 
         SetInitPos (refPoint.position);
 
-        var impulse = CalculateInitialImpulse (facingDirection, target);
+        var impulse = CalculateInitialImpulse (facingDirection, targetPos);
         rb.AddForce (impulse, ForceMode2D.Impulse);
     }
 
@@ -25,8 +25,8 @@ public class CharTargetArrow : CharArrowBase {
 
     #region Calculation
 
-    private Vector2 CalculateInitialImpulse (LifeEnum.HorizontalDirection facingDirection, Transform target) {
-        var theta = CalculateInitialImpulseAngle (facingDirection, target);
+    private Vector2 CalculateInitialImpulse (LifeEnum.HorizontalDirection facingDirection, Vector2? targetPos) {
+        var theta = CalculateInitialImpulseAngle (facingDirection, targetPos);
 
         var cos = Mathf.Cos (theta);
         var sin = Mathf.Sin (theta);
@@ -34,18 +34,20 @@ public class CharTargetArrow : CharArrowBase {
         return new Vector2 (charParams.arrowInitialSpeed_Target * cos, charParams.arrowInitialSpeed_Target * sin);
     }
 
-    private float CalculateInitialImpulseAngle (LifeEnum.HorizontalDirection facingDirection, Transform target) {
+    private float CalculateInitialImpulseAngle (LifeEnum.HorizontalDirection facingDirection, Vector2? optionalTargetPos) {
         // Remarks :
         // Details calculation refer to : https://www.youtube.com/watch?app=desktop&v=bqYtNrhdDAY
         // h of video -> -deltaY below
         // g of video -> -g below
 
-        if (target == null) {
+        if (optionalTargetPos == null) {
             return GetDefaultImpulseAngle (facingDirection);
         }
 
-        var deltaX = target.position.x - transform.position.x;
-        var deltaY = target.position.y - transform.position.y;
+        var targetPos = (Vector2)optionalTargetPos;
+
+        var deltaX = targetPos.x - transform.position.x;
+        var deltaY = targetPos.y - transform.position.y;
 
         if (facingDirection == LifeEnum.HorizontalDirection.Right && deltaX < 0) {
             Log.PrintWarning ("Wrong direction. Use default impulse.", LogType.Char);
@@ -55,7 +57,7 @@ public class CharTargetArrow : CharArrowBase {
             return GetDefaultImpulseAngle (facingDirection);
         }
 
-        var dist = Vector2.Distance (transform.position, target.position);
+        var dist = Vector2.Distance (transform.position, targetPos);
         var g = rb.gravityScale * Physics2D.gravity.y;
 
         var cosAngleSum = (deltaY - g * deltaX * deltaX / (charParams.arrowInitialSpeed_Target * charParams.arrowInitialSpeed_Target)) / dist;

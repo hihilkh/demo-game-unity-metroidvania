@@ -9,13 +9,11 @@ public class CharShootSMBBase : CharSMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        Transform target = null;
-
         switch (animUtils.model.currentArrowType) {
             case CharEnum.ArrowType.Target:
                 var targetArrowClone = Instantiate (animUtils.targetArrowTemplate);
-                target = animUtils.model.SearchShootTarget ();
-                targetArrowClone.StartAttack (shootRefPoint, animUtils.model.facingDirection, target);
+                var targetPos = animUtils.model.SearchShootTargetPos ();
+                targetArrowClone.StartAttack (shootRefPoint, animUtils.model.facingDirection, targetPos);
                 break;
             case CharEnum.ArrowType.Straight:
                 var straightArrowClone = Instantiate (animUtils.straightArrowTemplate);

@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData> {
+public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget {
 
-    public static event Action<MapData.HiddenPathData> SwitchedOnEvent;
+    public static event Action<MapSwitch> SwitchedOnEvent;
 
     public override void Init (MapData.SwitchData data) {
         base.Init (data);
@@ -39,10 +39,22 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData> {
     }
 
     protected override void OnTriggered () {
-        SwitchedOnEvent?.Invoke (data.hiddenPath);
+        SwitchedOnEvent?.Invoke (this);
     }
 
     public void Trigger () {
         OnTriggered ();
     }
+
+    public MapData.HiddenPathData GetHiddenPathData () {
+        return data.hiddenPath;
+    }
+
+    #region IMapTarget
+
+    public Vector2 GetTargetPos () {
+        return transform.position;
+    }
+
+    #endregion
 }

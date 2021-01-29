@@ -23,6 +23,14 @@ public class MapManager : MonoBehaviour {
         { MapEnum.TileMapType.Background, bgTileMap },
     };
 
+    public List<IMapTarget> arrowTargetList { get; private set; } = new List<IMapTarget> ();
+
+    private bool isAddedEventListeners = false;
+
+    private void OnDestroy () {
+        RemoveEventListeners ();
+    }
+
     #region Map Generation
 
     public void GenerateMap (int missionId, MapData mapData) {
@@ -32,12 +40,16 @@ public class MapManager : MonoBehaviour {
             return;
         }
 
+        arrowTargetList.Clear ();
+
         GenerateTiles (mapData.tiles);
         var enemyModelList = GenerateEnemy (mapData.enemies);
         GenerateCollectables (missionId, mapData.collectables, enemyModelList);
         GenerateSwitches (mapData.switches);
         GenerateExits (mapData.exits);
         GenerateTutorials (mapData.tutorials);
+
+        AddEventListeners ();
     }
 
     private void GenerateTiles (List<MapData.TileData> dataList) {
@@ -101,6 +113,7 @@ public class MapManager : MonoBehaviour {
             instance.Init (data);
 
             enemyModelList.Add (instance);
+            arrowTargetList.Add (instance);
         }
 
         Log.Print ("Finish GenerateEnemy", LogType.MapData);
@@ -129,24 +142,7 @@ public class MapManager : MonoBehaviour {
             var go = new GameObject ("MapCollectable");
             FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go);
             var script = go.AddComponent<MapCollectableObject> ();
-
-            if (data.isFromEnemy) {
-                var isInitialized = false;
-                foreach (var enemy in enemyModelList) {
-                    if (enemy.id == data.fromEnemyId) {
-                        script.Init (data, enemy);
-                        isInitialized = true;
-                        break;
-                    }
-                }
-
-                if (!isInitialized) {
-                    Log.PrintError ("Cannot initialize collectable. Cannot find coresponding enemy with enemyId: " + data.fromEnemyId, LogType.MapData);
-                }
-            } else {
-                script.Init (data);
-            }
-
+            script.Init (data);
         }
 
         Log.Print ("Finish GenerateCollectables", LogType.MapData);
@@ -165,6 +161,10 @@ public class MapManager : MonoBehaviour {
             FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go);
             var script = go.AddComponent<MapSwitch> ();
             script.Init (data);
+
+            if (data.GetSwitchType() == MapEnum.SwitchType.Arrow) {
+                arrowTargetList.Add (script);
+            }
         }
 
         Log.Print ("Finish GenerateSwitches", LogType.MapData);
@@ -211,6 +211,50 @@ public class MapManager : MonoBehaviour {
     }
 
     #endregion
+
+    #endregion
+
+    #region Map interaction
+
+    private void AddEventListeners () {
+        if (!isAddedEventListeners) {
+            isAddedEventListeners = true;
+
+            EnemyModelBase.DiedEvent += EnemyDied;
+            MapSwitch.SwitchedOnEvent += MapSwitchSwitchedOn;
+        }
+    }
+
+    private void RemoveEventListeners () {
+        if (isAddedEventListeners) {
+            EnemyModelBase.DiedEvent -= EnemyDied;
+            MapSwitch.SwitchedOnEvent -= MapSwitchSwitchedOn;
+
+            isAddedEventListeners = false;
+        }
+    }
+
+    private void EnemyDied (int enemyId) {
+        foreach (var target in arrowTargetList) {
+            if (target is EnemyModelBase) {
+                if (((EnemyModelBase)target).id == enemyId) {
+                    arrowTargetList.Remove (target);
+                    return;
+                }
+            }
+        }
+    }
+
+    private void MapSwitchSwitchedOn (MapSwitch mapSwitch) {
+        foreach (var target in arrowTargetList) {
+            if (target is MapSwitch) {
+                if ((MapSwitch)target == mapSwitch) {
+                    arrowTargetList.Remove (target);
+                    return;
+                }
+            }
+        }
+    }
 
     #endregion
 }

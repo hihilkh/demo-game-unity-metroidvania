@@ -17,6 +17,7 @@ MonoBehaviour:
   hpView: {fileID: 832551515858609667}
   _param: {fileID: 11400000, guid: 0a3a4bfc3538b43b8aae60b9d1a641f7, type: 2}
   animator: {fileID: 7489170776341902007}
+  targetRefPoint: {fileID: 7116791182930131958}
 --- !u!1001 &872880587235431056
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -331,6 +332,11 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7989090636763375974, guid: 9944760fd440b460793b212016a1de2c,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9944760fd440b460793b212016a1de2c, type: 3}
 --- !u!1 &7489170776341902004 stripped
@@ -375,3 +381,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 559238d25f6b54183ad5018949d4ae69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &7116791182930131958 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7989090636763375974, guid: 9944760fd440b460793b212016a1de2c,
+    type: 3}
+  m_PrefabInstance: {fileID: 872880587235431056}
+  m_PrefabAsset: {fileID: 0}

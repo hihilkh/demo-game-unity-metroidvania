@@ -5,7 +5,7 @@ using HIHIFramework.Core;
 using System;
 using UnityEngine.SceneManagement;
 
-public class CharModel : LifeBase {
+public class CharModel : LifeBase, IMapTarget {
     // event
     public event Action<CharEnum.BodyPart> obtainedBodyPartsChangedEvent;
     public event Action statusChangedEvent;
@@ -19,6 +19,8 @@ public class CharModel : LifeBase {
     public CharParams param => _param;
     [SerializeField] private CharController controller;
     [SerializeField] private Animator animator;
+    [SerializeField] private Transform targetRefPoint;
+    private MapManager mapManager;
 
     // Body Parts
     public CharEnum.BodyPart obtainedBodyParts { get; private set; } = CharEnum.BodyPart.Head | CharEnum.BodyPart.Arms | CharEnum.BodyPart.Legs | CharEnum.BodyPart.Thrusters | CharEnum.BodyPart.Arrow;
@@ -207,6 +209,20 @@ public class CharModel : LifeBase {
         }
     }
 
+    protected override void SetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
+        base.SetPosAndDirection (pos, direction);
+        movingDirection = facingDirection;
+    }
+
+    public void EnterGameScene (MapManager mapManager, MapData.EntryData entryData) {
+        this.mapManager = mapManager;
+        SetPosAndDirection (entryData.GetPos (), entryData.GetDirection ());
+    }
+
+    public void LeaveGameScene () {
+        this.mapManager = null;
+    }
+
     // Remarks :
     // Currently all physics is with sharp changes, so they are stick on Update().
     // Change to stick on FixedUpdate() if continuous changes is needed.
@@ -242,15 +258,6 @@ public class CharModel : LifeBase {
             ResetAllUpdateControlFlags ();
             StartIdling ();
         }
-    }
-
-    protected override void SetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
-        base.SetPosAndDirection (pos, direction);
-        movingDirection = facingDirection;
-    }
-
-    public void SetPosAndDirection (MapData.EntryData entryData) {
-        SetPosAndDirection (entryData.GetPos (), entryData.GetDirection ());
     }
 
     private void SetStatus (CharEnum.Status status, bool isOn) {
@@ -1028,9 +1035,58 @@ public class CharModel : LifeBase {
         attackCoolDownCoroutine = null;
     }
 
-    public Transform SearchShootTarget () {
-        // TODO
-        return null;
+    public Vector2? SearchShootTargetPos () {
+        if (mapManager == null) {
+            Log.Print ("No ShootTarget found : mapManager == null", LogType.Char | LogType.MapData);
+            return null;
+        }
+
+        var allTargets = mapManager.arrowTargetList;
+        if (allTargets == null || allTargets.Count <= 0) {
+            Log.Print ("No ShootTarget found : no targets in map", LogType.Char | LogType.MapData);
+            return null;
+        }
+
+        Vector2? result = null;
+        var resultDistanceSquare = -1f;
+        var from = GetTargetPos ();
+
+        foreach (var target in allTargets) {
+            var targetPos = target.GetTargetPos ();
+
+            // Check direction
+            var directionRefValue = facingDirection == LifeEnum.HorizontalDirection.Right ? 1 : -1;
+            var deltaX = targetPos.x - from.x;
+            if (Mathf.Sign (deltaX) != directionRefValue) {
+                continue;
+            }
+
+            // Check gradient
+            var deltaY = targetPos.y - from.y;
+            if (Mathf.Abs (deltaX * param.targetArrowMaxInitShootGradient) < Mathf.Abs (deltaY)) {
+                continue;
+            }
+
+            // Check max distance
+            var distanceSquare = deltaX * deltaX + deltaY * deltaY;
+            if (distanceSquare > param.targetArrowMaxTargetDistanceSquare) {
+                continue;
+            }
+
+            // Check smallest distance
+            if (resultDistanceSquare < 0 || resultDistanceSquare > distanceSquare) {
+                result = targetPos;
+                resultDistanceSquare = distanceSquare;
+            }
+        }
+
+        if (result != null) {
+            Log.Print ("ShootTarget found : " + result, LogType.Char | LogType.MapData);
+        } else {
+            Log.Print ("No ShootTarget found : no suitable target", LogType.Char | LogType.MapData);
+        }
+
+        return result;
     }
 
     #endregion
@@ -1340,6 +1396,14 @@ public class CharModel : LifeBase {
         Log.PrintDebug ("StopHoldAction", LogType.Char);
         isHolding = false;
         isJustReleaseHold = true;
+    }
+
+    #endregion
+
+    #region IMapTarget
+
+    public Vector2 GetTargetPos () {
+        return targetRefPoint.position;
     }
 
     #endregion

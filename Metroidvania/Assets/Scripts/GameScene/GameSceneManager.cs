@@ -45,7 +45,7 @@ public class GameSceneManager : MonoBehaviour {
         var mapData = JsonUtility.FromJson<MapData> (lines[0]);
         mapManager.GenerateMap (currentMissionId, mapData);
 
-        charModel.SetPosAndDirection (mapData.GetEntryData(entryId));
+        charModel.EnterGameScene (mapManager, mapData.GetEntryData(entryId));
         charModel.SetAllowMove (true);
 
         AddEventListeners ();
@@ -53,6 +53,7 @@ public class GameSceneManager : MonoBehaviour {
 
     private void OnDestroy () {
         RemoveEventListeners ();
+        charModel.LeaveGameScene ();
     }
 
     #region Events
@@ -63,30 +64,28 @@ public class GameSceneManager : MonoBehaviour {
 
             MapCollectableObject.CollectedEvent += CollectCollectable;
             MapExit.ExitedEvent += Exit;
-            MapSwitch.SwitchedOnEvent += OpenHiddenPath;
+            MapSwitch.SwitchedOnEvent += MapSwitchSwitchedOn;
             MapTutorialTrigger.TriggeredTutorialEvent += StartTutorial;
 
             charModel.diedEvent += CharDied;
         }
-
     }
 
     private void RemoveEventListeners () {
         if (isAddedEventListeners) {
             MapCollectableObject.CollectedEvent -= CollectCollectable;
             MapExit.ExitedEvent -= Exit;
-            MapSwitch.SwitchedOnEvent -= OpenHiddenPath;
+            MapSwitch.SwitchedOnEvent -= MapSwitchSwitchedOn;
             MapTutorialTrigger.TriggeredTutorialEvent -= StartTutorial;
 
             charModel.diedEvent -= CharDied;
 
             isAddedEventListeners = false;
         }
-
     }
 
-    private void CollectCollectable (MapCollectableObject collectable) {
-        GameProgress.CollectedCollectable (currentMissionId, collectable.GetCollectableType ());
+    private void CollectCollectable (MapCollectableObject collectableObject) {
+        GameProgress.CollectedCollectable (currentMissionId, collectableObject.GetCollectableType ());
 
         //TODO
     }
@@ -95,7 +94,7 @@ public class GameSceneManager : MonoBehaviour {
         // TODO
     }
 
-    private void OpenHiddenPath (MapData.HiddenPathData hiddenPath) {
+    private void MapSwitchSwitchedOn (MapSwitch mapSwitch) {
         // TODO
     }
 

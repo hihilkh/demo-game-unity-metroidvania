@@ -136,15 +136,10 @@ namespace HIHIFramework.Core {
             var isInsertAtLast = startSiblingIndex < 0 || startSiblingIndex >= parentTransform.childCount;
             var currentSiblingIndex = startSiblingIndex;
 
-            var localScale = Vector3.one;
-            if (childrenList.Count > 0) {
-                localScale = childrenList[0].localScale;
-            }
-
             for (var i = 0; i < childrenList.Count; i++) {
                 var child = childrenList[i];
                 child.SetParent (parentTransform, isWorldPositionStay);
-                child.localScale = localScale;
+                
                 if (isZPosZero) {
                     child.localPosition = new Vector3 (child.localPosition.x, child.localPosition.y, 0);
                 }
