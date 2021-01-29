@@ -16,6 +16,6 @@ public class MapTutorialTrigger : MapInvisibleTriggerBase<MapData.TutorialData> 
     }
 
     protected override void OnTriggered () {
-        TriggeredTutorialEvent?.Invoke (data.GetTutorialType ());
+        TriggeredTutorialEvent?.Invoke (data.type);
     }
 }

@@ -61,14 +61,14 @@ public class MapManager : MonoBehaviour {
         }
 
         foreach (var data in dataList) {
-            var tileMapType = data.GetTileMapType ();
+            var tileMapType = data.tileMapType;
             if (!tileMapDict.ContainsKey (tileMapType)) {
                 Log.PrintError ("Skipped tile : tileMapDict do not have mapping for tileMapType : " + tileMapType, LogType.MapData);
                 continue;
             }
 
             var targetTilemap = tileMapDict[tileMapType];
-            var tileType = data.GetTileType ();
+            var tileType = data.tileType;
             var resourcesName = TileMapping.GetTileResourcesName (tileType);
             if (string.IsNullOrEmpty (resourcesName)) {
                 Log.PrintError ("Skipped tile : resourcesName is empty for tileType : " + tileType, LogType.MapData);
@@ -96,7 +96,7 @@ public class MapManager : MonoBehaviour {
         }
 
         foreach (var data in dataList) {
-            var enemyType = data.GetEnemyType ();
+            var enemyType = data.type;
             var resourcesName = EnemyMapping.GetEnemyResourcesName (enemyType);
             if (string.IsNullOrEmpty (resourcesName)) {
                 Log.PrintError ("Skipped enemy : resourcesName is empty for enemyType : " + enemyType, LogType.MapData);
@@ -134,7 +134,7 @@ public class MapManager : MonoBehaviour {
 
         var collectedCollectableList = GameProgress.GetMissionProgress (missionId).collectedCollectables;
         foreach (var data in dataList) {
-            if (collectedCollectableList.Contains (data.GetCollectableType ())) {
+            if (collectedCollectableList.Contains (data.type)) {
                 // Already collected
                 continue;
             }
@@ -162,7 +162,7 @@ public class MapManager : MonoBehaviour {
             var script = go.AddComponent<MapSwitch> ();
             script.Init (data);
 
-            if (data.GetSwitchType() == MapEnum.SwitchType.Arrow) {
+            if (data.switchType == MapEnum.SwitchType.Arrow) {
                 arrowTargetList.Add (script);
             }
         }
@@ -197,7 +197,7 @@ public class MapManager : MonoBehaviour {
         }
 
         foreach (var data in dataList) {
-            if (TutorialManager.GetHasDoneGameTutorial (data.GetTutorialType ())) {
+            if (TutorialManager.GetHasDoneGameTutorial (data.type)) {
                 // Tutorial already done
                 continue;
             }

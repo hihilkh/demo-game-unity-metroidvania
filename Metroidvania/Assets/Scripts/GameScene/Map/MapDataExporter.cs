@@ -53,7 +53,7 @@ public class MapDataExporter : MonoBehaviour {
     }
 
     private MapDataTileExportIterator GetMapDataTileExportIterator (MapData.Boundary boundary) {
-        return new MapDataTileExportIterator (tileMapDict, boundary.GetLowerBound (), boundary.GetUpperBound ());
+        return new MapDataTileExportIterator (tileMapDict, boundary.lowerBound, boundary.upperBound);
     }
 
     private void CheckMapDesign () {
@@ -64,16 +64,16 @@ public class MapDataExporter : MonoBehaviour {
 
         foreach (var tileData in iterator) {
             if (tileData != null) {
-                var tileMapType = tileData.GetTileMapType ();
+                var tileMapType = tileData.tileMapType;
                 if (tileMapType == MapEnum.TileMapType.Background) {
-                    if (TileMapping.CheckIsMapDesignTileType (tileData.GetTileType ())) {
+                    if (TileMapping.CheckIsMapDesignTileType (tileData.tileType)) {
                         Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.GetPos () + ", background tile using map design tile type", LogType.MapData);
                         return;
                     }
                 } else {
                     var mapDesignTileType = TileMapping.GetMapDesignTileType (tileMapType);
-                    if (mapDesignTileType == null || mapDesignTileType != tileData.GetTileType ()) {
-                        Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.GetPos () + ", tileType : " + tileData.GetTileType () + " , added to TileMapType : " + tileData.GetTileMapType (), LogType.MapData);
+                    if (mapDesignTileType == null || mapDesignTileType != tileData.tileType) {
+                        Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.GetPos () + ", tileType : " + tileData.tileType + " , added to TileMapType : " + tileData.tileMapType, LogType.MapData);
                         return;
                     }
                 }

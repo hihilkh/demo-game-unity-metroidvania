@@ -123,7 +123,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     }
 
     public bool Init (MapData.EnemyData data) {
-        return Init (data.id, data.GetPos(), data.GetDirection());
+        return Init (data.id, data.pos, data.direction);
     }
 
     private bool Init (int id, Vector2 pos, LifeEnum.HorizontalDirection direction) {

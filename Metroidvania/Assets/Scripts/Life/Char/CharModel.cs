@@ -216,7 +216,7 @@ public class CharModel : LifeBase, IMapTarget {
 
     public void EnterGameScene (MapManager mapManager, MapData.EntryData entryData) {
         this.mapManager = mapManager;
-        SetPosAndDirection (entryData.GetPos (), entryData.GetDirection ());
+        SetPosAndDirection (entryData.pos, entryData.direction);
     }
 
     public void LeaveGameScene () {

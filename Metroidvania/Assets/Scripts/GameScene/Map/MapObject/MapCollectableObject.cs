@@ -28,7 +28,7 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
             }
         } else {
             gameObject.SetActive (true);
-            transform.position = data.GetPos ();
+            transform.position = new Vector3 (data.pos.x, data.pos.y, GameVariable.GeneralMapItemPosZ);
 
             var collider = gameObject.GetComponent<BoxCollider2D> ();
             if (collider == null) {
@@ -64,6 +64,6 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
     }
 
     public MapCollectable.Type GetCollectableType () {
-        return data.GetCollectableType ();
+        return data.type;
     }
 }

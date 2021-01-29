@@ -10,7 +10,7 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget
     public override void Init (MapData.SwitchData data) {
         base.Init (data);
 
-        switch (data.GetSwitchType ()) {
+        switch (data.switchType) {
             case MapEnum.SwitchType.Arrow:
                 gameObject.tag = GameVariable.ArrowSwitchTag;
                 break;
@@ -25,7 +25,7 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget
     }
 
     protected override bool CheckValidTrigger (Collider2D collision) {
-        if (data.GetSwitchType () != MapEnum.SwitchType.Normal) {
+        if (data.switchType != MapEnum.SwitchType.Normal) {
             // Trigger by Arrow attack or drop hit attack
             return false;
         }

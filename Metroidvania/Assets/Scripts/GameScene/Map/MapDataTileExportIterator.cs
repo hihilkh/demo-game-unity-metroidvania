@@ -84,7 +84,7 @@ public class MapDataTileExportIterator : IEnumerable<MapData.TileData> {
                 default:
                     var tileMapTypesStr = "";
                     foreach (var tileData in result) {
-                        tileMapTypesStr += tileData.GetTileMapType () + "  ";
+                        tileMapTypesStr += tileData.tileMapType + "  ";
                     }
 
                     Log.PrintError ("GetTileData for export error. Multiple TiieData. Pos : (" + x + ", " + y + ") , TileMapTypes : " + tileMapTypesStr, LogType.MapData);

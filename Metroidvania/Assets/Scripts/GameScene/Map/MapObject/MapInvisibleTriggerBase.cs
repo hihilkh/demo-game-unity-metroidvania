@@ -8,7 +8,7 @@ public abstract class MapInvisibleTriggerBase<T> : MapTriggerBase<T> where T : M
     public override void Init (T data) {
         this.data = data;
 
-        transform.position = data.collider.GetPos ();
+        transform.position = new Vector3 (data.collider.pos.x, data.collider.pos.y, GameVariable.GeneralMapItemPosZ);
 
         var collider = gameObject.GetComponent<BoxCollider2D> ();
         if (collider == null) {
@@ -16,6 +16,6 @@ public abstract class MapInvisibleTriggerBase<T> : MapTriggerBase<T> where T : M
         }
 
         collider.isTrigger = true;
-        collider.size = data.collider.GetSize ();
+        collider.size = data.collider.size;
     }
 }
