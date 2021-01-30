@@ -36,6 +36,7 @@ public class MissionDetails {
     private static readonly MissionDetails Mission_4 = new MissionDetails (4, "Mission_4", "Map_4");
     private static readonly MissionDetails Mission_5 = new MissionDetails (5, "Mission_5", "Map_5");
 
+    // TODO : Think if need order or not
     public static List<MissionDetails> OrderedMissionList { get; private set; } = new List<MissionDetails> {
             Mission_1,
             Mission_2,
@@ -44,5 +45,9 @@ public class MissionDetails {
             Mission_5,
     };
 
+    public static int GetMissionIdByEntry (int entryId) {
+        // TODO
+        return -1;
+    }
     #endregion
 }

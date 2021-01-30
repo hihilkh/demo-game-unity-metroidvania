@@ -25,7 +25,7 @@ public class MainMenuSceneManager : MonoBehaviour {
         foreach (var missionDetails in MissionDetails.OrderedMissionList) {
             var clone = Instantiate<SelectMissionItem> (selectMissionItemTemplate);
 
-            var progress = GameProgress.GetMissionProgress (missionDetails.id);
+            var progress = UserManager.GetMissionProgress (missionDetails.id);
             clone.Init (missionDetails, progress);
 
             selectMissionItemList.Add (clone);

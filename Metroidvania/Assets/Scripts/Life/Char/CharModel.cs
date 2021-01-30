@@ -11,6 +11,7 @@ public class CharModel : LifeBase, IMapTarget {
     public event Action statusChangedEvent;
     public event Action facingDirectionChangedEvent;
     public event Action movingDirectionChangedEvent;
+    public event Action horizontalSpeedChangedEvent;
     public event Action diedEvent;
 
     private Dictionary<CharEnum.InputSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
@@ -75,7 +76,13 @@ public class CharModel : LifeBase, IMapTarget {
     // Character Situation
     private LifeEnum.HorizontalDirection? _facingDirection = null;
     public override LifeEnum.HorizontalDirection facingDirection {
-        get { return (LifeEnum.HorizontalDirection)_facingDirection; }
+        get {
+            if (_facingDirection == null) {
+                return default;
+            } else {
+                return (LifeEnum.HorizontalDirection)_facingDirection;
+            }
+        }
         protected set {
             if (_facingDirection != value) {
                 _facingDirection = value;
@@ -87,7 +94,13 @@ public class CharModel : LifeBase, IMapTarget {
 
     private LifeEnum.HorizontalDirection? _movingDirection = null;
     public LifeEnum.HorizontalDirection movingDirection {
-        get { return (LifeEnum.HorizontalDirection)_movingDirection; }
+        get {
+            if (_movingDirection == null) {
+                return default;
+            } else {
+                return (LifeEnum.HorizontalDirection)_movingDirection;
+            }
+        }
         protected set {
             if (_movingDirection != value) {
                 _movingDirection = value;
@@ -96,7 +109,23 @@ public class CharModel : LifeBase, IMapTarget {
         }
     }
 
-    public CharEnum.HorizontalSpeed currentHorizontalSpeed { get; private set; }
+    private CharEnum.HorizontalSpeed? _currentHorizontalSpeed = null;
+    public CharEnum.HorizontalSpeed currentHorizontalSpeed {
+        get {
+            if (_currentHorizontalSpeed == null) {
+                return default;
+            } else {
+                return (CharEnum.HorizontalSpeed)_currentHorizontalSpeed;
+            }
+        }
+        protected set {
+            if (_currentHorizontalSpeed != value) {
+                _currentHorizontalSpeed = value;
+                horizontalSpeedChangedEvent?.Invoke ();
+            }
+        }
+    }
+
     public CharEnum.HitType? currentHitType { get; private set; }
     public CharEnum.ArrowType? currentArrowType { get; private set; }
     private bool isAllowMove;
@@ -128,7 +157,9 @@ public class CharModel : LifeBase, IMapTarget {
     private bool isJustTouchWall;
     private bool isTouchingWall;
 
-    private void Awake () {
+    protected override void Awake () {
+        base.Awake ();
+
         // Remarks :
         // Currently do not add StartedLeft, StoppedLeft, StartedRight, StoppedRight handling to prevent complicated code.
         // Add them back if found them to be useful for development or debugging.
@@ -161,9 +192,18 @@ public class CharModel : LifeBase, IMapTarget {
             return hasInitBefore;
         }
 
-        currentStatus = CharEnum.Status.Normal;
+        SetReadyForGame ();
 
+        return hasInitBefore;
+    }
+
+    public void SetReadyForGame () {
+        ResetFlags ();
         SetAllowMove (false);
+    }
+
+    private void ResetFlags () {
+        currentStatus = CharEnum.Status.Normal;
 
         currentHitType = null;
         currentArrowType = null;
@@ -171,17 +211,22 @@ public class CharModel : LifeBase, IMapTarget {
 
         isJustJumpedUp = false;
 
-        dashCoroutine = null;
+        if (dashCoroutine != null) {
+            StopCoroutine (dashCoroutine);
+            dashCoroutine = null;
+        }
 
-        attackCoolDownCoroutine = null;
+        if (attackCoolDownCoroutine != null) {
+            StopCoroutine (attackCoolDownCoroutine);
+            attackCoolDownCoroutine = null;
+        }
 
         isTouchingWall = false;
 
-        hpRecoveryCoroutine = null;
+        currentHP = totalHP;
+        SetHPRecovery (false);
 
         ResetAllUpdateControlFlags ();
-
-        return hasInitBefore;
     }
 
     private void ResetAllUpdateControlFlags () {
@@ -262,7 +307,6 @@ public class CharModel : LifeBase, IMapTarget {
         if (isAllowMove) {
             StartWalking ();
         } else {
-            ResetAllUpdateControlFlags ();
             StartIdling ();
         }
     }
@@ -291,7 +335,7 @@ public class CharModel : LifeBase, IMapTarget {
     }
 
     public void ObtainBodyPart (CharEnum.BodyPart part) {
-        if (!obtainedBodyParts.HasFlag(part)) {
+        if (!obtainedBodyParts.HasFlag (part)) {
             obtainedBodyParts = obtainedBodyParts | part;
 
             obtainedBodyPartsChangedEvent?.Invoke (obtainedBodyParts);
@@ -462,7 +506,7 @@ public class CharModel : LifeBase, IMapTarget {
                     case CharEnum.InputSituation.GroundRelease:
                     case CharEnum.InputSituation.AirRelease:
                         var checkSituation = (situation == CharEnum.InputSituation.GroundRelease) ? CharEnum.InputSituation.GroundHold : CharEnum.InputSituation.AirHold;
-                        if (GetCommandBySituation(checkSituation) == CharEnum.Command.Jump) {
+                        if (GetCommandBySituation (checkSituation) == CharEnum.Command.Jump) {
                             // That mean this release command should be a charged jump
                             if (GetIsInStatus (CharEnum.Status.JumpCharging)) {
                                 StartCoroutine (Jump ());
@@ -548,7 +592,7 @@ public class CharModel : LifeBase, IMapTarget {
                     Hit ((CharEnum.HitType)hitType);
                 }
                 isTriggeredCommand = true;
-                
+
                 break;
             case CharEnum.Command.Arrow:
                 if (GetIsInStatus (CharEnum.Status.AttackCoolingDown)) {
@@ -609,7 +653,7 @@ public class CharModel : LifeBase, IMapTarget {
                         Log.PrintWarning ("No action of Turn command is defined for holding. Please check.", LogType.Char);
                         break;
                 }
-                
+
                 break;
         }
 
@@ -664,7 +708,7 @@ public class CharModel : LifeBase, IMapTarget {
         Log.PrintDebug ("Char ResetAnimatorTrigger : " + trigger, LogType.Char | LogType.Animation);
         animator.ResetTrigger (trigger);
     }
-    
+
     protected void SetAnimatorBool (string boolName, bool value) {
         Log.PrintDebug ("Char SetAnimatorBool : " + boolName + " ; Value : " + value, LogType.Char | LogType.Animation);
         animator.SetBool (boolName, value);
@@ -1414,4 +1458,20 @@ public class CharModel : LifeBase, IMapTarget {
     }
 
     #endregion
+
+    #region MapDisposableBase
+
+    private bool _isDisposeWhenMapReset = false;
+    protected override bool isDisposeWhenMapReset => _isDisposeWhenMapReset;
+
+    protected override void Dispose () {
+        // TODO
+    }
+
+    public void SetIsDisposeWhenMapReset (bool isDispose) {
+        _isDisposeWhenMapReset = isDispose;
+    }
+
+    #endregion
+
 }

@@ -83,7 +83,8 @@ namespace HIHIFramework.Core {
         }
 
         /// <summary>
-        /// Used by non MonoBehaviour scripts. Call coroutine to wait until <paramref name="predicate"/> return <b>true</b> and trigger <paramref name="action"/>.
+        /// Call coroutine to wait until <paramref name="predicate"/> return <b>true</b> and trigger <paramref name="action"/>.<br />
+        /// Can be used by non MonoBehaviour scripts.
         /// </summary>
         /// <param name="predicate"></param>
         /// <param name="action"></param>

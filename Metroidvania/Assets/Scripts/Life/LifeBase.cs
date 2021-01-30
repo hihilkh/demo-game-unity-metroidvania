@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using HIHIFramework.Core;
 using UnityEngine;
 
-public abstract class LifeBase : MonoBehaviour {
+public abstract class LifeBase : MapDisposableBase {
     [SerializeField] protected Transform baseTransform;
     [SerializeField] protected LifeCollision lifeCollision;
     [SerializeField] private LifeHPView hpView;
@@ -35,7 +35,9 @@ public abstract class LifeBase : MonoBehaviour {
 
     protected bool isInitialized = false;
 
-    protected virtual void OnDestroy () {
+    protected override void OnDestroy () {
+        base.OnDestroy ();
+
         if (isInitialized) {
             UnregisterCollisionEventHandler ();
         }

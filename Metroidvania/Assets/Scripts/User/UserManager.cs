@@ -4,19 +4,29 @@ using System.Collections.ObjectModel;
 using UnityEngine;
 using HIHIFramework.Core;
 
-public static class GameProgress {
+public static class UserManager {
 
     public static Dictionary<int, MissionProgress> MissionProgressDict { get; private set; }
     public static List<CharEnum.Command> EnabledCommandList { get; private set; }
 
-    #region Init
-
-    static GameProgress () {
-        LoadProgress ();
+    public static int SelectedMissionId {
+        get { return PlayerPrefs.GetInt (GameVariable.SelectedMissionIdKey, -1); }
+        set { PlayerPrefs.SetInt (GameVariable.SelectedMissionIdKey, value); }
     }
 
-    private static void LoadProgress () {
-        Log.PrintDebug ("Load Game Progress", LogType.GameFlow);
+    public static int SelectedMapEntryId {
+        get { return PlayerPrefs.GetInt (GameVariable.SelectedMapEntryIdKey, -1); }
+        set { PlayerPrefs.SetInt (GameVariable.SelectedMapEntryIdKey, value); }
+    }
+
+    #region Init
+
+    static UserManager () {
+        LoadUserProgress ();
+    }
+
+    private static void LoadUserProgress () {
+        Log.PrintDebug ("Load User Progress", LogType.GameFlow);
         LoadMissionProgressList ();
         LoadEnabledCommandList ();
     }
@@ -28,7 +38,7 @@ public static class GameProgress {
     /// <summary>
     /// Get the MissionProgress of the corresponding missionId.<br />
     /// Notes :<br />
-    /// 1. The returned value is referenced in GameProgress class. Do not amend it outside the GameProgress class. Clone and use it if needed.<br />
+    /// 1. The returned value is referenced in UserManager class. Do not amend it outside the UserManager class. Clone and use it if needed.<br />
     /// 2. The returned value is ensured not be null
     /// </summary>
     public static MissionProgress GetMissionProgress (int missionId) {
@@ -111,19 +121,16 @@ public static class GameProgress {
         }
     }
 
-    public static void ClearMission (int missionId) {
+    public static void ClearMission (int missionId, int? toEntryId = null) {
         var clearMissionProgress = GetMissionProgress (missionId);
         clearMissionProgress.isCleared = true;
 
-        var clearMissionIndex = MissionDetails.OrderedMissionList.FindIndex (x => x.id == missionId);
-        if (clearMissionIndex < 0) {
-            Log.PrintWarning ("You has just cleared a mission which is not inside OrderedMissionList. Please check. Mission Id : " + missionId, LogType.GameFlow);
-        } else {
-            if (clearMissionIndex + 1 < MissionDetails.OrderedMissionList.Count) { // Check if there is next mission or not
-                var nextMissionId = MissionDetails.OrderedMissionList[clearMissionIndex + 1].id;
-                var nextMissionProgress = GetMissionProgress (nextMissionId);
-                nextMissionProgress.isUnlocked = true;
-            }
+        if (toEntryId != null) {
+            var nextMissionId = MissionDetails.GetMissionIdByEntry ((int)toEntryId);
+            var nextMissionProgress = GetMissionProgress (nextMissionId);
+            nextMissionProgress.isUnlocked = true;
+
+            // TODO : unlock entry
         }
 
         SaveMissionProgressList ();

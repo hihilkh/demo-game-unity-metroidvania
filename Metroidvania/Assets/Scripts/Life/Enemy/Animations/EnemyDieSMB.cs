@@ -18,7 +18,7 @@ public class EnemyDieSMB : EnemyBeatBackSMB {
             if (stateInfo.normalizedTime >= 1) {
                 isAnimFinished = true;
 
-                animUtils.model.DestroySelf ();
+                animUtils.model.DestroySelf (true);
             }
         }
     }

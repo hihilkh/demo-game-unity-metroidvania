@@ -14,9 +14,9 @@ public class CharEnum {
     }
 
     public enum HorizontalSpeed {
-        Idle,
-        Walk,
-        Dash,
+        Idle = 0,       // The default value 0 is used for any fallback cases
+        Walk = 1,
+        Dash = 2,
     }
 
     // Remarks: Never change the Command enum int value. It is saved in PlayerPrefs to represent the Command

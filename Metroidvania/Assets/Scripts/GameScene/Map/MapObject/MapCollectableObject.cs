@@ -39,7 +39,9 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
         }
     }
 
-    private void OnDestroy () {
+    protected override void OnDestroy () {
+        base.OnDestroy ();
+
         if (isAddedEventListeners) {
             EnemyModelBase.DiedEvent -= EnemyDied;
         }

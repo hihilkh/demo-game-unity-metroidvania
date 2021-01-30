@@ -23,7 +23,12 @@ public class MapManager : MonoBehaviour {
         { MapEnum.TileMapType.Background, bgTileMap },
     };
 
+    public static Action MapResetingEvent;
+
+    private int missionId;
+    private MapData mapData;
     public List<IMapTarget> arrowTargetList { get; private set; } = new List<IMapTarget> ();
+    private List<Vector2Int> removedTilePosList = new List<Vector2Int> ();
 
     private bool isAddedEventListeners = false;
     private const float OpenOneHiddenPathLayerPeriod = 0.1f;
@@ -35,7 +40,30 @@ public class MapManager : MonoBehaviour {
     #region Map Generation
 
     public void GenerateMap (int missionId, MapData mapData) {
+        this.missionId = missionId;
+        this.mapData = mapData;
 
+        if (mapData == null) {
+            Log.PrintError ("mapData is null. Please check.", LogType.MapData);
+            return;
+        }
+
+        removedTilePosList.Clear ();
+        GenerateTiles (mapData.tiles);
+        GenerateExits (mapData.exits);
+        GenerateMapDisposableObjects ();
+
+        AddEventListeners ();
+    }
+
+    public void ResetMap () {
+        MapResetingEvent?.Invoke ();
+
+        RegenerateRemovedTiles ();
+        GenerateMapDisposableObjects ();
+    }
+
+    private void GenerateMapDisposableObjects () {
         if (mapData == null) {
             Log.PrintError ("mapData is null. Please check.", LogType.MapData);
             return;
@@ -43,14 +71,10 @@ public class MapManager : MonoBehaviour {
 
         arrowTargetList.Clear ();
 
-        GenerateTiles (mapData.tiles);
-        var enemyModelList = GenerateEnemy (mapData.enemies);
-        GenerateCollectables (missionId, mapData.collectables, enemyModelList);
+        GenerateEnemy (mapData.enemies);
+        GenerateCollectables (missionId, mapData.collectables);
         GenerateSwitches (mapData.switches);
-        GenerateExits (mapData.exits);
         GenerateTutorials (mapData.tutorials);
-
-        AddEventListeners ();
     }
 
     private void GenerateTiles (List<MapData.TileData> dataList) {
@@ -62,36 +86,69 @@ public class MapManager : MonoBehaviour {
         }
 
         foreach (var data in dataList) {
-            var tileMapType = data.tileMapType;
-            if (!tileMapDict.ContainsKey (tileMapType)) {
-                Log.PrintError ("Skipped tile : tileMapDict do not have mapping for tileMapType : " + tileMapType, LogType.MapData);
-                continue;
-            }
-
-            var targetTilemap = tileMapDict[tileMapType];
-            var tileType = data.tileType;
-            var resourcesName = TileMapping.GetTileResourcesName (tileType);
-            if (string.IsNullOrEmpty (resourcesName)) {
-                Log.PrintError ("Skipped tile : resourcesName is empty for tileType : " + tileType, LogType.MapData);
-                continue;
-            }
-
-            var tile = Resources.Load<Tile> (resourcesName);
-            if (tile == null) {
-                Log.PrintError ("Skipped tile : Cannot load tile resources for resourcesName : " + resourcesName, LogType.MapData);
-                continue;
-            }
-            targetTilemap.SetTile (data.GetPos (), tile);
+            GenerateTile (data);
         }
 
         Log.Print ("Finish GenerateTiles", LogType.MapData);
     }
 
-    private List<EnemyModelBase> GenerateEnemy (List<MapData.EnemyData> dataList) {
-        var enemyModelList = new List<EnemyModelBase> ();
+    private void GenerateTile (MapData.TileData data) {
+        var tileMapType = data.tileMapType;
+        if (!tileMapDict.ContainsKey (tileMapType)) {
+            Log.PrintError ("generate tile failed : tileMapDict do not have mapping for tileMapType : " + tileMapType, LogType.MapData);
+            return;
+        }
+
+        var targetTilemap = tileMapDict[tileMapType];
+        var tileType = data.tileType;
+        var resourcesName = TileMapping.GetTileResourcesName (tileType);
+        if (string.IsNullOrEmpty (resourcesName)) {
+            Log.PrintError ("generate tile failed : resourcesName is empty for tileType : " + tileType, LogType.MapData);
+            return;
+        }
+
+        var tile = Resources.Load<Tile> (resourcesName);
+        if (tile == null) {
+            Log.PrintError ("generate tile failed : Cannot load tile resources for resourcesName : " + resourcesName, LogType.MapData);
+            return;
+        }
+
+        targetTilemap.SetTile (new Vector3Int (data.pos.x, data.pos.y, GameVariable.TilePosZ), tile);
+    }
+
+    private void RegenerateRemovedTiles () {
+        foreach (var pos in removedTilePosList) {
+            var tileData = mapData.GetTileData (pos);
+            if (tileData != null) {
+                GenerateTile (tileData);
+            }
+        }
+
+        removedTilePosList.Clear ();
+    }
+
+    private void GenerateExits (List<MapData.ExitData> dataList) {
+        if (dataList == null || dataList.Count <= 0) {
+            Log.PrintError ("No exit data. Please check.", LogType.MapData);
+            return;
+        } else {
+            Log.Print ("Start GenerateExits", LogType.MapData);
+        }
+
+        foreach (var data in dataList) {
+            var go = new GameObject ("MapExit");
+            FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go);
+            var script = go.AddComponent<MapExit> ();
+            script.Init (data);
+        }
+
+        Log.Print ("Finish GenerateExits", LogType.MapData);
+    }
+
+    private void GenerateEnemy (List<MapData.EnemyData> dataList) {
         if (dataList == null || dataList.Count <= 0) {
             Log.Print ("Skip GenerateEnemy : No enemy data.", LogType.MapData);
-            return enemyModelList;
+            return;
         } else {
             Log.Print ("Start GenerateEnemy", LogType.MapData);
         }
@@ -112,20 +169,18 @@ public class MapManager : MonoBehaviour {
 
             var instance = Instantiate (enemy, mapObjectsBaseTransform);
             instance.Init (data);
-
-            enemyModelList.Add (instance);
             arrowTargetList.Add (instance);
         }
 
         Log.Print ("Finish GenerateEnemy", LogType.MapData);
 
-        return enemyModelList;
+        return;
     }
 
     #region Map Trigger
     // TODO : Think if it can be simplied by a generic method
 
-    private void GenerateCollectables (int missionId, List<MapData.CollectableData> dataList, List<EnemyModelBase> enemyModelList) {
+    private void GenerateCollectables (int missionId, List<MapData.CollectableData> dataList) {
         if (dataList == null || dataList.Count <= 0) {
             Log.Print ("Skip GenerateCollectables : No collectable data.", LogType.MapData);
             return;
@@ -133,7 +188,7 @@ public class MapManager : MonoBehaviour {
             Log.Print ("Start GenerateCollectables", LogType.MapData);
         }
 
-        var collectedCollectableList = GameProgress.GetMissionProgress (missionId).collectedCollectables;
+        var collectedCollectableList = UserManager.GetMissionProgress (missionId).collectedCollectables;
         foreach (var data in dataList) {
             if (collectedCollectableList.Contains (data.type)) {
                 // Already collected
@@ -169,24 +224,6 @@ public class MapManager : MonoBehaviour {
         }
 
         Log.Print ("Finish GenerateSwitches", LogType.MapData);
-    }
-
-    private void GenerateExits (List<MapData.ExitData> dataList) {
-        if (dataList == null || dataList.Count <= 0) {
-            Log.PrintError ("No exit data. Please check.", LogType.MapData);
-            return;
-        } else {
-            Log.Print ("Start GenerateExits", LogType.MapData);
-        }
-
-        foreach (var data in dataList) {
-            var go = new GameObject ("MapExit");
-            FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go);
-            var script = go.AddComponent<MapExit> ();
-            script.Init (data);
-        }
-
-        Log.Print ("Finish GenerateExits", LogType.MapData);
     }
 
     private void GenerateTutorials (List<MapData.TutorialData> dataList) {
@@ -298,6 +335,7 @@ public class MapManager : MonoBehaviour {
             if (tilemap == null) {
                 Log.PrintWarning ("No coresponding tilemap of hidden path tile is found. Pos : " + pos, LogType.MapData);
             } else {
+                removedTilePosList.Add (new Vector2Int (pos.x, pos.y));
                 tilemap.SetTile (pos, null);
             }
         }

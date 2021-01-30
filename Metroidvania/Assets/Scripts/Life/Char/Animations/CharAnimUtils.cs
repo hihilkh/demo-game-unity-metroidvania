@@ -90,6 +90,7 @@ public class CharAnimUtils : MonoBehaviour {
         model.statusChangedEvent += NeedCommonUpdateAction;
         model.facingDirectionChangedEvent += NeedCommonUpdateAction;
         model.movingDirectionChangedEvent += NeedCommonUpdateAction;
+        model.horizontalSpeedChangedEvent += NeedCommonUpdateAction;
     }
 
     private void Start () {
@@ -120,6 +121,7 @@ public class CharAnimUtils : MonoBehaviour {
         model.statusChangedEvent -= NeedCommonUpdateAction;
         model.facingDirectionChangedEvent -= NeedCommonUpdateAction;
         model.movingDirectionChangedEvent -= NeedCommonUpdateAction;
+        model.horizontalSpeedChangedEvent -= NeedCommonUpdateAction;
     }
 
     private void NeedCommonUpdateAction () {

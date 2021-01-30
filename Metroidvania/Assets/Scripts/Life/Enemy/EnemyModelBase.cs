@@ -29,7 +29,13 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     private LifeEnum.HorizontalDirection? _facingDirection = null;
     public override LifeEnum.HorizontalDirection facingDirection {
-        get { return (LifeEnum.HorizontalDirection)_facingDirection; }
+        get {
+            if (_facingDirection == null) {
+                return default;
+            } else {
+                return (LifeEnum.HorizontalDirection)_facingDirection;
+            }
+        }
         protected set {
             if (_facingDirection != value) {
                 _facingDirection = value;
@@ -244,7 +250,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         SetAnimatorBool (EnemyAnimConstant.InvincibleBoolName, false);
     }
 
-    public virtual void DestroySelf () {
+    public virtual void DestroySelf (bool isDie) {
         DiedEvent?.Invoke (id);
 
         if (baseTransform.gameObject != null) {
@@ -397,6 +403,14 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     public Vector2 GetTargetPos () {
         return targetRefPoint.position;
+    }
+
+    #endregion
+
+    #region MapDisposableBase
+
+    protected override void Dispose () {
+        DestroySelf (false);
     }
 
     #endregion

@@ -11,6 +11,8 @@ public class MapExit : MapInvisibleTriggerBase<MapData.ExitData> {
     /// </summary>
     public static event Action<int> ExitedEvent;
 
+    protected override bool isDisposeWhenMapReset => false;
+
     protected override bool CheckValidTrigger (Collider2D collision) {
         if (collision.tag != GameVariable.PlayerTag) {
             return false;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using HIHIFramework.Core;
 using UnityEngine;
 
-public abstract class MapTriggerBase<T> : MonoBehaviour {
+public abstract class MapTriggerBase<T> : MapDisposableBase {
 
     protected T data;
 
@@ -24,5 +24,13 @@ public abstract class MapTriggerBase<T> : MonoBehaviour {
         OnTriggered ();
     }
 
+    #region MapDisposableBase
 
+    protected override void Dispose () {
+        if (gameObject != null) {
+            Destroy (gameObject);
+        }
+    }
+
+    #endregion
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HIHIFramework.Asset;
 using HIHIFramework.Core;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameSceneManager : MonoBehaviour {
 
@@ -20,41 +21,74 @@ public class GameSceneManager : MonoBehaviour {
         }
     }
 
-    private int currentMissionId = -1;
+    private int selectedMissionId = -1;
+    private int selectedMapEntryId = -1;
+    private MapData mapData = null;
 
     private bool isAddedEventListeners = false;
 
+    private void Awake () {
+        selectedMissionId = UserManager.SelectedMissionId;
+        selectedMapEntryId = UserManager.SelectedMapEntryId;
+        mapData = GetMapData (selectedMissionId);
+    }
+
     private void Start () {
-        //TODO
-        currentMissionId = 1;
-        var entryId = 1;
-
-        string[] lines = null;
-        var isSuccess = AssetHandler.Instance.TryReadPersistentDataFileByLines (AssetEnum.AssetType.MapData, AssetDetails.GetMapDataJSONFileName (currentMissionId), out lines);
-
-        if (!isSuccess) {
-            Log.PrintError ("Read map data Failed. missionId : " + currentMissionId, LogType.GameFlow | LogType.Asset);
-            return;
-        }
-
-        if (lines == null || lines.Length <= 0) {
-            Log.PrintError ("Read map data Failed. missionId : " + currentMissionId + " , Error : JSON file is empty", LogType.GameFlow | LogType.Asset);
-            return;
-        }
-
-        var mapData = JsonUtility.FromJson<MapData> (lines[0]);
-        mapManager.GenerateMap (currentMissionId, mapData);
-
-        charModel.EnterGameScene (mapManager, mapData.GetEntryData(entryId), mapData.boundary);
-        charModel.SetAllowMove (true);
-
-        AddEventListeners ();
+        ResetGame (true);
     }
 
     private void OnDestroy () {
         RemoveEventListeners ();
         charModel.LeaveGameScene ();
     }
+
+    #region Game Flow
+
+    private MapData GetMapData (int missionId) {
+        string[] lines = null;
+        var isSuccess = AssetHandler.Instance.TryReadPersistentDataFileByLines (AssetEnum.AssetType.MapData, AssetDetails.GetMapDataJSONFileName (missionId), out lines);
+
+        if (!isSuccess) {
+            Log.PrintError ("Read map data Failed. missionId : " + missionId, LogType.GameFlow | LogType.Asset);
+            return null;
+        }
+
+        if (lines == null || lines.Length <= 0) {
+            Log.PrintError ("Read map data Failed. missionId : " + missionId + " , Error : JSON file is empty", LogType.GameFlow | LogType.Asset);
+            return null;
+        }
+
+        return JsonUtility.FromJson<MapData> (lines[0]);
+    }
+
+    private void ResetGame (bool isInit) {
+        if (isInit) {
+            mapManager.GenerateMap (selectedMissionId, mapData);
+            charModel.EnterGameScene (mapManager, mapData.GetEntryData (selectedMapEntryId), mapData.boundary);
+
+            AddEventListeners ();
+        } else {
+            mapManager.ResetMap ();
+        }
+
+        charModel.SetReadyForGame ();
+
+        // TODO : Set command
+        // TODO : opening animation
+        StartCoroutine (StartGame (3));
+    }
+
+    private IEnumerator StartGame (float waitTime) {
+        yield return new WaitForSeconds (waitTime);
+        charModel.SetAllowMove (true);
+    }
+
+    private void LeaveGame () {
+        // TODO : Transition
+        SceneManager.LoadScene (GameVariable.MainMenuSceneName);
+    }
+
+    #endregion
 
     #region Events
 
@@ -83,17 +117,15 @@ public class GameSceneManager : MonoBehaviour {
     }
 
     private void CollectCollectable (MapCollectableObject collectableObject) {
-        GameProgress.CollectedCollectable (currentMissionId, collectableObject.GetCollectableType ());
+        UserManager.CollectedCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
 
         //TODO
     }
 
     private void Exit (int toEntryId) {
-        // TODO
-    }
+        UserManager.ClearMission (selectedMissionId, toEntryId);
 
-    private void MapSwitchSwitchedOn (MapSwitch mapSwitch) {
-        // TODO
+        LeaveGame ();
     }
 
     private void StartTutorial (TutorialEnum.GameTutorialType tutorialType) {
@@ -101,7 +133,9 @@ public class GameSceneManager : MonoBehaviour {
     }
 
     private void CharDied () {
-
+        // TODO : Transition
+        ResetGame (false);
     }
+
     #endregion
 }

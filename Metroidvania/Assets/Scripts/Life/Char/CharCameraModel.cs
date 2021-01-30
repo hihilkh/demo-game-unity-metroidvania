@@ -39,11 +39,6 @@ public class CharCameraModel : MonoBehaviour
         }
     }
 
-    private void Start () {
-        // TODO : Set with MapData
-        SetMissionBoundaries (new Vector2 (-35, -25), new Vector2 (210, 35));
-    }
-
     private void LateUpdate () {
         if (currentLookDirection == CharEnum.LookDirection.None && camTransform.localPosition == originalLocalPos) {
             // Skip below update

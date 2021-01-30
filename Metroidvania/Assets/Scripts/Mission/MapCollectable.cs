@@ -13,11 +13,11 @@ public static class MapCollectable {
         Command_Turn = 4,
 
         // Plot
-        Plot_1 = 101,
-        Plot_2 = 102,
-        Plot_3 = 103,
-        Plot_4 = 104,
-        Plot_5 = 105,
+        Plot_1 = 100,
+        Plot_2 = 101,
+        Plot_3 = 102,
+        Plot_4 = 103,
+        Plot_5 = 104,
 
     }
 

@@ -27,6 +27,16 @@ public class MapData {
         return null;
     }
 
+    public TileData GetTileData (Vector2Int pos) {
+        foreach (var tile in tiles) {
+            if (tile.pos == pos) {
+                return tile;
+            }
+        }
+
+        return null;
+    }
+
     [Serializable]
     public class Boundary {
         public Vector2Int lowerBound;
@@ -139,10 +149,6 @@ public class MapData {
 
         public TilePosData (int x, int y) {
             this.pos = new Vector2Int (x, y);
-        }
-
-        public Vector3Int GetPos () {
-            return new Vector3Int (pos.x, pos.y, GameVariable.TilePosZ);
         }
     }
 
