@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using HIHIFramework.Core;
 using UnityEngine;
 
-// TODO
 public class CharCameraModel : MonoBehaviour
 {
     private Camera cam;
@@ -20,6 +19,7 @@ public class CharCameraModel : MonoBehaviour
     private CharEnum.LookDirection currentLookDirection;
     private Vector2 missionMaxGlobalPos;
     private Vector2 missionMinGlobalPos;
+    private bool hasSetBoundaries;
 
     private void Awake () {
         cam = GetComponent<Camera> ();
@@ -30,6 +30,7 @@ public class CharCameraModel : MonoBehaviour
         generalMinLocalPos = new Vector2 (originalLocalPos.x - camParams.camMaxHorizontalMovement, originalLocalPos.y - camParams.camMaxVerticalMovement);
 
         currentLookDirection = CharEnum.LookDirection.None;
+        hasSetBoundaries = false;
 
         if (controller == null) {
             Log.PrintWarning ("Character controller is not assigned.", LogType.Char);
@@ -90,6 +91,10 @@ public class CharCameraModel : MonoBehaviour
             camTransform.localPosition = new Vector3 (targetPosX, targetPosY, camTransform.localPosition.z);
         }
 
+        if (!hasSetBoundaries) {
+            return;
+        }
+
         // ensure the camera is not outside mission boundaries
         if (camTransform.position.x > missionMaxGlobalPos.x) {
             camTransform.position = new Vector3 (missionMaxGlobalPos.x, camTransform.position.y, camTransform.position.z);
@@ -108,6 +113,12 @@ public class CharCameraModel : MonoBehaviour
         var offset = new Vector2 (cam.orthographicSize * (float)Screen.width / (float)Screen.height, cam.orthographicSize);
         missionMaxGlobalPos = upperBound - offset;
         missionMinGlobalPos = lowerBound + offset;
+
+        hasSetBoundaries = true;
+    }
+
+    public void UnsetMissionBoundaries () {
+        hasSetBoundaries = false;
     }
 
     private void LookAction (CharEnum.LookDirection direction) {

@@ -19,6 +19,7 @@ public class CharModel : LifeBase, IMapTarget {
     public CharParams param => _param;
     [SerializeField] private CharController controller;
     [SerializeField] private Animator animator;
+    [SerializeField] private CharCameraModel cameraModel;
     [SerializeField] private Transform targetRefPoint;
     private MapManager mapManager;
 
@@ -214,13 +215,19 @@ public class CharModel : LifeBase, IMapTarget {
         movingDirection = facingDirection;
     }
 
-    public void EnterGameScene (MapManager mapManager, MapData.EntryData entryData) {
+    public void EnterGameScene (MapManager mapManager, MapData.EntryData entryData, MapData.Boundary boundary) {
         this.mapManager = mapManager;
         SetPosAndDirection (entryData.pos, entryData.direction);
+        if (cameraModel != null) {
+            cameraModel.SetMissionBoundaries (boundary.lowerBound, boundary.upperBound);
+        }
     }
 
     public void LeaveGameScene () {
         this.mapManager = null;
+        if (cameraModel != null) {
+            cameraModel.UnsetMissionBoundaries ();
+        }
     }
 
     // Remarks :

@@ -45,7 +45,7 @@ public class GameSceneManager : MonoBehaviour {
         var mapData = JsonUtility.FromJson<MapData> (lines[0]);
         mapManager.GenerateMap (currentMissionId, mapData);
 
-        charModel.EnterGameScene (mapManager, mapData.GetEntryData(entryId));
+        charModel.EnterGameScene (mapManager, mapData.GetEntryData(entryId), mapData.boundary);
         charModel.SetAllowMove (true);
 
         AddEventListeners ();

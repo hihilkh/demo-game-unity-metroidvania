@@ -360,6 +360,7 @@ MonoBehaviour:
   _param: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
   controller: {fileID: 3404561521971273195}
   animator: {fileID: 6176056532493872824}
+  cameraModel: {fileID: 894378342}
   targetRefPoint: {fileID: 393535381431530524}
 --- !u!114 &3404561521971273195
 MonoBehaviour:
