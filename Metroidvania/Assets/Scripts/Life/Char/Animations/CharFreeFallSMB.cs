@@ -6,7 +6,7 @@ public class CharFreeFallSMB : CharSMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        animUtils.SetVelocityX (null);
+        animUtils.UpdateVelocityX (null);
         animUtils.ResetGravity ();
     }
 }

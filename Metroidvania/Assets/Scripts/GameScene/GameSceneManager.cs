@@ -24,17 +24,20 @@ public class GameSceneManager : MonoBehaviour {
     private int selectedMissionId = -1;
     private int selectedMapEntryId = -1;
     private MapData mapData = null;
+    private MapData.EntryData selectedMapEntryData = null;
 
+    protected bool isGameInitialized = false;
     private bool isAddedEventListeners = false;
 
     private void Awake () {
         selectedMissionId = UserManager.SelectedMissionId;
         selectedMapEntryId = UserManager.SelectedMapEntryId;
         mapData = GetMapData (selectedMissionId);
+        selectedMapEntryData = mapData.GetEntryData (selectedMapEntryId);
     }
 
     private void Start () {
-        ResetGame (true);
+        ResetGame ();
     }
 
     private void OnDestroy () {
@@ -61,17 +64,21 @@ public class GameSceneManager : MonoBehaviour {
         return JsonUtility.FromJson<MapData> (lines[0]);
     }
 
-    private void ResetGame (bool isInit) {
-        if (isInit) {
+    private void ResetGame () {
+        if (isGameInitialized) {
+            Log.Print ("Reset Game", LogType.GameFlow);
+            mapManager.ResetMap ();
+        } else {
+            Log.Print ("Init Game", LogType.GameFlow);
+            isGameInitialized = true;
+
             mapManager.GenerateMap (selectedMissionId, mapData);
-            charModel.EnterGameScene (mapManager, mapData.GetEntryData (selectedMapEntryId), mapData.boundary);
+            charModel.EnterGameScene (mapManager, mapData.boundary);
 
             AddEventListeners ();
-        } else {
-            mapManager.ResetMap ();
         }
 
-        charModel.SetReadyForGame ();
+        charModel.Reset (selectedMapEntryData);
 
         // TODO : Set command
         // TODO : opening animation
@@ -80,11 +87,14 @@ public class GameSceneManager : MonoBehaviour {
 
     private IEnumerator StartGame (float waitTime) {
         yield return new WaitForSeconds (waitTime);
+
+        Log.Print ("Start Game", LogType.GameFlow);
         charModel.SetAllowMove (true);
     }
 
     private void LeaveGame () {
         // TODO : Transition
+        Log.Print ("Leave Game", LogType.GameFlow);
         SceneManager.LoadScene (GameVariable.MainMenuSceneName);
     }
 
@@ -117,24 +127,28 @@ public class GameSceneManager : MonoBehaviour {
     }
 
     private void CollectCollectable (MapCollectableObject collectableObject) {
+        Log.Print ("Character collected collectable : " + collectableObject.ToString (), LogType.GameFlow | LogType.Char);
         UserManager.CollectedCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
 
         //TODO
     }
 
     private void Exit (int toEntryId) {
+        Log.Print ("Character reached exit : " + toEntryId, LogType.GameFlow | LogType.Char);
         UserManager.ClearMission (selectedMissionId, toEntryId);
 
         LeaveGame ();
     }
 
     private void StartTutorial (TutorialEnum.GameTutorialType tutorialType) {
+        Log.Print ("Character triggered tutorial : " + tutorialType.ToString (), LogType.GameFlow | LogType.Char);
         // TODO
     }
 
     private void CharDied () {
+        Log.Print ("Character died.", LogType.GameFlow | LogType.Char);
         // TODO : Transition
-        ResetGame (false);
+        ResetGame ();
     }
 
     #endregion

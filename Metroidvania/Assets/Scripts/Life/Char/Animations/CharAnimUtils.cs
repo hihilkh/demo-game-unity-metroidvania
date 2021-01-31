@@ -86,6 +86,7 @@ public class CharAnimUtils : MonoBehaviour {
         InitCharMaterial ();
 
         // event handler
+        model.resettingEvent += Reset;
         model.obtainedBodyPartsChangedEvent += SetBodyParts;
         model.statusChangedEvent += NeedCommonUpdateAction;
         model.facingDirectionChangedEvent += NeedCommonUpdateAction;
@@ -94,8 +95,14 @@ public class CharAnimUtils : MonoBehaviour {
     }
 
     private void Start () {
-        ResetGravity ();
         SetBodyParts (model.GetObtainedBodyParts ());
+    }
+
+    private void Reset () {
+        Log.Print ("CharAnimUtils : Reset", LogType.Animation);
+        SetDieFeature (false);
+        ResetGravity ();
+        UpdateVelocity (0, 0);
     }
 
     private void Update () {
@@ -108,7 +115,7 @@ public class CharAnimUtils : MonoBehaviour {
             UpdateFace ();
             UpdatePS ();
             UpdateFacingDirection ();
-            UpdateHorizontalVelocity ();
+            UpdateVelocityX (null);
         }
 
         if (rb.velocity.y < model.param.minFallDownVelocity) {
@@ -117,6 +124,7 @@ public class CharAnimUtils : MonoBehaviour {
     }
 
     private void OnDestroy () {
+        model.resettingEvent -= Reset;
         model.obtainedBodyPartsChangedEvent -= SetBodyParts;
         model.statusChangedEvent -= NeedCommonUpdateAction;
         model.facingDirectionChangedEvent -= NeedCommonUpdateAction;
@@ -127,6 +135,21 @@ public class CharAnimUtils : MonoBehaviour {
     private void NeedCommonUpdateAction () {
         isNeedCommonUpdate = true;
     }
+
+    #region Die feature
+
+    public void SetDieFeature (bool isDie) {
+        if (isDie) {
+            animator.speed = 0;
+            rb.bodyType = RigidbodyType2D.Static;
+        } else {
+            animator.speed = 1;
+            rb.bodyType = RigidbodyType2D.Dynamic;
+            SetCharAlpha (1);
+        }
+    }
+
+    #endregion
 
     #region Face related
 
@@ -286,12 +309,6 @@ public class CharAnimUtils : MonoBehaviour {
 
     #region Movement Related
 
-    private void UpdateHorizontalVelocity () {
-        var velocityX = GetVelocityXByCurrentHorizontalSpeed ();
-
-        rb.velocity = new Vector3 (velocityX, rb.velocity.y);
-    }
-
     public float GetVelocityXByCurrentHorizontalSpeed (bool magnitudeOnly = false) {
         var velocityX = 0f;
 
@@ -316,17 +333,21 @@ public class CharAnimUtils : MonoBehaviour {
     }
 
     /// <param name="x">Input null means determined by model.currentHorizontalSpeed</param>
-    public void SetVelocity (float? x, float y) {
+    public void UpdateVelocity (float? x, float y) {
+        if (rb.bodyType == RigidbodyType2D.Static) {
+            return;
+        }
+
         var velocityX = (x == null) ? GetVelocityXByCurrentHorizontalSpeed () : (float)x;
 
         rb.velocity = new Vector3 (velocityX, y);
     }
 
     /// <param name="x">Input null means determined by model.currentHorizontalSpeed</param>
-    public void SetVelocityX (float? x) {
+    public void UpdateVelocityX (float? x) {
         var velocityX = (x == null) ? GetVelocityXByCurrentHorizontalSpeed () : (float)x;
 
-        rb.velocity = new Vector3 (velocityX, rb.velocity.y);
+        UpdateVelocity (velocityX, rb.velocity.y);
     }
 
     private void UpdateFacingDirection () {

@@ -43,22 +43,27 @@ public abstract class LifeBase : MapDisposableBase {
         }
     }
 
+    /// <summary>
+    /// If not yet initialized, it will initialize. Otherwise, it will reset.
+    /// </summary>
     /// <returns>has initialized before</returns>
-    protected virtual bool Init (Vector2 pos, LifeEnum.HorizontalDirection direction) {
+    protected virtual bool Reset (Vector2 pos, LifeEnum.HorizontalDirection direction) {
+        var hasInitializedBefore = false;
         if (isInitialized) {
-            Log.PrintWarning (gameObject.name + " is already initialized. Do not initialize again. Please check.", LogType.Life);
-            return true;
-        }
+            Log.Print (gameObject.name + " : Reset", LogType.Life);
+            hasInitializedBefore = true;
+        } else {
+            Log.Print (gameObject.name + " : Initialize", LogType.Life);
+            isInitialized = true;
 
-        isInitialized = true;
+            lifeCollision.Init (invincibleLayer);
+            RegisterCollisionEventHandler ();
+        }
 
         currentHP = totalHP;
         SetPosAndDirection (pos, direction);
 
-        lifeCollision.Init (invincibleLayer);
-        RegisterCollisionEventHandler ();
-
-        return false;
+        return hasInitializedBefore;
     }
 
     // TODO : Handle the cases that change pos after init
@@ -147,7 +152,11 @@ public abstract class LifeBase : MapDisposableBase {
         // Wait for a frame and see if currentLocation has already been assigned (e.g. by collision event).
         // If not, assume it is in air.
         if (currentLocation == LifeEnum.Location.Unknown) {
-            currentLocation = LifeEnum.Location.Air;
+            if (lifeCollision.CheckIsTouchingGround ()) {
+                currentLocation = LifeEnum.Location.Ground;
+            } else {
+                currentLocation = LifeEnum.Location.Air;
+            }
         }
     }
 

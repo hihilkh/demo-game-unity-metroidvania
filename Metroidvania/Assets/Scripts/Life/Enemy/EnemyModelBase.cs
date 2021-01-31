@@ -124,22 +124,33 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     private void Start () {
         if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName) {
-            Init (1, baseTransform.position, LifeEnum.HorizontalDirection.Right);
+            Reset (1, baseTransform.position, LifeEnum.HorizontalDirection.Right);
         }
     }
 
-    public bool Init (MapData.EnemyData data) {
-        return Init (data.id, data.pos, data.direction);
+    /// <summary>
+    /// If not yet initialized, it will initialize. Otherwise, it will reset.
+    /// </summary>
+    /// <returns>has initialized before</returns>
+    public bool Reset (MapData.EnemyData data) {
+        return Reset (data.id, data.pos, data.direction);
     }
 
-    private bool Init (int id, Vector2 pos, LifeEnum.HorizontalDirection direction) {
-        var hasInitBefore = base.Init (pos, direction);
+    /// <summary>
+    /// If not yet initialized, it will initialize. Otherwise, it will reset.
+    /// </summary>
+    /// <returns>has initialized before</returns>
+    private bool Reset (int id, Vector2 pos, LifeEnum.HorizontalDirection direction) {
+        // Remarks :
+        // Currently Reset() may not work properly (and current approach would always dispose and re-create enemy if needed, but not reset)
+        // If want to use reset, need to check all the cases (e.g. enemy died/beating back/invincible/jumping and reset)
 
-        if (hasInitBefore) {
-            return hasInitBefore;
+        var hasInitBefore = base.Reset (pos, direction);
+
+        if (!hasInitBefore) {
+            this.id = id;
         }
 
-        this.id = id;
         currentStatus = EnemyEnum.Status.Normal;
         CheckAndPrepareRecursiveJump ();
 

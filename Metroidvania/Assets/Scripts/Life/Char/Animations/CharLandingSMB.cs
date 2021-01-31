@@ -10,7 +10,7 @@ public class CharLandingSMB : CharSMBBase {
 
         isAnimFinished = false;
 
-        animUtils.SetVelocity (null, 0);
+        animUtils.UpdateVelocity (null, 0);
         animUtils.ResetGravity ();
     }
 

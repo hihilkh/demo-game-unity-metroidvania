@@ -60,7 +60,7 @@ public class LifeCollision : MonoBehaviour {
 
     #region Collision Event
 
-    private bool CheckIsTouchingGround () {
+    public bool CheckIsTouchingGround () {
         foreach (var pair in currentCollisionDict) {
             if (pair.Value == GameVariable.GroundTag) {
                 return true;

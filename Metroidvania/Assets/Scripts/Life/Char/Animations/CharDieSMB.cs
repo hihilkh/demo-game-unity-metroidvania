@@ -10,8 +10,8 @@ public class CharDieSMB : CharSMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        animator.speed = 0;
-        animUtils.rb.bodyType = RigidbodyType2D.Static;
+        animUtils.SetDieFeature (true);
+
         startDieTime = Time.time;
         hasFinishedDying = false;
     }
@@ -20,6 +20,11 @@ public class CharDieSMB : CharSMBBase {
         base.OnStateUpdate (animator, stateInfo, layerIndex);
 
         if (hasFinishedDying) {
+            return;
+        }
+
+        if (!animUtils.model.isDying) {
+            hasFinishedDying = true;
             return;
         }
 

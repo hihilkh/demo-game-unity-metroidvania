@@ -6,7 +6,7 @@ public class CharSlideSMB : CharSMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
         
-        animUtils.SetVelocity (0, animUtils.model.param.slideDownVelocity);
+        animUtils.UpdateVelocity (0, animUtils.model.param.slideDownVelocity);
         animUtils.RemoveGravity ();     // Slide down with constant speed
 
         animator.SetBool (CharAnimConstant.SlidingBoolName, true);

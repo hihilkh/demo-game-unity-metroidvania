@@ -168,7 +168,7 @@ public class MapManager : MonoBehaviour {
             }
 
             var instance = Instantiate (enemy, mapObjectsBaseTransform);
-            instance.Init (data);
+            instance.Reset (data);
             arrowTargetList.Add (instance);
         }
 
@@ -299,6 +299,7 @@ public class MapManager : MonoBehaviour {
     }
 
     private void MapSwitchSwitchedOn (MapSwitch mapSwitch) {
+        Log.Print ("Switch switched on : Pos : " + mapSwitch.GetTargetPos (), LogType.GameFlow | LogType.MapData);
         foreach (var target in arrowTargetList) {
             if (target is MapSwitch) {
                 if ((MapSwitch)target == mapSwitch) {

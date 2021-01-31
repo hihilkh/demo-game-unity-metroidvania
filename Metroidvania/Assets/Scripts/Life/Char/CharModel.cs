@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class CharModel : LifeBase, IMapTarget {
     // event
+    public event Action resettingEvent;
     public event Action<CharEnum.BodyPart> obtainedBodyPartsChangedEvent;
     public event Action statusChangedEvent;
     public event Action facingDirectionChangedEvent;
@@ -166,9 +167,11 @@ public class CharModel : LifeBase, IMapTarget {
         controller.TappedEvent += TriggerTapAction;
         controller.StartedHoldEvent += StartHoldAction;
         controller.StoppedHoldEvent += StopHoldAction;
+    }
 
+    private void Start () {
         if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName) {
-            Init (baseTransform.position, param.initDirection);
+            Reset (baseTransform.position, param.initDirection);
             SetAllowMove (true);
         }
     }
@@ -181,25 +184,41 @@ public class CharModel : LifeBase, IMapTarget {
         controller.StoppedHoldEvent -= StopHoldAction;
     }
 
-    public bool Init () {
-        return Init (Vector3.zero, LifeEnum.HorizontalDirection.Right);
-    }
-
-    protected override bool Init (Vector2 pos, LifeEnum.HorizontalDirection direction) {
-        var hasInitBefore = base.Init (pos, direction);
-
-        if (hasInitBefore) {
-            return hasInitBefore;
+    public void EnterGameScene (MapManager mapManager, MapData.Boundary boundary) {
+        this.mapManager = mapManager;
+        if (cameraModel != null) {
+            cameraModel.SetMissionBoundaries (boundary.lowerBound, boundary.upperBound);
         }
-
-        SetReadyForGame ();
-
-        return hasInitBefore;
     }
 
-    public void SetReadyForGame () {
+    public void LeaveGameScene () {
+        this.mapManager = null;
+        if (cameraModel != null) {
+            cameraModel.UnsetMissionBoundaries ();
+        }
+    }
+
+    /// <summary>
+    /// If not yet initialized, it will initialize. Otherwise, it will reset.
+    /// </summary>
+    /// <returns>has initialized before</returns>
+    public bool Reset (MapData.EntryData entryData) {
+        return Reset (entryData.pos, entryData.direction);
+    }
+
+    /// <summary>
+    /// If not yet initialized, it will initialize. Otherwise, it will reset.
+    /// </summary>
+    /// <returns>has initialized before</returns>
+    new public bool Reset (Vector2 pos, LifeEnum.HorizontalDirection direction) {
+        resettingEvent?.Invoke ();
+
+        var hasInitBefore = base.Reset (pos, direction);
+
         ResetFlags ();
         SetAllowMove (false);
+
+        return hasInitBefore;
     }
 
     private void ResetFlags () {
@@ -223,8 +242,9 @@ public class CharModel : LifeBase, IMapTarget {
 
         isTouchingWall = false;
 
-        currentHP = totalHP;
         SetHPRecovery (false);
+
+        StopInvincible ();
 
         ResetAllUpdateControlFlags ();
     }
@@ -258,21 +278,6 @@ public class CharModel : LifeBase, IMapTarget {
     protected override void SetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         base.SetPosAndDirection (pos, direction);
         movingDirection = facingDirection;
-    }
-
-    public void EnterGameScene (MapManager mapManager, MapData.EntryData entryData, MapData.Boundary boundary) {
-        this.mapManager = mapManager;
-        SetPosAndDirection (entryData.pos, entryData.direction);
-        if (cameraModel != null) {
-            cameraModel.SetMissionBoundaries (boundary.lowerBound, boundary.upperBound);
-        }
-    }
-
-    public void LeaveGameScene () {
-        this.mapManager = null;
-        if (cameraModel != null) {
-            cameraModel.UnsetMissionBoundaries ();
-        }
     }
 
     // Remarks :
