@@ -1194,7 +1194,9 @@ public class CharModel : LifeBase, IMapTarget {
 
         Log.Print ("Char : Hurt! dp : " + dp + " , hurtDirection : " + hurtDirection + " , remain HP : " + currentHP, LogType.Char);
 
-        SetHPRecovery (true);
+        if (isAlive) {
+            SetHPRecovery (true);
+        }
 
         return isAlive;
     }

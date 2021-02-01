@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Switch_Off_3
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: -4290804350878894978, guid: 655a865168ffb4d1bafb975b003d9ae6,
+  m_Sprite: {fileID: 7465846547059183711, guid: 655a865168ffb4d1bafb975b003d9ae6,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:

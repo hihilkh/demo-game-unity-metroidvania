@@ -18,7 +18,6 @@ public class CharSlideSMB : CharSMBBase {
         // Set Sliding Bool for animation
         if (animator.GetBool (CharAnimConstant.SlidingBoolName)) {
             if (!animUtils.model.GetIsInStatus (CharEnum.Status.Sliding)) {
-                Debug.LogError ("CharSlideSMB");
                 animator.SetBool (CharAnimConstant.SlidingBoolName, false);
             }
         }

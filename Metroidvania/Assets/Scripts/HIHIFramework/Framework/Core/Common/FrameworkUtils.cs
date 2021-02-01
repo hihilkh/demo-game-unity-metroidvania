@@ -113,7 +113,7 @@ namespace HIHIFramework.Core {
             try {
                 convertedValue = Convert.ChangeType (value, underlyingType);
             } catch (Exception ex) {
-                Log.PrintError ("TryParseIntToEnum failed. " + ex.Message, LogType.General);
+                Log.PrintError ("TryParseToEnum failed. " + ex.Message, LogType.General);
                 enumValue = default;
                 return false;
             }
@@ -122,7 +122,22 @@ namespace HIHIFramework.Core {
                 enumValue = (TEnum)convertedValue;
                 return true;
             } else {
-                Log.PrintWarning ("TryParseIntToEnum failed. EnumType : " + typeof (TEnum) + " , value : " + value, LogType.General);
+                Log.PrintWarning ("TryParseToEnum failed. EnumType : " + typeof (TEnum) + " , value : " + value, LogType.General);
+                enumValue = default;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// If failed, <paramref name="enumValue"/> will be assigned default enum value
+        /// </summary>
+        /// <returns>Is success</returns>
+        public static bool TryParseToEnumByName<TEnum> (string valueName, out TEnum enumValue) where TEnum : Enum {
+            try {
+                enumValue = (TEnum)Enum.Parse (typeof (TEnum), valueName, true);
+                return true;
+            } catch (Exception ex) {
+                Log.PrintError ("TryParseToEnumByName failed. " + ex.Message, LogType.General);
                 enumValue = default;
                 return false;
             }
