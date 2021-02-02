@@ -94,13 +94,20 @@
 
     // Remarks: Never change the SwitchType enum int value. It is used in map json data.
     public enum SwitchType : int {
-        Normal = 0,   // The default value 0 is used for any fallback cases
+        OnOff = 0,   // The default value 0 is used for any fallback cases
         Arrow = 1,
         DropHit = 2,
+        Enemy = 3,
     }
 
-    // Remarks: Never change the HiddenPathOpenType enum int value. It is used in map json data.
-    public enum HiddenPathOpenType : int {
+    // Remarks: Never change the HiddenPathType enum int value. It is used in map json data.
+    public enum HiddenPathType : int {
+        HideWhenSwitchOn = 0,   // The default value 0 is used for any fallback cases
+        ShowWhenSwitchOn = 1,
+    }
+
+    // Remarks: Never change the HiddenPathOrdering enum int value. It is used in map json data.
+    public enum HiddenPathOrdering : int {
         DownToUp = 0,   // The default value 0 is used for any fallback cases
         UpToDown = 1,
         LeftToRight = 2,

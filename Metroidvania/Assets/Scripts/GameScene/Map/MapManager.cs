@@ -28,13 +28,21 @@ public class MapManager : MonoBehaviour {
     private int missionId;
     private MapData mapData;
     public List<IMapTarget> arrowTargetList { get; private set; } = new List<IMapTarget> ();
-    private List<Vector2Int> removedTilePosList = new List<Vector2Int> ();
+
+    /// <summary>
+    /// bool : isAdded<br />
+    ///  - true : initially not in map and added during game<br />
+    /// - false : initially in map and removed during game
+    /// </summary>
+    private Dictionary<MapData.TileData, bool> changedTileDict = new Dictionary<MapData.TileData, bool> ();
+    private List<Vector2Int> switchedOnOnOffSwitchBasePosList = new List<Vector2Int> ();
 
     private bool isAddedEventListeners = false;
     private const float OpenOneHiddenPathLayerPeriod = 0.1f;
 
     private void OnDestroy () {
         RemoveEventListeners ();
+        StopAllCoroutines ();
     }
 
     #region Map Generation
@@ -48,8 +56,9 @@ public class MapManager : MonoBehaviour {
             return;
         }
 
-        removedTilePosList.Clear ();
-        GenerateTiles (mapData.tiles);
+        changedTileDict.Clear ();
+        switchedOnOnOffSwitchBasePosList.Clear ();
+        InitializeTiles (mapData.tiles);
         GenerateExits (mapData.exits);
         GenerateMapDisposableObjects ();
 
@@ -59,7 +68,7 @@ public class MapManager : MonoBehaviour {
     public void ResetMap () {
         MapResetingEvent?.Invoke ();
 
-        RegenerateRemovedTiles ();
+        ResumeAllChangedTiles ();
         GenerateMapDisposableObjects ();
     }
 
@@ -77,22 +86,23 @@ public class MapManager : MonoBehaviour {
         GenerateTutorials (mapData.tutorials);
     }
 
-    private void GenerateTiles (List<MapData.TileData> dataList) {
+    private void InitializeTiles (List<MapData.TileData> dataList) {
         if (dataList == null || dataList.Count <= 0) {
             Log.PrintError ("No tile data. Please check.", LogType.MapData);
             return;
         } else {
-            Log.Print ("Start GenerateTiles", LogType.MapData);
+            Log.Print ("Start InitializeTiles", LogType.MapData);
         }
 
         foreach (var data in dataList) {
-            GenerateTile (data);
+            GenerateTile (data, true, false);
         }
 
-        Log.Print ("Finish GenerateTiles", LogType.MapData);
+        Log.Print ("Finish InitializeTiles", LogType.MapData);
     }
 
-    private void GenerateTile (MapData.TileData data) {
+    /// <param name="isChangedInGame">If true, the tile is changed during game and would do some logic with changedTileDict</param>
+    private void GenerateTile (MapData.TileData data, bool isShow, bool isChangedInGame) {
         var tileMapType = data.tileMapType;
         if (!tileMapDict.ContainsKey (tileMapType)) {
             Log.PrintError ("generate tile failed : tileMapDict do not have mapping for tileMapType : " + tileMapType, LogType.MapData);
@@ -100,31 +110,49 @@ public class MapManager : MonoBehaviour {
         }
 
         var targetTilemap = tileMapDict[tileMapType];
-        var tileType = data.tileType;
-        var resourcesName = TileMapping.GetTileResourcesName (tileType);
-        if (string.IsNullOrEmpty (resourcesName)) {
-            Log.PrintError ("generate tile failed : resourcesName is empty for tileType : " + tileType, LogType.MapData);
-            return;
+
+        if (!isShow) {
+            targetTilemap.SetTile (new Vector3Int (data.pos.x, data.pos.y, GameVariable.TilePosZ), null);
+        } else {
+            var tileType = data.tileType;
+            var resourcesName = TileMapping.GetTileResourcesName (tileType);
+            if (string.IsNullOrEmpty (resourcesName)) {
+                Log.PrintError ("generate tile failed : resourcesName is empty for tileType : " + tileType, LogType.MapData);
+                return;
+            }
+
+            var tile = Resources.Load<Tile> (resourcesName);
+            if (tile == null) {
+                Log.PrintError ("generate tile failed : Cannot load tile resources for resourcesName : " + resourcesName, LogType.MapData);
+                return;
+            }
+
+            targetTilemap.SetTile (new Vector3Int (data.pos.x, data.pos.y, GameVariable.TilePosZ), tile);
         }
 
-        var tile = Resources.Load<Tile> (resourcesName);
-        if (tile == null) {
-            Log.PrintError ("generate tile failed : Cannot load tile resources for resourcesName : " + resourcesName, LogType.MapData);
-            return;
-        }
 
-        targetTilemap.SetTile (new Vector3Int (data.pos.x, data.pos.y, GameVariable.TilePosZ), tile);
-    }
-
-    private void RegenerateRemovedTiles () {
-        foreach (var pos in removedTilePosList) {
-            var tileData = mapData.GetTileData (pos);
-            if (tileData != null) {
-                GenerateTile (tileData);
+        if (isChangedInGame) {
+            if (changedTileDict.ContainsKey (data)) {
+                if (changedTileDict[data] != isShow) {
+                    changedTileDict.Remove (data);
+                }
+            } else {
+                changedTileDict.Add (data, isShow);
             }
         }
 
-        removedTilePosList.Clear ();
+    }
+
+    private void ResumeAllChangedTiles () {
+        foreach (var pair in changedTileDict) {
+            GenerateTile (pair.Key, !pair.Value, false);
+        }
+        changedTileDict.Clear ();
+
+        foreach (var switchBasePos in switchedOnOnOffSwitchBasePosList) {
+            SetOnOffSwitch (switchBasePos, false, false);
+        }
+        switchedOnOnOffSwitchBasePosList.Clear ();
     }
 
     private void GenerateExits (List<MapData.ExitData> dataList) {
@@ -252,21 +280,6 @@ public class MapManager : MonoBehaviour {
 
     #endregion
 
-    #region Getter
-
-    private (Tilemap, TileBase) GetTile (Vector3Int pos) {
-        foreach (var pair in tileMapDict) {
-            var tile = pair.Value.GetTile (pos);
-            if (tile != null) {
-                return (pair.Value, tile);
-            }
-        }
-
-        return (null, null);
-    }
-
-    #endregion
-
     #region Map interaction
 
     private void AddEventListeners () {
@@ -274,14 +287,14 @@ public class MapManager : MonoBehaviour {
             isAddedEventListeners = true;
 
             EnemyModelBase.DiedEvent += EnemyDied;
-            MapSwitch.SwitchedOnEvent += MapSwitchSwitchedOn;
+            MapSwitch.SwitchedEvent += MapSwitchSwitched;
         }
     }
 
     private void RemoveEventListeners () {
         if (isAddedEventListeners) {
             EnemyModelBase.DiedEvent -= EnemyDied;
-            MapSwitch.SwitchedOnEvent -= MapSwitchSwitchedOn;
+            MapSwitch.SwitchedEvent -= MapSwitchSwitched;
 
             isAddedEventListeners = false;
         }
@@ -298,47 +311,115 @@ public class MapManager : MonoBehaviour {
         }
     }
 
-    private void MapSwitchSwitchedOn (MapSwitch mapSwitch) {
+    private void MapSwitchSwitched (MapSwitch mapSwitch, bool isSwitchOn) {
         Log.Print ("Switch switched on : Pos : " + mapSwitch.GetTargetPos (), LogType.GameFlow | LogType.MapData);
-        foreach (var target in arrowTargetList) {
-            if (target is MapSwitch) {
-                if ((MapSwitch)target == mapSwitch) {
-                    arrowTargetList.Remove (target);
-                    break;
+
+        switch (mapSwitch.GetSwitchType ()) {
+            case MapEnum.SwitchType.Arrow:
+                foreach (var target in arrowTargetList) {
+                    if (target is MapSwitch) {
+                        if ((MapSwitch)target == mapSwitch) {
+                            arrowTargetList.Remove (target);
+                            break;
+                        }
+                    }
+                }
+                break;
+            case MapEnum.SwitchType.OnOff:
+                SetOnOffSwitch (mapSwitch.GetSwitchBasePos (), isSwitchOn, true);
+                break;
+
+        }
+
+        StartCoroutine (OpenHiddenPath (mapSwitch, isSwitchOn));
+    }
+
+    /// <param name="isChangedInGame">If true, the tile is changed during game and would do some logic with switchedOnOnOffSwitchBasePosList</param>
+    private void SetOnOffSwitch (Vector2Int switchBasePos, bool isOn, bool isChangedInGame) {
+        var dict = isOn ? TileMapping.OnOffSwitchOnTileTypeDict : TileMapping.OnOffSwitchOffTileTypeDict;
+
+        foreach (var pair in dict) {
+            var tileType = default (MapEnum.TileType);
+            if (pair.Value != null) {
+                tileType = (MapEnum.TileType)pair.Value;
+            }
+
+            // Assume the switch is in background Tilemap
+            var tileData = new MapData.TileData (switchBasePos.x + pair.Key.x, switchBasePos.y + pair.Key.y, tileType, MapEnum.TileMapType.Background);
+            GenerateTile (tileData, pair.Value != null, false);
+        }
+
+        if (isChangedInGame) {
+            if (switchedOnOnOffSwitchBasePosList.Contains (switchBasePos)) {
+                // TODO : Check if Vector2Int can check equal by this way
+                Log.PrintError ("switchedOnOnOffSwitchBasePosList contain");
+                if (!isOn) {
+                    switchedOnOnOffSwitchBasePosList.Remove (switchBasePos);
+                }
+            } else {
+                if (isOn) {
+                    switchedOnOnOffSwitchBasePosList.Add (switchBasePos);
                 }
             }
         }
-
-        StartCoroutine (OpenHiddenPath (mapSwitch.GetHiddenPathData ()));
     }
-
-    private IEnumerator OpenHiddenPath (MapData.HiddenPathData pathData) {
-        var tiles = pathData.GetTilesPosByOpenOrder ();
-
-        if (tiles == null || tiles.Count <= 0) {
+    
+    private IEnumerator OpenHiddenPath (MapSwitch mapSwitch, bool isSwitchOn) {
+        if (mapSwitch == null) {
             yield break;
         }
 
-        for (var i = 0; i < tiles.Count; i++) {
-            OpenOneHiddenPathLayer (tiles[i]);
+        var pathDataList = mapSwitch.GetHiddenPathDataList ();
+        if (pathDataList == null || pathDataList.Count <= 0) {
+            mapSwitch.FinishSwitched ();
+            yield break;
+        }
+
+        var tilesDataToHideByOrdering = new List<List<MapData.TileData>> ();
+        var tilesDataToShowByOrdering = new List<List<MapData.TileData>> ();
+        foreach (var pathData in pathDataList) {
+            var tiles = pathData.GetTilesPosByOrdering (isSwitchOn);
+            var targetList = tilesDataToHideByOrdering;
+
+            if (!isSwitchOn && pathData.type == MapEnum.HiddenPathType.HideWhenSwitchOn) {
+                targetList = tilesDataToShowByOrdering;
+            } else if (isSwitchOn && pathData.type == MapEnum.HiddenPathType.ShowWhenSwitchOn) {
+                targetList = tilesDataToShowByOrdering;
+            }
+
+            while (targetList.Count < tiles.Count) {
+                targetList.Add (new List<MapData.TileData> ());
+            }
+
+            for (var i = 0; i < tiles.Count; i++) {
+                targetList[i].AddRange (tiles[i]);
+            }
+        }
+
+        var maxCount = Mathf.Max (tilesDataToHideByOrdering.Count, tilesDataToShowByOrdering.Count);
+
+        for (var i = 0; i < maxCount; i++) {
+            if (i < tilesDataToHideByOrdering.Count) {
+                UpdateOneHiddenPathLayer (tilesDataToHideByOrdering[i], false);
+            }
+
+            if (i < tilesDataToShowByOrdering.Count) {
+                UpdateOneHiddenPathLayer (tilesDataToShowByOrdering[i], true);
+            }
+
             yield return new WaitForSeconds (OpenOneHiddenPathLayerPeriod);
         }
+
+        mapSwitch.FinishSwitched ();
     }
 
-    private void OpenOneHiddenPathLayer (List<Vector3Int> tilePosList) {
-        if (tilePosList == null || tilePosList.Count <= 0) {
+    private void UpdateOneHiddenPathLayer (List<MapData.TileData> tileDataList, bool isShow) {
+        if (tileDataList == null || tileDataList.Count <= 0) {
             return;
         }
 
-        foreach (var pos in tilePosList) {
-            (var tilemap, var tileBase) = GetTile (pos);
-
-            if (tilemap == null) {
-                Log.PrintWarning ("No coresponding tilemap of hidden path tile is found. Pos : " + pos, LogType.MapData);
-            } else {
-                removedTilePosList.Add (new Vector2Int (pos.x, pos.y));
-                tilemap.SetTile (pos, null);
-            }
+        foreach (var tileData in tileDataList) {
+            GenerateTile (tileData, isShow, true);
         }
     }
 

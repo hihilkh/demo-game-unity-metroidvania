@@ -262,7 +262,9 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     }
 
     public virtual void DestroySelf (bool isDie) {
-        DiedEvent?.Invoke (id);
+        if (isDie) {
+            DiedEvent?.Invoke (id);
+        }
 
         if (baseTransform.gameObject != null) {
             Destroy (baseTransform.gameObject);

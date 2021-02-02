@@ -19,6 +19,12 @@ public static class MapCollectable {
         Plot_4 = 103,
         Plot_5 = 104,
 
+        // Others
+        HP_1 = 200,
+        HP_2 = 201,
+        Strength_1 = 202,
+        Strength_2 = 203,
+
     }
 
     // TODO 

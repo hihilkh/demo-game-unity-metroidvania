@@ -37,6 +37,10 @@ public class MapData {
         return null;
     }
 
+    public bool RemoveTileData (TileData tileData) {
+        return tiles.Remove (tileData);
+    }
+
     [Serializable]
     public class Boundary {
         public Vector2Int lowerBound;
@@ -66,13 +70,25 @@ public class MapData {
     [Serializable]
     public class SwitchData : InvisibleTriggerData {
         public MapEnum.SwitchType switchType;
-        public HiddenPathData hiddenPath;
+        public Vector2Int switchBasePos;    // SwitchBasePos is the bottom left position of the switch
+        public List<HiddenPathData> hiddenPaths;
+        public int fromEnemyId = -1;
 
         public SwitchData () { }
 
-        public SwitchData (float x, float y, float sizeX, float sizeY, MapEnum.SwitchType switchType, MapEnum.HiddenPathOpenType hiddenPathOpenType, List<Vector2Int> hiddenPathTilesPos) : base (x, y, sizeX, sizeY) {
+        public SwitchData (float x, float y, float sizeX, float sizeY, MapEnum.SwitchType switchType, Vector2Int switchBasePos) : base (x, y, sizeX, sizeY) {
             this.switchType = switchType;
-            this.hiddenPath = new HiddenPathData (hiddenPathOpenType, hiddenPathTilesPos);
+            this.switchBasePos = switchBasePos;
+            this.hiddenPaths = new List<HiddenPathData> ();
+        }
+
+        // pos / collider sizes / switchBasePos of EnemySwitch are just dummy
+        public SwitchData (int fromEnemyId) : this (0, 0, 1, 1, MapEnum.SwitchType.Enemy, Vector2Int.zero) {
+            this.fromEnemyId = fromEnemyId;
+        }
+
+        public void AddHiddenPath (MapEnum.HiddenPathType hiddenPathType, MapEnum.HiddenPathOrdering hiddenPathOrdering, List<TileData> hiddenPathTiles) {
+            hiddenPaths.Add (new HiddenPathData (hiddenPathType, hiddenPathOrdering, hiddenPathTiles));
         }
     }
 
@@ -204,69 +220,87 @@ public class MapData {
 
     [Serializable]
     public class HiddenPathData {
-        public MapEnum.HiddenPathOpenType openType;
+        public MapEnum.HiddenPathType type;
+        public MapEnum.HiddenPathOrdering ordering;
+        public List<TileData> tiles;
         public List<Vector2Int> tilesPos;
 
         public HiddenPathData () { }
 
-        public HiddenPathData (MapEnum.HiddenPathOpenType openType, List<Vector2Int> tilesPos) {
-            this.openType = openType;
-            this.tilesPos = new List<Vector2Int> ();
-
-            foreach (var pos in tilesPos) {
-                this.tilesPos.Add (pos);
-            }
+        public HiddenPathData (MapEnum.HiddenPathType type, MapEnum.HiddenPathOrdering ordering, List<TileData> tiles) {
+            this.type = type;
+            this.ordering = ordering;
+            this.tiles = tiles;
         }
 
-        public List<List<Vector3Int>> GetTilesPosByOpenOrder () {
-            if (tilesPos.Count <= 0) {
-                return new List<List<Vector3Int>> ();
+        public List<List<TileData>> GetTilesPosByOrdering (bool isSwitchOn) {
+            if (tiles.Count <= 0) {
+                return new List<List<TileData>> ();
             }
 
-            var tilesInOrder = new List<Vector2Int> (tilesPos);
+            var tilesInOrder = new List<TileData> (tiles);
 
-            Comparison<Vector2Int> comparison;
+            Comparison<TileData> comparison;
 
-            switch (openType) {
-                case MapEnum.HiddenPathOpenType.LeftToRight:
-                    comparison = (pos1, pos2) => {
-                        return pos1.x.CompareTo (pos2.x);
+            var runtimeOrdering = ordering;
+
+            if (!isSwitchOn) {  // invert ordering
+                switch (ordering) {
+                    case MapEnum.HiddenPathOrdering.LeftToRight:
+                        runtimeOrdering = MapEnum.HiddenPathOrdering.RightToLeft;
+                        break;
+                    case MapEnum.HiddenPathOrdering.RightToLeft:
+                        runtimeOrdering = MapEnum.HiddenPathOrdering.LeftToRight;
+                        break;
+                    case MapEnum.HiddenPathOrdering.UpToDown:
+                        runtimeOrdering = MapEnum.HiddenPathOrdering.DownToUp;
+                        break;
+                    case MapEnum.HiddenPathOrdering.DownToUp:
+                        runtimeOrdering = MapEnum.HiddenPathOrdering.UpToDown;
+                        break;
+                }
+            }
+
+            switch (runtimeOrdering) {
+                case MapEnum.HiddenPathOrdering.LeftToRight:
+                    comparison = (tile1, tile2) => {
+                        return tile1.pos.x.CompareTo (tile2.pos.x);
                     };
                     break;
-                case MapEnum.HiddenPathOpenType.RightToLeft:
-                    comparison = (pos1, pos2) => {
-                        return pos2.x.CompareTo (pos1.x);
+                case MapEnum.HiddenPathOrdering.RightToLeft:
+                    comparison = (tile1, tile2) => {
+                        return tile2.pos.x.CompareTo (tile1.pos.x);
                     };
                     break;
-                case MapEnum.HiddenPathOpenType.UpToDown:
-                    comparison = (pos1, pos2) => {
-                        return pos2.y.CompareTo (pos1.y);
+                case MapEnum.HiddenPathOrdering.UpToDown:
+                    comparison = (tile1, tile2) => {
+                        return tile2.pos.y.CompareTo (tile1.pos.y);
                     };
                     break;
-                case MapEnum.HiddenPathOpenType.DownToUp:
+                case MapEnum.HiddenPathOrdering.DownToUp:
                 default:
-                    comparison = (pos1, pos2) => {
-                        return pos1.y.CompareTo (pos2.y);
+                    comparison = (tile1, tile2) => {
+                        return tile1.pos.y.CompareTo (tile2.pos.y);
                     };
                     break;
             }
 
             tilesInOrder.Sort (comparison);
 
-            var result = new List<List<Vector3Int>> ();
+            var result = new List<List<TileData>> ();
 
-            Vector2Int? compareItem = null;
+            TileData compareItem = null;
             var counter = -1;
 
-            foreach (var tilePos in tilesInOrder) {
-                if (compareItem != null && comparison (tilePos, (Vector2Int)compareItem) == 0) {
-                    result[counter].Add (new Vector3Int (tilePos.x, tilePos.y, GameVariable.TilePosZ));
+            foreach (var tile in tilesInOrder) {
+                if (compareItem != null && comparison (tile, compareItem) == 0) {
+                    result[counter].Add (tile);
                 } else {
-                    result.Add (new List<Vector3Int> ());
+                    result.Add (new List<TileData> ());
                     counter++;
 
-                    result[counter].Add (new Vector3Int (tilePos.x, tilePos.y, GameVariable.TilePosZ));
-                    compareItem = tilePos;
+                    result[counter].Add (tile);
+                    compareItem = tile;
                 }
             }
 

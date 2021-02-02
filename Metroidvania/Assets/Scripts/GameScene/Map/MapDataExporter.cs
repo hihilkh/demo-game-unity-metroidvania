@@ -85,6 +85,16 @@ public class MapDataExporter : MonoBehaviour {
 
     #region Export
 
+    private bool CheckEnemyExist (List<MapData.EnemyData> enemies, int enemyId) {
+        foreach (var enemy in enemies) {
+            if (enemy.id == enemyId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void ExportMapData () {
         Log.PrintWarning ("Start export MapData", LogType.MapData);
 
@@ -95,7 +105,7 @@ public class MapDataExporter : MonoBehaviour {
         mapData.entries = ExportEntryDataList ();
         mapData.enemies = ExportEnemyDataList ();
         mapData.collectables = ExportCollectableDataList (mapData.enemies);
-        mapData.switches = ExportSwitchDataList ();
+        mapData.switches = ExportSwitchDataList (ref mapData);  // Must be after exporting tiles and enemies
         mapData.exits = ExportExitDataList ();
         mapData.tutorials = ExportTutorialDataList ();
 
@@ -222,15 +232,8 @@ public class MapDataExporter : MonoBehaviour {
                 result.Add (new MapData.CollectableData (child.position.x, child.position.y, collectableType));
             } else {
                 var fromEnemyId = int.Parse (array[1]);
-                var isEnemyMatched = false;
-                foreach (var enemy in enemies) {
-                    if (enemy.id == fromEnemyId) {
-                        isEnemyMatched = true;
-                        break;
-                    }
-                }
 
-                if (!isEnemyMatched) {
+                if (!CheckEnemyExist (enemies, fromEnemyId)) {
                     throw new Exception ("Export CollectableData failed. No matched enemy to fromEnemyId : " + fromEnemyId);
                 }
 
@@ -242,7 +245,7 @@ public class MapDataExporter : MonoBehaviour {
         return result;
     }
 
-    private List<MapData.SwitchData> ExportSwitchDataList () {
+    private List<MapData.SwitchData> ExportSwitchDataList (ref MapData mapData) {
         Log.PrintWarning ("Start export SwitchData", LogType.MapData);
 
         var result = new List<MapData.SwitchData> ();
@@ -274,38 +277,98 @@ public class MapDataExporter : MonoBehaviour {
             if (!FrameworkUtils.TryParseToEnum (array[1], out switchType)) {
                 throw new Exception ("Export SwitchData failed. Invalid SwitchType : " + array[1]);
             }
-            MapEnum.HiddenPathOpenType hiddenPathOpenType;
-            if (!FrameworkUtils.TryParseToEnum (array[2], out hiddenPathOpenType)) {
-                throw new Exception ("Export SwitchData failed. Invalid HiddenPathOpenType : " + array[2]);
-            }
 
             var collider = switchTransform.GetComponent<BoxCollider2D> ();
-            if (collider == null) {
+            if (collider == null && switchType != MapEnum.SwitchType.Enemy) {
                 throw new Exception ("Export SwitchData failed. Cannot find BoxCollider2D : " + switchName);
             }
 
-            var hiddenPathTransform = hiddenPathsBaseTransform.Find (switchName);
-            if (baseTransform == null) {
-                throw new Exception ("Export SwitchData failed. Cannot find hiddenPathTransform : " + switchName);
-            }
-            var spriteRenderer = hiddenPathTransform.GetComponent<SpriteRenderer> ();
-            if (spriteRenderer == null) {
-                throw new Exception ("Export SwitchData failed. Cannot find spriteRenderer : " + switchName);
-            }
-
-            // Remarks :
-            // - Assume the setting is correct and the calculated result is always an integer.
-            // - Must use local position in order to get the correct tile position instead of world position
-            var hiddenPathMinPosX = (int)(hiddenPathTransform.localPosition.x - ((spriteRenderer.size.x - 1) / 2));
-            var hiddenPathMinPosY = (int)(hiddenPathTransform.localPosition.y - ((spriteRenderer.size.y - 1) / 2));
-            var hiddenPathTilesPos = new List<Vector2Int> ();
-            for (int x = 0; x < spriteRenderer.size.x; x++) {
-                for (int y = 0; y < spriteRenderer.size.y; y++) {
-                    hiddenPathTilesPos.Add (new Vector2Int (hiddenPathMinPosX + x, hiddenPathMinPosY + y));
+            var hiddenPathTransformList = new List<Transform> ();
+            foreach (Transform trans in hiddenPathsBaseTransform) {
+                if (trans.name.Contains (switchName)) {
+                    hiddenPathTransformList.Add (trans);
                 }
             }
 
-            result.Add (new MapData.SwitchData (switchTransform.position.x, switchTransform.position.y, collider.size.x, collider.size.y, switchType, hiddenPathOpenType, hiddenPathTilesPos));
+            if (hiddenPathTransformList.Count <= 0) {
+                throw new Exception ("Export SwitchData failed. Cannot find any hiddenPathTransform for : " + switchName);
+            }
+
+            MapData.SwitchData switchData;
+            if (switchType == MapEnum.SwitchType.Enemy) {
+                var fromEnemyId = int.Parse (array[2]);
+
+                if (!CheckEnemyExist (mapData.enemies, fromEnemyId)) {
+                    throw new Exception ("Export SwitchData failed. No matched enemy to fromEnemyId : " + fromEnemyId);
+                }
+                
+                switchData = new MapData.SwitchData (fromEnemyId);
+            } else {
+                var colliderPosX = switchTransform.position.x + collider.offset.x;
+                var colliderPosY = switchTransform.position.y + collider.offset.y;
+
+                // Remarks : Must use local position in order to get the correct tile position instead of world position
+                var switchBasePos = new Vector2Int ((int)switchTransform.localPosition.x, (int)switchTransform.localPosition.y);
+                switchData = new MapData.SwitchData (colliderPosX, colliderPosY, collider.size.x, collider.size.y, switchType, switchBasePos);
+            }
+
+            foreach (var trans in hiddenPathTransformList) {
+                var hiddenPathNameArray = trans.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
+                if (hiddenPathNameArray.Length < 3) {
+                    throw new Exception ("Export SwitchData failed. Invalid transform name : " + switchTransform.name);
+                }
+
+                // hiddenPathNameArray[0] is switch name for searching usage
+
+                MapEnum.HiddenPathType hiddenPathType;
+                if (!FrameworkUtils.TryParseToEnum (hiddenPathNameArray[1], out hiddenPathType)) {
+                    throw new Exception ("Export SwitchData failed. Invalid HiddenPathType : " + hiddenPathNameArray[1]);
+                }
+
+                MapEnum.HiddenPathOrdering hiddenPathOrdering;
+                if (!FrameworkUtils.TryParseToEnum (hiddenPathNameArray[2], out hiddenPathOrdering)) {
+                    throw new Exception ("Export SwitchData failed. Invalid HiddenPathOrdering : " + hiddenPathNameArray[2]);
+                }
+
+                var spriteRenderer = trans.GetComponent<SpriteRenderer> ();
+                if (spriteRenderer == null) {
+                    throw new Exception ("Export SwitchData failed. Cannot find spriteRenderer for : " + trans.name);
+                }
+
+                // Remarks :
+                // - Assume the setting is correct and the calculated result is always an integer.
+                // - Must use local position in order to get the correct tile position instead of world position
+                var hiddenPathMinPosX = (int)(trans.localPosition.x - ((spriteRenderer.size.x - 1) / 2));
+                var hiddenPathMinPosY = (int)(trans.localPosition.y - ((spriteRenderer.size.y - 1) / 2));
+
+                var hiddenPathTiles = new List<MapData.TileData> ();
+                for (int x = 0; x < spriteRenderer.size.x; x++) {
+                    for (int y = 0; y < spriteRenderer.size.y; y++) {
+                        var pos = new Vector2Int (hiddenPathMinPosX + x, hiddenPathMinPosY + y);
+
+                        var tileData = mapData.GetTileData (pos);
+                        if (tileData != null) {
+                            hiddenPathTiles.Add (tileData);
+
+                            if (hiddenPathType == MapEnum.HiddenPathType.ShowWhenSwitchOn) {
+                                var isRemoveSuccess = mapData.RemoveTileData (tileData);
+
+                                if (!isRemoveSuccess) {
+                                    throw new Exception ("Export SwitchData failed. Cannot remove tile which should be shown after switched on. Pos : " + tileData.pos);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (hiddenPathTiles.Count <= 0) {
+                    throw new Exception ("Export SwitchData failed. hiddenPathTiles count <= 0 for : " + trans.name);
+                }
+
+                switchData.AddHiddenPath (hiddenPathType, hiddenPathOrdering, hiddenPathTiles);
+            }
+
+            result.Add (switchData);
         }
 
 

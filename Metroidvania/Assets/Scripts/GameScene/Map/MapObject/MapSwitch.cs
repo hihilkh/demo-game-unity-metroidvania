@@ -5,7 +5,16 @@ using UnityEngine;
 
 public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget {
 
-    public static event Action<MapSwitch> SwitchedOnEvent;
+    /// <summary>
+    /// Input :<br />
+    /// MapSwitch : the MapSwitch instance that trigger the event<br />
+    /// bool : isSwitchOn (false = switch off)
+    /// </summary>
+    public static event Action<MapSwitch, bool> SwitchedEvent;
+
+    private bool isAddedEnemyEventListeners = false;
+    private bool isSwitchedOn = false;
+    private bool allowSwitch = true;
 
     public override void Init (MapData.SwitchData data) {
         base.Init (data);
@@ -17,16 +26,35 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget
             case MapEnum.SwitchType.DropHit:
                 gameObject.tag = GameVariable.DropHitSwitchTag;
                 break;
-            case MapEnum.SwitchType.Normal:
+            case MapEnum.SwitchType.OnOff:
+            case MapEnum.SwitchType.Enemy:
             default:
                 gameObject.tag = GameVariable.DefaultTag;
                 break;
         }
+
+        if (data.switchType == MapEnum.SwitchType.Enemy) {
+            gameObject.SetActive (false);
+            if (!isAddedEnemyEventListeners) {
+                isAddedEnemyEventListeners = true;
+                EnemyModelBase.DiedEvent += EnemyDied;
+            }
+        } else {
+            gameObject.SetActive (true);
+        }
+    }
+
+    protected override void OnDestroy () {
+        base.OnDestroy ();
+
+        if (isAddedEnemyEventListeners) {
+            EnemyModelBase.DiedEvent -= EnemyDied;
+        }
     }
 
     protected override bool CheckValidTrigger (Collider2D collision) {
-        if (data.switchType != MapEnum.SwitchType.Normal) {
-            // Trigger by Arrow attack or drop hit attack
+        if (data.switchType != MapEnum.SwitchType.OnOff) {
+            // Trigger by other ways
             return false;
         }
 
@@ -39,15 +67,41 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget
     }
 
     protected override void OnTriggered () {
-        SwitchedOnEvent?.Invoke (this);
+        if (!allowSwitch) {
+            return;
+        }
+
+        allowSwitch = false;
+        isSwitchedOn = !isSwitchedOn;
+        SwitchedEvent?.Invoke (this, isSwitchedOn);
     }
 
     public void Trigger () {
         OnTriggered ();
     }
 
-    public MapData.HiddenPathData GetHiddenPathData () {
-        return data.hiddenPath;
+    public void FinishSwitched () {
+        if (data.switchType == MapEnum.SwitchType.OnOff) {
+            allowSwitch = true;
+        }
+    }
+
+    private void EnemyDied (int enemyId) {
+        if (data.switchType == MapEnum.SwitchType.Enemy && data.fromEnemyId == enemyId) {
+            OnTriggered ();
+        }
+    }
+
+    public MapEnum.SwitchType GetSwitchType () {
+        return data.switchType;
+    }
+
+    public Vector2Int GetSwitchBasePos () {
+        return data.switchBasePos;
+    }
+
+    public List<MapData.HiddenPathData> GetHiddenPathDataList () {
+        return data.hiddenPaths;
     }
 
     #region IMapTarget

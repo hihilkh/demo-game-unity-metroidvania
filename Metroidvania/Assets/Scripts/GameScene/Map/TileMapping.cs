@@ -22,6 +22,26 @@ public static class TileMapping {
         { MapEnum.TileMapType.Death, MapEnum.TileType.DeathTag },
     };
 
+    /// <summary>
+    /// Dictionary Key : Offset from switchBasePos
+    /// </summary>
+    public static readonly Dictionary<Vector2Int, MapEnum.TileType?> OnOffSwitchOffTileTypeDict = new Dictionary<Vector2Int, MapEnum.TileType?> () {
+        { Vector2Int.zero, MapEnum.TileType.Switch_Off_1 },
+        { Vector2Int.right, MapEnum.TileType.Switch_Off_2 },
+        { Vector2Int.up, MapEnum.TileType.Switch_Off_3 },
+        { Vector2Int.one, null },
+    };
+
+    /// <summary>
+    /// Dictionary Key : Offset from switchBasePos
+    /// </summary>
+    public static readonly Dictionary<Vector2Int, MapEnum.TileType?> OnOffSwitchOnTileTypeDict = new Dictionary<Vector2Int, MapEnum.TileType?> () {
+        { Vector2Int.zero, MapEnum.TileType.Switch_On_1 },
+        { Vector2Int.right, MapEnum.TileType.Switch_On_2 },
+        { Vector2Int.up, null },
+        { Vector2Int.one, MapEnum.TileType.Switch_On_3 },
+    };
+
     public static string GetTileResourcesName (MapEnum.TileType tileType) {
         if (TileResourcesCustomNameDict.ContainsKey (tileType)) {
             return ResourcesFolderName + TileResourcesCustomNameDict[tileType];

@@ -8,7 +8,7 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
 
     public static event Action<MapCollectableObject> CollectedEvent;
 
-    private bool isAddedEventListeners = false;
+    private bool isAddedEnemyEventListeners = false;
 
     public override void Init (MapData.CollectableData data) {
         this.data = data;
@@ -22,8 +22,8 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
 
         if (data.isFromEnemy) {
             gameObject.SetActive (false);
-            if (!isAddedEventListeners) {
-                isAddedEventListeners = true;
+            if (!isAddedEnemyEventListeners) {
+                isAddedEnemyEventListeners = true;
                 EnemyModelBase.DiedEvent += EnemyDied;
             }
         } else {
@@ -42,7 +42,7 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
     protected override void OnDestroy () {
         base.OnDestroy ();
 
-        if (isAddedEventListeners) {
+        if (isAddedEnemyEventListeners) {
             EnemyModelBase.DiedEvent -= EnemyDied;
         }
     }

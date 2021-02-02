@@ -4,18 +4,19 @@ using HIHIFramework.Core;
 using UnityEngine;
 
 public abstract class MapInvisibleTriggerBase<T> : MapTriggerBase<T> where T : MapData.InvisibleTriggerData {
+    protected BoxCollider2D triggerCollider;
 
     public override void Init (T data) {
         this.data = data;
 
         transform.position = new Vector3 (data.collider.pos.x, data.collider.pos.y, GameVariable.GeneralMapItemPosZ);
 
-        var collider = gameObject.GetComponent<BoxCollider2D> ();
-        if (collider == null) {
-            collider = gameObject.AddComponent<BoxCollider2D> ();
+        triggerCollider = gameObject.GetComponent<BoxCollider2D> ();
+        if (triggerCollider == null) {
+            triggerCollider = gameObject.AddComponent<BoxCollider2D> ();
         }
 
-        collider.isTrigger = true;
-        collider.size = data.collider.size;
+        triggerCollider.isTrigger = true;
+        triggerCollider.size = data.collider.size;
     }
 }
