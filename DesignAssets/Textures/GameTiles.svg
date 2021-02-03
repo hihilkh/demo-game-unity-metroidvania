@@ -1075,9 +1075,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.10505599"
-     inkscape:cx="3323.9124"
-     inkscape:cy="1386.8812"
+     inkscape:zoom="0.22191532"
+     inkscape:cx="2391.7707"
+     inkscape:cy="2782.9067"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -1183,13 +1183,6 @@
        height="127.99999"
        x="128"
        y="384" />
-    <rect
-       style="fill:url(#radialGradient1061-4-1-6);fill-opacity:1;stroke-width:1;stroke-linejoin:round"
-       id="rect1027-2-5-6"
-       width="127.99999"
-       height="127.99999"
-       x="128"
-       y="511.99997" />
     <rect
        style="fill:url(#radialGradient1061-4-1-6-0);fill-opacity:1;stroke-width:1;stroke-linejoin:round"
        id="rect1027-2-5-6-6"
@@ -1357,13 +1350,6 @@
        y="384"
        transform="rotate(-90)" />
     <rect
-       style="opacity:1;fill:url(#radialGradient1774-99);fill-opacity:1;stroke-width:1;stroke-linejoin:round"
-       id="rect1758-7"
-       width="127.99999"
-       height="127.99999"
-       x="512"
-       y="384" />
-    <rect
        style="opacity:1;fill:url(#radialGradient1774-99-8);fill-opacity:1;stroke-width:1;stroke-linejoin:round"
        id="rect1758-7-7"
        width="127.99999"
@@ -1448,34 +1434,33 @@
          transform="rotate(-90)" />
     </g>
     <g
-       id="g2473"
-       transform="translate(2.5,768.00002)">
+       id="g1748">
       <circle
-         style="opacity:1;fill:#000000;fill-opacity:0;stroke:#ff0000;stroke-width:4.5409;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="fill:#000000;fill-opacity:0;stroke:#ff0000;stroke-width:4.5409;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="path2435"
-         cx="832"
-         cy="192"
+         cx="831.35419"
+         cy="960"
          r="47.729549" />
       <circle
-         style="opacity:1;fill:#000000;fill-opacity:0;stroke:#ff0000;stroke-width:4.27159;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="fill:#000000;fill-opacity:0;stroke:#ff0000;stroke-width:4.27159;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="path2435-0"
-         cx="832"
-         cy="192"
+         cx="831.35419"
+         cy="960"
          r="27.864204" />
       <rect
-         style="opacity:1;fill:#ff0000;fill-opacity:1;stroke:#ff0000;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="fill:#ff0000;fill-opacity:1;stroke:#ff0000;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="rect2452"
-         width="127.99999"
+         width="127"
          height="4.9999995"
-         x="768"
-         y="189.5" />
+         x="768.41254"
+         y="957.5" />
       <rect
-         style="opacity:1;fill:#ff0000;fill-opacity:1;stroke:#ff0000;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="fill:#ff0000;fill-opacity:1;stroke:#ff0000;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="rect2452-4"
-         width="127.99999"
+         width="127"
          height="4.9999995"
-         x="127.99999"
-         y="-834.5"
+         x="896.52917"
+         y="-833.85419"
          transform="rotate(90)" />
     </g>
     <rect
@@ -1871,5 +1856,19 @@
          y="640"
          transform="rotate(-90)" />
     </g>
+    <rect
+       style="fill:url(#radialGradient1061-4-1-6);fill-opacity:1;stroke-width:1;stroke-linejoin:round"
+       id="rect1027-2-5-6"
+       width="127.99999"
+       height="127.99999"
+       x="128"
+       y="511.99997" />
+    <rect
+       style="opacity:1;fill:url(#radialGradient1774-99);fill-opacity:1;stroke-width:1;stroke-linejoin:round"
+       id="rect1758-7"
+       width="127.99999"
+       height="127.99999"
+       x="512"
+       y="384" />
   </g>
 </svg>
