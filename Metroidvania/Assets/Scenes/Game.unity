@@ -1708,6 +1708,8 @@ MonoBehaviour:
   deathTileMap: {fileID: 599432720}
   bgTileMap: {fileID: 973612927}
   mapObjectsBaseTransform: {fileID: 728973378}
+  collectableTemplate: {fileID: 7302308356337188844, guid: 06af2e63051094dafba9454e03d1b9e5,
+    type: 3}
 --- !u!114 &1519344826
 MonoBehaviour:
   m_ObjectHideFlags: 0

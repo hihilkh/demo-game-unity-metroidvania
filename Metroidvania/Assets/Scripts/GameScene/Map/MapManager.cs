@@ -15,6 +15,8 @@ public class MapManager : MonoBehaviour {
 
     [SerializeField] private Transform mapObjectsBaseTransform;
 
+    [SerializeField] private GameObject collectableTemplate;
+
     private Dictionary<MapEnum.TileMapType, Tilemap> tileMapDict => new Dictionary<MapEnum.TileMapType, Tilemap> {
         { MapEnum.TileMapType.Ground, groundTileMap},
         { MapEnum.TileMapType.Ground2, ground2TileMap},
@@ -223,9 +225,9 @@ public class MapManager : MonoBehaviour {
                 continue;
             }
 
-            var go = new GameObject ("MapCollectable");
+            var go = Instantiate (collectableTemplate);
             FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go);
-            var script = go.AddComponent<MapCollectableObject> ();
+            var script = go.GetComponentInChildren<MapCollectableObject> ();
             script.Init (data);
         }
 

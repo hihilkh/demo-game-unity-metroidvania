@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using HIHIFramework.Asset;
 using HIHIFramework.Core;
@@ -128,9 +129,16 @@ public class GameSceneManager : MonoBehaviour {
 
     private void CollectCollectable (MapCollectableObject collectableObject) {
         Log.Print ("Character collected collectable : " + collectableObject.ToString (), LogType.GameFlow | LogType.Char);
-        UserManager.CollectedCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
 
-        //TODO
+        Time.timeScale = 0;
+
+        Action onAnimFinished = () => {
+            //TODO
+            Time.timeScale = 1;
+            //UserManager.CollectedCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
+        };
+
+        collectableObject.StartCollectedAnim (charModel.GetCurrentCollectedCollectablePos (), onAnimFinished);
     }
 
     private void Exit (int toEntryId) {

@@ -335,5 +335,28 @@ namespace HIHIFramework.Core {
         }
 
         #endregion
+
+        #region Animation
+
+        public void StartSingleAnim (Animator animator, string stateName, Action onAnimFinished = null) {
+            StartCoroutine (StartAnimCoroutine (animator, stateName, onAnimFinished));
+        }
+
+        private IEnumerator StartAnimCoroutine (Animator animator, string stateName, Action onAnimFinished = null) {
+            animator.Play (stateName);
+
+            // To ensure the animation is started
+            while (!animator.GetCurrentAnimatorStateInfo (0).IsName (stateName)) {
+                yield return null;
+            }
+
+            while (animator.GetCurrentAnimatorStateInfo (0).normalizedTime <= 1) {
+                yield return null;
+            }
+
+            onAnimFinished?.Invoke ();
+        }
+
+        #endregion
     }
 }

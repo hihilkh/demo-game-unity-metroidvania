@@ -23,6 +23,7 @@ public class CharModel : LifeBase, IMapTarget {
     [SerializeField] private Animator animator;
     [SerializeField] private CharCameraModel cameraModel;
     [SerializeField] private Transform targetRefPoint;
+    [SerializeField] private Transform collectCollectableRefPoint;
     private MapManager mapManager;
 
     // Body Parts
@@ -1424,6 +1425,14 @@ public class CharModel : LifeBase, IMapTarget {
 
     private void StartFreeFall () {
         SetAnimatorTrigger (CharAnimConstant.FreeFallTriggerName);
+    }
+
+    #endregion
+
+    #region Collectable
+
+    public Vector3 GetCurrentCollectedCollectablePos () {
+        return collectCollectableRefPoint.position;
     }
 
     #endregion

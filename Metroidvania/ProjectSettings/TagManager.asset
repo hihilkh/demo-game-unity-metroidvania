@@ -51,3 +51,6 @@ TagManager:
   - name: HP
     uniqueID: 2633481435
     locked: 0
+  - name: Collectables
+    uniqueID: 898126107
+    locked: 0
