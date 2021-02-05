@@ -13,7 +13,7 @@ public class Collectable {
         Command_Arrow = 3,
         Command_Turn = 4,
 
-        // Plot
+        // TODO : Note
         Note_1 = 100,
         Note_2 = 101,
         Note_3 = 102,
