@@ -7,3 +7,35 @@ Mission_2	Mission2
 Mission_3	Mission3
 Mission_4	Mission4
 Mission_5	Mission5
+
+// Collectable related
+YouGot	You Got <color #ff0000>{0}</color>.
+
+Command_Hit	Command_Hit
+Command_Jump	Command_Jump
+Command_Dash	Command_Dash
+Command_Arrow	Command_Arrow
+Command_Turn	Command_Turn
+
+HP_Up	HP_Up
+Strength_Up	Strength_Up
+
+Note_1	Note_1
+Note_1_Title	Note_1_Title
+Note_1_Content	Note_1_Content
+
+Note_2	Note_2
+Note_2_Title	Note_2_Title
+Note_2_Content	Note_2_Content
+
+Note_3	Note_3
+Note_3_Title	Note_3_Title
+Note_3_Content	Note_3_Content
+
+Note_4	Note_4
+Note_4_Title	Note_4_Title
+Note_4_Content	Note_4_Content
+
+Note_5	Note_5
+Note_5_Title	Note_5_Title
+Note_5_Content	Note_5_Content
