@@ -5,17 +5,48 @@ using UnityEngine;
 public class MissionDetails {
     public int id { get; private set; }
     public string displayNameKey { get; private set; }
-    public string mapSceneName { get; private set; }
+    public List<MapEntry> mapEntries { get; private set; }
     public List<Collectable.Type> collectables { get; private set; }
 
-    public MissionDetails (int id, string displayNameKey, string mapSceneName, params Collectable.Type[] collectables) {
+    public class MapEntry {
+        public int id { get; private set; }
+        public string displayNameKey { get; private set; }
+
+        public MapEntry (int id, string displayNameKey) {
+            this.id = id;
+            this.displayNameKey = displayNameKey;
+        }
+    }
+
+    public MissionDetails (int id, string displayNameKey) {
         this.id = id;
         this.displayNameKey = displayNameKey;
-        this.mapSceneName = mapSceneName;
+        this.mapEntries = new List<MapEntry> ();
         this.collectables = new List<Collectable.Type> ();
+    }
+
+    public void SetMapEntries (params MapEntry[] mapEntries) {
+        this.mapEntries.Clear ();
+        if (mapEntries != null && mapEntries.Length > 0) {
+            this.mapEntries.AddRange (mapEntries);
+        }
+    }
+
+    public void SetCollectables (params Collectable.Type[] collectables) {
+        this.collectables.Clear ();
         if (collectables != null && collectables.Length > 0) {
             this.collectables.AddRange (collectables);
         }
+    }
+
+    public bool CheckHasMapEntry (int entryId) {
+        foreach (var mapEntry in mapEntries) {
+            if (mapEntry.id == entryId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public int GetCollectableCount () {
@@ -25,29 +56,4 @@ public class MissionDetails {
 
         return collectables.Count;
     }
-
-    #region All Missions
-
-    private static readonly MissionDetails Mission_1 = new MissionDetails (1, "Mission_Tutorial", "Map_Tutorial", Collectable.Type.Command_Hit);
-
-    // TODO : Naming without order
-    private static readonly MissionDetails Mission_2 = new MissionDetails (2, "Mission_2", "Map_2");
-    private static readonly MissionDetails Mission_3 = new MissionDetails (3, "Mission_3", "Map_3");
-    private static readonly MissionDetails Mission_4 = new MissionDetails (4, "Mission_4", "Map_4");
-    private static readonly MissionDetails Mission_5 = new MissionDetails (5, "Mission_5", "Map_5");
-
-    // TODO : Think if need order or not
-    public static List<MissionDetails> OrderedMissionList { get; private set; } = new List<MissionDetails> {
-            Mission_1,
-            Mission_2,
-            Mission_3,
-            Mission_4,
-            Mission_5,
-    };
-
-    public static int GetMissionIdByEntry (int entryId) {
-        // TODO
-        return -1;
-    }
-    #endregion
 }

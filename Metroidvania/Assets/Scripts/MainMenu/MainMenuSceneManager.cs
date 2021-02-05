@@ -22,7 +22,7 @@ public class MainMenuSceneManager : MonoBehaviour {
     private void GenerateSelectMissionItems () {
         var selectMissionItemList = new List<SelectMissionItem> ();
 
-        foreach (var missionDetails in MissionDetails.OrderedMissionList) {
+        foreach (var missionDetails in MissionManager.MissionList) {
             var clone = Instantiate<SelectMissionItem> (selectMissionItemTemplate);
 
             var progress = UserManager.GetMissionProgress (missionDetails.id);

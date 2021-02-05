@@ -142,6 +142,40 @@ public class GameSceneManager : MonoBehaviour {
         // Include collect panel, note panel and coresponding event
         Action onAllActionFinished = () => {
             UserManager.CollectedCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
+
+            // Command / BodyPart
+            CharEnum.Command? enabledCommand = null;
+            var obtainedBodyPart = CharEnum.BodyPart.None;
+            switch (collectableObject.GetCollectableType ()) {
+                case Collectable.Type.Command_Hit:
+                    enabledCommand = CharEnum.Command.Hit;
+                    obtainedBodyPart = CharEnum.BodyPart.Arms;
+                    break;
+                case Collectable.Type.Command_Jump:
+                    enabledCommand = CharEnum.Command.Jump;
+                    obtainedBodyPart = CharEnum.BodyPart.Legs;
+                    break;
+                case Collectable.Type.Command_Dash:
+                    enabledCommand = CharEnum.Command.Dash;
+                    obtainedBodyPart = CharEnum.BodyPart.Thrusters;
+                    break;
+                case Collectable.Type.Command_Arrow:
+                    enabledCommand = CharEnum.Command.Arrow;
+                    obtainedBodyPart = CharEnum.BodyPart.Arrow;
+                    break;
+                case Collectable.Type.Command_Turn:
+                    enabledCommand = CharEnum.Command.Turn;
+                    break;
+            }
+
+            if (enabledCommand != null) {
+                UserManager.EnableCommand ((CharEnum.Command)enabledCommand);
+            }
+
+            if (obtainedBodyPart != CharEnum.BodyPart.None) {
+                charModel.ObtainBodyPart (obtainedBodyPart);
+            }
+            
             Time.timeScale = 1;
         };
 

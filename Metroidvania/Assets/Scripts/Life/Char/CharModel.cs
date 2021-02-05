@@ -27,7 +27,7 @@ public class CharModel : LifeBase, IMapTarget {
     private MapManager mapManager;
 
     // Body Parts
-    public CharEnum.BodyPart obtainedBodyParts { get; private set; } = CharEnum.BodyPart.Head | CharEnum.BodyPart.Arms | CharEnum.BodyPart.Legs | CharEnum.BodyPart.Thrusters | CharEnum.BodyPart.Arrow;
+    public CharEnum.BodyPart obtainedBodyParts { get; private set; }
 
     protected override int posZ => GameVariable.CharPosZ;
     protected override int invincibleLayer => GameVariable.PlayerInvincibleLayer;
@@ -162,6 +162,7 @@ public class CharModel : LifeBase, IMapTarget {
     protected override void Awake () {
         base.Awake ();
 
+        obtainedBodyParts = UserManager.GetObtainedBodyParts ();
         // Remarks :
         // Currently do not add StartedLeft, StoppedLeft, StartedRight, StoppedRight handling to prevent complicated code.
         // Add them back if found them to be useful for development or debugging.

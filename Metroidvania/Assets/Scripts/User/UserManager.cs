@@ -9,6 +9,8 @@ public static class UserManager {
     public static Dictionary<int, MissionProgress> MissionProgressDict { get; private set; }
     public static List<CharEnum.Command> EnabledCommandList { get; private set; }
 
+    #region PlayerPrefs
+
     public static int SelectedMissionId {
         get { return PlayerPrefs.GetInt (GameVariable.SelectedMissionIdKey, -1); }
         set { PlayerPrefs.SetInt (GameVariable.SelectedMissionIdKey, value); }
@@ -18,6 +20,14 @@ public static class UserManager {
         get { return PlayerPrefs.GetInt (GameVariable.SelectedMapEntryIdKey, -1); }
         set { PlayerPrefs.SetInt (GameVariable.SelectedMapEntryIdKey, value); }
     }
+
+    #endregion
+
+    #region Temp saved
+
+    public static int? EntryJustUnlockedMissionId { get; private set; } = null;
+
+    #endregion
 
     #region Init
 
@@ -52,6 +62,27 @@ public static class UserManager {
         }
     }
 
+    public static CharEnum.BodyPart GetObtainedBodyParts () {
+        var obtainedBodyPart = CharEnum.BodyPart.None;
+        if (EnabledCommandList.Contains(CharEnum.Command.Hit)) {
+            obtainedBodyPart = obtainedBodyPart | CharEnum.BodyPart.Arms;
+        }
+
+        if (EnabledCommandList.Contains (CharEnum.Command.Jump)) {
+            obtainedBodyPart = obtainedBodyPart | CharEnum.BodyPart.Legs;
+        }
+
+        if (EnabledCommandList.Contains (CharEnum.Command.Dash)) {
+            obtainedBodyPart = obtainedBodyPart | CharEnum.BodyPart.Thrusters;
+        }
+
+        if (EnabledCommandList.Contains (CharEnum.Command.Arrow)) {
+            obtainedBodyPart = obtainedBodyPart | CharEnum.BodyPart.Arrow;
+        }
+
+        return obtainedBodyPart;
+    }
+
     #endregion
 
     #region PlayerPrefs (Save / Load)
@@ -67,11 +98,11 @@ public static class UserManager {
     }
 
     private static void LoadMissionProgressList () {
+        MissionProgressDict = new Dictionary<int, MissionProgress> ();
+
         var json = PlayerPrefs.GetString (GameVariable.AllMissionProgressKey, null);
 
-        if (string.IsNullOrEmpty (json)) {
-            MissionProgressDict = new Dictionary<int, MissionProgress> ();
-        } else {
+        if (!string.IsNullOrEmpty (json)) {
             var allMissionProgress = new AllMissionProgress ();
             allMissionProgress = JsonUtility.FromJson<AllMissionProgress> (json);
             MissionProgressDict = allMissionProgress.ConvertToDict ();
@@ -95,11 +126,11 @@ public static class UserManager {
     }
 
     private static void LoadEnabledCommandList () {
+        EnabledCommandList = new List<CharEnum.Command> ();
+
         var str = PlayerPrefs.GetString (GameVariable.EnabledCommandListKey, null);
 
-        if (string.IsNullOrEmpty (str)) {
-            EnabledCommandList = new List<CharEnum.Command> ();
-        } else {
+        if (!string.IsNullOrEmpty (str)) {
             var array = str.Split (new string[] { FrameworkVariable.DefaultDelimiter }, System.StringSplitOptions.None);
             foreach (var commandIntStr in array) {
                 EnabledCommandList.Add ((CharEnum.Command)int.Parse (commandIntStr));
@@ -112,11 +143,23 @@ public static class UserManager {
     #region Logic
 
     private static void SetFirstMissionUnlocked () {
-        var firstMissionId = MissionDetails.OrderedMissionList[0].id;
+        var firstMissionId = MissionManager.FirstMissionId;
         var progress = GetMissionProgress (firstMissionId);
 
         if (!progress.isUnlocked) {
-            progress.isUnlocked = true;
+            var mission = MissionManager.GetMission (firstMissionId);
+
+            if (mission == null) {
+                Log.PrintError ("Cannot get mission with mission id : " + firstMissionId, LogType.GameFlow);
+                return;
+            }
+
+            if (mission.mapEntries == null || mission.mapEntries.Count <= 0) {
+                Log.PrintError ("No map entries for mission with mission id : " + firstMissionId, LogType.GameFlow);
+                return;
+            }
+
+            progress.AddUnlockedMapEntry (mission.mapEntries[0].id);
             SaveMissionProgressList ();
         }
     }
@@ -126,29 +169,31 @@ public static class UserManager {
         clearMissionProgress.isCleared = true;
 
         if (toEntryId != null) {
-            var nextMissionId = MissionDetails.GetMissionIdByEntry ((int)toEntryId);
-            var nextMissionProgress = GetMissionProgress (nextMissionId);
-            nextMissionProgress.isUnlocked = true;
+            var toEntryIdInt = (int)toEntryId;
+            var nextMission = MissionManager.GetMissionByMapEntry (toEntryIdInt);
 
-            // TODO : unlock entry
+            if (nextMission == null) {
+                Log.PrintError ("Cannot get mission that contain map entry with id : " + toEntryId, LogType.GameFlow);
+            } else {
+                var nextMissionProgress = GetMissionProgress (nextMission.id);
+                if (nextMissionProgress.AddUnlockedMapEntry (toEntryIdInt)) {
+                    EntryJustUnlockedMissionId = nextMission.id;
+                } else {
+                    EntryJustUnlockedMissionId = null;
+                }
+            }
         }
 
         SaveMissionProgressList ();
     }
 
+    public static void ClearEntryJustUnlockedMissionId () {
+        EntryJustUnlockedMissionId = null;
+    }
+
     public static void CollectedCollectable (int missionId, Collectable.Type collectable) {
         var missionProgress = GetMissionProgress (missionId);
         missionProgress.AddCollectedCollectable (collectable);
-
-        SaveMissionProgressList ();
-    }
-
-    /// <summary>
-    /// For development use only
-    /// </summary>
-    public static void ClearAllCollectedCollectables (int missionId) {
-        var missionProgress = GetMissionProgress (missionId);
-        missionProgress.ClearAllCollectedCollectables ();
 
         SaveMissionProgressList ();
     }
@@ -165,5 +210,23 @@ public static class UserManager {
         SaveEnabledCommandList ();
     }
 
+    /// <summary>
+    /// For development use only
+    /// </summary>
+    private static void ClearAllCollectedCollectables (int missionId) {
+        var missionProgress = GetMissionProgress (missionId);
+        missionProgress.ClearAllCollectedCollectables ();
+
+        SaveMissionProgressList ();
+    }
+
+    /// <summary>
+    /// For development use only. You would need to call ClearAllCollectedCollectables in order to get the corresponding collectable again.
+    /// </summary>
+    private static void ClearAllEnabledCommand () {
+        EnabledCommandList.Clear ();
+
+        SaveEnabledCommandList ();
+    }
     #endregion
 }
