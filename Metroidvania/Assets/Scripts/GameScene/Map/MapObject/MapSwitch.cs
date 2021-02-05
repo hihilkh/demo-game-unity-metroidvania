@@ -22,14 +22,17 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget
         switch (data.switchType) {
             case MapEnum.SwitchType.Arrow:
                 gameObject.tag = GameVariable.ArrowSwitchTag;
+                gameObject.layer = GameVariable.DefaultLayer;
                 break;
             case MapEnum.SwitchType.DropHit:
                 gameObject.tag = GameVariable.DropHitSwitchTag;
+                gameObject.layer = GameVariable.DefaultLayer;
                 break;
             case MapEnum.SwitchType.OnOff:
             case MapEnum.SwitchType.Enemy:
             default:
                 gameObject.tag = GameVariable.DefaultTag;
+                gameObject.layer = GameVariable.PlayerInteractableLayer;
                 break;
         }
 

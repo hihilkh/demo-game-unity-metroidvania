@@ -13,6 +13,12 @@ public class MapExit : MapInvisibleTriggerBase<MapData.ExitData> {
 
     protected override bool isDisposeWhenMapReset => false;
 
+    public override void Init (MapData.ExitData data) {
+        base.Init (data);
+
+        gameObject.layer = GameVariable.PlayerInteractableLayer;
+    }
+
     protected override bool CheckValidTrigger (Collider2D collision) {
         if (collision.tag != GameVariable.PlayerTag) {
             return false;

@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 6378167172035650656}
   - component: {fileID: 5143845770374917409}
   - component: {fileID: 3992539947984451592}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: ChargedHit
-  m_TagString: Attack
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

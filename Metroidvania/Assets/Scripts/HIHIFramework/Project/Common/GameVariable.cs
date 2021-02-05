@@ -13,7 +13,6 @@ public static partial class GameVariable {
     public const string GroundTag = "Ground";
     public const string SlippyWallTag = "SlippyWall";
     public const string DeathTag = "Death";
-    public const string AttackTag = "Attack";
     public const string ArrowSwitchTag = "ArrowSwitch";
     public const string DropHitSwitchTag = "DropHitSwitch";
 
@@ -21,11 +20,14 @@ public static partial class GameVariable {
 
     #region Layer
 
+    public const int DefaultLayer = 0;
     public const int PlayerLayer = 8;
     public const int EnemyLayer = 9;
     public const int PlayerInvincibleLayer = 10;
     public const int EnemyInvincibleLayer = 11;
     public const int PlayerInteractableLayer = 12;
+    public const int PlayerAttackLayer = 13;
+    public const int EnemyAttackLayer = 14;
 
     #endregion
 

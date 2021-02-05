@@ -5,7 +5,6 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
-  - Attack
   - SlippyWall
   - Death
   - Enemy
@@ -25,8 +24,8 @@ TagManager:
   - PlayerInvincible
   - EnemyInvincible
   - PlayerInteractable
-  - 
-  - 
+  - PlayerAttack
+  - EnemyAttack
   - 
   - 
   - 

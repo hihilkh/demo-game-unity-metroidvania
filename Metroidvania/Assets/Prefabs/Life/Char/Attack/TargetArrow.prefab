@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 858284693220932101}
   - component: {fileID: 858284693220932100}
   - component: {fileID: 2322343721057824326}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: TargetArrow
-  m_TagString: Attack
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 3466689531986377007}
   - component: {fileID: 6871684591903549134}
   - component: {fileID: 8693601085556598654}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: FinishingHit
-  m_TagString: Attack
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -25,7 +25,6 @@ public class CharAttackTrigger : MonoBehaviour {
     private void OnTriggerEnter2D (Collider2D collision) {
         switch (collision.tag) {
             case GameVariable.PlayerTag:
-            case GameVariable.AttackTag:
                 return;
             case GameVariable.EnemyTag:
                 var lifeBase = collision.GetComponentInParent<LifeBase> ();
