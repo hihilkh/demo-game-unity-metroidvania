@@ -7,13 +7,13 @@ using UnityEngine;
 public static class MissionManager {
     public const int FirstMissionId = 1;
 
-    private static readonly MissionDetails Mission_1 = new MissionDetails (1, "Mission_1");
-    private static readonly MissionDetails Mission_2 = new MissionDetails (2, "Mission_2");
-    private static readonly MissionDetails Mission_3 = new MissionDetails (3, "Mission_3");
-    private static readonly MissionDetails Mission_4 = new MissionDetails (4, "Mission_4");
-    private static readonly MissionDetails Mission_5 = new MissionDetails (5, "Mission_5");
+    private static readonly Mission Mission_1 = new Mission (1, "Mission_1");
+    private static readonly Mission Mission_2 = new Mission (2, "Mission_2");
+    private static readonly Mission Mission_3 = new Mission (3, "Mission_3");
+    private static readonly Mission Mission_4 = new Mission (4, "Mission_4");
+    private static readonly Mission Mission_5 = new Mission (5, "Mission_5");
 
-    public static List<MissionDetails> MissionList { get; private set; } = new List<MissionDetails> {
+    public static List<Mission> MissionList { get; private set; } = new List<Mission> {
             Mission_1,
             Mission_2,
             Mission_3,
@@ -23,7 +23,7 @@ public static class MissionManager {
 
     static MissionManager () {
         // Mission_1
-        Mission_1.SetMapEntries (new MissionDetails.MapEntry (1, "MapEntry_1"));
+        Mission_1.SetMapEntries (new Mission.MapEntry (1, "MapEntry_1"));
         Mission_1.SetCollectables (
             Collectable.Type.Command_Hit,
             Collectable.Type.Command_Jump
@@ -31,8 +31,8 @@ public static class MissionManager {
 
         // Mission_2
         Mission_2.SetMapEntries (
-            new MissionDetails.MapEntry (2, "MapEntry_2"),
-            new MissionDetails.MapEntry (6, "MapEntry_6")
+            new Mission.MapEntry (2, "MapEntry_2"),
+            new Mission.MapEntry (6, "MapEntry_6")
         );
         Mission_2.SetCollectables (
             Collectable.Type.Command_Dash,
@@ -42,19 +42,19 @@ public static class MissionManager {
         );
 
         // Mission_3
-        Mission_3.SetMapEntries (new MissionDetails.MapEntry (3, "MapEntry_3"));
+        Mission_3.SetMapEntries (new Mission.MapEntry (3, "MapEntry_3"));
 
         // Mission_4
         Mission_4.SetMapEntries (
-            new MissionDetails.MapEntry (4, "MapEntry_4"),
-            new MissionDetails.MapEntry (7, "MapEntry_7")
+            new Mission.MapEntry (4, "MapEntry_4"),
+            new Mission.MapEntry (7, "MapEntry_7")
         );
 
         // Mission_5
-        Mission_5.SetMapEntries (new MissionDetails.MapEntry (5, "MapEntry_5"));
+        Mission_5.SetMapEntries (new Mission.MapEntry (5, "MapEntry_5"));
     }
 
-    public static MissionDetails GetMission (int missionId) {
+    public static Mission GetMission (int missionId) {
         foreach (var mission in MissionList) {
             if (mission.id == missionId) {
                 return mission;
@@ -64,7 +64,7 @@ public static class MissionManager {
         return null;
     }
 
-    public static MissionDetails GetMissionByMapEntry (int entryId) {
+    public static Mission GetMissionByMapEntry (int entryId) {
         foreach (var mission in MissionList) {
             if (mission.CheckHasMapEntry(entryId)) {
                 return mission;

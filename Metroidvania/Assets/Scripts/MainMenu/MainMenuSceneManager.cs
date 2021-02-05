@@ -22,11 +22,11 @@ public class MainMenuSceneManager : MonoBehaviour {
     private void GenerateSelectMissionItems () {
         var selectMissionItemList = new List<SelectMissionItem> ();
 
-        foreach (var missionDetails in MissionManager.MissionList) {
+        foreach (var mission in MissionManager.MissionList) {
             var clone = Instantiate<SelectMissionItem> (selectMissionItemTemplate);
 
-            var progress = UserManager.GetMissionProgress (missionDetails.id);
-            clone.Init (missionDetails, progress);
+            var progress = UserManager.GetMissionProgress (mission.id);
+            clone.Init (mission, progress);
 
             selectMissionItemList.Add (clone);
         }
@@ -35,12 +35,12 @@ public class MainMenuSceneManager : MonoBehaviour {
     }
 
     private void OnSelectMissionItemClick (object info) {
-        if (!(info is MissionDetails)) {
+        if (!(info is Mission)) {
             Log.PrintError ("OnSelectMissionItemClick failed. Getting invalid info type : " + info.GetType (), LogType.UI | LogType.Input | LogType.GameFlow);
             return;
         }
 
-        var details = (MissionDetails)info;
+        var details = (Mission)info;
 
         // TODO
         SceneManager.LoadScene (GameVariable.GameSceneName);

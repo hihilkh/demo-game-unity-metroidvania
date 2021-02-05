@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MissionDetails {
+public class Mission {
     public int id { get; private set; }
     public string displayNameKey { get; private set; }
     public List<MapEntry> mapEntries { get; private set; }
@@ -18,7 +18,7 @@ public class MissionDetails {
         }
     }
 
-    public MissionDetails (int id, string displayNameKey) {
+    public Mission (int id, string displayNameKey) {
         this.id = id;
         this.displayNameKey = displayNameKey;
         this.mapEntries = new List<MapEntry> ();

@@ -17,7 +17,7 @@ public class SelectMissionItem : MonoBehaviour {
     /// Init the SelectMissionItem.<br />
     /// progress = null : Use new MissionProgress () as value
     /// </summary>
-    public void Init (MissionDetails details, MissionProgress progress = null) {
+    public void Init (Mission details, MissionProgress progress = null) {
         if (progress == null) {
             progress = new MissionProgress ();
         }
@@ -46,7 +46,7 @@ public class SelectMissionItem : MonoBehaviour {
         button.interactable = isUnlocked;
     }
 
-    private float GetMissionProgress (MissionDetails details, MissionProgress progress) {
+    private float GetMissionProgress (Mission details, MissionProgress progress) {
         var totalCount = details.GetCollectableCount ();
 
         if (totalCount <= 0) {
@@ -68,7 +68,7 @@ public class SelectMissionItem : MonoBehaviour {
         return (float)collectedCount / (float)totalCount;
     }
 
-    private void SetCollectables (MissionDetails details, MissionProgress progress) {
+    private void SetCollectables (Mission details, MissionProgress progress) {
         // TODO
     }
 
