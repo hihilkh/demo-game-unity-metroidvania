@@ -44,7 +44,6 @@ public class MapManager : MonoBehaviour {
 
     private void OnDestroy () {
         RemoveEventListeners ();
-        StopAllCoroutines ();
     }
 
     #region Map Generation

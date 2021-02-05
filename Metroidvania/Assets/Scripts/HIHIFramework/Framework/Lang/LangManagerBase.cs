@@ -184,25 +184,25 @@ namespace HIHIFramework.Lang {
 
         #endregion
 
-        #region GetWord / SetWord method
+        #region GetLocalizedStr / SetTexts method
 
         /// <summary>
         /// Get localization of input localization key in <b>CurrentLang</b> 
         /// </summary>
-        public static string GetWord (string key, bool isFallbackToRootLang = true) {
-            return GetWord (CurrentLang, key, isFallbackToRootLang);
+        public static string GetLocalizedStr (string key, bool isFallbackToRootLang = true) {
+            return GetLocalizedStr (CurrentLang, key, isFallbackToRootLang);
         }
 
         /// <summary>
         /// Get localization of input localization key in input LangType
         /// </summary>
-        public static string GetWord (LangType langType, string key, bool isFallbackToRootLang = true) {
+        public static string GetLocalizedStr (LangType langType, string key, bool isFallbackToRootLang = true) {
             Func<string> failedAction = () => {
                 if (isFallbackToRootLang) {
                     var rootLang = LangConfig.GetRootLang ();
                     if (langType != rootLang) {
                         Log.Print ("Try to get word with root lang.", LogType.Lang);
-                        return GetWord (rootLang, key, false);
+                        return GetLocalizedStr (rootLang, key, false);
                     }
                 }
 
@@ -231,11 +231,40 @@ namespace HIHIFramework.Lang {
             return mapping[key];
         }
 
+        private static void SetText (TMP_FontAsset font, BasicLocalizedTextDetails details, bool isFallbackToRootLang = true) {
+            details.text.font = font;
+
+            var str = details.isNeedLocalization ? GetLocalizedStr (details.localizationKey, isFallbackToRootLang) : details.localizationKey;
+            if (details.replaceStringDict != null && details.replaceStringDict.Count > 0) {
+                List<string> replaceStringList = new List<string> ();
+                foreach (var pair in details.replaceStringDict) {
+                    if (pair.Value) {
+                        replaceStringList.Add (GetLocalizedStr (pair.Key, isFallbackToRootLang));
+                    } else {
+                        replaceStringList.Add (pair.Key);
+                    }
+                }
+
+                str = FrameworkUtils.StringReplace (str, replaceStringList.ToArray ());
+            }
+
+            details.text.text = str;
+        }
+
+        /// <summary>
+        /// Set the Text component with corresponding BasicLocalizedTextDetails List
+        /// </summary>
+        public static void SetText (BasicLocalizedTextDetails details, bool isFallbackToRootLang = true) {
+            var font = GetCurrentFont ();
+
+            SetText (font, details, isFallbackToRootLang);
+        }
+
         /// <summary>
         /// Set the Text components with corresponding BasicLocalizedTextDetails List
         /// </summary>
         //// Remarks : Use IEnumerable because it is covariance
-        public static void SetWords (IEnumerable<BasicLocalizedTextDetails> detailsList, bool isFallbackToRootLang = true) {
+        public static void SetTexts (IEnumerable<BasicLocalizedTextDetails> detailsList, bool isFallbackToRootLang = true) {
             if (detailsList == null) {
                 Log.PrintWarning ("The input detailsList is null. Cannot set words.", LogType.Lang);
                 return;
@@ -243,12 +272,7 @@ namespace HIHIFramework.Lang {
 
             var font = GetCurrentFont ();
             foreach (var details in detailsList) {
-                details.text.font = font;
-                if (details.isNeedLocalization) {
-                    details.text.text = GetWord (details.localizationKey, isFallbackToRootLang);
-                } else {
-                    details.text.text = details.localizationKey;
-                }
+                SetText (font, details, isFallbackToRootLang);
             }
         }
 

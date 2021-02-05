@@ -118,17 +118,17 @@ public class MapData {
 
     [Serializable]
     public class CollectableData : WorldPosData {
-        public MapCollectable.Type type;
+        public Collectable.Type type;
         public int fromEnemyId = -1;
         public bool isFromEnemy => fromEnemyId > -1;
 
         public CollectableData () { }
 
-        public CollectableData (float x, float y, MapCollectable.Type type) : base (x, y) {
+        public CollectableData (float x, float y, Collectable.Type type) : base (x, y) {
             this.type = type;
         }
 
-        public CollectableData (float x, float y, MapCollectable.Type type, int fromEnemyId) : this (x, y, type) {
+        public CollectableData (float x, float y, Collectable.Type type, int fromEnemyId) : this (x, y, type) {
             this.fromEnemyId = fromEnemyId;
         }
     }

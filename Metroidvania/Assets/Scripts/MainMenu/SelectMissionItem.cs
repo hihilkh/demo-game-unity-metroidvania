@@ -73,6 +73,6 @@ public class SelectMissionItem : MonoBehaviour {
     }
 
     private void OnLangChanged () {
-        LangManager.SetWords (detailsList);
+        LangManager.SetTexts (detailsList);
     }
 }

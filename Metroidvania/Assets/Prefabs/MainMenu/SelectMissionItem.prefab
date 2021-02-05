@@ -121,7 +121,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  onClickType: 101
+  onClickType: 100
 --- !u!114 &7786266168883018241
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -130,15 +130,40 @@ public class GameSceneManager : MonoBehaviour {
     private void CollectCollectable (MapCollectableObject collectableObject) {
         Log.Print ("Character collected collectable : " + collectableObject.ToString (), LogType.GameFlow | LogType.Char);
 
+        var collectable = CollectableManager.GetCollectable (collectableObject.GetCollectableType ());
+
+        if (collectable == null) {
+            Log.PrintError ("Cannot find collectable. Do not do CollectCollectable action.", LogType.GameFlow);
+            return;
+        }
+
         Time.timeScale = 0;
 
-        Action onAnimFinished = () => {
-            //TODO
+        // Include collect panel, note panel and coresponding event
+        Action onAllActionFinished = () => {
+            UserManager.CollectedCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
             Time.timeScale = 1;
-            //UserManager.CollectedCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
         };
 
-        collectableObject.StartCollectedAnim (charModel.GetCurrentCollectedCollectablePos (), onAnimFinished);
+        // Include collect panel and note panel
+        Action onAllCollectActionFinished = () => {
+            // TODO : events
+            onAllActionFinished ();
+        };
+
+        Action onShowCollectedPanelFinished = () => {
+            if (collectable is NoteCollectable) {
+                uiManager.ShowNotePanel ((NoteCollectable)collectable, onAllCollectActionFinished);
+            } else {
+                onAllCollectActionFinished ();
+            }
+        };
+
+        Action onCollectedAnimFinished = () => {
+            uiManager.ShowCollectedPanel (collectable, onShowCollectedPanelFinished);
+        };
+
+        collectableObject.StartCollectedAnim (charModel.GetCurrentCollectedCollectablePos (), onCollectedAnimFinished);
     }
 
     private void Exit (int toEntryId) {

@@ -13,10 +13,7 @@ public class LandingSceneUIManager : MonoBehaviour {
     }
     
     private void SetTexts () {
-        var detailsList = new List<LocalizedTextDetails> ();
-        detailsList.Add (new LocalizedTextDetails (startText, "PressToStart"));
-
-        LangManager.SetWords (detailsList);
+        LangManager.SetText (new LocalizedTextDetails (startText, "PressToStart"));
     }
 
 }

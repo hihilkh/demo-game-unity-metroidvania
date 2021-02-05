@@ -53,30 +53,41 @@ public class MissionProgressWithId {
 public class MissionProgress {
     public bool isUnlocked;
     public bool isCleared;
-    public List<MapCollectable.Type> collectedCollectables;
+    public List<Collectable.Type> collectedCollectables;
 
     public MissionProgress () {
         isUnlocked = false;
         isCleared = false;
-        collectedCollectables = new List<MapCollectable.Type> ();
+        collectedCollectables = new List<Collectable.Type> ();
     }
 
-    public MissionProgress (bool isUnlocked, bool isCleared, params MapCollectable.Type[] collectedCollectables) {
+    public MissionProgress (bool isUnlocked, bool isCleared, params Collectable.Type[] collectedCollectables) {
         this.isUnlocked = isUnlocked;
         this.isCleared = isCleared;
-        this.collectedCollectables = new List<MapCollectable.Type> ();
+        this.collectedCollectables = new List<Collectable.Type> ();
         if (collectedCollectables != null && collectedCollectables.Length > 0) {
             this.collectedCollectables.AddRange (collectedCollectables);
         }
     }
 
-    public void AddCollectedCollectable (MapCollectable.Type collectable) {
+    public void AddCollectedCollectable (Collectable.Type collectable) {
         if (collectedCollectables == null) {
-            collectedCollectables = new List<MapCollectable.Type> ();
+            collectedCollectables = new List<Collectable.Type> ();
         }
 
         if (!collectedCollectables.Contains (collectable)) {
             collectedCollectables.Add (collectable);
         }
+    }
+
+    /// <summary>
+    /// For development use only
+    /// </summary>
+    public void ClearAllCollectedCollectables () {
+        if (collectedCollectables == null) {
+            collectedCollectables = new List<Collectable.Type> ();
+        }
+
+        collectedCollectables.Clear ();
     }
 }

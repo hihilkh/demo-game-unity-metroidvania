@@ -18,10 +18,10 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
     public override void Init (MapData.CollectableData data) {
         this.data = data;
 
-        var collectable = MapCollectable.GetCollectable (data.type);
+        var collectable = CollectableManager.GetCollectable (data.type);
         if (collectable == null) {
             baseGO.SetActive (false);
-            Log.PrintError ("Cannot init map collectable object : MapCollectable is null.", LogType.MapData);
+            Log.PrintError ("Cannot init map collectable object : Collectable is null.", LogType.MapData);
             return;
         }
 
@@ -78,7 +78,7 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
         }
     }
 
-    public MapCollectable.Type GetCollectableType () {
+    public Collectable.Type GetCollectableType () {
         return data.type;
     }
 

@@ -136,9 +136,19 @@ public static class UserManager {
         SaveMissionProgressList ();
     }
 
-    public static void CollectedCollectable (int missionId, MapCollectable.Type collectable) {
+    public static void CollectedCollectable (int missionId, Collectable.Type collectable) {
         var missionProgress = GetMissionProgress (missionId);
         missionProgress.AddCollectedCollectable (collectable);
+
+        SaveMissionProgressList ();
+    }
+
+    /// <summary>
+    /// For development use only
+    /// </summary>
+    public static void ClearAllCollectedCollectables (int missionId) {
+        var missionProgress = GetMissionProgress (missionId);
+        missionProgress.ClearAllCollectedCollectables ();
 
         SaveMissionProgressList ();
     }

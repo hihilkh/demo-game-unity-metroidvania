@@ -6,13 +6,13 @@ public class MissionDetails {
     public int id { get; private set; }
     public string displayNameKey { get; private set; }
     public string mapSceneName { get; private set; }
-    public List<MapCollectable.Type> collectables { get; private set; }
+    public List<Collectable.Type> collectables { get; private set; }
 
-    public MissionDetails (int id, string displayNameKey, string mapSceneName, params MapCollectable.Type[] collectables) {
+    public MissionDetails (int id, string displayNameKey, string mapSceneName, params Collectable.Type[] collectables) {
         this.id = id;
         this.displayNameKey = displayNameKey;
         this.mapSceneName = mapSceneName;
-        this.collectables = new List<MapCollectable.Type> ();
+        this.collectables = new List<Collectable.Type> ();
         if (collectables != null && collectables.Length > 0) {
             this.collectables.AddRange (collectables);
         }
@@ -28,7 +28,7 @@ public class MissionDetails {
 
     #region All Missions
 
-    private static readonly MissionDetails Mission_1 = new MissionDetails (1, "Mission_Tutorial", "Map_Tutorial", MapCollectable.Type.Command_Hit);
+    private static readonly MissionDetails Mission_1 = new MissionDetails (1, "Mission_Tutorial", "Map_Tutorial", Collectable.Type.Command_Hit);
 
     // TODO : Naming without order
     private static readonly MissionDetails Mission_2 = new MissionDetails (2, "Mission_2", "Map_2");
