@@ -75,14 +75,14 @@ namespace HIHIFramework.Core {
         }
 
         private static string ConstructLog (string rawMessage) {
-            if (UnityEngine.Debug.isDebugBuild) {
+            if (Application.platform == RuntimePlatform.LinuxEditor || Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.WindowsEditor) {
                 return rawMessage;
+            } else {
+                var logTag = GameVariable.LogTag;
+                var logTime = DateTime.Now.ToString ("HH:mm:ss.fff");
+                var stackTraceDetails = GetStackTraceDetails ();
+                return logTime + " " + logTag + " " + stackTraceDetails + "   " + rawMessage;
             }
-
-            var logTag = GameVariable.LogTag;
-            var logTime = DateTime.Now.ToString ("HH:mm:ss.fff");
-            var stackTraceDetails = GetStackTraceDetails ();
-            return logTime + " " + logTag + " " + stackTraceDetails + "   " + rawMessage;
         }
 
         private static string GetStackTraceDetails () {
