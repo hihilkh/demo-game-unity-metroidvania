@@ -2,11 +2,20 @@ LangName	English
 PressToStart	Press to Start
 
 // Mission Name
-Mission_Tutorial	Tutorial
+Mission_1	Mission1
 Mission_2	Mission2
 Mission_3	Mission3
 Mission_4	Mission4
 Mission_5	Mission5
+
+// MapEntry
+MapEntry_1	MapEntry_1
+MapEntry_2	MapEntry_2
+MapEntry_3	MapEntry_3
+MapEntry_4	MapEntry_4
+MapEntry_5	MapEntry_5
+MapEntry_6	MapEntry_6
+MapEntry_7	MapEntry_7
 
 // Collectable related
 YouGot	You Got <color #ff0000>{0}</color>.
