@@ -19,12 +19,14 @@ public class Collectable {
         Note_3 = 102,
         Note_4 = 103,
         Note_5 = 104,
+        Note_6 = 105,
 
         // Others
         HP_1 = 200,
         HP_2 = 201,
         Strength_1 = 202,
         Strength_2 = 203,
+        Fire_Arrow = 204,
 
     }
 
