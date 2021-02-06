@@ -285,7 +285,8 @@ public class MapDataExporter : MonoBehaviour {
 
             var hiddenPathTransformList = new List<Transform> ();
             foreach (Transform trans in hiddenPathsBaseTransform) {
-                if (trans.name.Contains (switchName)) {
+                var tempArray = trans.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
+                if (tempArray.Length > 0 && tempArray[0] == switchName) {
                     hiddenPathTransformList.Add (trans);
                 }
             }
