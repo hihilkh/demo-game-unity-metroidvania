@@ -28,6 +28,7 @@ Command_Turn	Command_Turn
 
 HP_Up	HP_Up
 Strength_Up	Strength_Up
+FireArrow	FireArrow
 
 Note_1	Note_1
 Note_1_Title	Note_1_Title
@@ -48,3 +49,7 @@ Note_4_Content	Note_4_Content
 Note_5	Note_5
 Note_5_Title	Note_5_Title
 Note_5_Content	Note_5_Content
+
+Note_6	Note_6
+Note_6_Title	Note_6_Title
+Note_6_Content	Note_6_Content

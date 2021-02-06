@@ -26,7 +26,7 @@ public class Collectable {
         HP_2 = 201,
         Strength_1 = 202,
         Strength_2 = 203,
-        Fire_Arrow = 204,
+        FireArrow = 204,
 
     }
 
