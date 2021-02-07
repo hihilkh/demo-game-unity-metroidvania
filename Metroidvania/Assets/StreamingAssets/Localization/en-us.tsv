@@ -1,5 +1,10 @@
 LangName	English
+
+// Landing
 PressToStart	Press to Start
+
+// MainMenu
+SelectArea	Select an Area
 
 // Mission Name
 Mission_1	Mission1

@@ -13,7 +13,7 @@ public static class MissionManager {
     private static readonly Mission Mission_4 = new Mission (4, "Mission_4");
     private static readonly Mission Mission_5 = new Mission (5, "Mission_5");
 
-    public static List<Mission> MissionList { get; private set; } = new List<Mission> {
+    public static List<Mission> MissionListInOrder { get; private set; } = new List<Mission> {
             Mission_1,
             Mission_2,
             Mission_3,
@@ -55,7 +55,7 @@ public static class MissionManager {
     }
 
     public static Mission GetMission (int missionId) {
-        foreach (var mission in MissionList) {
+        foreach (var mission in MissionListInOrder) {
             if (mission.id == missionId) {
                 return mission;
             }
@@ -65,7 +65,7 @@ public static class MissionManager {
     }
 
     public static Mission GetMissionByMapEntry (int entryId) {
-        foreach (var mission in MissionList) {
+        foreach (var mission in MissionListInOrder) {
             if (mission.CheckHasMapEntry(entryId)) {
                 return mission;
             }

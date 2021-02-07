@@ -7,31 +7,54 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuSceneManager : MonoBehaviour {
     [SerializeField] private MainMenuSceneUIManager uiManager;
+    [SerializeField] private List<SelectMissionItem> selectMissionItemsInOrder;
 
-    [SerializeField] private SelectMissionItem selectMissionItemTemplate;
+    /// <summary>
+    /// int : missionId
+    /// </summary>
+    private Dictionary<int, SelectMissionItem> selectMissionItemDict;
 
     private void Start () {
         UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_SelectMissionItem, OnSelectMissionItemClick);
-        GenerateSelectMissionItems ();
+        InitSelectMissionItems ();
+
+        // TODO : Move to after screen transition
+        CheckEntryJustUnlocked ();
     }
 
     private void OnDestroy () {
         UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_SelectMissionItem, OnSelectMissionItemClick);
     }
 
-    private void GenerateSelectMissionItems () {
-        var selectMissionItemList = new List<SelectMissionItem> ();
+    private void InitSelectMissionItems () {
+        selectMissionItemDict = new Dictionary<int, SelectMissionItem> ();
 
-        foreach (var mission in MissionManager.MissionList) {
-            var clone = Instantiate<SelectMissionItem> (selectMissionItemTemplate);
-
-            var progress = UserManager.GetMissionProgress (mission.id);
-            clone.Init (mission, progress);
-
-            selectMissionItemList.Add (clone);
+        if (selectMissionItemsInOrder.Count != MissionManager.MissionListInOrder.Count) {
+            Log.PrintWarning ("No. of selectMissionItems are not equal to no. of mission. Please check.", LogType.GameFlow);
         }
 
-        uiManager.SetSelectMissionItems (selectMissionItemList);
+        var count = Mathf.Min (selectMissionItemsInOrder.Count, MissionManager.MissionListInOrder.Count);
+        for (var i = 0; i < count; i++) {
+            var mission = MissionManager.MissionListInOrder[i];
+
+            var progress = UserManager.GetMissionProgress (mission.id);
+            selectMissionItemsInOrder[i].Init (mission, progress);
+
+            selectMissionItemDict.Add (mission.id, selectMissionItemsInOrder[i]);
+        }
+    }
+
+    private void CheckEntryJustUnlocked () {
+        if (UserManager.EntryJustUnlockedMissionId != null) {
+            var missionId = (int)UserManager.EntryJustUnlockedMissionId;
+            if (selectMissionItemDict.ContainsKey (missionId)) {
+                selectMissionItemDict[missionId].ShowNewEntryUnlocked ();
+            } else {
+                Log.PrintWarning ("No mapping in selectMissionItemDict for mission id : " + missionId + " . Cannot show entry just unlocked effect.", LogType.GameFlow);
+            }
+
+            UserManager.ClearEntryJustUnlockedMissionId ();
+        }
     }
 
     private void OnSelectMissionItemClick (object info) {
