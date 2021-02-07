@@ -283,18 +283,6 @@ public class MapDataExporter : MonoBehaviour {
                 throw new Exception ("Export SwitchData failed. Cannot find BoxCollider2D : " + switchName);
             }
 
-            var hiddenPathTransformList = new List<Transform> ();
-            foreach (Transform trans in hiddenPathsBaseTransform) {
-                var tempArray = trans.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
-                if (tempArray.Length > 0 && tempArray[0] == switchName) {
-                    hiddenPathTransformList.Add (trans);
-                }
-            }
-
-            if (hiddenPathTransformList.Count <= 0) {
-                throw new Exception ("Export SwitchData failed. Cannot find any hiddenPathTransform for : " + switchName);
-            }
-
             MapData.SwitchData switchData;
             if (switchType == MapEnum.SwitchType.Enemy) {
                 var fromEnemyId = int.Parse (array[2]);
@@ -313,13 +301,15 @@ public class MapDataExporter : MonoBehaviour {
                 switchData = new MapData.SwitchData (colliderPosX, colliderPosY, collider.size.x, collider.size.y, switchType, switchBasePos);
             }
 
-            foreach (var trans in hiddenPathTransformList) {
+            foreach (Transform trans in hiddenPathsBaseTransform) {
                 var hiddenPathNameArray = trans.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
                 if (hiddenPathNameArray.Length < 3) {
                     throw new Exception ("Export SwitchData failed. Invalid transform name : " + switchTransform.name);
                 }
 
-                // hiddenPathNameArray[0] is switch name for searching usage
+                if (hiddenPathNameArray[0] != switchName) {
+                    continue;
+                }
 
                 MapEnum.HiddenPathType hiddenPathType;
                 if (!FrameworkUtils.TryParseToEnum (hiddenPathNameArray[1], out hiddenPathType)) {
