@@ -106,10 +106,10 @@ public class MissionDetailsPanel : MonoBehaviour {
     }
 
     private void GenerateEntryBtn (Mission mission, MissionProgress progress) {
-        var entryList = new List<Mission.MapEntry> ();
+        var entryList = new List<Mission.Entry> ();
 
-        foreach (var entryId in progress.unlockedMapEntryIds) {
-            var entry = mission.GetMapEntry (entryId);
+        foreach (var entryId in progress.unlockedEntryIds) {
+            var entry = mission.GetEntry (entryId);
             if (entry != null) {
                 entryList.Add (entry);
             }

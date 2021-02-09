@@ -23,7 +23,7 @@ public static class MissionManager {
 
     static MissionManager () {
         // Mission_1
-        Mission_1.SetMapEntries (new Mission.MapEntry (1, "MapEntry_1"));
+        Mission_1.SetEntries (new Mission.Entry (1, "Entry_1"));
         Mission_1.SetCollectables (
             Collectable.Type.Command_Hit,
             Collectable.Type.Command_Jump,
@@ -31,9 +31,9 @@ public static class MissionManager {
         );
 
         // Mission_2
-        Mission_2.SetMapEntries (
-            new Mission.MapEntry (2, "MapEntry_2"),
-            new Mission.MapEntry (6, "MapEntry_6")
+        Mission_2.SetEntries (
+            new Mission.Entry (2, "Entry_2"),
+            new Mission.Entry (6, "Entry_6")
         );
         Mission_2.SetCollectables (
             Collectable.Type.Command_Dash,
@@ -44,7 +44,7 @@ public static class MissionManager {
         );
 
         // Mission_3
-        Mission_3.SetMapEntries (new Mission.MapEntry (3, "MapEntry_3"));
+        Mission_3.SetEntries (new Mission.Entry (3, "Entry_3"));
         Mission_3.SetCollectables (
             Collectable.Type.Command_Turn,
             Collectable.Type.Note_3,
@@ -52,9 +52,9 @@ public static class MissionManager {
         );
 
         // Mission_4
-        Mission_4.SetMapEntries (
-            new Mission.MapEntry (4, "MapEntry_4"),
-            new Mission.MapEntry (7, "MapEntry_7")
+        Mission_4.SetEntries (
+            new Mission.Entry (4, "Entry_4"),
+            new Mission.Entry (7, "Entry_7")
         );
         Mission_4.SetCollectables (
             Collectable.Type.Note_4,
@@ -65,7 +65,7 @@ public static class MissionManager {
         );
 
         // Mission_5
-        Mission_5.SetMapEntries (new Mission.MapEntry (5, "MapEntry_5"));
+        Mission_5.SetEntries (new Mission.Entry (5, "Entry_5"));
         Mission_5.SetCollectables (
             Collectable.Type.HP_2,
             Collectable.Type.Ending_1,
@@ -83,9 +83,9 @@ public static class MissionManager {
         return null;
     }
 
-    public static Mission GetMissionByMapEntry (int entryId) {
+    public static Mission GetMissionByEntry (int entryId) {
         foreach (var mission in MissionListInOrder) {
-            if (mission.GetMapEntry (entryId) != null) {
+            if (mission.GetEntry (entryId) != null) {
                 return mission;
             }
         }

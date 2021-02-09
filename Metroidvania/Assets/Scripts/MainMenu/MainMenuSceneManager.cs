@@ -71,15 +71,15 @@ public class MainMenuSceneManager : MonoBehaviour {
     }
 
     private void OnSelectEntryClick (object info) {
-        if (!(info is Mission.MapEntry)) {
+        if (!(info is Mission.Entry)) {
             Log.PrintError ("OnSelectEntryClick failed. Getting invalid info type : " + info.GetType (), LogType.UI | LogType.Input | LogType.GameFlow);
             return;
         }
 
-        var entry = (Mission.MapEntry)info;
-        var mission = MissionManager.GetMissionByMapEntry (entry.id);
+        var entry = (Mission.Entry)info;
+        var mission = MissionManager.GetMissionByEntry (entry.id);
         UserManager.SelectedMissionId = mission.id;
-        UserManager.SelectedMapEntryId = entry.id;
+        UserManager.SelectedEntryId = entry.id;
 
         // TODO
         SceneManager.LoadScene (GameVariable.GameSceneName);

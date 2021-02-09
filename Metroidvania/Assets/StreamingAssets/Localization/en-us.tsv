@@ -17,13 +17,13 @@ Mission_4	Mission4
 Mission_5	Mission5
 
 // MapEntry
-MapEntry_1	MapEntry_1
-MapEntry_2	MapEntry_2
-MapEntry_3	MapEntry_3
-MapEntry_4	MapEntry_4
-MapEntry_5	MapEntry_5
-MapEntry_6	MapEntry_6
-MapEntry_7	MapEntry_7
+Entry_1	Entry_1
+Entry_2	Entry_2
+Entry_3	Entry_3
+Entry_4	Entry_4
+Entry_5	Entry_5
+Entry_6	Entry_6
+Entry_7	Entry_7
 
 // Collectable related
 YouGot	You Got <color #ff0000>{0}</color>.

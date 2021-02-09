@@ -16,9 +16,9 @@ public static class UserManager {
         set { PlayerPrefs.SetInt (GameVariable.SelectedMissionIdKey, value); }
     }
 
-    public static int SelectedMapEntryId {
-        get { return PlayerPrefs.GetInt (GameVariable.SelectedMapEntryIdKey, -1); }
-        set { PlayerPrefs.SetInt (GameVariable.SelectedMapEntryIdKey, value); }
+    public static int SelectedEntryId {
+        get { return PlayerPrefs.GetInt (GameVariable.SelectedEntryIdKey, -1); }
+        set { PlayerPrefs.SetInt (GameVariable.SelectedEntryIdKey, value); }
     }
 
     #endregion
@@ -154,12 +154,12 @@ public static class UserManager {
                 return;
             }
 
-            if (mission.mapEntries == null || mission.mapEntries.Count <= 0) {
+            if (mission.entries == null || mission.entries.Count <= 0) {
                 Log.PrintError ("No map entries for mission with mission id : " + firstMissionId, LogType.GameFlow);
                 return;
             }
 
-            progress.AddUnlockedMapEntry (mission.mapEntries[0].id);
+            progress.AddUnlockedEntry (mission.entries[0].id);
             SaveMissionProgressList ();
         }
     }
@@ -170,13 +170,13 @@ public static class UserManager {
 
         if (toEntryId != null) {
             var toEntryIdInt = (int)toEntryId;
-            var nextMission = MissionManager.GetMissionByMapEntry (toEntryIdInt);
+            var nextMission = MissionManager.GetMissionByEntry (toEntryIdInt);
 
             if (nextMission == null) {
                 Log.PrintError ("Cannot get mission that contain map entry with id : " + toEntryId, LogType.GameFlow);
             } else {
                 var nextMissionProgress = GetMissionProgress (nextMission.id);
-                if (nextMissionProgress.AddUnlockedMapEntry (toEntryIdInt)) {
+                if (nextMissionProgress.AddUnlockedEntry (toEntryIdInt)) {
                     EntryJustUnlockedMissionId = nextMission.id;
                 } else {
                     EntryJustUnlockedMissionId = null;

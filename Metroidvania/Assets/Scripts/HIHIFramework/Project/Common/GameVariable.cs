@@ -64,7 +64,7 @@ public static partial class GameVariable {
     public const string AllMissionProgressKey = "ALL_MISSION_PROGRESS";
     public const string EnabledCommandListKey = "ENABLED_COMMAND_LIST";
     public const string SelectedMissionIdKey = "SELECTED_MISSION_ID";
-    public const string SelectedMapEntryIdKey = "SELECTED_MAP_ENTRY_ID";
+    public const string SelectedEntryIdKey = "SELECTED_ENTRY_ID";
 
     #endregion
 

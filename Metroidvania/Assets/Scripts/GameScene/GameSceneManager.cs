@@ -23,18 +23,18 @@ public class GameSceneManager : MonoBehaviour {
     }
 
     private int selectedMissionId = -1;
-    private int selectedMapEntryId = -1;
+    private int selectedEntryId = -1;
     private MapData mapData = null;
-    private MapData.EntryData selectedMapEntryData = null;
+    private MapData.EntryData selectedEntryData = null;
 
     protected bool isGameInitialized = false;
     private bool isAddedEventListeners = false;
 
     private void Awake () {
         selectedMissionId = UserManager.SelectedMissionId;
-        selectedMapEntryId = UserManager.SelectedMapEntryId;
+        selectedEntryId = UserManager.SelectedEntryId;
         mapData = GetMapData (selectedMissionId);
-        selectedMapEntryData = mapData.GetEntryData (selectedMapEntryId);
+        selectedEntryData = mapData.GetEntryData (selectedEntryId);
     }
 
     private void Start () {
@@ -79,7 +79,7 @@ public class GameSceneManager : MonoBehaviour {
             AddEventListeners ();
         }
 
-        charModel.Reset (selectedMapEntryData);
+        charModel.Reset (selectedEntryData);
 
         // TODO : Set command
         // TODO : opening animation

@@ -5,14 +5,14 @@ using UnityEngine;
 public class Mission {
     public int id { get; private set; }
     public string displayNameKey { get; private set; }
-    public List<MapEntry> mapEntries { get; private set; }
+    public List<Entry> entries { get; private set; }
     public List<Collectable.Type> collectableTypes { get; private set; }
 
-    public class MapEntry {
+    public class Entry {
         public int id { get; private set; }
         public string displayNameKey { get; private set; }
 
-        public MapEntry (int id, string displayNameKey) {
+        public Entry (int id, string displayNameKey) {
             this.id = id;
             this.displayNameKey = displayNameKey;
         }
@@ -21,14 +21,14 @@ public class Mission {
     public Mission (int id, string displayNameKey) {
         this.id = id;
         this.displayNameKey = displayNameKey;
-        this.mapEntries = new List<MapEntry> ();
+        this.entries = new List<Entry> ();
         this.collectableTypes = new List<Collectable.Type> ();
     }
 
-    public void SetMapEntries (params MapEntry[] mapEntries) {
-        this.mapEntries.Clear ();
-        if (mapEntries != null && mapEntries.Length > 0) {
-            this.mapEntries.AddRange (mapEntries);
+    public void SetEntries (params Entry[] entries) {
+        this.entries.Clear ();
+        if (entries != null && entries.Length > 0) {
+            this.entries.AddRange (entries);
         }
     }
 
@@ -40,10 +40,10 @@ public class Mission {
     }
 
     /// <returns><b>null</b> means the mission do not have entry with corresponding entryId</returns>
-    public MapEntry GetMapEntry (int entryId) {
-        foreach (var mapEntry in mapEntries) {
-            if (mapEntry.id == entryId) {
-                return mapEntry;
+    public Entry GetEntry (int entryId) {
+        foreach (var entry in entries) {
+            if (entry.id == entryId) {
+                return entry;
             }
         }
 

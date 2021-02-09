@@ -51,28 +51,28 @@ public class MissionProgressWithId {
 
 [Serializable]
 public class MissionProgress {
-    public List<int> unlockedMapEntryIds;
+    public List<int> unlockedEntryIds;
     public bool isCleared;
     public List<Collectable.Type> collectedCollectables;
 
-    public bool isUnlocked => unlockedMapEntryIds != null && unlockedMapEntryIds.Count > 0;
+    public bool isUnlocked => unlockedEntryIds != null && unlockedEntryIds.Count > 0;
 
     public MissionProgress () {
-        unlockedMapEntryIds = new List<int> ();
+        unlockedEntryIds = new List<int> ();
         isCleared = false;
         collectedCollectables = new List<Collectable.Type> ();
     }
 
     /// <returns>Is the map entry just unlocked</returns>
-    public bool AddUnlockedMapEntry (int entryId) {
-        if (unlockedMapEntryIds == null) {
-            unlockedMapEntryIds = new List<int> ();
+    public bool AddUnlockedEntry (int entryId) {
+        if (unlockedEntryIds == null) {
+            unlockedEntryIds = new List<int> ();
         }
 
-        if (unlockedMapEntryIds.Contains (entryId)) {
+        if (unlockedEntryIds.Contains (entryId)) {
             return false;
         } else {
-            unlockedMapEntryIds.Add (entryId);
+            unlockedEntryIds.Add (entryId);
             return true;
         }
     }
