@@ -13,7 +13,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="1.0.1 (c497b03c, 2020-09-10)"
-   sodipodi:docname="DialogFrame.svg">
+   sodipodi:docname="Frame_Panel.svg">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -23,8 +23,8 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.33475894"
-     inkscape:cx="400"
+     inkscape:zoom="0.32018157"
+     inkscape:cx="-201.22137"
      inkscape:cy="560"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -45,7 +45,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -54,12 +54,12 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:#00015c;stroke:#cacaca;stroke-width:4.92778;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:0.80241936"
+       style="fill:#00015c;fill-opacity:0.802419;stroke:#cacaca;stroke-width:4.92778;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect869"
        width="123.07222"
        height="123.07222"
        x="2.4638901"
        y="2.4638901"
-       ry="24.300882" />
+       ry="42.480671" />
   </g>
 </svg>

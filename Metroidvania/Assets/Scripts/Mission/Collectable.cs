@@ -28,6 +28,10 @@ public class Collectable {
         Strength_2 = 203,
         FireArrow = 204,
 
+        // Ending
+        Ending_1 = 300,
+        Ending_2 = 301,
+        Ending_3 = 302,
     }
 
     private const string ResourcesFolderName = "Collectables/";
@@ -57,8 +61,13 @@ public class NoteCollectable : Collectable {
         // Do not allow constructor without note info
     }
 
-    public NoteCollectable (Type type, string displayNameKey, string iconResourcesName, bool isWithCircleFrame, string noteTitleKey, string noteContentKey) : base (type, displayNameKey, iconResourcesName, isWithCircleFrame) {
+    public NoteCollectable (Type type, string displayNameKey, string noteTitleKey, string noteContentKey) : base (type, displayNameKey, "Collectable_Note", false) {
         this.noteTitleKey = noteTitleKey;
         this.noteContentKey = noteContentKey;
+    }
+}
+
+public class EndingCollectable : Collectable {
+    public EndingCollectable (Type type, string displayNameKey) : base (type, displayNameKey, "Collectable_Ending", false) {
     }
 }
