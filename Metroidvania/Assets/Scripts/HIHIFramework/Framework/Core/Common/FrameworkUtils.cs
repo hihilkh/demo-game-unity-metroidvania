@@ -147,15 +147,25 @@ namespace HIHIFramework.Core {
 
         #region Parent/Child GameObject
 
-        public static void InsertChildrenToParent (Transform parentTransform, List<Transform> childrenList, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) {
+        /// <param name="isKeepLocalScale">
+        /// For UI, you would probably want to keep local scale because Canvas usually not with unit scale<br />
+        /// For other case, you may want to keep lossy scale instead
+        /// </param>
+        public static void InsertChildrenToParent (Transform parentTransform, List<Transform> childrenList, bool isKeepLocalScale, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) {
             // startSiblingIndex < 0 means insert at last
             var isInsertAtLast = startSiblingIndex < 0 || startSiblingIndex >= parentTransform.childCount;
             var currentSiblingIndex = startSiblingIndex;
 
             for (var i = 0; i < childrenList.Count; i++) {
                 var child = childrenList[i];
+
+                var originalLocalScale = child.localScale;
+
                 child.SetParent (parentTransform, isWorldPositionStay);
-                
+                if (isKeepLocalScale) {
+                    child.localScale = originalLocalScale;
+                }
+
                 if (isZPosZero) {
                     child.localPosition = new Vector3 (child.localPosition.x, child.localPosition.y, 0);
                 }
@@ -167,48 +177,68 @@ namespace HIHIFramework.Core {
             }
         }
 
-        public static void InsertChildrenToParent (Transform parentTransform, List<GameObject> childrenList, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) {
+        /// <param name="isKeepLocalScale">
+        /// For UI, you would probably want to keep local scale because Canvas usually not with unit scale<br />
+        /// For other case, you may want to keep lossy scale instead
+        /// </param>
+        public static void InsertChildrenToParent (Transform parentTransform, List<GameObject> childrenList, bool isKeepLocalScale, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) {
             var childrenTransformList = new List<Transform> ();
 
             foreach (var child in childrenList) {
                 childrenTransformList.Add (child.transform);
             }
 
-            InsertChildrenToParent (parentTransform, childrenTransformList, isZPosZero, startSiblingIndex, isWorldPositionStay);
+            InsertChildrenToParent (parentTransform, childrenTransformList, isKeepLocalScale, isZPosZero, startSiblingIndex, isWorldPositionStay);
         }
 
-        public static void InsertChildrenToParent<T> (Transform parentTransform, List<T> childrenList, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) where T : MonoBehaviour {
+        /// <param name="isKeepLocalScale">
+        /// For UI, you would probably want to keep local scale because Canvas usually not with unit scale<br />
+        /// For other case, you may want to keep lossy scale instead
+        /// </param>
+        public static void InsertChildrenToParent<T> (Transform parentTransform, List<T> childrenList, bool isKeepLocalScale, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) where T : MonoBehaviour {
             var childrenTransformList = new List<Transform> ();
 
             foreach (var child in childrenList) {
                 childrenTransformList.Add (child.transform);
             }
 
-            InsertChildrenToParent (parentTransform, childrenTransformList, isZPosZero, startSiblingIndex, isWorldPositionStay);
+            InsertChildrenToParent (parentTransform, childrenTransformList, isKeepLocalScale, isZPosZero, startSiblingIndex, isWorldPositionStay);
         }
 
-        public static void InsertChildrenToParent (Transform parentTransform, Transform child, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) {
+        /// <param name="isKeepLocalScale">
+        /// For UI, you would probably want to keep local scale because Canvas usually not with unit scale<br />
+        /// For other case, you may want to keep lossy scale instead
+        /// </param>
+        public static void InsertChildrenToParent (Transform parentTransform, Transform child, bool isKeepLocalScale, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) {
             var childrenTransformList = new List<Transform> ();
 
             childrenTransformList.Add (child);
 
-            InsertChildrenToParent (parentTransform, childrenTransformList, isZPosZero, startSiblingIndex, isWorldPositionStay);
+            InsertChildrenToParent (parentTransform, childrenTransformList, isKeepLocalScale, isZPosZero, startSiblingIndex, isWorldPositionStay);
         }
 
-        public static void InsertChildrenToParent (Transform parentTransform, GameObject child, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) {
+        /// <param name="isKeepLocalScale">
+        /// For UI, you would probably want to keep local scale because Canvas usually not with unit scale<br />
+        /// For other case, you may want to keep lossy scale instead
+        /// </param>
+        public static void InsertChildrenToParent (Transform parentTransform, GameObject child, bool isKeepLocalScale, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) {
             var childrenTransformList = new List<Transform> ();
 
             childrenTransformList.Add (child.transform);
 
-            InsertChildrenToParent (parentTransform, childrenTransformList, isZPosZero, startSiblingIndex, isWorldPositionStay);
+            InsertChildrenToParent (parentTransform, childrenTransformList, isKeepLocalScale, isZPosZero, startSiblingIndex, isWorldPositionStay);
         }
 
-        public static void InsertChildrenToParent<T> (Transform parentTransform, T child, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) where T : MonoBehaviour {
+        /// <param name="isKeepLocalScale">
+        /// For UI, you would probably want to keep local scale because Canvas usually not with unit scale<br />
+        /// For other case, you may want to keep lossy scale instead
+        /// </param>
+        public static void InsertChildrenToParent<T> (Transform parentTransform, T child, bool isKeepLocalScale, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) where T : MonoBehaviour {
             var childrenTransformList = new List<Transform> ();
 
             childrenTransformList.Add (child.transform);
 
-            InsertChildrenToParent (parentTransform, childrenTransformList, isZPosZero, startSiblingIndex, isWorldPositionStay);
+            InsertChildrenToParent (parentTransform, childrenTransformList, isKeepLocalScale, isZPosZero, startSiblingIndex, isWorldPositionStay);
         }
 
         public static void DestroyChildren (Transform parentTransform) {

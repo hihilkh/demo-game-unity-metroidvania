@@ -39,7 +39,7 @@ namespace HIHIFramework.UI {
             text.text = "Button";
             text.color = Color.black;
             text.alignment = TextAlignmentOptions.Center;
-            FrameworkUtils.InsertChildrenToParent (go.transform, textObject);
+            FrameworkUtils.InsertChildrenToParent (go.transform, textObject, true);
 
             var textRectTransform = textObject.GetComponent<RectTransform> ();
             textRectTransform.anchorMin = Vector2.zero;
@@ -48,7 +48,7 @@ namespace HIHIFramework.UI {
 
             // Btn parent
             if (Selection.activeTransform != null) {
-                FrameworkUtils.InsertChildrenToParent (Selection.activeTransform, go, false, -1, false);
+                FrameworkUtils.InsertChildrenToParent (Selection.activeTransform, go, true, false, -1, false);
             }
 
             // Selection

@@ -21,7 +21,6 @@ public class GameSceneUIManager : MonoBehaviour {
     [SerializeField] private PanelControl collectedPanelControl;
     [SerializeField] private PanelControl notePanelControl;
 
-    private const string HidePanelAnimStateName = "Hide";
     private const float WaitPeriodBeforeAllowPanelClick = 1f;
 
     private bool isAllowPanelClick = false;
@@ -81,7 +80,7 @@ public class GameSceneUIManager : MonoBehaviour {
             tempAction?.Invoke ();
         };
 
-        FrameworkUtils.Instance.StartSingleAnim (panelControl.animator, HidePanelAnimStateName, onFinished);
+        FrameworkUtils.Instance.StartSingleAnim (panelControl.animator, GameVariable.HidePanelAnimStateName, onFinished);
     }
 
     private IEnumerator SetPanelClick (PanelControl panelControl, float waitPeriodBeforeAllowClick) {

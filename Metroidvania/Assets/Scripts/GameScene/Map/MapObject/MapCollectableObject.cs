@@ -25,7 +25,7 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
             return;
         }
 
-        Sprite icon = Resources.Load<Sprite> (collectable.GetIconResourcesName ());
+        var icon = Resources.Load<Sprite> (collectable.GetIconResourcesName ());
         if (collectable.isWithCircleFrame) {
             additionalSpriteRenderer.sprite = icon;
         } else {

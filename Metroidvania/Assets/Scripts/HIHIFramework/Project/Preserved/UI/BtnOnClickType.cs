@@ -4,7 +4,13 @@
 // - int value after 9999 is preserved by Framework usage.
 public enum BtnOnClickType : int {
     Landing_Start = 1,
-    MainMenu_SelectMissionItem = 100,
+
+    MainMenu_SelectMission = 100,
+    MainMenu_CloseMissionDetailsPanel = 101,
+    MainMenu_SelectEntry = 102,
+    MainMenu_OpenNotesPanel = 103,
+    MainMenu_CloseNotesPanel = 104,
+    MainMenu_SelectNote = 105,
 
     Game_ClickOnScreen = 200,
 

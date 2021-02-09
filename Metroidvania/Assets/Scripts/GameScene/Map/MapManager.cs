@@ -166,7 +166,7 @@ public class MapManager : MonoBehaviour {
 
         foreach (var data in dataList) {
             var go = new GameObject ("MapExit");
-            FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go);
+            FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go, false);
             var script = go.AddComponent<MapExit> ();
             script.Init (data);
         }
@@ -225,7 +225,7 @@ public class MapManager : MonoBehaviour {
             }
 
             var go = Instantiate (collectableTemplate);
-            FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go);
+            FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go, false);
             var script = go.GetComponentInChildren<MapCollectableObject> ();
             script.Init (data);
         }
@@ -243,7 +243,7 @@ public class MapManager : MonoBehaviour {
 
         foreach (var data in dataList) {
             var go = new GameObject ("MapSwitch");
-            FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go);
+            FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go, false);
             var script = go.AddComponent<MapSwitch> ();
             script.Init (data);
 
@@ -269,7 +269,7 @@ public class MapManager : MonoBehaviour {
                 continue;
             }
             var go = new GameObject ("MapTutorial");
-            FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go);
+            FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go, false);
             var script = go.AddComponent<MapTutorialTrigger> ();
             script.Init (data);
         }

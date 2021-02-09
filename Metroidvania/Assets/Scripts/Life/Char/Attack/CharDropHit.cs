@@ -9,7 +9,7 @@ public class CharDropHit : CharHitBase {
     public override void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed) {
         base.StartAttack (refPoint, direction, charHorizontalSpeed);
 
-        FrameworkUtils.InsertChildrenToParent (refPoint, gameObject, false, -1, false);
+        FrameworkUtils.InsertChildrenToParent (refPoint, gameObject, false, false, -1, false);
         attackTrigger.HitDropHitSwitchEvent += HitDropHitSwitch;
     }
 

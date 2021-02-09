@@ -6,7 +6,7 @@ public class Mission {
     public int id { get; private set; }
     public string displayNameKey { get; private set; }
     public List<MapEntry> mapEntries { get; private set; }
-    public List<Collectable.Type> collectables { get; private set; }
+    public List<Collectable.Type> collectableTypes { get; private set; }
 
     public class MapEntry {
         public int id { get; private set; }
@@ -22,7 +22,7 @@ public class Mission {
         this.id = id;
         this.displayNameKey = displayNameKey;
         this.mapEntries = new List<MapEntry> ();
-        this.collectables = new List<Collectable.Type> ();
+        this.collectableTypes = new List<Collectable.Type> ();
     }
 
     public void SetMapEntries (params MapEntry[] mapEntries) {
@@ -33,27 +33,20 @@ public class Mission {
     }
 
     public void SetCollectables (params Collectable.Type[] collectables) {
-        this.collectables.Clear ();
+        this.collectableTypes.Clear ();
         if (collectables != null && collectables.Length > 0) {
-            this.collectables.AddRange (collectables);
+            this.collectableTypes.AddRange (collectables);
         }
     }
 
-    public bool CheckHasMapEntry (int entryId) {
+    /// <returns><b>null</b> means the mission do not have entry with corresponding entryId</returns>
+    public MapEntry GetMapEntry (int entryId) {
         foreach (var mapEntry in mapEntries) {
             if (mapEntry.id == entryId) {
-                return true;
+                return mapEntry;
             }
         }
 
-        return false;
-    }
-
-    public int GetCollectableCount () {
-        if (collectables == null) {
-            return 0;
-        }
-
-        return collectables.Count;
+        return null;
     }
 }

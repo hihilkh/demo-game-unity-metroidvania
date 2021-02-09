@@ -5,6 +5,9 @@ PressToStart	Press to Start
 
 // MainMenu
 SelectArea	Select an Area
+Progress	Progress :
+SelectEntry	Select an Entry :
+UnknownCollectableDescription	? ? ?
 
 // Mission Name
 Mission_1	Mission1
@@ -58,3 +61,7 @@ Note_5_Content	Note_5_Content
 Note_6	Note_6
 Note_6_Title	Note_6_Title
 Note_6_Content	Note_6_Content
+
+Ending_1	Ending_1
+Ending_2	Ending_2
+Ending_3	Ending_3

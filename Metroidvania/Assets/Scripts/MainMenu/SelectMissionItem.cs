@@ -19,7 +19,7 @@ public class SelectMissionItem : MonoBehaviour {
             progress = new MissionProgress ();
         }
 
-        button.SetOnClickInfo (BtnOnClickType.MainMenu_SelectMissionItem, details);
+        button.SetOnClickInfo (BtnOnClickType.MainMenu_SelectMission, details);
 
         SetUnlockStatus (progress.isUnlocked);
     }

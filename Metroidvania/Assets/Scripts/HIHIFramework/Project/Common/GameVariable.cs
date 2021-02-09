@@ -67,4 +67,10 @@ public static partial class GameVariable {
     public const string SelectedMapEntryIdKey = "SELECTED_MAP_ENTRY_ID";
 
     #endregion
+
+    #region UIAnimation
+
+    public const string HidePanelAnimStateName = "Hide";
+
+    #endregion
 }
