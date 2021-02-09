@@ -8,9 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class NotesPanel : MonoBehaviour {
-    [SerializeField] private Animator animator;
-
+public class NotesPanel : GeneralPanel {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI contentText;
 
@@ -55,14 +53,14 @@ public class NotesPanel : MonoBehaviour {
         }
 
         UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_SelectNote, OnSelectNoteClick);
-        UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_CloseNotesPanel, OnCloseButtonClick);
     }
 
-    private void OnDestroy () {
+    protected override void OnDestroy () {
         if (isInitialized) {
             UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_SelectNote, OnSelectNoteClick);
-            UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_CloseNotesPanel, OnCloseButtonClick);
         }
+
+        base.OnDestroy ();
     }
 
     public void Show (List<Collectable.Type> collectedNoteTypeList) {
@@ -72,7 +70,7 @@ public class NotesPanel : MonoBehaviour {
         contentText.text = "";
         EventSystem.current.SetSelectedGameObject (null);
 
-        gameObject.SetActive (true);
+        base.Show ();
 
         StartCoroutine (WaitAndSetScrollRect ());
     }
@@ -83,17 +81,7 @@ public class NotesPanel : MonoBehaviour {
         selectNoteBtnScrollRect.verticalNormalizedPosition = 1;
     }
 
-    private void Hide() {
-        Action onFinished = () => {
-            gameObject.SetActive (false);
-        };
-
-        FrameworkUtils.Instance.StartSingleAnim (animator, GameVariable.HidePanelAnimStateName, onFinished);
-    }
-
-    private void OnCloseButtonClick (HIHIButton btn) {
-        Hide ();
-    }
+    #region Events
 
     private void OnSelectNoteClick (HIHIButton btn, object info) {
         if (!(info is NoteCollectable)) {
@@ -109,4 +97,6 @@ public class NotesPanel : MonoBehaviour {
         }
         LangManager.SetText (new LocalizedTextDetails (contentText, key));
     }
+
+    #endregion
 }

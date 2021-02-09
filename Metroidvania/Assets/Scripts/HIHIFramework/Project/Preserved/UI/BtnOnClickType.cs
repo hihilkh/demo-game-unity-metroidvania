@@ -6,14 +6,15 @@ public enum BtnOnClickType : int {
     Landing_Start = 1,
 
     MainMenu_SelectMission = 100,
-    MainMenu_CloseMissionDetailsPanel = 101,
-    MainMenu_SelectEntry = 102,
-    MainMenu_OpenNotesPanel = 103,
-    MainMenu_CloseNotesPanel = 104,
-    MainMenu_SelectNote = 105,
+    MainMenu_SelectEntry = 101,
+    MainMenu_OpenNotesPanel = 102,
+    MainMenu_SelectNote = 103,
 
     Game_ClickOnScreen = 200,
 
+    // Framework usage
     GameConfig_Confirm = 10000,
     GameConfig_ClearPlayerPrefs = 10001,
+
+    Panel_CloseBtn = 10002,
 }

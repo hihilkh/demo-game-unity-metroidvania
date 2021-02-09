@@ -7,9 +7,7 @@ using TMPro;
 using HIHIFramework.Core;
 using UnityEngine.UI;
 
-public class MissionDetailsPanel : MonoBehaviour {
-
-    [SerializeField] private Animator animator;
+public class MissionDetailsPanel : GeneralPanel {
 
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI progressText;
@@ -41,14 +39,6 @@ public class MissionDetailsPanel : MonoBehaviour {
                 entryBtnTextParallelList.Add (text);
             }
         }
-
-        UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_CloseMissionDetailsPanel, OnCloseButtonClick);
-    }
-
-    private void OnDestroy () {
-        if (isInitialized) {
-            UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_CloseMissionDetailsPanel, OnCloseButtonClick);
-        }
     }
 
     public void Show (Mission mission, MissionProgress progress) {
@@ -63,7 +53,7 @@ public class MissionDetailsPanel : MonoBehaviour {
         localizedTextDetailsList.Add (new LocalizedTextDetails (titleText, mission.displayNameKey));
         LangManager.SetTexts (localizedTextDetailsList);
 
-        gameObject.SetActive (true);
+        base.Show ();
 
         StartCoroutine (WaitAndSetScrollRect ());
     }
@@ -72,18 +62,6 @@ public class MissionDetailsPanel : MonoBehaviour {
         yield return null;
 
         collectableDescriptionScrollRect.verticalNormalizedPosition = 1;
-    }
-
-    private void Hide () {
-        Action onFinished = () => {
-            gameObject.SetActive (false);
-        };
-
-        FrameworkUtils.Instance.StartSingleAnim (animator, GameVariable.HidePanelAnimStateName, onFinished);
-    }
-
-    private void OnCloseButtonClick (HIHIButton btn) {
-        Hide ();
     }
 
     private void GenerateProgress (Mission mission, MissionProgress progress) {
