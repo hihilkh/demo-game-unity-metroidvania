@@ -8,16 +8,14 @@ public class CollectableDescription : MonoBehaviour {
     [SerializeField] private Image iconImage;
     [SerializeField] private TextMeshProUGUI descriptionText;
 
-    private static Color NotCollectedMaskColor = new Color (200f / 255f, 200f / 255f, 200f / 255f, 128f / 255f);
-
     public void Show (Collectable collectable, bool isCollected) {
         var icon = Resources.Load<Sprite> (collectable.GetIconResourcesName ());
         iconImage.sprite = icon;
 
-        LangManager.SetText (new LocalizedTextDetails (descriptionText, isCollected ? collectable.displayNameKey : "UnknownCollectableDescription"));
+        LangManager.SetText (new LocalizedTextDetails (descriptionText, isCollected ? collectable.displayNameKey : GameVariable.UnknownTextKey));
 
-        iconImage.color = isCollected ? Color.white : NotCollectedMaskColor;
-        descriptionText.color = isCollected ? Color.white : NotCollectedMaskColor;
+        iconImage.color = isCollected ? Color.white : GameVariable.DisabledUIMaskColor;
+        descriptionText.color = isCollected ? Color.white : GameVariable.DisabledUIMaskColor;
 
         gameObject.SetActive (true);
     }

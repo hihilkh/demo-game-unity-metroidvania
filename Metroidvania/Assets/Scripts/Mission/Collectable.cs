@@ -54,15 +54,13 @@ public class Collectable {
 }
 
 public class NoteCollectable : Collectable {
-    public string noteTitleKey { get; private set; }
     public string noteContentKey { get; private set; }
 
     private NoteCollectable (Type type, string displayNameKey, string iconResourcesName, bool isWithCircleFrame) : base (type, displayNameKey, iconResourcesName, isWithCircleFrame) {
         // Do not allow constructor without note info
     }
 
-    public NoteCollectable (Type type, string displayNameKey, string noteTitleKey, string noteContentKey) : base (type, displayNameKey, "Collectable_Note", false) {
-        this.noteTitleKey = noteTitleKey;
+    public NoteCollectable (Type type, string displayNameKey, string noteContentKey) : base (type, displayNameKey, "Collectable_Note", false) {
         this.noteContentKey = noteContentKey;
     }
 }

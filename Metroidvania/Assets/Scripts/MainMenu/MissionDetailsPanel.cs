@@ -5,6 +5,7 @@ using HIHIFramework.UI;
 using UnityEngine;
 using TMPro;
 using HIHIFramework.Core;
+using UnityEngine.UI;
 
 public class MissionDetailsPanel : MonoBehaviour {
 
@@ -19,9 +20,9 @@ public class MissionDetailsPanel : MonoBehaviour {
 
     [SerializeField] private Transform collectableDescriptionBaseTransform;
     [SerializeField] private CollectableDescription collectableDescriptionTemplate;
- 
-    private bool isInitialized = false;
+    [SerializeField] private ScrollRect collectableDescriptionScrollRect;
 
+    private bool isInitialized = false;
     private List<CollectableDescription> collectableDescriptionList = new List<CollectableDescription> ();
 
     private void Init () {
@@ -63,6 +64,14 @@ public class MissionDetailsPanel : MonoBehaviour {
         LangManager.SetTexts (localizedTextDetailsList);
 
         gameObject.SetActive (true);
+
+        StartCoroutine (WaitAndSetScrollRect ());
+    }
+
+    private IEnumerator WaitAndSetScrollRect () {
+        yield return null;
+
+        collectableDescriptionScrollRect.verticalNormalizedPosition = 1;
     }
 
     private void Hide () {
@@ -73,7 +82,7 @@ public class MissionDetailsPanel : MonoBehaviour {
         FrameworkUtils.Instance.StartSingleAnim (animator, GameVariable.HidePanelAnimStateName, onFinished);
     }
 
-    private void OnCloseButtonClick () {
+    private void OnCloseButtonClick (HIHIButton btn) {
         Hide ();
     }
 
@@ -88,9 +97,9 @@ public class MissionDetailsPanel : MonoBehaviour {
 
         var missingCount = collectableList.Count - collectableDescriptionList.Count;
         for (var i = 0; i < missingCount; i ++) {
-            var collectableDescription = Instantiate (collectableDescriptionTemplate);
+            var collectableDescription = Instantiate (collectableDescriptionTemplate, collectableDescriptionBaseTransform);
             collectableDescriptionList.Add (collectableDescription);
-            FrameworkUtils.InsertChildrenToParent (collectableDescriptionBaseTransform, collectableDescription, true);
+            //FrameworkUtils.InsertChildrenToParent (collectableDescriptionBaseTransform, collectableDescription, true);
         }
 
         for (var i = 0; i < collectableDescriptionList.Count; i++) {

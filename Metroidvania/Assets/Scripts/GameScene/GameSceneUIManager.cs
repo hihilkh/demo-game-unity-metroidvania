@@ -46,7 +46,7 @@ public class GameSceneUIManager : MonoBehaviour {
 
     public void ShowNotePanel (NoteCollectable noteCollectable, Action onFinished = null) {
         var localizedTextDetailsList = new List<LocalizedTextDetails> ();
-        localizedTextDetailsList.Add (new LocalizedTextDetails (notePanelControl.titleText, noteCollectable.noteTitleKey));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (notePanelControl.titleText, noteCollectable.displayNameKey));
         localizedTextDetailsList.Add (new LocalizedTextDetails (notePanelControl.contentText, noteCollectable.noteContentKey));
 
         ShowPanel (notePanelControl, localizedTextDetailsList, onFinished);
@@ -100,7 +100,7 @@ public class GameSceneUIManager : MonoBehaviour {
 
     #region Event Handler
 
-    private void OnClickOnScreenBtnClick () {
+    private void OnClickOnScreenBtnClick (HIHIButton btn) {
         if (!isAllowPanelClick) {
             return;
         }

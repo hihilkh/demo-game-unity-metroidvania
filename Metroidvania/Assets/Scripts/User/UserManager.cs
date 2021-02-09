@@ -83,6 +83,20 @@ public static class UserManager {
         return obtainedBodyPart;
     }
 
+    public static List<Collectable.Type> GetAllCollectedCollectable () {
+        var list = new List<Collectable.Type> ();
+
+        foreach (var pair in MissionProgressDict) {
+            var collectedList = pair.Value.collectedCollectables;
+            if (collectedList != null && collectedList.Count > 0) {
+                list.AddRange (collectedList);
+            }
+            
+        }
+
+        return list;
+    }
+
     #endregion
 
     #region PlayerPrefs (Save / Load)
@@ -191,7 +205,7 @@ public static class UserManager {
         EntryJustUnlockedMissionId = null;
     }
 
-    public static void CollectedCollectable (int missionId, Collectable.Type collectable) {
+    public static void CollectCollectable (int missionId, Collectable.Type collectable) {
         var missionProgress = GetMissionProgress (missionId);
         missionProgress.AddCollectedCollectable (collectable);
 

@@ -77,9 +77,9 @@ namespace HIHIFramework.UI {
 
             Log.Print ("OnClick : " + onClickType, LogType.UI | LogType.Input);
             if (info == null) {
-                UIEventManager.InvokeEvent (onClickType);
+                UIEventManager.InvokeEvent (onClickType, this);
             } else {
-                UIEventManager.InvokeEvent (onClickType, info);
+                UIEventManager.InvokeEvent (onClickType, this, info);
             }
 
         }

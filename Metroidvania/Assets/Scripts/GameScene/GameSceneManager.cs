@@ -141,7 +141,7 @@ public class GameSceneManager : MonoBehaviour {
 
         // Include collect panel, note panel and coresponding event
         Action onAllActionFinished = () => {
-            UserManager.CollectedCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
+            UserManager.CollectCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
 
             // Command / BodyPart
             CharEnum.Command? enabledCommand = null;

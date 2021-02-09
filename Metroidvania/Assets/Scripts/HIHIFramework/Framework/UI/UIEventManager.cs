@@ -5,12 +5,12 @@ using System.Collections.Generic;
 namespace HIHIFramework.UI {
     public static class UIEventManager {
 
-        private static Dictionary<BtnOnClickType, Action> BtnOnClickDict = new Dictionary<BtnOnClickType, Action> ();
-        private static Dictionary<BtnOnClickType, Action<object>> BtnOnClickWithInfoDict = new Dictionary<BtnOnClickType, Action<object>> ();
+        private static Dictionary<BtnOnClickType, Action<HIHIButton>> BtnOnClickDict = new Dictionary<BtnOnClickType, Action<HIHIButton>> ();
+        private static Dictionary<BtnOnClickType, Action<HIHIButton, object>> BtnOnClickWithInfoDict = new Dictionary<BtnOnClickType, Action<HIHIButton, object>> ();
 
         #region handler - Action
 
-        public static void AddEventHandler (BtnOnClickType onClickType, Action handler) {
+        public static void AddEventHandler (BtnOnClickType onClickType, Action<HIHIButton> handler) {
             if (!BtnOnClickDict.ContainsKey (onClickType)) {
                 BtnOnClickDict.Add (onClickType, null);
             }
@@ -18,7 +18,7 @@ namespace HIHIFramework.UI {
             BtnOnClickDict[onClickType] += handler;
         }
 
-        public static void RemoveEventHandler (BtnOnClickType onClickType, Action handler) {
+        public static void RemoveEventHandler (BtnOnClickType onClickType, Action<HIHIButton> handler) {
             if (BtnOnClickDict.ContainsKey (onClickType)) {
                 BtnOnClickDict[onClickType] -= handler;
 
@@ -28,9 +28,9 @@ namespace HIHIFramework.UI {
             }
         }
 
-        public static void InvokeEvent (BtnOnClickType onClickType) {
+        public static void InvokeEvent (BtnOnClickType onClickType, HIHIButton btn) {
             if (BtnOnClickDict.ContainsKey (onClickType)) {
-                BtnOnClickDict[onClickType]?.Invoke ();
+                BtnOnClickDict[onClickType]?.Invoke (btn);
             }
         }
 
@@ -38,7 +38,7 @@ namespace HIHIFramework.UI {
 
         #region handler - Action<object>
 
-        public static void AddEventHandler (BtnOnClickType onClickType, Action<object> handler) {
+        public static void AddEventHandler (BtnOnClickType onClickType, Action<HIHIButton, object> handler) {
             if (!BtnOnClickWithInfoDict.ContainsKey (onClickType)) {
                 BtnOnClickWithInfoDict.Add (onClickType, null);
             }
@@ -46,7 +46,7 @@ namespace HIHIFramework.UI {
             BtnOnClickWithInfoDict[onClickType] += handler;
         }
 
-        public static void RemoveEventHandler (BtnOnClickType onClickType, Action<object> handler) {
+        public static void RemoveEventHandler (BtnOnClickType onClickType, Action<HIHIButton, object> handler) {
             if (BtnOnClickWithInfoDict.ContainsKey (onClickType)) {
                 BtnOnClickWithInfoDict[onClickType] -= handler;
 
@@ -56,9 +56,9 @@ namespace HIHIFramework.UI {
             }
         }
 
-        public static void InvokeEvent (BtnOnClickType onClickType, object info) {
+        public static void InvokeEvent (BtnOnClickType onClickType, HIHIButton btn, object info) {
             if (BtnOnClickWithInfoDict.ContainsKey (onClickType)) {
-                BtnOnClickWithInfoDict[onClickType]?.Invoke (info);
+                BtnOnClickWithInfoDict[onClickType]?.Invoke (btn, info);
             }
         }
 

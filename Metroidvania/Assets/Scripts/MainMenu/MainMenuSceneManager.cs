@@ -9,6 +9,7 @@ public class MainMenuSceneManager : MonoBehaviour {
     [SerializeField] private MainMenuSceneUIManager uiManager;
     [SerializeField] private List<SelectMissionItem> selectMissionItemsInOrder;
     [SerializeField] private MissionDetailsPanel missionDetailsPanel;
+    [SerializeField] private NotesPanel notesPanel;
 
     /// <summary>
     /// int : missionId
@@ -18,6 +19,7 @@ public class MainMenuSceneManager : MonoBehaviour {
     private void Start () {
         UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_SelectMission, OnSelectMissionClick);
         UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_SelectEntry, OnSelectEntryClick);
+        UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_OpenNotesPanel, OnOpenNotesPanelClick);
         InitSelectMissionItems ();
 
         // TODO : Move to after screen transition
@@ -27,6 +29,7 @@ public class MainMenuSceneManager : MonoBehaviour {
     private void OnDestroy () {
         UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_SelectMission, OnSelectMissionClick);
         UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_SelectEntry, OnSelectEntryClick);
+        UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_OpenNotesPanel, OnOpenNotesPanelClick);
     }
 
     private void InitSelectMissionItems () {
@@ -60,7 +63,7 @@ public class MainMenuSceneManager : MonoBehaviour {
         }
     }
 
-    private void OnSelectMissionClick (object info) {
+    private void OnSelectMissionClick (HIHIButton btn, object info) {
         if (!(info is Mission)) {
             Log.PrintError ("OnSelectMissionClick failed. Getting invalid info type : " + info.GetType (), LogType.UI | LogType.Input | LogType.GameFlow);
             return;
@@ -70,7 +73,7 @@ public class MainMenuSceneManager : MonoBehaviour {
         missionDetailsPanel.Show (mission, UserManager.GetMissionProgress (mission.id));
     }
 
-    private void OnSelectEntryClick (object info) {
+    private void OnSelectEntryClick (HIHIButton btn, object info) {
         if (!(info is Mission.Entry)) {
             Log.PrintError ("OnSelectEntryClick failed. Getting invalid info type : " + info.GetType (), LogType.UI | LogType.Input | LogType.GameFlow);
             return;
@@ -83,5 +86,9 @@ public class MainMenuSceneManager : MonoBehaviour {
 
         // TODO
         SceneManager.LoadScene (GameVariable.GameSceneName);
+    }
+
+    private void OnOpenNotesPanelClick (HIHIButton btn) {
+        notesPanel.Show (UserManager.GetAllCollectedCollectable ());
     }
 }

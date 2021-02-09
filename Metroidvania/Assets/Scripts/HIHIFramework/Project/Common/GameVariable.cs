@@ -68,9 +68,13 @@ public static partial class GameVariable {
 
     #endregion
 
-    #region UIAnimation
+    #region Common UI values
 
     public const string HidePanelAnimStateName = "Hide";
+
+    public const string UnknownTextKey = "UnknownText";
+
+    public static Color DisabledUIMaskColor = new Color (200f / 255f, 200f / 255f, 200f / 255f, 128f / 255f);
 
     #endregion
 }

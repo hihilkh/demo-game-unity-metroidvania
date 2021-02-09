@@ -16,7 +16,7 @@ public class LandingSceneManager : MonoBehaviour {
         UIEventManager.RemoveEventHandler (BtnOnClickType.Landing_Start, OnStartBtnClick);
     }
 
-    private void OnStartBtnClick () {
+    private void OnStartBtnClick (HIHIButton btn) {
         // TODO : Implement TutorialManager.HasDoneTutorial_Opening logic
         //if (TutorialManager.HasDoneTutorial_Opening) {
         //    SceneManager.LoadScene (GameVariable.MainMenuSceneName);
