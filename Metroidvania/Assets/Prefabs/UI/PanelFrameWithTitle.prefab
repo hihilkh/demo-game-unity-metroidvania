@@ -1,25 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &1542642093089832886
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 141429813231604843}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreLayout: 1
-  m_MinWidth: -1
-  m_MinHeight: -1
-  m_PreferredWidth: -1
-  m_PreferredHeight: -1
-  m_FlexibleWidth: -1
-  m_FlexibleHeight: -1
-  m_LayoutPriority: 1
 --- !u!1 &3168026649941173400
 GameObject:
   m_ObjectHideFlags: 0
@@ -31,7 +11,6 @@ GameObject:
   - component: {fileID: 3385543775550726332}
   - component: {fileID: 8278626945353269176}
   - component: {fileID: 3582863636881955957}
-  - component: {fileID: 8732796655844183491}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -154,26 +133,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &8732796655844183491
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3168026649941173400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreLayout: 1
-  m_MinWidth: -1
-  m_MinHeight: -1
-  m_PreferredWidth: -1
-  m_PreferredHeight: -1
-  m_FlexibleWidth: -1
-  m_FlexibleHeight: -1
-  m_LayoutPriority: 1
 --- !u!1001 &349349957215417431
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -293,12 +252,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a3322730ce60244da921f7f2d9002a7f, type: 3}
---- !u!1 &141429813231604843 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 373612148788469820, guid: a3322730ce60244da921f7f2d9002a7f,
-    type: 3}
-  m_PrefabInstance: {fileID: 349349957215417431}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1682470833622461259
 PrefabInstance:
   m_ObjectHideFlags: 0
