@@ -106,7 +106,7 @@ public class MapManager : MonoBehaviour {
     private void GenerateTile (MapData.TileData data, bool isShow, bool isChangedInGame) {
         var tileMapType = data.tileMapType;
         if (!tileMapDict.ContainsKey (tileMapType)) {
-            Log.PrintError ("generate tile failed : tileMapDict do not have mapping for tileMapType : " + tileMapType, LogType.MapData);
+            Log.PrintError ("Generate tile failed : tileMapDict do not have mapping for tileMapType : " + tileMapType, LogType.MapData);
             return;
         }
 
@@ -118,13 +118,13 @@ public class MapManager : MonoBehaviour {
             var tileType = data.tileType;
             var resourcesName = TileMapping.GetTileResourcesName (tileType);
             if (string.IsNullOrEmpty (resourcesName)) {
-                Log.PrintError ("generate tile failed : resourcesName is empty for tileType : " + tileType, LogType.MapData);
+                Log.PrintError ("Generate tile failed : resourcesName is empty for tileType : " + tileType, LogType.MapData);
                 return;
             }
 
             var tile = Resources.Load<Tile> (resourcesName);
             if (tile == null) {
-                Log.PrintError ("generate tile failed : Cannot load tile resources for resourcesName : " + resourcesName, LogType.MapData);
+                Log.PrintError ("Generate tile failed : Cannot load tile resources for resourcesName : " + resourcesName, LogType.MapData);
                 return;
             }
 

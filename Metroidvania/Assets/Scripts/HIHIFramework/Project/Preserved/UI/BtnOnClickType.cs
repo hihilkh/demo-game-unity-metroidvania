@@ -11,6 +11,9 @@ public enum BtnOnClickType : int {
     MainMenu_SelectNote = 103,
 
     Game_ClickOnScreen = 200,
+    Game_RemoveCommand = 201,
+    Game_ConfirmCommand = 202,
+
 
     // Framework usage
     GameConfig_Confirm = 10000,
