@@ -10,6 +10,7 @@ namespace HIHIFramework.UI {
     public class UIDragFollower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
 
         public static event Action<UIDragFollower, PointerEventData> BeganDragEvent;
+        public static event Action<UIDragFollower, PointerEventData> DraggingEvent;
         public static event Action<UIDragFollower, PointerEventData> EndedDragEvent;
 
         public virtual void OnBeginDrag (PointerEventData eventData) {
@@ -20,6 +21,7 @@ namespace HIHIFramework.UI {
         public virtual void OnDrag (PointerEventData eventData) {
             if (eventData.dragging) {
                 transform.position = eventData.position;
+                DraggingEvent?.Invoke (this, eventData);
             }
         }
 

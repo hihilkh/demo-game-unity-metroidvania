@@ -13,8 +13,6 @@ public class CharDropHitSMB : CharHitSMBBase {
     public override void OnStateExit (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateExit (animator, stateInfo, layerIndex);
 
-        if (hitClone != null) {
-            hitClone.DestroySelf ();
-        }
+        hitClone?.DestroySelf ();
     }
 }

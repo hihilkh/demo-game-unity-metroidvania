@@ -188,16 +188,12 @@ public class CharModel : LifeBase, IMapTarget {
 
     public void EnterGameScene (MapManager mapManager, MapData.Boundary boundary) {
         this.mapManager = mapManager;
-        if (cameraModel != null) {
-            cameraModel.SetMissionBoundaries (boundary.lowerBound, boundary.upperBound);
-        }
+        cameraModel?.SetMissionBoundaries (boundary.lowerBound, boundary.upperBound);
     }
 
     public void LeaveGameScene () {
         this.mapManager = null;
-        if (cameraModel != null) {
-            cameraModel.UnsetMissionBoundaries ();
-        }
+        cameraModel?.UnsetMissionBoundaries ();
     }
 
     /// <summary>

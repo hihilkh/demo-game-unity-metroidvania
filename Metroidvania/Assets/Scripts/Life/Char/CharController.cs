@@ -31,9 +31,7 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
     }
 
     void OnDisable () {
-        if (userInput != null) {
-            userInput.Character.Disable ();
-        }
+        userInput?.Character.Disable ();
     }
 
     public void OnLeft (InputAction.CallbackContext context) {
