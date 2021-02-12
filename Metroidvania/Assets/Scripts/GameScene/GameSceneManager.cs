@@ -10,6 +10,7 @@ public class GameSceneManager : MonoBehaviour {
 
     [SerializeField] private GameSceneUIManager uiManager;
     [SerializeField] private MapManager mapManager;
+    [SerializeField] private CommandPanel commandPanel;
 
     private CharModel _charModel = null;
     private CharModel charModel {
@@ -80,8 +81,10 @@ public class GameSceneManager : MonoBehaviour {
         }
 
         charModel.Reset (selectedEntryData);
+        commandPanel.Show (UserManager.EnabledCommandList, UserManager.CommandSettingsCache);
+    }
 
-        // TODO : Set command
+    private void PrepareToStartGame () {
         // TODO : opening animation
         StartCoroutine (StartGame (3));
     }
@@ -111,6 +114,7 @@ public class GameSceneManager : MonoBehaviour {
             MapExit.ExitedEvent += Exit;
             MapTutorialTrigger.TriggeredTutorialEvent += StartTutorial;
 
+            commandPanel.panelHiddenEvent += PrepareToStartGame;
             charModel.diedEvent += CharDied;
         }
     }
@@ -121,6 +125,7 @@ public class GameSceneManager : MonoBehaviour {
             MapExit.ExitedEvent -= Exit;
             MapTutorialTrigger.TriggeredTutorialEvent -= StartTutorial;
 
+            commandPanel.panelHiddenEvent -= PrepareToStartGame;
             charModel.diedEvent -= CharDied;
 
             isAddedEventListeners = false;

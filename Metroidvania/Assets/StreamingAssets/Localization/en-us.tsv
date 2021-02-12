@@ -1,5 +1,8 @@
 LangName	English
 
+//Common
+Confirm	Confirm
+
 // Landing
 PressToStart	Press to Start
 
@@ -25,6 +28,14 @@ Entry_4	Entry_4
 Entry_5	Entry_5
 Entry_6	Entry_6
 Entry_7	Entry_7
+
+// Command Panel
+CommandPanel_Title	Set Commands
+InAir	In Air
+OnGround	On Ground
+Tag	Tag
+Hold	Hold
+Release	Release
 
 // Collectable related
 YouGot	You Got <color #ff0000>{0}</color>.

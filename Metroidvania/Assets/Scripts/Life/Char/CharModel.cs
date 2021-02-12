@@ -15,7 +15,7 @@ public class CharModel : LifeBase, IMapTarget {
     public event Action horizontalSpeedChangedEvent;
     public event Action diedEvent;
 
-    private Dictionary<CharEnum.InputSituation, CharEnum.Command> situationToCommandDict = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
+    private Dictionary<CharEnum.InputSituation, CharEnum.Command> commandSettings = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
 
     [SerializeField] private CharParams _param;
     public CharParams param => _param;
@@ -349,29 +349,20 @@ public class CharModel : LifeBase, IMapTarget {
 
     #region Situation and Command
 
-    #region Situation To Command Dictionary
+    #region CommandSettings
 
-    public void ClearSituationToCommandDict () {
-        situationToCommandDict.Clear ();
-    }
-
-    public void SetSituationToCommandDict (CharEnum.InputSituation situation, CharEnum.Command command) {
-        if (situationToCommandDict.ContainsKey (situation)) {
-            situationToCommandDict[situation] = command;
+    public void SetCommandSettings (Dictionary<CharEnum.InputSituation, CharEnum.Command> settings) {
+        if (settings == null) {
+            commandSettings.Clear ();
         } else {
-            situationToCommandDict.Add (situation, command);
+            commandSettings = settings;
         }
-    }
 
-    public void RemoveSituationToCommandDictKey (CharEnum.InputSituation situation) {
-        situationToCommandDict.Remove (situation);
     }
 
     public CharEnum.Command? GetCommandBySituation (CharEnum.InputSituation situation) {
-        if (situationToCommandDict.ContainsKey (situation)) {
-            return situationToCommandDict[situation];
-        } else {
-            // TODO : Dev only
+#if UNITY_EDITOR
+        if (param.isUseDebugCommandSettings) {
             switch (situation) {
                 case CharEnum.InputSituation.GroundTap:
                     return param.groundTapCommand;
@@ -389,6 +380,13 @@ public class CharModel : LifeBase, IMapTarget {
 
             return null;
         }
+#endif
+
+        if (commandSettings.ContainsKey (situation)) {
+            return commandSettings[situation];
+        }
+
+        return null;
     }
 
     #endregion

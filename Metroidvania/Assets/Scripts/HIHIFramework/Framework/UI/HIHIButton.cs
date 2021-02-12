@@ -61,6 +61,8 @@ namespace HIHIFramework.UI {
             this.onClick.AddListener (OnClick);
         }
 
+        #region Click related
+
         public void SetOnClickInfo (BtnOnClickType onClickType, object info = null) {
             this.onClickType = onClickType;
 
@@ -81,7 +83,30 @@ namespace HIHIFramework.UI {
             } else {
                 UIEventManager.InvokeEvent (onClickType, this, info);
             }
-
         }
+        #endregion
+
+        #region Interactable
+
+        public void SetInteractable (bool isInteractable) {
+            if (interactable == isInteractable) {
+                return;
+            }
+
+            interactable = isInteractable;
+            if (transition == Transition.ColorTint) {
+                var maskColor = isInteractable ? colors.normalColor : colors.disabledColor;
+
+                // Texts
+                var texts = GetComponentsInChildren<TextMeshProUGUI> ();
+                if (texts != null && texts.Length > 0) {
+                    foreach (var text in texts) {
+                        text.color = maskColor;
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 }

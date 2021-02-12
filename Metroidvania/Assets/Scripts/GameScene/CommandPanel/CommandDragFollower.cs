@@ -5,7 +5,7 @@ using HIHIFramework.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CommandDragFollower : UIDragFollower {
+public class CommandDragFollower : UIDragSingleFollower {
 
     private Vector3 originalLocalPos;
     private Transform baseTransform;

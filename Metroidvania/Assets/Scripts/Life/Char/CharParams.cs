@@ -149,6 +149,9 @@ public class CharParams : ScriptableObject {
     [SerializeField] private LifeEnum.HorizontalDirection _initDirection;
     public LifeEnum.HorizontalDirection initDirection => _initDirection;
 
+    [SerializeField] private bool _isUseDebugCommandSettings;
+    public bool isUseDebugCommandSettings => _isUseDebugCommandSettings;
+
     [SerializeField] private CharEnum.Command _groundTapCommand;
     public CharEnum.Command groundTapCommand => _groundTapCommand;
 

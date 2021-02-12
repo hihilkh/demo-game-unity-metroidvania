@@ -8,6 +8,7 @@ public static class UserManager {
 
     public static Dictionary<int, MissionProgress> MissionProgressDict { get; private set; }
     public static List<CharEnum.Command> EnabledCommandList { get; private set; }
+    public static Dictionary<CharEnum.InputSituation, CharEnum.Command> CommandSettingsCache { get; private set; }
 
     #region PlayerPrefs
 
@@ -36,9 +37,10 @@ public static class UserManager {
     }
 
     private static void LoadUserProgress () {
-        Log.PrintDebug ("Load User Progress", LogType.GameFlow);
+        Log.PrintDebug ("Load User Progress", LogType.GameFlow | LogType.UserData);
         LoadMissionProgressList ();
         LoadEnabledCommandList ();
+        LoadCommandSettingsCache ();
     }
 
     #endregion
@@ -152,6 +154,41 @@ public static class UserManager {
         }
     }
 
+    private static void SaveCommandSettingsCache () {
+        var str = "";
+        if (CommandSettingsCache != null && CommandSettingsCache.Count > 0) {
+            var tempList = new List<int> ();
+            foreach (var pair in CommandSettingsCache) {
+                tempList.Add ((int)pair.Key);
+                tempList.Add ((int)pair.Value);
+            }
+
+            str = string.Join (FrameworkVariable.DefaultDelimiter, tempList);
+        }
+
+        PlayerPrefs.SetString (GameVariable.CommandSettingsCacheKey, str);
+    }
+
+    private static void LoadCommandSettingsCache () {
+        CommandSettingsCache = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
+
+        var str = PlayerPrefs.GetString (GameVariable.CommandSettingsCacheKey, null);
+
+        if (!string.IsNullOrEmpty (str)) {
+            var array = str.Split (new string[] { FrameworkVariable.DefaultDelimiter }, System.StringSplitOptions.None);
+            if (array.Length % 2 != 0) {
+                Log.PrintWarning ("CommandSettingsCache is somehow with a wrong format. Save an empty cache to overwrite.", LogType.GameFlow | LogType.UserData);
+                SaveCommandSettingsCache ();
+                return;
+            }
+
+            var count = array.Length / 2;
+            for (var i = 0; i < count; i++) {
+                CommandSettingsCache.Add ((CharEnum.InputSituation)int.Parse (array[i]), (CharEnum.Command)int.Parse (array[i + 1]));
+            }
+        }
+    }
+    
     #endregion
 
     #region Logic
@@ -164,12 +201,12 @@ public static class UserManager {
             var mission = MissionManager.GetMission (firstMissionId);
 
             if (mission == null) {
-                Log.PrintError ("Cannot get mission with mission id : " + firstMissionId, LogType.GameFlow);
+                Log.PrintError ("Cannot get mission with mission id : " + firstMissionId, LogType.GameFlow | LogType.UserData);
                 return;
             }
 
             if (mission.entries == null || mission.entries.Count <= 0) {
-                Log.PrintError ("No map entries for mission with mission id : " + firstMissionId, LogType.GameFlow);
+                Log.PrintError ("No map entries for mission with mission id : " + firstMissionId, LogType.GameFlow | LogType.UserData);
                 return;
             }
 
@@ -187,7 +224,7 @@ public static class UserManager {
             var nextMission = MissionManager.GetMissionByEntry (toEntryIdInt);
 
             if (nextMission == null) {
-                Log.PrintError ("Cannot get mission that contain map entry with id : " + toEntryId, LogType.GameFlow);
+                Log.PrintError ("Cannot get mission that contain map entry with id : " + toEntryId, LogType.GameFlow | LogType.UserData);
             } else {
                 var nextMissionProgress = GetMissionProgress (nextMission.id);
                 if (nextMissionProgress.AddUnlockedEntry (toEntryIdInt)) {
@@ -222,6 +259,16 @@ public static class UserManager {
         }
 
         SaveEnabledCommandList ();
+    }
+
+    public static void SetCommandSettingsCache (Dictionary<CharEnum.InputSituation, CharEnum.Command> settings) {
+        if (settings == null) {
+            CommandSettingsCache = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
+        } else {
+            CommandSettingsCache = settings;
+        }
+
+        SaveCommandSettingsCache ();
     }
 
     /// <summary>

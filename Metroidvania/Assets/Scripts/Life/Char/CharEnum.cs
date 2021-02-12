@@ -21,20 +21,21 @@ public class CharEnum {
 
     // Remarks: Never change the Command enum int value. It is saved in PlayerPrefs to represent the Command
     public enum Command : int {
-        Jump = 1,
-        Dash = 2,
-        Hit = 3,
-        Arrow = 4,
-        Turn = 5,
+        Jump = 0,
+        Dash = 1,
+        Hit = 2,
+        Arrow = 3,
+        Turn = 4,
     }
 
+    // Remarks: Never change the InputSituation enum int value. It is saved in PlayerPrefs to represent the InputSituation
     public enum InputSituation {
-        GroundTap,
-        GroundHold,
-        GroundRelease,
-        AirTap,
-        AirHold,
-        AirRelease,
+        GroundTap = 0,
+        GroundHold = 1,
+        GroundRelease = 2,
+        AirTap = 3,
+        AirHold = 4,
+        AirRelease = 5,
     }
 
     public enum HitType {

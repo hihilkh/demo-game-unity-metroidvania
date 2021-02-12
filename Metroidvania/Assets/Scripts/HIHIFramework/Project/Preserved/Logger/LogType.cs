@@ -16,6 +16,7 @@ public enum LogType : long {
     GameFlow = 1 << 7,       // From Framework. Do not remove
     Lang = 1 << 8,           // From Framework. Do not remove
     IO = 1 << 9,             // From Framework. Do not remove
+    UserData = 1 << 10,      // From Framework. Do not remove
 
     MapData = 1 << 20,
     Life = 1 << 21,

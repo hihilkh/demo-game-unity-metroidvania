@@ -10,6 +10,7 @@ public abstract class GeneralPanel : MonoBehaviour {
     [SerializeField] private HIHIButton closeBtn;
 
     private bool isAddedEventListeners = false;
+    public event Action panelHiddenEvent;
 
     protected virtual void OnDestroy () {
         RemoveEventListeners ();
@@ -24,6 +25,7 @@ public abstract class GeneralPanel : MonoBehaviour {
     protected virtual void Hide () {
         Action onFinished = () => {
             gameObject.SetActive (false);
+            panelHiddenEvent?.Invoke ();
         };
 
         RemoveEventListeners ();

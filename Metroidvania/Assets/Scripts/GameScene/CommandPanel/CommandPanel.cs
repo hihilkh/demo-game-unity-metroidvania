@@ -16,6 +16,8 @@ public class CommandPanel : GeneralPanel {
     [SerializeField] private TextMeshProUGUI releaseText;
     [SerializeField] private TextMeshProUGUI confirmBtnText;
 
+    [SerializeField] private HIHIButton confirmBtn;
+
     [SerializeField] private CommandDisplay commandContainer_AirTap;
     [SerializeField] private CommandDisplay commandContainer_AirHold;
     [SerializeField] private CommandDisplay commandContainer_AirRelease;
@@ -41,17 +43,6 @@ public class CommandPanel : GeneralPanel {
     private bool isGroundHoldBinding = false;
     private bool isAirHoldBinding = false;
 
-    private void Start () {
-        var list = new List<CharEnum.Command> ();
-        list.Add (CharEnum.Command.Hit);
-        list.Add (CharEnum.Command.Jump);
-
-        var settings = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
-        settings.Add (CharEnum.InputSituation.AirHold, CharEnum.Command.Hit);
-
-        Show (list, settings);
-    }
-
     private void Init () {
         if (isInitialized) {
             return;
@@ -74,9 +65,18 @@ public class CommandPanel : GeneralPanel {
         commandContainerToSituationDict.Add (commandContainer_GroundHold, CharEnum.InputSituation.GroundHold);
         commandContainerToSituationDict.Add (commandContainer_GroundRelease, CharEnum.InputSituation.GroundRelease);
 
-        // TODO
-        //localization
+        // Localization
+        var localizedTextDetailsList = new List<LocalizedTextDetails> ();
+        localizedTextDetailsList.Add (new LocalizedTextDetails (titleText, "CommandPanel_Title"));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (airText, "InAir"));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (groundText, "OnGround"));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (tapText, "Tag"));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (holdText, "Hold"));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (releaseText, "Release"));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (confirmBtnText, "Confirm"));
+        LangManager.SetTexts (localizedTextDetailsList);
 
+        // Events
         CommandDragFollower.BeganDragEvent += OnCommandBeganDrag;
         CommandDragFollower.DraggingEvent += OnCommandDragging;
         CommandDragFollower.EndedDragEvent += OnCommandEndedDrag;
@@ -98,6 +98,8 @@ public class CommandPanel : GeneralPanel {
 
     public void Show (List<CharEnum.Command> enabledCommandList, Dictionary<CharEnum.InputSituation, CharEnum.Command> defaultCommandSettings) {
         Init ();
+
+        base.Show ();
 
         GenerateCommandPickers (enabledCommandList);
         ResetCommandContainers (defaultCommandSettings);
@@ -197,6 +199,8 @@ public class CommandPanel : GeneralPanel {
                 }
             }
         }
+
+        UpdateConfirmBtn ();
     }
 
     private CommandDisplay GetBindedCommandContainer (CommandDisplay baseDisplay, CharEnum.Command command, bool isAlsoGetBindingFromRelease) {
@@ -248,6 +252,34 @@ public class CommandPanel : GeneralPanel {
             return null;
         }
     }
+
+    #region Command Settings
+
+    private void UpdateConfirmBtn () {
+        foreach (var pair in commandContainerToSituationDict) {
+            if (pair.Key.command != null) {
+                confirmBtn.SetInteractable (true);
+                return;
+            }
+        }
+
+        confirmBtn.SetInteractable (false);
+    }
+
+    private void UpdateCharCommandSettings () {
+        var commandSettings = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
+
+        foreach (var pair in commandContainerToSituationDict) {
+            if (pair.Key.command != null) {
+                commandSettings.Add (pair.Value, (CharEnum.Command)pair.Key.command);
+            }
+        }
+
+        GameUtils.FindOrSpawnChar ().SetCommandSettings (commandSettings);
+        UserManager.SetCommandSettingsCache (commandSettings);
+    }
+
+    #endregion
 
     #region Events
 
@@ -403,6 +435,8 @@ public class CommandPanel : GeneralPanel {
             pair.Key.SetClickable (true);
             pair.Key.SetTargetable (true);
         }
+
+        UpdateConfirmBtn ();
     }
 
     private void OnUserRemovedCommand (CommandDisplay sender, CharEnum.Command removedCommand) {
@@ -424,11 +458,13 @@ public class CommandPanel : GeneralPanel {
             }
         }
 
+        UpdateConfirmBtn ();
     }
 
 
     private void OnConfirmCommandClick (HIHIButton btn) {
-        // TODO
+        UpdateCharCommandSettings ();
+        Hide ();
     }
 
     #endregion

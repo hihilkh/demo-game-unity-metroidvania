@@ -23,6 +23,7 @@ public class GameSceneUIManager : MonoBehaviour {
 
     private const float WaitPeriodBeforeAllowPanelClick = 1f;
 
+    // General Panel
     private bool isAllowPanelClick = false;
     private PanelControl currentShowingPanel = null;
     private Action currentShowPanelFinishedAction = null;
@@ -35,7 +36,7 @@ public class GameSceneUIManager : MonoBehaviour {
         UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ClickOnScreen, OnClickOnScreenBtnClick);
     }
 
-    #region Panel Control
+    #region General Panel Control
 
     public void ShowCollectedPanel (Collectable collectable, Action onFinished = null) {
         var detail = new LocalizedTextDetails (collectedPanelControl.contentText, "YouGot");
