@@ -313,11 +313,11 @@ namespace HIHIFramework.GameConfiguration {
             SetConfigSet (selectedValue);
         }
 
-        private void OnConfirmButtonClick (HIHIButton btn) {
+        private void OnConfirmButtonClick (HIHIButton sender) {
             GoIntoGame (false);
         }
 
-        private void OnClearPlayerPrefsButtonClick (HIHIButton btn) {
+        private void OnClearPlayerPrefsButtonClick (HIHIButton sender) {
             PlayerPrefs.DeleteAll ();
             Log.PrintWarning ("PlayerPrefs have been cleared", LogType.General);
         }

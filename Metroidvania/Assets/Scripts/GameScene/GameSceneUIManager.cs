@@ -101,7 +101,7 @@ public class GameSceneUIManager : MonoBehaviour {
 
     #region Event Handler
 
-    private void OnClickOnScreenBtnClick (HIHIButton btn) {
+    private void OnClickOnScreenBtnClick (HIHIButton sender) {
         if (!isAllowPanelClick) {
             return;
         }

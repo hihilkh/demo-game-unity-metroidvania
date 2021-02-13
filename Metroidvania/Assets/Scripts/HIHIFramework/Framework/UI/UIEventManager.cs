@@ -28,9 +28,9 @@ namespace HIHIFramework.UI {
             }
         }
 
-        public static void InvokeEvent (BtnOnClickType onClickType, HIHIButton btn) {
+        public static void InvokeEvent (BtnOnClickType onClickType, HIHIButton sender) {
             if (BtnOnClickDict.ContainsKey (onClickType)) {
-                BtnOnClickDict[onClickType]?.Invoke (btn);
+                BtnOnClickDict[onClickType]?.Invoke (sender);
             }
         }
 
@@ -56,9 +56,9 @@ namespace HIHIFramework.UI {
             }
         }
 
-        public static void InvokeEvent (BtnOnClickType onClickType, HIHIButton btn, object info) {
+        public static void InvokeEvent (BtnOnClickType onClickType, HIHIButton sender, object info) {
             if (BtnOnClickWithInfoDict.ContainsKey (onClickType)) {
-                BtnOnClickWithInfoDict[onClickType]?.Invoke (btn, info);
+                BtnOnClickWithInfoDict[onClickType]?.Invoke (sender, info);
             }
         }
 

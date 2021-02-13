@@ -29,13 +29,20 @@ Entry_5	Entry_5
 Entry_6	Entry_6
 Entry_7	Entry_7
 
-// Command Panel
-CommandPanel_Title	Set Commands
+// Command Matrix
 InAir	In Air
 OnGround	On Ground
 Tag	Tag
 Hold	Hold
 Release	Release
+
+// Command Panel
+CommandPanel_Title	Set Commands
+
+//Game Pause Panel
+GamePausePanel_Title	Pause
+BackToMM	Back to Main Menu
+Restart	Restart
 
 // Collectable related
 YouGot	You Got <color #ff0000>{0}</color>.

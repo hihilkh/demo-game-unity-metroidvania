@@ -50,8 +50,8 @@ public abstract class GeneralPanel : MonoBehaviour {
         }
     }
 
-    private void OnCloseBtnClick (HIHIButton btn) {
-        if (btn == closeBtn) {
+    private void OnCloseBtnClick (HIHIButton sender) {
+        if (sender == closeBtn) {
             Hide ();
         }
     }

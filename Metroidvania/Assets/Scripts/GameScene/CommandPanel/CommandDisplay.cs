@@ -169,8 +169,8 @@ public class CommandDisplay : Selectable {
         }
     }
 
-    private void OnRemoveCommandClick (HIHIButton btn) {
-        if (btn == crossBtn) {
+    private void OnRemoveCommandClick (HIHIButton sender) {
+        if (sender == crossBtn) {
             RemoveCommand (true);
 
             crossBtn.gameObject.SetActive (false);

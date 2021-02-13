@@ -83,7 +83,7 @@ public class NotesPanel : GeneralPanel {
 
     #region Events
 
-    private void OnSelectNoteClick (HIHIButton btn, object info) {
+    private void OnSelectNoteClick (HIHIButton sender, object info) {
         if (!(info is NoteCollectable)) {
             Log.PrintError ("OnSelectNoteClick failed. Getting invalid info type : " + info.GetType (), LogType.UI | LogType.Input | LogType.GameFlow);
             return;

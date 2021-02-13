@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using HIHIFramework.Asset;
 using HIHIFramework.Core;
+using HIHIFramework.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,6 +12,7 @@ public class GameSceneManager : MonoBehaviour {
     [SerializeField] private GameSceneUIManager uiManager;
     [SerializeField] private MapManager mapManager;
     [SerializeField] private CommandPanel commandPanel;
+    [SerializeField] private GamePausePanel pausePanel;
 
     private CharModel _charModel = null;
     private CharModel charModel {
@@ -116,6 +118,10 @@ public class GameSceneManager : MonoBehaviour {
 
             commandPanel.panelHiddenEvent += PrepareToStartGame;
             charModel.diedEvent += CharDied;
+
+            UIEventManager.AddEventHandler (BtnOnClickType.Game_Pause, OnPauseBtnCLick);
+            UIEventManager.AddEventHandler (BtnOnClickType.Game_Restart, OnRestartBtnClick);
+            UIEventManager.AddEventHandler (BtnOnClickType.Game_BackToMM, OnBackToMMBtnClick);
         }
     }
 
@@ -127,6 +133,10 @@ public class GameSceneManager : MonoBehaviour {
 
             commandPanel.panelHiddenEvent -= PrepareToStartGame;
             charModel.diedEvent -= CharDied;
+
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Pause, OnPauseBtnCLick);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Restart, OnRestartBtnClick);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_BackToMM, OnBackToMMBtnClick);
 
             isAddedEventListeners = false;
         }
@@ -221,6 +231,19 @@ public class GameSceneManager : MonoBehaviour {
         Log.Print ("Character died.", LogType.GameFlow | LogType.Char);
         // TODO : Transition
         ResetGame ();
+    }
+
+    private void OnPauseBtnCLick (HIHIButton sender) {
+        pausePanel.Show (UserManager.CommandSettingsCache);
+    }
+
+    private void OnRestartBtnClick (HIHIButton sender) {
+        // TODO : Transition / Close panel
+        ResetGame ();
+    }
+
+    private void OnBackToMMBtnClick (HIHIButton sender) {
+        LeaveGame ();
     }
 
     #endregion
