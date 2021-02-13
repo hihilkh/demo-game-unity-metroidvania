@@ -71,6 +71,8 @@ public static partial class GameVariable {
 
     #region Common UI values
 
+    public const string TransitionCanvasPrefabResourcesName = "UI/TransitionCanvas";
+
     public const string HidePanelAnimStateName = "Hide";
 
     public const string UnknownTextKey = "UnknownText";

@@ -3,12 +3,16 @@ LangName	English
 //Common
 Confirm	Confirm
 
+// ReadyGo
+Ready	Ready
+Go	Go
+
 // Landing
 PressToStart	Press to Start
 
 // MainMenu
 SelectArea	Select an Area
-Progress	Progress :
+ProgressDone	Progress Done :
 SelectEntry	Select an Entry :
 UnknownText	? ? ?
 NotePanelTitle	Note Panel

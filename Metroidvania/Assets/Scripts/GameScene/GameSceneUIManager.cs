@@ -17,6 +17,7 @@ public class GameSceneUIManager : MonoBehaviour {
         public Animator animator;
     }
 
+    [SerializeField] private HIHIButton pauseBtn;
     [SerializeField] private GameObject clickOnScreenBtnObject;
     [SerializeField] private PanelControl collectedPanelControl;
     [SerializeField] private PanelControl notePanelControl;
@@ -34,6 +35,14 @@ public class GameSceneUIManager : MonoBehaviour {
 
     private void OnDestroy () {
         UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ClickOnScreen, OnClickOnScreenBtnClick);
+    }
+
+    public void ResetGame () {
+        pauseBtn.SetInteractable (false);
+    }
+
+    public void StartGame () {
+        pauseBtn.SetInteractable (true);
     }
 
     #region General Panel Control

@@ -48,7 +48,7 @@ public class MissionDetailsPanel : GeneralPanel {
         GenerateEntryBtn (mission, progress);
 
         var localizedTextDetailsList = new List<LocalizedTextDetails> ();
-        localizedTextDetailsList.Add (new LocalizedTextDetails (progressText, "Progress"));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (progressText, "ProgressDone"));
         localizedTextDetailsList.Add (new LocalizedTextDetails (selectEntryText, "SelectEntry"));
         localizedTextDetailsList.Add (new LocalizedTextDetails (titleText, mission.displayNameKey));
         LangManager.SetTexts (localizedTextDetailsList);

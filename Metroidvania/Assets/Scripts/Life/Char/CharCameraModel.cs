@@ -6,6 +6,7 @@ using UnityEngine;
 public class CharCameraModel : MonoBehaviour
 {
     private Camera cam;
+    private AudioListener audioListener;
     private Transform camTransform;
     [SerializeField] private CharModel charModel;
     [SerializeField] private CharCameraParams camParams;
@@ -23,6 +24,7 @@ public class CharCameraModel : MonoBehaviour
 
     private void Awake () {
         cam = GetComponent<Camera> ();
+        audioListener = GetComponent<AudioListener> ();
         camTransform = cam.transform;
         originalLocalPos = camTransform.localPosition;
 
@@ -118,5 +120,9 @@ public class CharCameraModel : MonoBehaviour
 
     private void LookAction (CharEnum.LookDirection direction) {
         currentLookDirection = direction;
+    }
+
+    public void SetAudioListener (bool isEnable) {
+        audioListener.enabled = isEnable;
     }
 }

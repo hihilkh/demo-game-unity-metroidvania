@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using HIHIFramework.Core;
 using HIHIFramework.UI;
@@ -22,8 +23,11 @@ public class MainMenuSceneManager : MonoBehaviour {
         UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_OpenNotesPanel, OnOpenNotesPanelClick);
         InitSelectMissionItems ();
 
-        // TODO : Move to after screen transition
-        CheckEntryJustUnlocked ();
+        Action onFadeOutFinished = () => {
+            CheckEntryJustUnlocked ();
+        };
+
+        GameUtils.ScreenFadeOut (onFadeOutFinished);
     }
 
     private void OnDestroy () {
@@ -86,8 +90,11 @@ public class MainMenuSceneManager : MonoBehaviour {
         UserManager.SelectedMissionId = mission.id;
         UserManager.SelectedEntryId = entry.id;
 
-        // TODO
-        SceneManager.LoadScene (GameVariable.GameSceneName);
+        Action onFadeInFinished = () => {
+            SceneManager.LoadScene (GameVariable.GameSceneName);
+        };
+
+        GameUtils.ScreenFadeIn (onFadeInFinished);
     }
 
     private void OnOpenNotesPanelClick (HIHIButton sender) {

@@ -187,13 +187,17 @@ public class CharModel : LifeBase, IMapTarget {
     }
 
     public void EnterGameScene (MapManager mapManager, MapData.Boundary boundary) {
+        gameObject.SetActive (true);
         this.mapManager = mapManager;
         cameraModel?.SetMissionBoundaries (boundary.lowerBound, boundary.upperBound);
+        cameraModel?.SetAudioListener (true);
     }
 
     public void LeaveGameScene () {
         this.mapManager = null;
         cameraModel?.UnsetMissionBoundaries ();
+        cameraModel?.SetAudioListener (false);
+        gameObject.SetActive (false);
     }
 
     /// <summary>
@@ -1307,7 +1311,12 @@ public class CharModel : LifeBase, IMapTarget {
         }
 
         if (!GetIsInStatus (CharEnum.Status.Dashing)) {
-            currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
+            if (isAllowMove) {
+                currentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
+            } else {
+                currentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
+            }
+            
             AlignMovingWithFacingDirection ();
 
             if (GetIsInStatus (CharEnum.Status.Sliding)) {

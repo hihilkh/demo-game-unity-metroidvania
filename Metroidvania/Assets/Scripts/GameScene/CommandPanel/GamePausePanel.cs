@@ -9,7 +9,20 @@ public class GamePausePanel : CommandMatrixPanel {
     [SerializeField] private TextMeshProUGUI backToMMBtnText;
     [SerializeField] private TextMeshProUGUI restartBtnText;
 
+    private bool isHideResetTimeScale = true;
+
     #region CommandMatrixPanel
+
+    private void OnEnable () {
+        Time.timeScale = 0;
+        isHideResetTimeScale = true;
+    }
+
+    private void OnDisable () {
+        if (isHideResetTimeScale) {
+            Time.timeScale = 1;
+        }
+    }
 
     protected override bool Init () {
         if (!base.Init ()) {
@@ -30,5 +43,10 @@ public class GamePausePanel : CommandMatrixPanel {
 
     new public void Show (Dictionary<CharEnum.InputSituation, CharEnum.Command> defaultCommandSettings) {
         base.Show (defaultCommandSettings);
+    }
+
+    public void Hide (bool isResetTimeScale) {
+        isHideResetTimeScale = isResetTimeScale;
+        base.Hide ();
     }
 }

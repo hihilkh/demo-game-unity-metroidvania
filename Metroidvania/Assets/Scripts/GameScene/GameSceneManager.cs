@@ -13,6 +13,7 @@ public class GameSceneManager : MonoBehaviour {
     [SerializeField] private MapManager mapManager;
     [SerializeField] private CommandPanel commandPanel;
     [SerializeField] private GamePausePanel pausePanel;
+    [SerializeField] private ReadyGo readyGo;
 
     private CharModel _charModel = null;
     private CharModel charModel {
@@ -41,6 +42,7 @@ public class GameSceneManager : MonoBehaviour {
     }
 
     private void Start () {
+        AddEventListeners ();
         ResetGame ();
     }
 
@@ -69,39 +71,65 @@ public class GameSceneManager : MonoBehaviour {
     }
 
     private void ResetGame () {
-        if (isGameInitialized) {
-            Log.Print ("Reset Game", LogType.GameFlow);
-            mapManager.ResetMap ();
-        } else {
-            Log.Print ("Init Game", LogType.GameFlow);
-            isGameInitialized = true;
 
-            mapManager.GenerateMap (selectedMissionId, mapData);
+        Action onFadeOutFinished = () => {
+            commandPanel.Show (UserManager.EnabledCommandList, UserManager.CommandSettingsCache);
+        };
+
+        Action onFadeInFinished = () => {
+            Time.timeScale = 1;
+
+            // Remarks : To ensure everything is ready so that CharModel has no strange behaviour 
+            StartCoroutine (DelayResetCharModel (isGameInitialized));
+
+            if (isGameInitialized) {
+                Log.Print ("Reset Game", LogType.GameFlow);
+                mapManager.ResetMap ();
+            } else {
+                Log.Print ("Init Game", LogType.GameFlow);
+                isGameInitialized = true;
+
+                mapManager.GenerateMap (selectedMissionId, mapData);
+            }
+
+            GameUtils.ScreenFadeOut (onFadeOutFinished);
+        };
+
+        uiManager.ResetGame ();
+        GameUtils.ScreenFadeIn (onFadeInFinished);
+    }
+
+    private IEnumerator DelayResetCharModel (bool isGameInitialized) {
+        yield return null;
+
+        if (!isGameInitialized) {
             charModel.EnterGameScene (mapManager, mapData.boundary);
-
-            AddEventListeners ();
         }
 
         charModel.Reset (selectedEntryData);
-        commandPanel.Show (UserManager.EnabledCommandList, UserManager.CommandSettingsCache);
     }
 
-    private void PrepareToStartGame () {
-        // TODO : opening animation
-        StartCoroutine (StartGame (3));
-    }
+    private void StartGame () {
+        Log.Print ("ReadyGo", LogType.GameFlow);
 
-    private IEnumerator StartGame (float waitTime) {
-        yield return new WaitForSeconds (waitTime);
+        Action onReadyGoFinished = () => {
+            Log.Print ("Start Game", LogType.GameFlow);
 
-        Log.Print ("Start Game", LogType.GameFlow);
-        charModel.SetAllowMove (true);
+            uiManager.StartGame ();
+            charModel.SetAllowMove (true);
+        };
+
+        readyGo.Play (onReadyGoFinished);
     }
 
     private void LeaveGame () {
-        // TODO : Transition
         Log.Print ("Leave Game", LogType.GameFlow);
-        SceneManager.LoadScene (GameVariable.MainMenuSceneName);
+
+        Action onFadeInFinished = () => {
+            SceneManager.LoadScene (GameVariable.MainMenuSceneName);
+        };
+
+        GameUtils.ScreenFadeIn (onFadeInFinished);
     }
 
     #endregion
@@ -116,7 +144,7 @@ public class GameSceneManager : MonoBehaviour {
             MapExit.ExitedEvent += Exit;
             MapTutorialTrigger.TriggeredTutorialEvent += StartTutorial;
 
-            commandPanel.panelHiddenEvent += PrepareToStartGame;
+            commandPanel.panelHiddenEvent += StartGame;
             charModel.diedEvent += CharDied;
 
             UIEventManager.AddEventHandler (BtnOnClickType.Game_Pause, OnPauseBtnCLick);
@@ -131,7 +159,7 @@ public class GameSceneManager : MonoBehaviour {
             MapExit.ExitedEvent -= Exit;
             MapTutorialTrigger.TriggeredTutorialEvent -= StartTutorial;
 
-            commandPanel.panelHiddenEvent -= PrepareToStartGame;
+            commandPanel.panelHiddenEvent -= StartGame;
             charModel.diedEvent -= CharDied;
 
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Pause, OnPauseBtnCLick);
@@ -229,7 +257,6 @@ public class GameSceneManager : MonoBehaviour {
 
     private void CharDied () {
         Log.Print ("Character died.", LogType.GameFlow | LogType.Char);
-        // TODO : Transition
         ResetGame ();
     }
 
@@ -238,7 +265,7 @@ public class GameSceneManager : MonoBehaviour {
     }
 
     private void OnRestartBtnClick (HIHIButton sender) {
-        // TODO : Transition / Close panel
+        pausePanel.Hide (false);
         ResetGame ();
     }
 

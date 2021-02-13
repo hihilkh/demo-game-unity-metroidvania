@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace HIHIFramework.Core {
-    public class Singleton<T> : MonoBehaviour where T : MonoBehaviour, new () {
+    public class Singleton<T> : MonoBehaviour where T : MonoBehaviour, new() {
         private static object objLock = new object ();
         private static bool IsApplicationQuiting = false;
 
