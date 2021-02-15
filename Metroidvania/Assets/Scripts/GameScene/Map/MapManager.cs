@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -13,34 +13,37 @@ public class MapManager : MonoBehaviour {
     [SerializeField] private Tilemap deathTileMap;
     [SerializeField] private Tilemap bgTileMap;
 
+    [Space(10)]
     [SerializeField] private Transform mapObjectsBaseTransform;
 
     [SerializeField] private GameObject collectableTemplate;
 
-    private Dictionary<MapEnum.TileMapType, Tilemap> tileMapDict => new Dictionary<MapEnum.TileMapType, Tilemap> {
-        { MapEnum.TileMapType.Ground, groundTileMap},
-        { MapEnum.TileMapType.Ground2, ground2TileMap},
-        { MapEnum.TileMapType.SlippyWall, slippyWallTileMap},
-        { MapEnum.TileMapType.Death, deathTileMap },
-        { MapEnum.TileMapType.Background, bgTileMap },
-    };
+    private readonly Dictionary<MapEnum.TileMapType, Tilemap> tileMapDict = new Dictionary<MapEnum.TileMapType, Tilemap> ();
 
-    public static Action MapResetingEvent;
+    public static Action MapReseting;
 
     private int missionId;
     private MapData mapData;
-    public List<IMapTarget> arrowTargetList { get; private set; } = new List<IMapTarget> ();
+    public List<IMapTarget> ArrowTargetList { get; } = new List<IMapTarget> ();
 
     /// <summary>
     /// bool : isAdded<br />
     ///  - true : initially not in map and added during game<br />
     /// - false : initially in map and removed during game
     /// </summary>
-    private Dictionary<MapData.TileData, bool> changedTileDict = new Dictionary<MapData.TileData, bool> ();
-    private List<Vector2Int> switchedOnOnOffSwitchBasePosList = new List<Vector2Int> ();
+    private readonly Dictionary<MapData.TileData, bool> changedTileDict = new Dictionary<MapData.TileData, bool> ();
+    private readonly List<Vector2Int> switchedOnOnOffSwitchBasePosList = new List<Vector2Int> ();
 
     private bool isAddedEventListeners = false;
     private const float OpenOneHiddenPathLayerPeriod = 0.1f;
+
+    private void Awake () {
+        tileMapDict.Add (MapEnum.TileMapType.Ground, groundTileMap);
+        tileMapDict.Add (MapEnum.TileMapType.Ground2, ground2TileMap);
+        tileMapDict.Add (MapEnum.TileMapType.SlippyWall, slippyWallTileMap);
+        tileMapDict.Add (MapEnum.TileMapType.Death, deathTileMap);
+        tileMapDict.Add (MapEnum.TileMapType.Background, bgTileMap);
+    }
 
     private void OnDestroy () {
         RemoveEventListeners ();
@@ -53,7 +56,7 @@ public class MapManager : MonoBehaviour {
         this.mapData = mapData;
 
         if (mapData == null) {
-            Log.PrintError ("mapData is null. Please check.", LogType.MapData);
+            Log.PrintError ("mapData is null. Please check.", LogTypes.MapData);
             return;
         }
 
@@ -67,7 +70,7 @@ public class MapManager : MonoBehaviour {
     }
 
     public void ResetMap () {
-        MapResetingEvent?.Invoke ();
+        MapReseting?.Invoke ();
 
         ResumeAllChangedTiles ();
         GenerateMapDisposableObjects ();
@@ -75,11 +78,11 @@ public class MapManager : MonoBehaviour {
 
     private void GenerateMapDisposableObjects () {
         if (mapData == null) {
-            Log.PrintError ("mapData is null. Please check.", LogType.MapData);
+            Log.PrintError ("mapData is null. Please check.", LogTypes.MapData);
             return;
         }
 
-        arrowTargetList.Clear ();
+        ArrowTargetList.Clear ();
 
         GenerateEnemy (mapData.enemies);
         GenerateCollectables (missionId, mapData.collectables);
@@ -89,24 +92,24 @@ public class MapManager : MonoBehaviour {
 
     private void InitializeTiles (List<MapData.TileData> dataList) {
         if (dataList == null || dataList.Count <= 0) {
-            Log.PrintError ("No tile data. Please check.", LogType.MapData);
+            Log.PrintError ("No tile data. Please check.", LogTypes.MapData);
             return;
         } else {
-            Log.Print ("Start InitializeTiles", LogType.MapData);
+            Log.Print ("Start InitializeTiles", LogTypes.MapData);
         }
 
         foreach (var data in dataList) {
             GenerateTile (data, true, false);
         }
 
-        Log.Print ("Finish InitializeTiles", LogType.MapData);
+        Log.Print ("Finish InitializeTiles", LogTypes.MapData);
     }
 
     /// <param name="isChangedInGame">If true, the tile is changed during game and would do some logic with changedTileDict</param>
     private void GenerateTile (MapData.TileData data, bool isShow, bool isChangedInGame) {
         var tileMapType = data.tileMapType;
         if (!tileMapDict.ContainsKey (tileMapType)) {
-            Log.PrintError ("Generate tile failed : tileMapDict do not have mapping for tileMapType : " + tileMapType, LogType.MapData);
+            Log.PrintError ("Generate tile failed : tileMapDict do not have mapping for tileMapType : " + tileMapType, LogTypes.MapData);
             return;
         }
 
@@ -118,13 +121,13 @@ public class MapManager : MonoBehaviour {
             var tileType = data.tileType;
             var resourcesName = TileMapping.GetTileResourcesName (tileType);
             if (string.IsNullOrEmpty (resourcesName)) {
-                Log.PrintError ("Generate tile failed : resourcesName is empty for tileType : " + tileType, LogType.MapData);
+                Log.PrintError ("Generate tile failed : resourcesName is empty for tileType : " + tileType, LogTypes.MapData);
                 return;
             }
 
             var tile = Resources.Load<Tile> (resourcesName);
             if (tile == null) {
-                Log.PrintError ("Generate tile failed : Cannot load tile resources for resourcesName : " + resourcesName, LogType.MapData);
+                Log.PrintError ("Generate tile failed : Cannot load tile resources for resourcesName : " + resourcesName, LogTypes.MapData);
                 return;
             }
 
@@ -158,10 +161,10 @@ public class MapManager : MonoBehaviour {
 
     private void GenerateExits (List<MapData.ExitData> dataList) {
         if (dataList == null || dataList.Count <= 0) {
-            Log.PrintError ("No exit data. Please check.", LogType.MapData);
+            Log.PrintError ("No exit data. Please check.", LogTypes.MapData);
             return;
         } else {
-            Log.Print ("Start GenerateExits", LogType.MapData);
+            Log.Print ("Start GenerateExits", LogTypes.MapData);
         }
 
         foreach (var data in dataList) {
@@ -171,37 +174,37 @@ public class MapManager : MonoBehaviour {
             script.Init (data);
         }
 
-        Log.Print ("Finish GenerateExits", LogType.MapData);
+        Log.Print ("Finish GenerateExits", LogTypes.MapData);
     }
 
     private void GenerateEnemy (List<MapData.EnemyData> dataList) {
         if (dataList == null || dataList.Count <= 0) {
-            Log.Print ("Skip GenerateEnemy : No enemy data.", LogType.MapData);
+            Log.Print ("Skip GenerateEnemy : No enemy data.", LogTypes.MapData);
             return;
         } else {
-            Log.Print ("Start GenerateEnemy", LogType.MapData);
+            Log.Print ("Start GenerateEnemy", LogTypes.MapData);
         }
 
         foreach (var data in dataList) {
             var enemyType = data.type;
             var resourcesName = EnemyMapping.GetEnemyResourcesName (enemyType);
             if (string.IsNullOrEmpty (resourcesName)) {
-                Log.PrintError ("Skipped enemy : resourcesName is empty for enemyType : " + enemyType, LogType.MapData);
+                Log.PrintError ("Skipped enemy : resourcesName is empty for enemyType : " + enemyType, LogTypes.MapData);
                 continue;
             }
 
             var enemy = Resources.Load<EnemyModelBase> (resourcesName);
             if (enemy == null) {
-                Log.PrintError ("Skipped enemy : Cannot load enemy resources for resourcesName : " + resourcesName, LogType.MapData);
+                Log.PrintError ("Skipped enemy : Cannot load enemy resources for resourcesName : " + resourcesName, LogTypes.MapData);
                 continue;
             }
 
             var instance = Instantiate (enemy, mapObjectsBaseTransform);
             instance.Reset (data);
-            arrowTargetList.Add (instance);
+            ArrowTargetList.Add (instance);
         }
 
-        Log.Print ("Finish GenerateEnemy", LogType.MapData);
+        Log.Print ("Finish GenerateEnemy", LogTypes.MapData);
 
         return;
     }
@@ -211,10 +214,10 @@ public class MapManager : MonoBehaviour {
 
     private void GenerateCollectables (int missionId, List<MapData.CollectableData> dataList) {
         if (dataList == null || dataList.Count <= 0) {
-            Log.Print ("Skip GenerateCollectables : No collectable data.", LogType.MapData);
+            Log.Print ("Skip GenerateCollectables : No collectable data.", LogTypes.MapData);
             return;
         } else {
-            Log.Print ("Start GenerateCollectables", LogType.MapData);
+            Log.Print ("Start GenerateCollectables", LogTypes.MapData);
         }
 
         var collectedCollectableList = UserManager.GetMissionProgress (missionId).collectedCollectables;
@@ -230,15 +233,15 @@ public class MapManager : MonoBehaviour {
             script.Init (data);
         }
 
-        Log.Print ("Finish GenerateCollectables", LogType.MapData);
+        Log.Print ("Finish GenerateCollectables", LogTypes.MapData);
     }
 
     private void GenerateSwitches (List<MapData.SwitchData> dataList) {
         if (dataList == null || dataList.Count <= 0) {
-            Log.Print ("Skip GenerateSwitches : No switch data.", LogType.MapData);
+            Log.Print ("Skip GenerateSwitches : No switch data.", LogTypes.MapData);
             return;
         } else {
-            Log.Print ("Start GenerateSwitches", LogType.MapData);
+            Log.Print ("Start GenerateSwitches", LogTypes.MapData);
         }
 
         foreach (var data in dataList) {
@@ -248,19 +251,19 @@ public class MapManager : MonoBehaviour {
             script.Init (data);
 
             if (data.switchType == MapEnum.SwitchType.Arrow) {
-                arrowTargetList.Add (script);
+                ArrowTargetList.Add (script);
             }
         }
 
-        Log.Print ("Finish GenerateSwitches", LogType.MapData);
+        Log.Print ("Finish GenerateSwitches", LogTypes.MapData);
     }
 
     private void GenerateTutorials (List<MapData.TutorialData> dataList) {
         if (dataList == null || dataList.Count <= 0) {
-            Log.Print ("Skip GenerateTutorials : No tutorial data.", LogType.MapData);
+            Log.Print ("Skip GenerateTutorials : No tutorial data.", LogTypes.MapData);
             return;
         } else {
-            Log.Print ("Start GenerateTutorials", LogType.MapData);
+            Log.Print ("Start GenerateTutorials", LogTypes.MapData);
         }
 
         foreach (var data in dataList) {
@@ -274,7 +277,7 @@ public class MapManager : MonoBehaviour {
             script.Init (data);
         }
 
-        Log.Print ("Finish GenerateTutorials", LogType.MapData);
+        Log.Print ("Finish GenerateTutorials", LogTypes.MapData);
     }
 
     #endregion
@@ -287,40 +290,40 @@ public class MapManager : MonoBehaviour {
         if (!isAddedEventListeners) {
             isAddedEventListeners = true;
 
-            EnemyModelBase.DiedEvent += EnemyDied;
-            MapSwitch.SwitchedEvent += MapSwitchSwitched;
+            EnemyModelBase.Died += EnemyDiedHandler;
+            MapSwitch.Switched += MapSwitchSwitchedHandler;
         }
     }
 
     private void RemoveEventListeners () {
         if (isAddedEventListeners) {
-            EnemyModelBase.DiedEvent -= EnemyDied;
-            MapSwitch.SwitchedEvent -= MapSwitchSwitched;
+            EnemyModelBase.Died -= EnemyDiedHandler;
+            MapSwitch.Switched -= MapSwitchSwitchedHandler;
 
             isAddedEventListeners = false;
         }
     }
 
-    private void EnemyDied (int enemyId) {
-        foreach (var target in arrowTargetList) {
+    private void EnemyDiedHandler (int enemyId) {
+        foreach (var target in ArrowTargetList) {
             if (target is EnemyModelBase) {
-                if (((EnemyModelBase)target).id == enemyId) {
-                    arrowTargetList.Remove (target);
+                if (((EnemyModelBase)target).Id == enemyId) {
+                    ArrowTargetList.Remove (target);
                     return;
                 }
             }
         }
     }
 
-    private void MapSwitchSwitched (MapSwitch mapSwitch, bool isSwitchOn) {
-        Log.Print ("Switch switched on : Pos : " + mapSwitch.GetTargetPos (), LogType.GameFlow | LogType.MapData);
+    private void MapSwitchSwitchedHandler (MapSwitch mapSwitch, bool isSwitchOn) {
+        Log.Print ("Switch switched on : Pos : " + mapSwitch.GetTargetPos (), LogTypes.GameFlow | LogTypes.MapData);
 
         switch (mapSwitch.GetSwitchType ()) {
             case MapEnum.SwitchType.Arrow:
-                foreach (var target in arrowTargetList) {
+                foreach (var target in ArrowTargetList) {
                     if (target is MapSwitch) {
                         if ((MapSwitch)target == mapSwitch) {
-                            arrowTargetList.Remove (target);
+                            ArrowTargetList.Remove (target);
                             break;
                         }
                     }

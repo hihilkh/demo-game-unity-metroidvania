@@ -1,7 +1,7 @@
 ﻿public class MapEnum {
 
     // Remarks: Never change the TileType enum int value. It is used in map json data.
-    public enum TileType : int {
+    public enum TileType {
         Soil = 0,   // The default value 0 is used for any fallback cases
 
         Ground_Top = 1,
@@ -84,7 +84,7 @@
     }
 
     // Remarks: Never change the TileMapType enum int value. It is used in map json data.
-    public enum TileMapType : int {
+    public enum TileMapType {
         Ground = 0,   // The default value 0 is used for any fallback cases
         Ground2 = 1,
         SlippyWall = 2,
@@ -93,7 +93,7 @@
     }
 
     // Remarks: Never change the SwitchType enum int value. It is used in map json data.
-    public enum SwitchType : int {
+    public enum SwitchType {
         OnOff = 0,   // The default value 0 is used for any fallback cases
         Arrow = 1,
         DropHit = 2,
@@ -101,13 +101,13 @@
     }
 
     // Remarks: Never change the HiddenPathType enum int value. It is used in map json data.
-    public enum HiddenPathType : int {
+    public enum HiddenPathType {
         HideWhenSwitchOn = 0,   // The default value 0 is used for any fallback cases
         ShowWhenSwitchOn = 1,
     }
 
     // Remarks: Never change the HiddenPathOrdering enum int value. It is used in map json data.
-    public enum HiddenPathOrdering : int {
+    public enum HiddenPathOrdering {
         DownToUp = 0,   // The default value 0 is used for any fallback cases
         UpToDown = 1,
         LeftToRight = 2,

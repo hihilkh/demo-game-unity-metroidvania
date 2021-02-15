@@ -144,10 +144,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4748d45f6d2743cbbeb45da640a008e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  charParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
-  arrowSprite: {fileID: 858284693220932099}
-  rb: {fileID: 858284693220932101}
-  attackTrigger: {fileID: 2322343721057824326}
+  _params: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
+  _arrowSprite: {fileID: 858284693220932099}
+  _rb: {fileID: 858284693220932101}
+  _attackTrigger: {fileID: 2322343721057824326}
 --- !u!114 &2322343721057824326
 MonoBehaviour:
   m_ObjectHideFlags: 0

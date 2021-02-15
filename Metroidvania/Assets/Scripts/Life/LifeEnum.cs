@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class LifeEnum {
+﻿public class LifeEnum {
     // Remarks: Never change the HorizontalDirection enum int value. It is used in map json data.
     public enum HorizontalDirection {
         Left = 0,       // The default value 0 is used for any fallback cases

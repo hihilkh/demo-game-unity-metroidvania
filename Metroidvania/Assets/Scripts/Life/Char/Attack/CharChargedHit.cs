@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharChargedHit : CharHitBase {
-    protected override int dp => charParams.hitDP_Charged;
+    protected override int DP => Params.HitDP_Charged;
 
     public override void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed) {
         base.StartAttack (refPoint, direction, charHorizontalSpeed);
@@ -17,7 +15,7 @@ public class CharChargedHit : CharHitBase {
             velocity = -velocity;
         }
 
-        rb.velocity = new Vector3 (velocity, 0, 0);
+        RB.velocity = new Vector3 (velocity, 0, 0);
 
         StartCoroutine (PSNotAliveDestroyCoroutine ());
     }

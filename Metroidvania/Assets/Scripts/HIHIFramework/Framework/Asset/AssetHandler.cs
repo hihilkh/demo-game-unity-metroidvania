@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace HIHIFramework.Asset {
+namespace HihiFramework.Asset {
     public class AssetHandler : Singleton<AssetHandler> {
 
         #region Check Assets Update
@@ -45,7 +45,7 @@ namespace HIHIFramework.Asset {
                     fileNameList.RemoveAt (0);
                     CheckAndUpdateStreamingAssetsRecursive (type, fileNameList, onFinished);
                 } else {
-                    Log.PrintError ("Check and update streaming assets failed. AssetType : " + type + " , fileName : " + fileNameList[0], LogType.Asset);
+                    Log.PrintError ("Check and update streaming assets failed. AssetType : " + type + " , fileName : " + fileNameList[0], LogTypes.Asset);
                     onFinished?.Invoke (false);
                 }
             };
@@ -117,7 +117,7 @@ namespace HIHIFramework.Asset {
         /// </summary>
         /// <param name="onFinished">bool : isSuccess</param>
         private IEnumerator CopyStreamingAssetsCoroutine (string sourcePath, string destPath, Action<bool> onFinished = null) {
-            Log.Print ("Start copying streaming assets. sourcePath : " + sourcePath + " , destPath : " + destPath, LogType.Asset | LogType.IO);
+            Log.Print ("Start copying streaming assets. sourcePath : " + sourcePath + " , destPath : " + destPath, LogTypes.Asset | LogTypes.IO);
 
             var folderPath = Path.GetDirectoryName (destPath);
             if (!Directory.Exists (folderPath)) {
@@ -143,7 +143,7 @@ namespace HIHIFramework.Asset {
                     File.WriteAllText (destPath, resultText);
                     isSuccess = true;
                 } else {
-                    Log.PrintError ("Copy streaming assets failed. sourcePath : " + sourcePath + " , destPath : " + destPath + " , Error : " + unityWebRequest.error, LogType.Asset | LogType.IO);
+                    Log.PrintError ("Copy streaming assets failed. sourcePath : " + sourcePath + " , destPath : " + destPath + " , Error : " + unityWebRequest.error, LogTypes.Asset | LogTypes.IO);
                     isSuccess = false;
                 }
             } else {
@@ -151,13 +151,13 @@ namespace HIHIFramework.Asset {
                     File.Copy (sourcePath, destPath, true);
                     isSuccess = true;
                 } else {
-                    Log.PrintError ("Copy streaming assets failed. sourcePath : " + sourcePath + " , destPath : " + destPath + " , Error : File does not exist", LogType.Asset | LogType.IO);
+                    Log.PrintError ("Copy streaming assets failed. sourcePath : " + sourcePath + " , destPath : " + destPath + " , Error : File does not exist", LogTypes.Asset | LogTypes.IO);
                     isSuccess = false;
                 }
             }
 
             if (isSuccess) {
-                Log.Print ("Finished copying streaming assets file. sourcePath : " + sourcePath + " , destPath : " + destPath, LogType.Asset | LogType.IO);
+                Log.Print ("Finished copying streaming assets file. sourcePath : " + sourcePath + " , destPath : " + destPath, LogTypes.Asset | LogTypes.IO);
             }
 
             onFinished?.Invoke (isSuccess);
@@ -171,7 +171,7 @@ namespace HIHIFramework.Asset {
 
         /// <param name="onFinished">bool : isSuccess, string[] : content by lines(if not success, it would be null)</param>
         private IEnumerator ReadStreamingAssetsFileCoroutine (string filePath, Action<bool, string[]> onFinished) {
-            Log.Print ("Start reading streaming assets file. filePath : " + filePath, LogType.Asset | LogType.IO);
+            Log.Print ("Start reading streaming assets file. filePath : " + filePath, LogTypes.Asset | LogTypes.IO);
             string[] lines = null;
             string errorMsg = null;
 
@@ -205,10 +205,10 @@ namespace HIHIFramework.Asset {
             }
 
             if (errorMsg == null) {
-                Log.Print ("Finished reading streaming assets file. filePath : " + filePath, LogType.Asset | LogType.IO);
+                Log.Print ("Finished reading streaming assets file. filePath : " + filePath, LogTypes.Asset | LogTypes.IO);
                 onFinished?.Invoke (true, lines);
             } else {
-                Log.PrintError ("Failed to read streaming assets file. filePath : " + filePath + " , error : " + errorMsg, LogType.Asset | LogType.IO);
+                Log.PrintError ("Failed to read streaming assets file. filePath : " + filePath + " , error : " + errorMsg, LogTypes.Asset | LogTypes.IO);
                 onFinished?.Invoke (false, null);
             }
 
@@ -224,7 +224,7 @@ namespace HIHIFramework.Asset {
         /// <returns>Is success</returns>
         public bool TryReadPersistentDataFileByLines (AssetEnum.AssetType type, string fileName, out string[] lines) {
             var filePath = Path.Combine (AssetFrameworkDetails.GetAssetFolderFullPath (AssetFrameworkEnum.AssetCategory.PersistentData, type), fileName);
-            Log.Print ("Start reading persistent data file. filePath : " + filePath, LogType.Asset | LogType.IO);
+            Log.Print ("Start reading persistent data file. filePath : " + filePath, LogTypes.Asset | LogTypes.IO);
 
             lines = null;
             string errorMsg = null;
@@ -240,10 +240,10 @@ namespace HIHIFramework.Asset {
             }
 
             if (errorMsg == null) {
-                Log.Print ("Finished reading persistent data file. filePath : " + filePath, LogType.Asset | LogType.IO);
+                Log.Print ("Finished reading persistent data file. filePath : " + filePath, LogTypes.Asset | LogTypes.IO);
                 return true;
             } else {
-                Log.PrintError ("Failed to read persistent data file. filePath : " + filePath + " , error : " + errorMsg, LogType.Asset | LogType.IO);
+                Log.PrintError ("Failed to read persistent data file. filePath : " + filePath + " , error : " + errorMsg, LogTypes.Asset | LogTypes.IO);
                 return false;
             }
         }
@@ -255,16 +255,16 @@ namespace HIHIFramework.Asset {
 
         /// <param name="onFinished">bool : isNeedToUpdate , int : latest version</param>
         private void CheckIsNeedUpdateStreamingAssets (AssetEnum.AssetType type, string fileName, Action<bool, int> onFinished) {
-            Log.Print ("Start checking need of update streaming assets. AssetType : " + type + " , fileName : " + fileName, LogType.Asset);
+            Log.Print ("Start checking need of update streaming assets. AssetType : " + type + " , fileName : " + fileName, LogTypes.Asset);
             var currentVersion = GetCurrentAssetVersion (type, fileName);
 
             Action<int> onGetStreamingAssetsVersionFinished = (streamingAssetsVersion) => {
-                Log.PrintDebug ("AssetType : " + type + " , fileName : " + fileName + " -> streamingAssetsVersion : " + streamingAssetsVersion + " , currentVersion : " + currentVersion, LogType.Asset);
+                Log.PrintDebug ("AssetType : " + type + " , fileName : " + fileName + " -> streamingAssetsVersion : " + streamingAssetsVersion + " , currentVersion : " + currentVersion, LogTypes.Asset);
                 if (currentVersion < streamingAssetsVersion) {
-                    Log.Print ("Finished checking need of update streaming assets : isNeed = true. AssetType : " + type + " , fileName : " + fileName, LogType.Asset);
+                    Log.Print ("Finished checking need of update streaming assets : isNeed = true. AssetType : " + type + " , fileName : " + fileName, LogTypes.Asset);
                     onFinished?.Invoke (true, streamingAssetsVersion);
                 } else {
-                    Log.Print ("Finished checking need of update streaming assets : isNeed = false. AssetType : " + type + " , fileName : " + fileName, LogType.Asset);
+                    Log.Print ("Finished checking need of update streaming assets : isNeed = false. AssetType : " + type + " , fileName : " + fileName, LogTypes.Asset);
                     onFinished?.Invoke (false, currentVersion);
                 }
             };
@@ -279,13 +279,13 @@ namespace HIHIFramework.Asset {
 
             Action<bool, string[]> onReadFinished = (isSuccess, lines) => {
                 if (!isSuccess) {
-                    Log.PrintError ("Get streaming assets version failed. versionFilePath : " + versionFilePath, LogType.Asset);
+                    Log.PrintError ("Get streaming assets version failed. versionFilePath : " + versionFilePath, LogTypes.Asset);
                     onFinished?.Invoke (-1);
                     return;
                 }
 
                 if (lines == null || lines.Length <= 0) {
-                    Log.PrintError ("Get streaming assets version failed. Error : version no raw text is empty", LogType.Asset);
+                    Log.PrintError ("Get streaming assets version failed. Error : version no raw text is empty", LogTypes.Asset);
                     onFinished?.Invoke (-1);
                 }
 
@@ -294,7 +294,7 @@ namespace HIHIFramework.Asset {
                 if (Int32.TryParse (rawText, out version)) {
                     onFinished?.Invoke (version);
                 } else {
-                    Log.PrintError ("Get streaming assets version failed. version no raw text : " + rawText + " , Error : Cannot parse raw text to int", LogType.Asset);
+                    Log.PrintError ("Get streaming assets version failed. version no raw text : " + rawText + " , Error : Cannot parse raw text to int", LogTypes.Asset);
                     onFinished?.Invoke (-1);
                 }
             };
@@ -324,18 +324,18 @@ namespace HIHIFramework.Asset {
 
         /// <param name="onFinished">bool : isCorrect</param>
         private void CheckIsChecksumCorrect (AssetEnum.AssetType type, string fileName, string copiedFilePath, Action<bool> onFinished) {
-            Log.Print ("Start checking copied file checksum. AssetType : " + type + " , fileName : " + fileName, LogType.Asset);
+            Log.Print ("Start checking copied file checksum. AssetType : " + type + " , fileName : " + fileName, LogTypes.Asset);
             Action<string> onReadChecksumFinished = (streamingAssetsChecksum) => {
                 var copiedFileChecksum = FrameworkUtils.CalculateMD5 (copiedFilePath);
 
-                Log.PrintDebug ("streamingAssetsChecksum : " + streamingAssetsChecksum + " , copiedFileChecksum : " + copiedFileChecksum + " . AssetType : " + type + " , fileName : " + fileName, LogType.Asset);
+                Log.PrintDebug ("streamingAssetsChecksum : " + streamingAssetsChecksum + " , copiedFileChecksum : " + copiedFileChecksum + " . AssetType : " + type + " , fileName : " + fileName, LogTypes.Asset);
 
                 var isCorrect = copiedFileChecksum == streamingAssetsChecksum;
 
                 if (isCorrect) {
-                    Log.Print ("Copied file checksum is correct. AssetType : " + type + " , fileName : " + fileName, LogType.Asset);
+                    Log.Print ("Copied file checksum is correct. AssetType : " + type + " , fileName : " + fileName, LogTypes.Asset);
                 } else {
-                    Log.PrintError ("Copied file checksum is wrong. AssetType : " + type + " , fileName : " + fileName, LogType.Asset);
+                    Log.PrintError ("Copied file checksum is wrong. AssetType : " + type + " , fileName : " + fileName, LogTypes.Asset);
                 }
 
                 onFinished?.Invoke (isCorrect);
@@ -351,18 +351,18 @@ namespace HIHIFramework.Asset {
 
             Action<bool, string[]> onReadFinished = (isSuccess, lines) => {
                 if (!isSuccess) {
-                    Log.PrintError ("Get streaming assets checksum failed. checksumFilePath : " + checksumFilePath, LogType.Asset);
+                    Log.PrintError ("Get streaming assets checksum failed. checksumFilePath : " + checksumFilePath, LogTypes.Asset);
                     onFinished?.Invoke (null);
                     return;
                 }
 
                 if (lines == null || lines.Length <= 0) {
-                    Log.PrintError ("Get streaming assets checksum failed. Error : checksum is empty", LogType.Asset);
+                    Log.PrintError ("Get streaming assets checksum failed. Error : checksum is empty", LogTypes.Asset);
                     onFinished?.Invoke (null);
                 }
 
                 var checksum = lines[0];
-                Log.PrintDebug ("checksum = " + checksum + " . checksumFilePath : " + checksumFilePath, LogType.Asset);
+                Log.PrintDebug ("checksum = " + checksum + " . checksumFilePath : " + checksumFilePath, LogTypes.Asset);
                 onFinished?.Invoke (lines[0]);
             };
 

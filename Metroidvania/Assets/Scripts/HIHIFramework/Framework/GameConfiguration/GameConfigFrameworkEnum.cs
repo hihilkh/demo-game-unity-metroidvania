@@ -1,4 +1,4 @@
-﻿namespace HIHIFramework.GameConfiguration {
+﻿namespace HihiFramework.GameConfiguration {
     public static class GameConfigFrameworkEnum {
         public enum GameConfigType {
             GameConfigSetName = 0,

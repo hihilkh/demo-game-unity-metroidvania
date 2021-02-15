@@ -1,18 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
+﻿using HihiFramework.Core;
 using UnityEngine;
 
 public abstract class MapTriggerBase<T> : MapDisposableBase {
 
-    protected T data;
+    protected T Data { get; set; }
 
     public abstract void Init (T data);
     protected abstract bool CheckValidTrigger (Collider2D collision);
     protected abstract void OnTriggered ();
 
     private void OnTriggerEnter2D (Collider2D collision) {
-        if (data == null) {
+        if (Data == null) {
             Log.PrintError ("Not yet initialized. Please check.");
             return;
         }

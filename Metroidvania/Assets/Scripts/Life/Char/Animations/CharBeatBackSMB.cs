@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharBeatBackSMB : CharSMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        animUtils.ResetGravity ();
+        AnimUtils.ResetGravity ();
 
-        animUtils.rb.velocity = animUtils.model.beatBackDirection * animUtils.model.param.beatBackInitSpeed;
+        AnimUtils.RB.velocity = AnimUtils.Model.BeatBackDirection * AnimUtils.Model.Params.BeatBackInitSpeed;
     }
 }

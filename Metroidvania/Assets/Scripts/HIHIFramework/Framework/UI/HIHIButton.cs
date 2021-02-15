@@ -1,14 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using HihiFramework.Core;
+using TMPro;
 using UnityEditor;
+using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor.UI;
-using HIHIFramework.Core;
-using TMPro;
-using System;
 
-namespace HIHIFramework.UI {
+namespace HihiFramework.UI {
 
     [CustomEditor (typeof (HIHIButton))]
     public class HIHIButtonEditor : ButtonEditor {
@@ -58,7 +56,7 @@ namespace HIHIFramework.UI {
         protected override void Awake () {
             base.Awake ();
 
-            this.onClick.AddListener (OnClick);
+            onClick.AddListener (ClickedHandler);
         }
 
         #region Click related
@@ -71,13 +69,13 @@ namespace HIHIFramework.UI {
             }
         }
 
-        private void OnClick () {
+        private void ClickedHandler () {
             if (!Enum.IsDefined (typeof (BtnOnClickType), onClickType)) {
-                Log.PrintError ("HIHIButton onClickType is not yet assigned", LogType.UI | LogType.Input);
+                Log.PrintError ("HIHIButton onClickType is not yet assigned", LogTypes.UI | LogTypes.Input);
                 return;
             }
 
-            Log.Print ("OnClick : " + onClickType, LogType.UI | LogType.Input);
+            Log.Print ("ClickedHandler : " + onClickType, LogTypes.UI | LogTypes.Input);
             if (info == null) {
                 UIEventManager.InvokeEvent (onClickType, this);
             } else {

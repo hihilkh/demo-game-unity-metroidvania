@@ -1,6 +1,2 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class CharGeneralHitSMB : CharHitSMBBase {
+﻿public class CharGeneralHitSMB : CharHitSMBBase {
 }

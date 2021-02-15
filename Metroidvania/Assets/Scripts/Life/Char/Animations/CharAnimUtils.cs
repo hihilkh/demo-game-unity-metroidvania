@@ -1,38 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
+﻿using System.Collections.Generic;
+using HihiFramework.Core;
 using UnityEngine;
 
 public class CharAnimUtils : MonoBehaviour {
-    private Dictionary<CharEnum.FaceType, GameObject> faceDict;
-    private const string MeshName_HeadNormal = "Meshes/Head/head.normal";
-    private const string MeshName_HeadNormalInversed = "Meshes/Head/head.normal_inversed";
-    private const string MeshName_HeadConfused = "Meshes/Head/head.confused";
-    private const string MeshName_HeadShocked = "Meshes/Head/head.shocked";
-
-    private Dictionary<CharEnum.BodyPart, GameObject> bodyPartDict;
-    private const string MeshName_Arms = "Meshes/Arm";
-    private const string MeshName_Legs = "Meshes/Leg";
-    private const string MeshName_Thrusters = "Meshes/Leg/Thruster";
-    private const string MeshName_ArrowWeapon = "Meshes/Arm/Weapon";
-
     [SerializeField] private CharModel _model;
-    public CharModel model => _model;
+    public CharModel Model => _model;
 
     [SerializeField] private Rigidbody2D _rb;
-    public Rigidbody2D rb => _rb;
+    public Rigidbody2D RB => _rb;
 
     [SerializeField] private Transform _animBaseTransform;
-    public Transform animBaseTransform => _animBaseTransform;
-
-    private Animator animator;
-
-    private bool isNeedCommonUpdate = false;
+    public Transform AnimBaseTransform => _animBaseTransform;
 
     [Header ("Material")]
     [SerializeField] private Material charMaterialToClone;
-    private Material charMaterial;
-    private const string CharMaterialAlphaFloatName = "_alpha";
 
     [Header ("Particle System")]
     [SerializeField] private List<ParticleSystem> thrusterPSList;
@@ -41,42 +22,61 @@ public class CharAnimUtils : MonoBehaviour {
 
     [Header ("Hit Template")]
     [SerializeField] private CharNormalHit _normalHitTemplate;
-    public CharNormalHit normalHitTemplate => _normalHitTemplate;
+    public CharNormalHit NormalHitTemplate => _normalHitTemplate;
 
     [SerializeField] private CharChargedHit _chargedHitTemplate;
-    public CharChargedHit chargedHitTemplate => _chargedHitTemplate;
+    public CharChargedHit ChargedHitTemplate => _chargedHitTemplate;
 
     [SerializeField] private CharFinishingHit _finishingHitTemplate;
-    public CharFinishingHit finishingHitTemplate => _finishingHitTemplate;
+    public CharFinishingHit FinishingHitTemplate => _finishingHitTemplate;
 
     [SerializeField] private CharDropHit _dropHitTemplate;
-    public CharDropHit dropHitTemplate => _dropHitTemplate;
+    public CharDropHit DropHitTemplate => _dropHitTemplate;
 
     [Header ("Arrow Template")]
     [SerializeField] private CharTargetArrow _targetArrowTemplate;
-    public CharTargetArrow targetArrowTemplate => _targetArrowTemplate;
+    public CharTargetArrow TargetArrowTemplate => _targetArrowTemplate;
 
     [SerializeField] private CharStraightArrow _straightArrowTemplate;
-    public CharStraightArrow straightArrowTemplate => _straightArrowTemplate;
+    public CharStraightArrow StraightArrowTemplate => _straightArrowTemplate;
 
     [SerializeField] private CharTripleArrow _tripleArrowTemplate;
-    public CharTripleArrow tripleArrowTemplate => _tripleArrowTemplate;
+    public CharTripleArrow TripleArrowTemplate => _tripleArrowTemplate;
 
     [Header ("RefPoint")]
     [SerializeField] private Transform _refPoint_GeneralHit;
-    public Transform refPoint_GeneralHit => _refPoint_GeneralHit;
+    public Transform RefPoint_GeneralHit => _refPoint_GeneralHit;
 
     [SerializeField] private Transform _refPoint_SlideHit;
-    public Transform refPoint_SlideHit => _refPoint_SlideHit;
+    public Transform RefPoint_SlideHit => _refPoint_SlideHit;
 
     [SerializeField] private Transform _refPoint_DropHit;
-    public Transform refPoint_DropHit => _refPoint_DropHit;
+    public Transform RefPoint_DropHit => _refPoint_DropHit;
 
     [SerializeField] private Transform _refPoint_GeneralShoot;
-    public Transform refPoint_GeneralShoot => _refPoint_GeneralShoot;
+    public Transform RefPoint_GeneralShoot => _refPoint_GeneralShoot;
 
     [SerializeField] private Transform _refPoint_SlideShoot;
-    public Transform refPoint_SlideShoot => _refPoint_SlideShoot;
+    public Transform RefPoint_SlideShoot => _refPoint_SlideShoot;
+
+    private readonly Dictionary<CharEnum.FaceType, GameObject> faceDict = new Dictionary<CharEnum.FaceType, GameObject> ();
+    private const string MeshName_HeadNormal = "Meshes/Head/head.normal";
+    private const string MeshName_HeadNormalInversed = "Meshes/Head/head.normal_inversed";
+    private const string MeshName_HeadConfused = "Meshes/Head/head.confused";
+    private const string MeshName_HeadShocked = "Meshes/Head/head.shocked";
+
+    private readonly Dictionary<CharEnum.BodyParts, GameObject> bodyPartDict = new Dictionary<CharEnum.BodyParts, GameObject> ();
+    private const string MeshName_Arms = "Meshes/Arm";
+    private const string MeshName_Legs = "Meshes/Leg";
+    private const string MeshName_Thrusters = "Meshes/Leg/Thruster";
+    private const string MeshName_ArrowWeapon = "Meshes/Arm/Weapon";
+
+    private Animator animator;
+
+    private bool isNeedCommonUpdate = false;
+
+    private Material charMaterial;
+    private const string CharMaterialAlphaFloatName = "_alpha";
 
     private void Awake () {
         animator = GetComponent<Animator> ();
@@ -86,20 +86,20 @@ public class CharAnimUtils : MonoBehaviour {
         InitCharMaterial ();
 
         // event handler
-        model.resettingEvent += Reset;
-        model.obtainedBodyPartsChangedEvent += SetBodyParts;
-        model.statusChangedEvent += NeedCommonUpdateAction;
-        model.facingDirectionChangedEvent += NeedCommonUpdateAction;
-        model.movingDirectionChangedEvent += NeedCommonUpdateAction;
-        model.horizontalSpeedChangedEvent += NeedCommonUpdateAction;
+        Model.Resetting += ModelResettingHandler;
+        Model.ObtainedBodyPartsChanged += ObtainedBodyPartsChangedHandler;
+        Model.StatusesChanged += CommonUpdateNeededHandler;
+        Model.FacingDirectionChanged += CommonUpdateNeededHandler;
+        Model.MovingDirectionChanged += CommonUpdateNeededHandler;
+        Model.HorizontalSpeedChanged += CommonUpdateNeededHandler;
     }
 
     private void Start () {
-        SetBodyParts (model.GetObtainedBodyParts ());
+        SetBodyParts (Model.GetObtainedBodyParts ());
     }
 
     private void Reset () {
-        Log.Print ("CharAnimUtils : Reset", LogType.Animation);
+        Log.Print ("CharAnimUtils : Reset", LogTypes.Animation);
         SetDieFeature (false);
         ResetGravity ();
         UpdateVelocity (0, 0);
@@ -118,22 +118,18 @@ public class CharAnimUtils : MonoBehaviour {
             UpdateVelocityX (null);
         }
 
-        if (rb.velocity.y < model.param.minFallDownVelocity) {
-            rb.velocity = new Vector2 (rb.velocity.x, model.param.minFallDownVelocity);
+        if (RB.velocity.y < Model.Params.MinFallDownVelocity) {
+            RB.velocity = new Vector2 (RB.velocity.x, Model.Params.MinFallDownVelocity);
         }
     }
 
     private void OnDestroy () {
-        model.resettingEvent -= Reset;
-        model.obtainedBodyPartsChangedEvent -= SetBodyParts;
-        model.statusChangedEvent -= NeedCommonUpdateAction;
-        model.facingDirectionChangedEvent -= NeedCommonUpdateAction;
-        model.movingDirectionChangedEvent -= NeedCommonUpdateAction;
-        model.horizontalSpeedChangedEvent -= NeedCommonUpdateAction;
-    }
-
-    private void NeedCommonUpdateAction () {
-        isNeedCommonUpdate = true;
+        Model.Resetting -= ModelResettingHandler;
+        Model.ObtainedBodyPartsChanged -= ObtainedBodyPartsChangedHandler;
+        Model.StatusesChanged -= CommonUpdateNeededHandler;
+        Model.FacingDirectionChanged -= CommonUpdateNeededHandler;
+        Model.MovingDirectionChanged -= CommonUpdateNeededHandler;
+        Model.HorizontalSpeedChanged -= CommonUpdateNeededHandler;
     }
 
     #region Die feature
@@ -141,10 +137,10 @@ public class CharAnimUtils : MonoBehaviour {
     public void SetDieFeature (bool isDie) {
         if (isDie) {
             animator.speed = 0;
-            rb.bodyType = RigidbodyType2D.Static;
+            RB.bodyType = RigidbodyType2D.Static;
         } else {
             animator.speed = 1;
-            rb.bodyType = RigidbodyType2D.Dynamic;
+            RB.bodyType = RigidbodyType2D.Dynamic;
             SetCharAlpha (1);
         }
     }
@@ -154,45 +150,43 @@ public class CharAnimUtils : MonoBehaviour {
     #region Face related
 
     private void InitFaceDict () {
-        faceDict = new Dictionary<CharEnum.FaceType, GameObject> ();
-
         var normalHeadTransform = transform.Find (MeshName_HeadNormal);
         if (normalHeadTransform == null) {
-            Log.PrintError ("Cannot find normal head of the character.", LogType.Animation);
+            Log.PrintError ("Cannot find normal head of the character.", LogTypes.Animation);
         } else {
             faceDict.Add (CharEnum.FaceType.Normal, normalHeadTransform.gameObject);
         }
 
         var normalInversedHeadTransform = transform.Find (MeshName_HeadNormalInversed);
         if (normalInversedHeadTransform == null) {
-            Log.PrintError ("Cannot find normal inversed head of the character.", LogType.Animation);
+            Log.PrintError ("Cannot find normal inversed head of the character.", LogTypes.Animation);
         } else {
             faceDict.Add (CharEnum.FaceType.Normal_Inversed, normalInversedHeadTransform.gameObject);
         }
 
         var confusedHeadTransform = transform.Find (MeshName_HeadConfused);
         if (confusedHeadTransform == null) {
-            Log.PrintError ("Cannot find confused head of the character.", LogType.Animation);
+            Log.PrintError ("Cannot find confused head of the character.", LogTypes.Animation);
         } else {
             faceDict.Add (CharEnum.FaceType.Confused, confusedHeadTransform.gameObject);
         }
 
         var shockedHeadTransform = transform.Find (MeshName_HeadShocked);
         if (shockedHeadTransform == null) {
-            Log.PrintError ("Cannot find shocked head of the character.", LogType.Animation);
+            Log.PrintError ("Cannot find shocked head of the character.", LogTypes.Animation);
         } else {
             faceDict.Add (CharEnum.FaceType.Shocked, shockedHeadTransform.gameObject);
         }
     }
 
     private void UpdateFace () {
-        if (model.isBeatingBack || model.isDying) {
+        if (Model.IsBeatingBack || Model.IsDying) {
             SetFace (CharEnum.FaceType.Confused);
-        } else if (model.GetIsInStatus (CharEnum.Status.Sliding)) {
+        } else if (Model.GetIsInStatuses (CharEnum.Statuses.Sliding)) {
             SetFace (CharEnum.FaceType.Normal_Inversed);
         } else {
             var faceType = CharEnum.FaceType.Normal;
-            if ((model.GetObtainedBodyParts () & ~CharEnum.BodyPart.Head) == CharEnum.BodyPart.None) {  // Only have head
+            if ((Model.GetObtainedBodyParts () & ~CharEnum.BodyParts.Head) == CharEnum.BodyParts.None) {  // Only have head
                 faceType = CharEnum.FaceType.Confused;
             }
 
@@ -201,11 +195,6 @@ public class CharAnimUtils : MonoBehaviour {
     }
 
     private void SetFace (CharEnum.FaceType faceType) {
-        if (faceDict == null) {
-            Log.PrintWarning ("FaceDict is null. Cannot set face.", LogType.Animation);
-            return;
-        }
-
         foreach (var pair in faceDict) {
             pair.Value.SetActive (pair.Key == faceType);
         }
@@ -216,43 +205,36 @@ public class CharAnimUtils : MonoBehaviour {
     #region Body Parts
 
     private void InitBodyPartDict () {
-        bodyPartDict = new Dictionary<CharEnum.BodyPart, GameObject> ();
-
         var armsTransform = transform.Find (MeshName_Arms);
         if (armsTransform == null) {
-            Log.PrintError ("Cannot find arms of the character.", LogType.Animation);
+            Log.PrintError ("Cannot find arms of the character.", LogTypes.Animation);
         } else {
-            bodyPartDict.Add (CharEnum.BodyPart.Arms, armsTransform.gameObject);
+            bodyPartDict.Add (CharEnum.BodyParts.Arms, armsTransform.gameObject);
         }
 
         var legsTransform = transform.Find (MeshName_Legs);
         if (legsTransform == null) {
-            Log.PrintError ("Cannot find legs of the character.", LogType.Animation);
+            Log.PrintError ("Cannot find legs of the character.", LogTypes.Animation);
         } else {
-            bodyPartDict.Add (CharEnum.BodyPart.Legs, legsTransform.gameObject);
+            bodyPartDict.Add (CharEnum.BodyParts.Legs, legsTransform.gameObject);
         }
 
         var thrustersTransform = transform.Find (MeshName_Thrusters);
         if (thrustersTransform == null) {
-            Log.PrintError ("Cannot find thrusters of the character.", LogType.Animation);
+            Log.PrintError ("Cannot find thrusters of the character.", LogTypes.Animation);
         } else {
-            bodyPartDict.Add (CharEnum.BodyPart.Thrusters, thrustersTransform.gameObject);
+            bodyPartDict.Add (CharEnum.BodyParts.Thrusters, thrustersTransform.gameObject);
         }
 
         var arrowTransform = transform.Find (MeshName_ArrowWeapon);
         if (arrowTransform == null) {
-            Log.PrintError ("Cannot find arrow weapon of the character.", LogType.Animation);
+            Log.PrintError ("Cannot find arrow weapon of the character.", LogTypes.Animation);
         } else {
-            bodyPartDict.Add (CharEnum.BodyPart.Arrow, arrowTransform.gameObject);
+            bodyPartDict.Add (CharEnum.BodyParts.Arrow, arrowTransform.gameObject);
         }
     }
 
-    private void SetBodyParts (CharEnum.BodyPart parts) {
-        if (bodyPartDict == null) {
-            Log.PrintWarning ("BodyPartDict is null. Cannot set body parts.", LogType.Animation);
-            return;
-        }
-
+    private void SetBodyParts (CharEnum.BodyParts parts) {
         foreach (var pair in bodyPartDict) {
             pair.Value.SetActive (parts.HasFlag (pair.Key));
         }
@@ -268,7 +250,7 @@ public class CharAnimUtils : MonoBehaviour {
         var renderers = GetComponentsInChildren<SkinnedMeshRenderer> ();
 
         if (renderers == null || renderers.Length <= 0) {
-            Log.PrintError ("Cannot find SkinnedMeshRenderer of the character.", LogType.Animation);
+            Log.PrintError ("Cannot find SkinnedMeshRenderer of the character.", LogTypes.Animation);
             return;
         }
 
@@ -301,9 +283,9 @@ public class CharAnimUtils : MonoBehaviour {
     }
 
     private void UpdatePS () {
-        SetThrusterPS (model.GetIsInStatus (CharEnum.Status.Dashing));
-        SetJumpChargePS (model.GetIsInStatus (CharEnum.Status.JumpCharging));
-        SetDropHitChargePS (model.GetIsInStatus (CharEnum.Status.DropHitCharging));
+        SetThrusterPS (Model.GetIsInStatuses (CharEnum.Statuses.Dashing));
+        SetJumpChargePS (Model.GetIsInStatuses (CharEnum.Statuses.JumpCharging));
+        SetDropHitChargePS (Model.GetIsInStatuses (CharEnum.Statuses.DropHitCharging));
     }
     #endregion
 
@@ -312,60 +294,76 @@ public class CharAnimUtils : MonoBehaviour {
     public float GetVelocityXByCurrentHorizontalSpeed (bool magnitudeOnly = false) {
         var velocityX = 0f;
 
-        switch (model.currentHorizontalSpeed) {
+        switch (Model.CurrentHorizontalSpeed) {
             case CharEnum.HorizontalSpeed.Idle:
                 velocityX = 0;
                 break;
             case CharEnum.HorizontalSpeed.Walk:
-                velocityX = model.param.walkingSpeed;
+                velocityX = Model.Params.WalkingSpeed;
                 break;
             case CharEnum.HorizontalSpeed.Dash:
-                velocityX = model.param.dashingSpeed;
+                velocityX = Model.Params.DashingSpeed;
                 break;
         }
 
         if (magnitudeOnly) {
             return velocityX;
         } else {
-            var multiplier = (model.movingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
+            var multiplier = (Model.MovingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
             return velocityX * multiplier;
         }
     }
 
     /// <param name="x">Input null means determined by model.currentHorizontalSpeed</param>
     public void UpdateVelocity (float? x, float y) {
-        if (rb.bodyType == RigidbodyType2D.Static) {
+        if (RB.bodyType == RigidbodyType2D.Static) {
             return;
         }
 
         var velocityX = (x == null) ? GetVelocityXByCurrentHorizontalSpeed () : (float)x;
 
-        rb.velocity = new Vector3 (velocityX, y);
+        RB.velocity = new Vector3 (velocityX, y);
     }
 
     /// <param name="x">Input null means determined by model.currentHorizontalSpeed</param>
     public void UpdateVelocityX (float? x) {
         var velocityX = (x == null) ? GetVelocityXByCurrentHorizontalSpeed () : (float)x;
 
-        UpdateVelocity (velocityX, rb.velocity.y);
+        UpdateVelocity (velocityX, RB.velocity.y);
     }
 
     private void UpdateFacingDirection () {
-        var scale = (model.facingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
+        var scale = (Model.FacingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
 
-        if (model.GetIsInStatus (CharEnum.Status.Sliding)) {
+        if (Model.GetIsInStatuses (CharEnum.Statuses.Sliding)) {
             scale = scale * -1;
         }
 
-        animBaseTransform.localScale = new Vector3 (scale, 1, 1);
+        AnimBaseTransform.localScale = new Vector3 (scale, 1, 1);
     }
 
     public void ResetGravity () {
-        rb.gravityScale = model.param.gravityScale;
+        RB.gravityScale = Model.Params.GravityScale;
     }
 
     public void RemoveGravity () {
-        rb.gravityScale = 0;
+        RB.gravityScale = 0;
+    }
+
+    #endregion
+
+    #region Events
+
+    private void ModelResettingHandler () {
+        Reset ();
+    }
+
+    private void ObtainedBodyPartsChangedHandler (CharEnum.BodyParts parts) {
+        SetBodyParts (parts);
+    }
+
+    private void CommonUpdateNeededHandler () {
+        isNeedCommonUpdate = true;
     }
 
     #endregion

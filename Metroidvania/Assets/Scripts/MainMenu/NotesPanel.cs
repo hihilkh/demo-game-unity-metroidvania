@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using HIHIFramework.Core;
-using HIHIFramework.UI;
+using HihiFramework.Core;
+using HihiFramework.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class NotesPanel : GeneralPanel {
+public class NotesPanel : GeneralPanelBase {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI contentText;
 
@@ -17,9 +16,9 @@ public class NotesPanel : GeneralPanel {
     [SerializeField] private ScrollRect selectNoteBtnScrollRect;
 
     private bool isInitialized = false;
-    private List<HIHIButton> selectNoteBtnList = new List<HIHIButton> ();
-    private List<LocalizedTextDetails> fixedLocalizedTextDetailsList = new List<LocalizedTextDetails> ();
-    private List<Collectable.Type> collectedNoteTypeList = new List<Collectable.Type> ();
+    private readonly List<HIHIButton> selectNoteBtnList = new List<HIHIButton> ();
+    private readonly List<LocalizedTextDetails> fixedLocalizedTextDetailsList = new List<LocalizedTextDetails> ();
+    private readonly List<Collectable.Type> collectedNoteTypeList = new List<Collectable.Type> ();
 
     private void Init (List<Collectable.Type> collectedNoteTypeList) {
         if (isInitialized) {
@@ -28,7 +27,10 @@ public class NotesPanel : GeneralPanel {
 
         isInitialized = true;
 
-        this.collectedNoteTypeList = collectedNoteTypeList;
+        this.collectedNoteTypeList.Clear ();
+        if (collectedNoteTypeList != null && collectedNoteTypeList.Count > 0) {
+            this.collectedNoteTypeList.AddRange (collectedNoteTypeList);
+        }
 
         fixedLocalizedTextDetailsList.Clear ();
         fixedLocalizedTextDetailsList.Add (new LocalizedTextDetails (titleText, "NotePanelTitle"));
@@ -42,22 +44,22 @@ public class NotesPanel : GeneralPanel {
             btn.SetOnClickInfo (BtnOnClickType.MainMenu_SelectNote, note);
             var text = btn.GetComponentInChildren<TextMeshProUGUI> ();
             if (text == null) {
-                Log.PrintError ("Cannot get text component of select note button. Please check.", LogType.UI);
+                Log.PrintError ("Cannot get text component of select note button. Please check.", LogTypes.UI);
             } else {
                 var key = GameVariable.UnknownTextKey;
-                if (collectedNoteTypeList.Contains (note.type)) {
-                    key = note.displayNameKey;
+                if (collectedNoteTypeList.Contains (note.CollectableType)) {
+                    key = note.DisplayNameKey;
                 }
                 fixedLocalizedTextDetailsList.Add (new LocalizedTextDetails (text, key));
             }
         }
 
-        UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_SelectNote, OnSelectNoteClick);
+        UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_SelectNote, SelectNoteBtnClickedHandler);
     }
 
     protected override void OnDestroy () {
         if (isInitialized) {
-            UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_SelectNote, OnSelectNoteClick);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_SelectNote, SelectNoteBtnClickedHandler);
         }
 
         base.OnDestroy ();
@@ -83,17 +85,17 @@ public class NotesPanel : GeneralPanel {
 
     #region Events
 
-    private void OnSelectNoteClick (HIHIButton sender, object info) {
+    private void SelectNoteBtnClickedHandler (HIHIButton sender, object info) {
         if (!(info is NoteCollectable)) {
-            Log.PrintError ("OnSelectNoteClick failed. Getting invalid info type : " + info.GetType (), LogType.UI | LogType.Input | LogType.GameFlow);
+            Log.PrintError ("OnSelectNoteClick failed. Getting invalid info type : " + info.GetType (), LogTypes.UI | LogTypes.Input | LogTypes.GameFlow);
             return;
         }
 
         var note = (NoteCollectable)info;
 
         var key = GameVariable.UnknownTextKey;
-        if (collectedNoteTypeList.Contains (note.type)) {
-            key = note.noteContentKey;
+        if (collectedNoteTypeList.Contains (note.CollectableType)) {
+            key = note.NoteContentKey;
         }
         LangManager.SetText (new LocalizedTextDetails (contentText, key));
     }

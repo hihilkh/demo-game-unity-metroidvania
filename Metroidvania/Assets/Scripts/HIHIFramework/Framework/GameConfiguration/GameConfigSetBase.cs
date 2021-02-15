@@ -1,45 +1,44 @@
 ﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 
-namespace HIHIFramework.GameConfiguration {
+namespace HihiFramework.GameConfiguration {
     public abstract class GameConfigSetBase {
         // Remarks : the variable name "gameConfigSetName" must not be changed
-        protected string gameConfigSetName;                        // Display name for the config set
+        protected string GameConfigSetName { get; set; }                        // Display name for the config set
 
-        public Dictionary<string, GameConfigFrameworkEnum.GameConfigType> GetGameConfigFieldNameDict () {
+        public Dictionary<string, GameConfigFrameworkEnum.GameConfigType> GetGameConfigPropertyNameDict () {
             var gameConfigSearchKeys = new Dictionary<string, GameConfigFrameworkEnum.GameConfigType> ();
 
-            var gameConfigFields = GetType ().GetFields (System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-            foreach (var field in gameConfigFields) {
-                if (field.Name == FrameworkVariable.GameConfigSetNameFieldName) {
-                    gameConfigSearchKeys.Add (field.Name, GameConfigFrameworkEnum.GameConfigType.GameConfigSetName);
-                } else if (field.FieldType == typeof (string)) {
-                    if (field.Name.Contains (FrameworkVariable.GameConfigCustomStringSuffix)) {
-                        gameConfigSearchKeys.Add (field.Name, GameConfigFrameworkEnum.GameConfigType.CustomString);
+            var gameConfigProperties = GetType ().GetProperties (System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            foreach (var property in gameConfigProperties) {
+                if (property.Name == FrameworkVariable.GameConfigSetNameFieldName) {
+                    gameConfigSearchKeys.Add (property.Name, GameConfigFrameworkEnum.GameConfigType.GameConfigSetName);
+                } else if (property.PropertyType == typeof (string)) {
+                    if (property.Name.Contains (FrameworkVariable.GameConfigCustomStringSuffix)) {
+                        gameConfigSearchKeys.Add (property.Name, GameConfigFrameworkEnum.GameConfigType.CustomString);
                     } else {
-                        gameConfigSearchKeys.Add (field.Name, GameConfigFrameworkEnum.GameConfigType.String);
+                        gameConfigSearchKeys.Add (property.Name, GameConfigFrameworkEnum.GameConfigType.String);
                     }
-                } else if (field.FieldType.IsEnum) {
-                    gameConfigSearchKeys.Add (field.Name, GameConfigFrameworkEnum.GameConfigType.Enum);
+                } else if (property.PropertyType.IsEnum) {
+                    gameConfigSearchKeys.Add (property.Name, GameConfigFrameworkEnum.GameConfigType.Enum);
                 }
             }
             return gameConfigSearchKeys;
         }
 
-        public string GetFieldTypeName (string fieldName) {
-            var fieldInfo = GetType ().GetField (fieldName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-            return fieldInfo.FieldType.FullName;
+        public string GetPropertyTypeName (string propertyName) {
+            var propertyInfo = GetType ().GetProperty (propertyName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            return propertyInfo.PropertyType.FullName;
         }
 
-        public object GetFieldValue (string fieldName) {
-            var fieldInfo = GetType ().GetField (fieldName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-            return fieldInfo.GetValue (this);
+        public object GetPropertyValue (string propertyName) {
+            var propertyInfo = GetType ().GetProperty (propertyName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            return propertyInfo.GetValue (this);
         }
 
-        public void SetFieldValue (string fieldName, object fieldValue) {
-            var fieldInfo = GetType ().GetField (fieldName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-            fieldInfo.SetValue (this, fieldValue);
+        public void SetPropertyValue (string propertyName, object propertyValue) {
+            var propertyInfo = GetType ().GetProperty (propertyName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            propertyInfo.SetValue (this, propertyValue);
         }
     }
 }

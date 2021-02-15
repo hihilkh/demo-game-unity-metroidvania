@@ -1,35 +1,33 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 
 public partial class GameUtils : Singleton<GameUtils> {
-    private static CharModel charModel;
-    private static bool isCharModelInitialized = false;
+    private static CharModel Character;
+    private static bool IsCharModelInitialized = false;
 
-    private static TransitionCanvas transitionCanvas;
+    private static TransitionCanvas TransitionCanvasInstance;
 
     #region CharModel
 
     public static CharModel FindOrSpawnChar () {
         // isCharModelInitialized is to prevent calling charModel after it is destroyed while quiting application 
-        if (!isCharModelInitialized) {
-            isCharModelInitialized = true;
+        if (!IsCharModelInitialized) {
+            IsCharModelInitialized = true;
 
-            charModel = FindObjectOfType<CharModel> ();
+            Character = FindObjectOfType<CharModel> ();
 
-            if (charModel == null) {
-                charModel = Instantiate (Resources.Load<CharModel> (GameVariable.CharPrefabResourcesName));
+            if (Character == null) {
+                Character = Instantiate (Resources.Load<CharModel> (GameVariable.CharPrefabResourcesName));
                 // Remarks :
                 // Do Reset() explicitly instead of doing inside Awake() to ensure after getting the model from this method,
                 // the model is already initialized
-                charModel.Reset (Vector3.zero, LifeEnum.HorizontalDirection.Right);
-                DontDestroyOnLoad (charModel);
+                Character.Reset (Vector3.zero, LifeEnum.HorizontalDirection.Right);
+                DontDestroyOnLoad (Character);
             }
         }
 
-        return charModel;
+        return Character;
     }
 
     #endregion
@@ -37,16 +35,16 @@ public partial class GameUtils : Singleton<GameUtils> {
     #region TransitionCanvas
 
     private static TransitionCanvas GetTransitionCanvas () {
-        if (!transitionCanvas) {
-            transitionCanvas = FindObjectOfType<TransitionCanvas> ();
+        if (!TransitionCanvasInstance) {
+            TransitionCanvasInstance = FindObjectOfType<TransitionCanvas> ();
 
-            if (transitionCanvas == null) {
-                transitionCanvas = Instantiate (Resources.Load<TransitionCanvas> (GameVariable.TransitionCanvasPrefabResourcesName));
-                DontDestroyOnLoad (transitionCanvas);
+            if (TransitionCanvasInstance == null) {
+                TransitionCanvasInstance = Instantiate (Resources.Load<TransitionCanvas> (GameVariable.TransitionCanvasPrefabResourcesName));
+                DontDestroyOnLoad (TransitionCanvasInstance);
             }
         }
 
-        return transitionCanvas;
+        return TransitionCanvasInstance;
     }
 
     public static void SetScreen (bool isBlockedSight) {

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 // TODO : Thin of getting mission and collectable details by map export to JSON
 public static class MissionManager {
@@ -75,7 +72,7 @@ public static class MissionManager {
 
     public static Mission GetMission (int missionId) {
         foreach (var mission in MissionListInOrder) {
-            if (mission.id == missionId) {
+            if (mission.Id == missionId) {
                 return mission;
             }
         }

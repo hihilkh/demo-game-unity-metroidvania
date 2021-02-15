@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using HIHIFramework.Lang;
+using HihiFramework.Lang;
 
 public partial class LangManager : LangManagerBase {
 }

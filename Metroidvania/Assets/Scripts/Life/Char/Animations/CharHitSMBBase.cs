@@ -1,37 +1,37 @@
-﻿using HIHIFramework.Core;
+﻿using HihiFramework.Core;
 using UnityEngine;
 
 public class CharHitSMBBase : CharSMBBase {
-    protected CharHitBase hitClone;
-    protected virtual Transform generalHitRefPoint => animUtils.refPoint_GeneralHit;
+    protected CharHitBase HitClone { get; private set; }
+    protected virtual Transform GeneralHitRefPoint => AnimUtils.RefPoint_GeneralHit;
 
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
         Transform refPoint;
 
-        switch (animUtils.model.currentHitType) {
+        switch (AnimUtils.Model.CurrentHitType) {
             case CharEnum.HitType.Normal:
-                hitClone = Instantiate (animUtils.normalHitTemplate);
-                refPoint = generalHitRefPoint;
+                HitClone = Instantiate (AnimUtils.NormalHitTemplate);
+                refPoint = GeneralHitRefPoint;
                 break;
             case CharEnum.HitType.Charged:
-                hitClone = Instantiate (animUtils.chargedHitTemplate);
-                refPoint = generalHitRefPoint;
+                HitClone = Instantiate (AnimUtils.ChargedHitTemplate);
+                refPoint = GeneralHitRefPoint;
                 break;
             case CharEnum.HitType.Finishing:
-                hitClone = Instantiate (animUtils.finishingHitTemplate);
-                refPoint = generalHitRefPoint;
+                HitClone = Instantiate (AnimUtils.FinishingHitTemplate);
+                refPoint = GeneralHitRefPoint;
                 break;
             case CharEnum.HitType.Drop:
-                hitClone = Instantiate (animUtils.dropHitTemplate);
-                refPoint = animUtils.refPoint_DropHit;
+                HitClone = Instantiate (AnimUtils.DropHitTemplate);
+                refPoint = AnimUtils.RefPoint_DropHit;
                 break;
             default:
-                Log.PrintError ("currentHitType = " + animUtils.model.currentHitType + " . No implementation in CharHitSMBBase. Please check.", LogType.Animation);
+                Log.PrintError ("currentHitType = " + AnimUtils.Model.CurrentHitType + " . No implementation in CharHitSMBBase. Please check.", LogTypes.Animation);
                 return;
         }
 
-        hitClone.StartAttack (refPoint, animUtils.model.facingDirection, animUtils.GetVelocityXByCurrentHorizontalSpeed (true));
+        HitClone.StartAttack (refPoint, AnimUtils.Model.FacingDirection, AnimUtils.GetVelocityXByCurrentHorizontalSpeed (true));
     }
 }

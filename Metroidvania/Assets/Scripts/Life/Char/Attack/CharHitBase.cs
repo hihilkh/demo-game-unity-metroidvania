@@ -4,17 +4,21 @@ using UnityEngine;
 
 public abstract class CharHitBase : MonoBehaviour {
 
-    [SerializeField] protected CharParams charParams;
-    [SerializeField] protected Rigidbody2D rb;
-    [SerializeField] protected ParticleSystem ps;
-    [SerializeField] protected CharAttackTrigger attackTrigger;
+    [SerializeField] private CharParams _params;
+    protected CharParams Params => _params;
+    [SerializeField] private Rigidbody2D _rb;
+    protected Rigidbody2D RB => _rb;
+    [SerializeField] private ParticleSystem _ps;
+    protected ParticleSystem PS => _ps;
+    [SerializeField] private CharAttackTrigger _attackTrigger;
+    protected CharAttackTrigger AttackTrigger => _attackTrigger;
 
-    protected LifeEnum.HorizontalDirection direction;
-    protected abstract int dp { get; }
+    protected LifeEnum.HorizontalDirection Direction { get; private set; }
+    protected abstract int DP { get; }
 
     public virtual void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed) {
-        this.direction = direction;
-        attackTrigger.HitLifeEvent += HitLife;
+        Direction = direction;
+        AttackTrigger.HitLife += HitLifeHandler;
     }
 
     protected void SetInitPos (Vector3 pos) {
@@ -23,7 +27,7 @@ public abstract class CharHitBase : MonoBehaviour {
     }
 
     protected IEnumerator PSNotAliveDestroyCoroutine () {
-        yield return new WaitUntil (() => !ps.IsAlive ());
+        yield return new WaitUntil (() => !PS.IsAlive ());
 
         DestroySelf ();
     }
@@ -35,14 +39,18 @@ public abstract class CharHitBase : MonoBehaviour {
     }
 
     protected void InversePSShape () {
-        var shape = ps.shape;
+        var shape = PS.shape;
         shape.position = -shape.position;
         shape.rotation = -shape.rotation;
     }
 
-    protected virtual void HitLife (LifeBase lifeBase, Transform colliderTransform, bool isInvincible) {
+    #region Events
+
+    protected virtual void HitLifeHandler (LifeBase lifeBase, Transform colliderTransform, bool isInvincible) {
         if (!isInvincible) {
-            lifeBase.Hurt (dp, direction);
+            lifeBase.Hurt (DP, Direction);
         }
     }
+
+    #endregion
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using HIHIFramework.Core;
-using HIHIFramework.UI;
+using HihiFramework.Core;
+using HihiFramework.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,15 +19,15 @@ public class CommandPanel : CommandMatrixPanel {
 
     private GraphicRaycaster graphicRaycaster;
 
-    private Dictionary<CharEnum.Command, CommandDisplay> commandPickerDisplayDict = new Dictionary<CharEnum.Command, CommandDisplay> ();
-    private Dictionary<CharEnum.Command, CommandDisplay> commandPickerDict = new Dictionary<CharEnum.Command, CommandDisplay> ();
+    private readonly Dictionary<CharEnum.Command, CommandDisplay> commandPickerDisplayDict = new Dictionary<CharEnum.Command, CommandDisplay> ();
+    private readonly Dictionary<CharEnum.Command, CommandDisplay> commandPickerDict = new Dictionary<CharEnum.Command, CommandDisplay> ();
 
     private CharEnum.Command currentDraggingCommand;
-    private List<CommandDisplay> currentTargetContainerList = new List<CommandDisplay> ();
+    private readonly List<CommandDisplay> currentTargetContainerList = new List<CommandDisplay> ();
 
     #region CommandMatrixPanel
 
-    protected override bool isCommandMatrixDisplayOnly => false;
+    protected override bool IsCommandMatrixDisplayOnly => false;
 
     protected override bool Init () {
         if (!base.Init ()) {
@@ -37,7 +37,7 @@ public class CommandPanel : CommandMatrixPanel {
         // Raycaster
         graphicRaycaster = GetComponentInParent<GraphicRaycaster> ();
         if (graphicRaycaster == null) {
-            Log.PrintError ("Cannot find GraphicRaycaster (which should be in Canvas GameObject). Please check.", LogType.UI);
+            Log.PrintError ("Cannot find GraphicRaycaster (which should be in Canvas GameObject). Please check.", LogTypes.UI);
         }
 
         // Localization
@@ -47,22 +47,22 @@ public class CommandPanel : CommandMatrixPanel {
         LangManager.SetTexts (localizedTextDetailsList);
 
         // Events
-        CommandDragFollower.BeganDragEvent += OnCommandBeganDrag;
-        CommandDragFollower.DraggingEvent += OnCommandDragging;
-        CommandDragFollower.EndedDragEvent += OnCommandEndedDrag;
-        CommandDisplay.UserRemovedCommandEvent += OnUserRemovedCommand;
-        UIEventManager.AddEventHandler (BtnOnClickType.Game_ConfirmCommand, OnConfirmCommandClick);
+        CommandDragFollower.BeganDrag += CommandBeganDragHandler;
+        CommandDragFollower.Dragging += CommandDraggingHandler;
+        CommandDragFollower.EndedDrag += CommandEndedDragHandler;
+        CommandDisplay.UserRemovedCommand += UserRemovedCommandHandler;
+        UIEventManager.AddEventHandler (BtnOnClickType.Game_ConfirmCommand, ConfirmCommandBtnClickedHandler);
 
         return true;
     }
 
     protected override void OnDestroy () {
-        if (isInitialized) {
-            CommandDragFollower.BeganDragEvent -= OnCommandBeganDrag;
-            CommandDragFollower.DraggingEvent -= OnCommandDragging;
-            CommandDragFollower.EndedDragEvent -= OnCommandEndedDrag;
-            CommandDisplay.UserRemovedCommandEvent -= OnUserRemovedCommand;
-            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ConfirmCommand, OnConfirmCommandClick);
+        if (IsInitialized) {
+            CommandDragFollower.BeganDrag -= CommandBeganDragHandler;
+            CommandDragFollower.Dragging -= CommandDraggingHandler;
+            CommandDragFollower.EndedDrag -= CommandEndedDragHandler;
+            CommandDisplay.UserRemovedCommand -= UserRemovedCommandHandler;
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ConfirmCommand, ConfirmCommandBtnClickedHandler);
         }
 
         base.OnDestroy ();
@@ -87,7 +87,7 @@ public class CommandPanel : CommandMatrixPanel {
         foreach (var command in enabledCommandList) {
             if (!commandPickerDisplayDict.ContainsKey (command)) {
                 var commandDisplay = Instantiate (commandDisplayTemplate, commandPickerBaseTransform);
-                commandDisplay.Reset (CommandDisplay.Type.Display);
+                commandDisplay.Reset (CommandDisplay.DisplayType.Display);
                 commandDisplay.SetTapCommand (command, false);
 
                 commandPickerDisplayDict.Add (command, commandDisplay);
@@ -108,7 +108,7 @@ public class CommandPanel : CommandMatrixPanel {
                 picker.gameObject.AddComponent<CommandDragFollower> ();
                 var layoutElement = picker.gameObject.AddComponent<LayoutElement> ();
                 layoutElement.ignoreLayout = true;
-                picker.Reset (CommandDisplay.Type.Picker);
+                picker.Reset (CommandDisplay.DisplayType.Picker);
                 picker.SetTapCommand (pair.Key, false);
                 commandPickerDict.Add (pair.Key, picker);
             } else {
@@ -128,31 +128,31 @@ public class CommandPanel : CommandMatrixPanel {
         var isInAir = false;
         CommandDisplay target = null;
 
-        if (commandMatrixToSituationDict.ContainsKey (baseDisplay)) {
-            var situation = commandMatrixToSituationDict[baseDisplay];
+        if (CommandMatrixToSituationDict.ContainsKey (baseDisplay)) {
+            var situation = CommandMatrixToSituationDict[baseDisplay];
 
             switch (situation) {
                 case CharEnum.InputSituation.GroundHold:
                     isInAir = false;
-                    target = commandMatrix_GroundRelease;
+                    target = CommandMatrix_GroundRelease;
                     break;
                 case CharEnum.InputSituation.AirHold:
                     isInAir = true;
-                    target = commandMatrix_AirRelease;
+                    target = CommandMatrix_AirRelease;
                     break;
                 case CharEnum.InputSituation.GroundRelease:
                     if (isAlsoGetBindingFromRelease) {
-                        if (command == commandMatrix_GroundHold.command) {
+                        if (command == CommandMatrix_GroundHold.Command) {
                             isInAir = false;
-                            target = commandMatrix_GroundHold;
+                            target = CommandMatrix_GroundHold;
                         }
                     }
                     break;
                 case CharEnum.InputSituation.AirRelease:
                     if (isAlsoGetBindingFromRelease) {
-                        if (command == commandMatrix_AirHold.command) {
+                        if (command == CommandMatrix_AirHold.Command) {
                             isInAir = true;
-                            target = commandMatrix_AirHold;
+                            target = CommandMatrix_AirHold;
                         }
                     }
                     break;
@@ -173,8 +173,8 @@ public class CommandPanel : CommandMatrixPanel {
     #region Command Settings
 
     private void UpdateConfirmBtn () {
-        foreach (var pair in commandMatrixToSituationDict) {
-            if (pair.Key.command != null) {
+        foreach (var pair in CommandMatrixToSituationDict) {
+            if (pair.Key.Command != null) {
                 confirmBtn.SetInteractable (true);
                 return;
             }
@@ -186,9 +186,9 @@ public class CommandPanel : CommandMatrixPanel {
     private void UpdateCharCommandSettings () {
         var commandSettings = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
 
-        foreach (var pair in commandMatrixToSituationDict) {
-            if (pair.Key.command != null) {
-                commandSettings.Add (pair.Value, (CharEnum.Command)pair.Key.command);
+        foreach (var pair in CommandMatrixToSituationDict) {
+            if (pair.Key.Command != null) {
+                commandSettings.Add (pair.Value, (CharEnum.Command)pair.Key.Command);
             }
         }
 
@@ -200,21 +200,21 @@ public class CommandPanel : CommandMatrixPanel {
 
     #region Events
 
-    private void OnCommandBeganDrag (UIDragFollower sender, PointerEventData eventData) {
+    private void CommandBeganDragHandler (UIDragFollower sender, PointerEventData eventData) {
         if (!(sender is CommandDragFollower)) {
             return;
         }
 
         var draggingCommandDisplay = sender.GetComponent<CommandDisplay> ();
-        if (draggingCommandDisplay.command == null) {
-            Log.PrintError ("Dragging command is null. Please check.", LogType.UI | LogType.Input | LogType.Char);
+        if (draggingCommandDisplay.Command == null) {
+            Log.PrintError ("Dragging command is null. Please check.", LogTypes.UI | LogTypes.Input | LogTypes.Char);
             return;
         }
 
-        currentDraggingCommand = (CharEnum.Command)draggingCommandDisplay.command;
+        currentDraggingCommand = (CharEnum.Command)draggingCommandDisplay.Command;
 
         var disallowList = CommandPanelInfo.GetDisallowInputSituationList (currentDraggingCommand);
-        foreach (var pair in commandMatrixToSituationDict) {
+        foreach (var pair in CommandMatrixToSituationDict) {
             pair.Key.SetClickable (false);
 
             if (disallowList.Contains (pair.Value)) {
@@ -223,7 +223,7 @@ public class CommandPanel : CommandMatrixPanel {
         }
     }
 
-    private void OnCommandDragging (UIDragFollower sender, PointerEventData eventData) {
+    private void CommandDraggingHandler (UIDragFollower sender, PointerEventData eventData) {
         if (!(sender is CommandDragFollower)) {
             return;
         }
@@ -240,7 +240,7 @@ public class CommandPanel : CommandMatrixPanel {
 
             var commandDisplay = result.gameObject.GetComponentInParent<CommandDisplay> ();
             if (commandDisplay != null) {
-                if (commandMatrixToSituationDict.ContainsKey (commandDisplay)) {
+                if (CommandMatrixToSituationDict.ContainsKey (commandDisplay)) {
                     target = commandDisplay;
                     break;
                 }
@@ -277,7 +277,7 @@ public class CommandPanel : CommandMatrixPanel {
 
     }
 
-    private void OnCommandEndedDrag (UIDragFollower sender, PointerEventData eventData) {
+    private void CommandEndedDragHandler (UIDragFollower sender, PointerEventData eventData) {
         if (!(sender is CommandDragFollower)) {
             return;
         }
@@ -285,12 +285,12 @@ public class CommandPanel : CommandMatrixPanel {
         foreach (var target in currentTargetContainerList) {
             target.SetTargeting (false);
 
-            if (!commandMatrixToSituationDict.ContainsKey (target)) {
-                Log.PrintError ("commandMatrixToSituationDict do not contain target container. Please check", LogType.UI | LogType.Input | LogType.Char);
+            if (!CommandMatrixToSituationDict.ContainsKey (target)) {
+                Log.PrintError ("commandMatrixToSituationDict do not contain target container. Please check", LogTypes.UI | LogTypes.Input | LogTypes.Char);
                 continue;
             }
 
-            var situation = commandMatrixToSituationDict[target];
+            var situation = CommandMatrixToSituationDict[target];
 
             switch (situation) {
                 case CharEnum.InputSituation.GroundTap:
@@ -303,11 +303,11 @@ public class CommandPanel : CommandMatrixPanel {
                     target.SetHoldCommand (currentDraggingCommand, false);
 
                     if (currentTargetContainerList.Count > 1) {
-                        isGroundHoldBinding = true;
+                        IsGroundHoldBinding = true;
                     } else {
-                        if (isGroundHoldBinding) {
-                            commandMatrix_GroundRelease.RemoveCommand (false);
-                            isGroundHoldBinding = false;
+                        if (IsGroundHoldBinding) {
+                            CommandMatrix_GroundRelease.RemoveCommand (false);
+                            IsGroundHoldBinding = false;
                         }
                     }
                     break;
@@ -315,11 +315,11 @@ public class CommandPanel : CommandMatrixPanel {
                     target.SetHoldCommand (currentDraggingCommand, true);
 
                     if (currentTargetContainerList.Count > 1) {
-                        isAirHoldBinding = true;
+                        IsAirHoldBinding = true;
                     } else {
-                        if (isAirHoldBinding) {
-                            commandMatrix_AirRelease.RemoveCommand (false);
-                            isGroundHoldBinding = false;
+                        if (IsAirHoldBinding) {
+                            CommandMatrix_AirRelease.RemoveCommand (false);
+                            IsGroundHoldBinding = false;
                         }
                     }
                     break;
@@ -327,9 +327,9 @@ public class CommandPanel : CommandMatrixPanel {
                     var isSame = currentTargetContainerList.Count > 1;
                     target.SetReleaseCommand (currentDraggingCommand, false, isSame);
                     if (!isSame) {
-                        if (isGroundHoldBinding) {
-                            commandMatrix_GroundHold.RemoveCommand (false);
-                            isGroundHoldBinding = false;
+                        if (IsGroundHoldBinding) {
+                            CommandMatrix_GroundHold.RemoveCommand (false);
+                            IsGroundHoldBinding = false;
                         }
                     }
                     break;
@@ -337,9 +337,9 @@ public class CommandPanel : CommandMatrixPanel {
                     var isSame2 = currentTargetContainerList.Count > 1;
                     target.SetReleaseCommand (currentDraggingCommand, true, isSame2);
                     if (!isSame2) {
-                        if (isAirHoldBinding) {
-                            commandMatrix_AirHold.RemoveCommand (false);
-                            isAirHoldBinding = false;
+                        if (IsAirHoldBinding) {
+                            CommandMatrix_AirHold.RemoveCommand (false);
+                            IsAirHoldBinding = false;
                         }
                     }
                     break;
@@ -348,7 +348,7 @@ public class CommandPanel : CommandMatrixPanel {
 
         currentTargetContainerList.Clear ();
 
-        foreach (var pair in commandMatrixToSituationDict) {
+        foreach (var pair in CommandMatrixToSituationDict) {
             pair.Key.SetClickable (true);
             pair.Key.SetTargetable (true);
         }
@@ -356,21 +356,21 @@ public class CommandPanel : CommandMatrixPanel {
         UpdateConfirmBtn ();
     }
 
-    private void OnUserRemovedCommand (CommandDisplay sender, CharEnum.Command removedCommand) {
+    private void UserRemovedCommandHandler (CommandDisplay sender, CharEnum.Command removedCommand) {
         var binding = GetBindedCommandContainer (sender, removedCommand, true);
 
         if (binding != null) {
             binding.RemoveCommand (false);
 
-            var situation = commandMatrixToSituationDict[binding];
+            var situation = CommandMatrixToSituationDict[binding];
             switch (situation) {
                 case CharEnum.InputSituation.GroundHold:
                 case CharEnum.InputSituation.GroundRelease:
-                    isGroundHoldBinding = false;
+                    IsGroundHoldBinding = false;
                     break;
                 case CharEnum.InputSituation.AirHold:
                 case CharEnum.InputSituation.AirRelease:
-                    isAirHoldBinding = false;
+                    IsAirHoldBinding = false;
                     break;
             }
         }
@@ -379,7 +379,7 @@ public class CommandPanel : CommandMatrixPanel {
     }
 
 
-    private void OnConfirmCommandClick (HIHIButton sender) {
+    private void ConfirmCommandBtnClickedHandler (HIHIButton sender) {
         UpdateCharCommandSettings ();
         Hide ();
     }

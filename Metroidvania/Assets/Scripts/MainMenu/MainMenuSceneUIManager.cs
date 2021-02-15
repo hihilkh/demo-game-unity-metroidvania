@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
 
 public class MainMenuSceneUIManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI selectAreaText;
@@ -14,14 +12,22 @@ public class MainMenuSceneUIManager : MonoBehaviour {
         localizedTextDetailsList.Add (new LocalizedTextDetails (selectAreaText, "SelectArea"));
         SetTexts ();
 
-        LangManager.LangChangedEvent += SetTexts;
+        LangManager.LangChanged += LangChangedHandler;
     }
 
     private void OnDestroy () {
-        LangManager.LangChangedEvent -= SetTexts;
+        LangManager.LangChanged -= LangChangedHandler;
     }
 
     private void SetTexts () {
         LangManager.SetTexts (localizedTextDetailsList);
     }
+
+    #region Events
+
+    private void LangChangedHandler () {
+        SetTexts ();
+    }
+
+    #endregion
 }

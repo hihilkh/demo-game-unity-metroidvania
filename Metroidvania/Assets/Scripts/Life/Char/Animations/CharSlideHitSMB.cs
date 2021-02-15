@@ -1,16 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharSlideHitSMB : CharHitSMBBase {
-    protected override Transform generalHitRefPoint => animUtils.refPoint_SlideHit;
+    protected override Transform GeneralHitRefPoint => AnimUtils.RefPoint_SlideHit;
 
     public override void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateUpdate (animator, stateInfo, layerIndex);
 
         // Set Sliding Bool for animation
         if (animator.GetBool (CharAnimConstant.SlidingBoolName)) {
-            if (!animUtils.model.GetIsInStatus (CharEnum.Status.Sliding)) {
+            if (!AnimUtils.Model.GetIsInStatuses (CharEnum.Statuses.Sliding)) {
                 Debug.LogError ("CharSlideHitSMB");
                 animator.SetBool (CharAnimConstant.SlidingBoolName, false);
             }
@@ -21,7 +19,7 @@ public class CharSlideHitSMB : CharHitSMBBase {
         base.OnStateExit (animator, stateInfo, layerIndex);
 
         // Set Sliding Bool for animation
-        if (!animUtils.model.GetIsInStatus (CharEnum.Status.Sliding)) {
+        if (!AnimUtils.Model.GetIsInStatuses (CharEnum.Statuses.Sliding)) {
             animator.SetBool (CharAnimConstant.SlidingBoolName, false);
         }
     }

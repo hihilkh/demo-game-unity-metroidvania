@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 
-namespace HIHIFramework.Asset {
+namespace HihiFramework.Asset {
     public static class AssetFrameworkDetails {
 
         public static string GetIOTempZipFilePath () {
@@ -31,7 +29,7 @@ namespace HIHIFramework.Asset {
             }
 
             if (string.IsNullOrEmpty (fullPath) || string.IsNullOrEmpty (folderName)) {
-                Log.PrintError ("GetAssetFolderFullPath Failed. AssetCategory : " + category + " , AssetType : " + type, LogType.Asset);
+                Log.PrintError ("GetAssetFolderFullPath Failed. AssetCategory : " + category + " , AssetType : " + type, LogTypes.Asset);
                 return null;
             }
 
@@ -46,7 +44,7 @@ namespace HIHIFramework.Asset {
             var assetFolderFullPath = GetAssetFolderFullPath (AssetFrameworkEnum.AssetCategory.StreamingAssets, type);
 
             if (string.IsNullOrEmpty (assetFolderFullPath)) {
-                Log.PrintError ("GetStreamingAssetsVersionFileFullPath Failed. AssetType : " + type, LogType.Asset);
+                Log.PrintError ("GetStreamingAssetsVersionFileFullPath Failed. AssetType : " + type, LogTypes.Asset);
                 return null;
             }
 
@@ -57,7 +55,7 @@ namespace HIHIFramework.Asset {
             var folderName = AssetDetails.GetAssetFolderName (type);
 
             if (string.IsNullOrEmpty (folderName)) {
-                Log.PrintError ("GetAssetVersionPlayerPrefsKey Failed. AssetType : " + type, LogType.Asset);
+                Log.PrintError ("GetAssetVersionPlayerPrefsKey Failed. AssetType : " + type, LogTypes.Asset);
                 return null;
             }
 
@@ -72,7 +70,7 @@ namespace HIHIFramework.Asset {
             var assetFolderFullPath = GetAssetFolderFullPath (AssetFrameworkEnum.AssetCategory.StreamingAssets, type);
 
             if (string.IsNullOrEmpty (assetFolderFullPath)) {
-                Log.PrintError ("GetStreamingAssetsChecksumFileFullPath Failed. AssetType : " + type, LogType.Asset);
+                Log.PrintError ("GetStreamingAssetsChecksumFileFullPath Failed. AssetType : " + type, LogTypes.Asset);
                 return null;
             }
 

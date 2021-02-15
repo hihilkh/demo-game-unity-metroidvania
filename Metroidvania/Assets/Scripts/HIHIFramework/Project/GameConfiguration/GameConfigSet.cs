@@ -1,18 +1,18 @@
-﻿using HIHIFramework.GameConfiguration;
+﻿using HihiFramework.GameConfiguration;
 
 public partial class GameConfigSet : GameConfigSetBase {
-    public string baseURL { get; private set; }
-    public GameConfigEnum.AnalyticsType analyticsType { get; private set; }
+    public string BaseURL { get; private set; }
+    public GameConfigEnum.AnalyticsType AnalyticsType { get; private set; }
 
     public GameConfigSet () {
-        this.gameConfigSetName = null;
-        this.baseURL = null;
-        this.analyticsType = GameConfigEnum.AnalyticsType.None;
+        GameConfigSetName = null;
+        BaseURL = null;
+        AnalyticsType = GameConfigEnum.AnalyticsType.None;
     }
 
     public GameConfigSet (string gameConfigSetName, string baseURL, GameConfigEnum.AnalyticsType analyticsType) {
-        this.gameConfigSetName = gameConfigSetName;
-        this.baseURL = baseURL;
-        this.analyticsType = analyticsType;
+        GameConfigSetName = gameConfigSetName;
+        BaseURL = baseURL;
+        AnalyticsType = analyticsType;
     }
 }

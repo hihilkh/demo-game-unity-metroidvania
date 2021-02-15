@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -39,8 +39,6 @@ public class MapDataTileExportIterator : IEnumerable<MapData.TileData> {
             tileMapDict = null;
         }
 
-
-
         public bool MoveNext () {
             currentPosX++;
             if (currentPosX > upperBound.x) {
@@ -69,7 +67,7 @@ public class MapDataTileExportIterator : IEnumerable<MapData.TileData> {
                 if (tile != null) {
                     var tileType = TileMapping.GetTileType (tile.name);
                     if (tileType == null) {
-                        Log.PrintError ("GetTileData for export error. Cannot get tileType of " + tile.name + " . Pos : (" + x + ", " + y + ")", LogType.MapData);
+                        Log.PrintError ("GetTileData for export error. Cannot get tileType of " + tile.name + " . Pos : (" + x + ", " + y + ")", LogTypes.MapData);
                     } else {
                         result.Add (new MapData.TileData (x, y, (MapEnum.TileType)tileType, pair.Key));
                     }
@@ -87,7 +85,7 @@ public class MapDataTileExportIterator : IEnumerable<MapData.TileData> {
                         tileMapTypesStr += tileData.tileMapType + "  ";
                     }
 
-                    Log.PrintError ("GetTileData for export error. Multiple TiieData. Pos : (" + x + ", " + y + ") , TileMapTypes : " + tileMapTypesStr, LogType.MapData);
+                    Log.PrintError ("GetTileData for export error. Multiple TiieData. Pos : (" + x + ", " + y + ") , TileMapTypes : " + tileMapTypesStr, LogTypes.MapData);
                     return null;
             }
         }

@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.UI;
+﻿using HihiFramework.UI;
 using UnityEngine;
-using HIHIFramework.Core;
 
 public class SelectMissionItem : MonoBehaviour {
     [SerializeField] private HIHIButton button;
@@ -21,7 +18,7 @@ public class SelectMissionItem : MonoBehaviour {
 
         button.SetOnClickInfo (BtnOnClickType.MainMenu_SelectMission, details);
 
-        SetUnlockStatus (progress.isUnlocked);
+        SetUnlockStatus (progress.IsUnlocked);
     }
 
     private void SetUnlockStatus (bool isUnlocked) {

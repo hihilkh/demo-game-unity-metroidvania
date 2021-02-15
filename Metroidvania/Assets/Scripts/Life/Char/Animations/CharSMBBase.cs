@@ -1,21 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using HihiFramework.Core;
 using UnityEngine;
-using HIHIFramework.Core;
 
 public class CharSMBBase : StateMachineBehaviour {
-    protected CharAnimUtils animUtils { get; private set; }
+    protected CharAnimUtils AnimUtils { get; private set; }
 
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        Log.PrintDebug ("Char OnStateEnter : " + this, LogType.Animation | LogType.Char);
+        Log.PrintDebug ("Char OnStateEnter : " + this, LogTypes.Animation | LogTypes.Char);
 
-        if (animUtils == null) {
-            animUtils = animator.GetComponent<CharAnimUtils> ();
+        if (AnimUtils == null) {
+            AnimUtils = animator.GetComponent<CharAnimUtils> ();
 
-            if (animUtils == null) {
-                Log.PrintError ("Cannot find corresponding CharAnimUtils script.", LogType.Animation | LogType.Char);
+            if (AnimUtils == null) {
+                Log.PrintError ("Cannot find corresponding CharAnimUtils script.", LogTypes.Animation | LogTypes.Char);
             }
         }
     }
@@ -23,6 +21,6 @@ public class CharSMBBase : StateMachineBehaviour {
     public override void OnStateExit (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateExit (animator, stateInfo, layerIndex);
 
-        Log.PrintDebug ("Char OnStateExit : " + this, LogType.Animation | LogType.Char);
+        Log.PrintDebug ("Char OnStateExit : " + this, LogTypes.Animation | LogTypes.Char);
     }
 }

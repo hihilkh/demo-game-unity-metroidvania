@@ -1,48 +1,44 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public class Mission {
-    public int id { get; private set; }
-    public string displayNameKey { get; private set; }
-    public List<Entry> entries { get; private set; }
-    public List<Collectable.Type> collectableTypes { get; private set; }
+    public int Id { get; private set; }
+    public string DisplayNameKey { get; private set; }
+    public List<Entry> Entries { get; } = new List<Entry> ();
+    public List<Collectable.Type> CollectableTypes { get; } = new List<Collectable.Type> ();
 
     public class Entry {
-        public int id { get; private set; }
-        public string displayNameKey { get; private set; }
+        public int Id { get; private set; }
+        public string DisplayNameKey { get; private set; }
 
         public Entry (int id, string displayNameKey) {
-            this.id = id;
-            this.displayNameKey = displayNameKey;
+            Id = id;
+            DisplayNameKey = displayNameKey;
         }
     }
 
     public Mission (int id, string displayNameKey) {
-        this.id = id;
-        this.displayNameKey = displayNameKey;
-        this.entries = new List<Entry> ();
-        this.collectableTypes = new List<Collectable.Type> ();
+        Id = id;
+        DisplayNameKey = displayNameKey;
     }
 
     public void SetEntries (params Entry[] entries) {
-        this.entries.Clear ();
+        Entries.Clear ();
         if (entries != null && entries.Length > 0) {
-            this.entries.AddRange (entries);
+            Entries.AddRange (entries);
         }
     }
 
     public void SetCollectables (params Collectable.Type[] collectables) {
-        this.collectableTypes.Clear ();
+        CollectableTypes.Clear ();
         if (collectables != null && collectables.Length > 0) {
-            this.collectableTypes.AddRange (collectables);
+            CollectableTypes.AddRange (collectables);
         }
     }
 
     /// <returns><b>null</b> means the mission do not have entry with corresponding entryId</returns>
     public Entry GetEntry (int entryId) {
-        foreach (var entry in entries) {
-            if (entry.id == entryId) {
+        foreach (var entry in Entries) {
+            if (entry.Id == entryId) {
                 return entry;
             }
         }

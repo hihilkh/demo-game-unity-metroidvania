@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using HIHIFramework.Asset;
-using HIHIFramework.Core;
-using UnityEngine;
+using HihiFramework.Asset;
+using HihiFramework.Core;
 
 // Similar usage of FrameworkUtils, but project based
 public partial class GameUtils : Singleton<GameUtils> {
@@ -14,4 +10,19 @@ public partial class GameUtils : Singleton<GameUtils> {
     public static void InitGameSettings (Action<bool> onFinished = null) {
         AssetHandler.Instance.CheckAndUpdateStreamingAssets (AssetEnum.AssetType.MapData, onFinished);
     }
+
+    #region Logger
+
+    public static LogLevel GetMinLogLevel (LogTypes logType) {
+        //if ((logType & LogType.Enemy) == LogType.Enemy) {
+        //    return LogLevel.Error;
+        //}
+        //if ((logType & LogType.Animation) == LogType.Animation) {
+        //    return LogLevel.Debug;
+        //}
+
+        return LogLevel.Info;
+    }
+
+    #endregion
 }

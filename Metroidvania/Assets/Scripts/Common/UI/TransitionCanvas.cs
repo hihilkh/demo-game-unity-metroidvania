@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 using UnityEngine.UI;
 

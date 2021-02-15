@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
-namespace HIHIFramework.UI {
+namespace HihiFramework.UI {
     public static class UIEventManager {
 
-        private static Dictionary<BtnOnClickType, Action<HIHIButton>> BtnOnClickDict = new Dictionary<BtnOnClickType, Action<HIHIButton>> ();
-        private static Dictionary<BtnOnClickType, Action<HIHIButton, object>> BtnOnClickWithInfoDict = new Dictionary<BtnOnClickType, Action<HIHIButton, object>> ();
+        private static readonly Dictionary<BtnOnClickType, Action<HIHIButton>> BtnOnClickDict = new Dictionary<BtnOnClickType, Action<HIHIButton>> ();
+        private static readonly Dictionary<BtnOnClickType, Action<HIHIButton, object>> BtnOnClickWithInfoDict = new Dictionary<BtnOnClickType, Action<HIHIButton, object>> ();
 
         #region handler - Action
 

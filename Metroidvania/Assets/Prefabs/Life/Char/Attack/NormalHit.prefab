@@ -4817,10 +4817,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 610e7c9ac4e6247e993c201624ddef23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  charParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
-  rb: {fileID: 7143613927472316199}
-  ps: {fileID: 7143613927472316202}
-  attackTrigger: {fileID: -4912671494172938390}
+  _params: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
+  _rb: {fileID: 7143613927472316199}
+  _ps: {fileID: 7143613927472316202}
+  _attackTrigger: {fileID: -4912671494172938390}
 --- !u!114 &-4912671494172938390
 MonoBehaviour:
   m_ObjectHideFlags: 0

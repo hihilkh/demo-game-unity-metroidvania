@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharFinishingHit : CharHitBase {
-    protected override int dp => charParams.hitDP_Finishing;
+    protected override int DP => Params.HitDP_Finishing;
 
     public override void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed) {
         base.StartAttack (refPoint, direction, charHorizontalSpeed);
@@ -16,13 +14,13 @@ public class CharFinishingHit : CharHitBase {
 
             InversePSShape ();
 
-            var psr = ps.GetComponent<ParticleSystemRenderer> ();
+            var psr = PS.GetComponent<ParticleSystemRenderer> ();
             psr.flip = new Vector3 (0, 1, 0);
 
             velocity = -velocity;
         }
 
-        rb.velocity = new Vector3 (velocity, 0, 0);
+        RB.velocity = new Vector3 (velocity, 0, 0);
 
         StartCoroutine (PSNotAliveDestroyCoroutine ());
     }

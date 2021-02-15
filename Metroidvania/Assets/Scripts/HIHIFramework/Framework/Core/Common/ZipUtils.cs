@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
+﻿using System.IO;
 #if UNITY_EDITOR || !UNITY_IPHONE
 using Ionic.Zip;
 #endif
 
-namespace HIHIFramework.Core {
+namespace HihiFramework.Core {
     public class ZipUtils {
 #if !UNITY_EDITOR && UNITY_IPHONE
 	[DllImport("__Internal")]

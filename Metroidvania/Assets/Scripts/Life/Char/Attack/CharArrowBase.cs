@@ -1,26 +1,28 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 
-public abstract class CharArrowBase : MonoBehaviour
-{
-    [SerializeField] protected CharParams charParams;
-    [SerializeField] protected SpriteRenderer arrowSprite;
-    [SerializeField] protected Rigidbody2D rb;
-    [SerializeField] protected CharAttackTrigger attackTrigger;
+public abstract class CharArrowBase : MonoBehaviour {
+    [SerializeField] private CharParams _params;
+    protected CharParams Params => _params;
+    [SerializeField] private SpriteRenderer _arrowSprite;
+    protected SpriteRenderer ArrowSprite => _arrowSprite;
+    [SerializeField] private Rigidbody2D _rb;
+    protected Rigidbody2D RB => _rb;
+    [SerializeField] private CharAttackTrigger _attackTrigger;
+    protected CharAttackTrigger AttackTrigger => _attackTrigger;
 
-    protected bool hasHitAnything = false;
+    protected bool HasHitAnything { get; private set; } = false;
     private const float VanishPeriod = 1f;
 
-    protected LifeEnum.HorizontalDirection direction;
-    protected abstract int dp { get; }
+    protected LifeEnum.HorizontalDirection Direction { get; private set; }
+    protected abstract int DP { get; }
 
     protected void Init (LifeEnum.HorizontalDirection direction) {
-        this.direction = direction;
-        attackTrigger.HitLifeEvent += HitLife;
-        attackTrigger.HitEnvironmentEvent += HitEnvironment;
-        attackTrigger.HitArrowSwitchEvent += HitArrowSwitch;
+        Direction = direction;
+        AttackTrigger.HitLife += HitLifeHandler;
+        AttackTrigger.HitEnvironment += HitEnvironmentHandler;
+        AttackTrigger.HitArrowSwitch += HitArrowSwitchHandler;
     }
 
     protected void SetInitPos (Vector3 pos) {
@@ -29,14 +31,14 @@ public abstract class CharArrowBase : MonoBehaviour
     }
 
     protected void UpdateArrowPointingDirection () {
-        transform.right = rb.velocity.normalized;
+        transform.right = RB.velocity.normalized;
     }
 
     private void Hit (Transform target) {
-        hasHitAnything = true;
-        FrameworkUtils.InsertChildrenToParent (target, gameObject,false);
-        rb.bodyType = RigidbodyType2D.Kinematic;
-        rb.velocity = Vector2.zero;
+        HasHitAnything = true;
+        FrameworkUtils.InsertChildrenToParent (target, gameObject, false);
+        RB.bodyType = RigidbodyType2D.Kinematic;
+        RB.velocity = Vector2.zero;
 
         StartCoroutine (Vanish ());
     }
@@ -46,7 +48,7 @@ public abstract class CharArrowBase : MonoBehaviour
 
         while (Time.time - startTime < VanishPeriod) {
             var progress = (Time.time - startTime) / VanishPeriod;
-            arrowSprite.color = new Color (arrowSprite.color.r, arrowSprite.color.g, arrowSprite.color.b, 1 - progress);
+            ArrowSprite.color = new Color (ArrowSprite.color.r, ArrowSprite.color.g, ArrowSprite.color.b, 1 - progress);
             yield return null;
         }
 
@@ -59,32 +61,36 @@ public abstract class CharArrowBase : MonoBehaviour
         }
     }
 
-    private void HitLife (LifeBase lifeBase, Transform colliderTransform, bool isInvincible) {
-        if (hasHitAnything) {
+    #region Events
+
+    private void HitLifeHandler (LifeBase lifeBase, Transform colliderTransform, bool isInvincible) {
+        if (HasHitAnything) {
             return;
         }
 
         if (!isInvincible) {
-            lifeBase.Hurt (dp, direction);
+            lifeBase.Hurt (DP, Direction);
         }
 
         Hit (colliderTransform);
     }
 
-    private void HitEnvironment (Transform colliderTransform) {
-        if (hasHitAnything) {
+    private void HitEnvironmentHandler (Transform colliderTransform) {
+        if (HasHitAnything) {
             return;
         }
 
         Hit (colliderTransform);
     }
 
-    private void HitArrowSwitch (MapSwitch mapSwitch) {
-        if (hasHitAnything) {
+    private void HitArrowSwitchHandler (MapSwitch mapSwitch) {
+        if (HasHitAnything) {
             return;
         }
 
         Hit (mapSwitch.transform);
         mapSwitch.Trigger ();
     }
+
+    #endregion
 }

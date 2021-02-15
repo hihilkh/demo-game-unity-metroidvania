@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MapTutorialTrigger : MapInvisibleTriggerBase<MapData.TutorialData> {
 
-    public static event Action<TutorialEnum.GameTutorialType> TriggeredTutorialEvent;
+    public static event Action<TutorialEnum.GameTutorialType> TutorialTriggered;
 
     public override void Init (MapData.TutorialData data) {
         base.Init (data);
@@ -22,6 +20,6 @@ public class MapTutorialTrigger : MapInvisibleTriggerBase<MapData.TutorialData> 
     }
 
     protected override void OnTriggered () {
-        TriggeredTutorialEvent?.Invoke (data.type);
+        TutorialTriggered?.Invoke (Data.type);
     }
 }

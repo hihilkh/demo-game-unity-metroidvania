@@ -4835,10 +4835,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca1c247728f9e44cabb39bf71c3b6d10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  charParams: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
-  rb: {fileID: 9073589436541787055}
-  ps: {fileID: 9073589436541787042}
-  attackTrigger: {fileID: 3722533499333534379}
+  _params: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
+  _rb: {fileID: 9073589436541787055}
+  _ps: {fileID: 9073589436541787042}
+  _attackTrigger: {fileID: 3722533499333534379}
 --- !u!114 &3722533499333534379
 MonoBehaviour:
   m_ObjectHideFlags: 0

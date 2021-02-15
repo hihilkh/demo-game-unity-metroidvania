@@ -1,11 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
-using UnityEngine;
-
-public class Collectable {
+﻿public class Collectable {
     // Remarks: Never change the Type enum int value. It is used in PlayerPrefs and map json data.
-    public enum Type : int {
+    public enum Type {
         // Command
         Command_Hit = 0,   // The default value 0 is used for any fallback cases
         Command_Jump = 1,
@@ -36,16 +31,16 @@ public class Collectable {
 
     private const string ResourcesFolderName = "Collectables/";
 
-    public Type type { get; private set; }
-    public string displayNameKey { get; private set; }
+    public Type CollectableType { get; private set; }
+    public string DisplayNameKey { get; private set; }
     private string iconResourcesName;
-    public bool isWithCircleFrame { get; private set; }
+    public bool IsWithCircleFrame { get; private set; }
 
     public Collectable (Type type, string displayNameKey, string iconResourcesName, bool isWithCircleFrame) {
-        this.type = type;
-        this.displayNameKey = displayNameKey;
+        this.CollectableType = type;
+        this.DisplayNameKey = displayNameKey;
         this.iconResourcesName = iconResourcesName;
-        this.isWithCircleFrame = isWithCircleFrame;
+        this.IsWithCircleFrame = isWithCircleFrame;
     }
 
     public string GetIconResourcesName () {
@@ -54,14 +49,14 @@ public class Collectable {
 }
 
 public class NoteCollectable : Collectable {
-    public string noteContentKey { get; private set; }
+    public string NoteContentKey { get; private set; }
 
     private NoteCollectable (Type type, string displayNameKey, string iconResourcesName, bool isWithCircleFrame) : base (type, displayNameKey, iconResourcesName, isWithCircleFrame) {
         // Do not allow constructor without note info
     }
 
     public NoteCollectable (Type type, string displayNameKey, string noteContentKey) : base (type, displayNameKey, "Collectable_Note", false) {
-        this.noteContentKey = noteContentKey;
+        NoteContentKey = noteContentKey;
     }
 }
 

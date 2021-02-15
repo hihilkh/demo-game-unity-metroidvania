@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace HIHIFramework.UI {
+namespace HihiFramework.UI {
     public class UIDragSingleFollower : UIDragFollower {
-        private static UIDragSingleFollower draggingObject;
+        private static UIDragSingleFollower DraggingObject;
 
         private bool CheckCanDrag () {
-            if (draggingObject == null || draggingObject == this) {
+            if (DraggingObject == null || DraggingObject == this) {
                 return true;
             }
 
@@ -20,7 +20,7 @@ namespace HIHIFramework.UI {
                 return;
             }
 
-            draggingObject = this;
+            DraggingObject = this;
             base.OnBeginDrag (eventData);
         }
 
@@ -37,7 +37,7 @@ namespace HIHIFramework.UI {
                 return;
             }
 
-            draggingObject = null;
+            DraggingObject = null;
             base.OnEndDrag (eventData);
         }
     }

@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
-using UnityEngine;
+﻿using System.Collections.Generic;
+using HihiFramework.Core;
 
 public static class CollectableManager {
-    public static readonly List<Collectable> AllCollectables = new List<Collectable> () {
+    public static List<Collectable> AllCollectables { get; } = new List<Collectable> () {
         new Collectable (Collectable.Type.Command_Hit, "Command_Hit", "Collectable_Hit", true),
         new Collectable (Collectable.Type.Command_Jump, "Command_Jump", "Collectable_Jump", true),
         new Collectable (Collectable.Type.Command_Dash, "Command_Dash", "Collectable_Dash", true),
@@ -31,12 +29,12 @@ public static class CollectableManager {
 
     public static Collectable GetCollectable (Collectable.Type type) {
         foreach (var collectable in AllCollectables) {
-            if (collectable.type == type) {
+            if (collectable.CollectableType == type) {
                 return collectable;
             }
         }
 
-        Log.PrintWarning ("Cannot find Collectable of type : " + type.ToString (), LogType.General);
+        Log.PrintWarning ("Cannot find Collectable of type : " + type.ToString (), LogTypes.General);
         return null;
     }
 

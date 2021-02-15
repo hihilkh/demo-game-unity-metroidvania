@@ -1,23 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using HihiFramework.Core;
 using UnityEngine;
-using HIHIFramework.Core;
 using UnityEngine.InputSystem;
-using System;
 
 public class CharController : MonoBehaviour, UserInput.ICharacterActions {
 
     [SerializeField] private CharCameraParams cameraParams;
     private UserInput userInput;
 
-    public event Action StartedLeftEvent;
-    public event Action StoppedLeftEvent;
-    public event Action StartedRightEvent;
-    public event Action StoppedRightEvent;
-    public event Action TappedEvent;
-    public event Action StartedHoldEvent;
-    public event Action StoppedHoldEvent;
-    public event Action<CharEnum.LookDirection> LookEvent;
+    public event Action StartedLeft;
+    public event Action StoppedLeft;
+    public event Action StartedRight;
+    public event Action StoppedRight;
+    public event Action Tapped;
+    public event Action StartedHold;
+    public event Action StoppedHold;
+    public event Action<CharEnum.LookDirections> Looked;
 
     private bool isHolding = false;
 
@@ -35,65 +33,65 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
     }
 
     public void OnLeft (InputAction.CallbackContext context) {
-        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogType.Input);
+        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogTypes.Input);
         if (context.phase == InputActionPhase.Started) {
-            StartedLeftEvent?.Invoke ();
+            StartedLeft?.Invoke ();
         } else if (context.phase == InputActionPhase.Canceled) {
-            StoppedLeftEvent?.Invoke ();
+            StoppedLeft?.Invoke ();
         }
     }
 
     public void OnRight (InputAction.CallbackContext context) {
-        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogType.Input);
+        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogTypes.Input);
         if (context.phase == InputActionPhase.Started) {
-            StartedRightEvent?.Invoke ();
+            StartedRight?.Invoke ();
         } else if (context.phase == InputActionPhase.Canceled) {
-            StoppedRightEvent?.Invoke ();
+            StoppedRight?.Invoke ();
         }
     }
 
     public void OnTap (InputAction.CallbackContext context) {
-        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogType.Input);
+        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogTypes.Input);
         if (context.phase == InputActionPhase.Performed) {
-            TappedEvent?.Invoke ();
+            Tapped?.Invoke ();
         }
     }
 
     public void OnHold (InputAction.CallbackContext context) {
-        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogType.Input);
+        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogTypes.Input);
         if (context.phase == InputActionPhase.Performed) {
             isHolding = true;
-            StartedHoldEvent?.Invoke ();
+            StartedHold?.Invoke ();
         } else if (context.phase == InputActionPhase.Canceled) {
             if (isHolding) {
-                StoppedHoldEvent?.Invoke ();
+                StoppedHold?.Invoke ();
             }
             isHolding = false;
         }
     }
 
     public void OnLook (InputAction.CallbackContext context) {
-        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogType.Input);
+        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogTypes.Input);
 
         if (context.phase == InputActionPhase.Performed) {
             var value = context.ReadValue<Vector2> ();
 
-            var lookDirection = CharEnum.LookDirection.None;
-            if (value.x >= cameraParams.lookThreshold) {
-                lookDirection = lookDirection | CharEnum.LookDirection.Right;
-            } else if (value.x <= -cameraParams.lookThreshold) {
-                lookDirection = lookDirection | CharEnum.LookDirection.Left;
+            var lookDirections = CharEnum.LookDirections.None;
+            if (value.x >= cameraParams.LookThreshold) {
+                lookDirections = lookDirections | CharEnum.LookDirections.Right;
+            } else if (value.x <= -cameraParams.LookThreshold) {
+                lookDirections = lookDirections | CharEnum.LookDirections.Left;
             }
 
-            if (value.y >= cameraParams.lookThreshold) {
-                lookDirection = lookDirection | CharEnum.LookDirection.Up;
-            } else if (value.y <= -cameraParams.lookThreshold) {
-                lookDirection = lookDirection | CharEnum.LookDirection.Down;
+            if (value.y >= cameraParams.LookThreshold) {
+                lookDirections = lookDirections | CharEnum.LookDirections.Up;
+            } else if (value.y <= -cameraParams.LookThreshold) {
+                lookDirections = lookDirections | CharEnum.LookDirections.Down;
             }
 
-            LookEvent?.Invoke (lookDirection);
+            Looked?.Invoke (lookDirections);
         } else if (context.phase == InputActionPhase.Canceled) {
-            LookEvent?.Invoke (CharEnum.LookDirection.None);
+            Looked?.Invoke (CharEnum.LookDirections.None);
         }
     }
 }

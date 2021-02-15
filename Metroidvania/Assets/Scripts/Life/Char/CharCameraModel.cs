@@ -1,23 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
+﻿using HihiFramework.Core;
 using UnityEngine;
 
 public class CharCameraModel : MonoBehaviour
 {
-    private Camera cam;
-    private AudioListener audioListener;
-    private Transform camTransform;
     [SerializeField] private CharModel charModel;
     [SerializeField] private CharCameraParams camParams;
     [SerializeField] private CharController controller;
+
+    private Camera cam;
+    private AudioListener audioListener;
+    private Transform camTransform;
 
     private Vector3 originalLocalPos;
 
     private Vector2 generalMaxLocalPos;
     private Vector2 generalMinLocalPos;
 
-    private CharEnum.LookDirection currentLookDirection;
+    private CharEnum.LookDirections currentLookDirections;
     private Vector2 missionMaxGlobalPos;
     private Vector2 missionMinGlobalPos;
     private bool hasSetBoundaries;
@@ -28,37 +27,37 @@ public class CharCameraModel : MonoBehaviour
         camTransform = cam.transform;
         originalLocalPos = camTransform.localPosition;
 
-        generalMaxLocalPos = new Vector2 (originalLocalPos.x + camParams.camMaxHorizontalMovement, originalLocalPos.y + camParams.camMaxVerticalMovement);
-        generalMinLocalPos = new Vector2 (originalLocalPos.x - camParams.camMaxHorizontalMovement, originalLocalPos.y - camParams.camMaxVerticalMovement);
+        generalMaxLocalPos = new Vector2 (originalLocalPos.x + camParams.CamMaxHorizontalMovement, originalLocalPos.y + camParams.CamMaxVerticalMovement);
+        generalMinLocalPos = new Vector2 (originalLocalPos.x - camParams.CamMaxHorizontalMovement, originalLocalPos.y - camParams.CamMaxVerticalMovement);
 
-        currentLookDirection = CharEnum.LookDirection.None;
+        currentLookDirections = CharEnum.LookDirections.None;
         hasSetBoundaries = false;
 
         if (controller == null) {
-            Log.PrintWarning ("Character controller is not assigned.", LogType.Char);
+            Log.PrintWarning ("Character controller is not assigned.", LogTypes.Char);
         } else {
-            controller.LookEvent += LookAction;
+            controller.Looked += LookedHandler;
         }
     }
 
     private void LateUpdate () {
-        if (currentLookDirection == CharEnum.LookDirection.None && camTransform.localPosition == originalLocalPos) {
+        if (currentLookDirections == CharEnum.LookDirections.None && camTransform.localPosition == originalLocalPos) {
             // Skip below update
         } else {
             // Move camera base on looking direction
             var targetPosX = camTransform.localPosition.x;
             var targetPosY = camTransform.localPosition.y;
 
-            var horizontalDeltaPos = camParams.camHorizontalMoveSpeed * Time.deltaTime;
-            var horizontalDirection = currentLookDirection & (CharEnum.LookDirection.Left | CharEnum.LookDirection.Right);
+            var horizontalDeltaPos = camParams.CamHorizontalMoveSpeed * Time.deltaTime;
+            var horizontalDirection = currentLookDirections & (CharEnum.LookDirections.Left | CharEnum.LookDirections.Right);
             switch (horizontalDirection) {
-                case CharEnum.LookDirection.Left:
+                case CharEnum.LookDirections.Left:
                     targetPosX = Mathf.Max (targetPosX - horizontalDeltaPos, generalMinLocalPos.x);
                     break;
-                case CharEnum.LookDirection.Right:
+                case CharEnum.LookDirections.Right:
                     targetPosX = Mathf.Min (targetPosX + horizontalDeltaPos, generalMaxLocalPos.x);
                     break;
-                case CharEnum.LookDirection.None:
+                case CharEnum.LookDirections.None:
                     if (targetPosX < originalLocalPos.x) {
                         targetPosX = Mathf.Min (targetPosX + horizontalDeltaPos, originalLocalPos.x);
                     } else {
@@ -67,16 +66,16 @@ public class CharCameraModel : MonoBehaviour
                     break;
             }
 
-            var verticalDeltaPos = camParams.camVerticalMoveSpeed * Time.deltaTime;
-            var verticalDirection = currentLookDirection & (CharEnum.LookDirection.Down | CharEnum.LookDirection.Up);
+            var verticalDeltaPos = camParams.CamVerticalMoveSpeed * Time.deltaTime;
+            var verticalDirection = currentLookDirections & (CharEnum.LookDirections.Down | CharEnum.LookDirections.Up);
             switch (verticalDirection) {
-                case CharEnum.LookDirection.Down:
+                case CharEnum.LookDirections.Down:
                     targetPosY = Mathf.Max (targetPosY - verticalDeltaPos, generalMinLocalPos.y);
                     break;
-                case CharEnum.LookDirection.Up:
+                case CharEnum.LookDirections.Up:
                     targetPosY = Mathf.Min (targetPosY + verticalDeltaPos, generalMaxLocalPos.y);
                     break;
-                case CharEnum.LookDirection.None:
+                case CharEnum.LookDirections.None:
                     if (targetPosY < originalLocalPos.y) {
                         targetPosY = Mathf.Min (targetPosY + verticalDeltaPos, originalLocalPos.y);
                     } else {
@@ -118,8 +117,8 @@ public class CharCameraModel : MonoBehaviour
         hasSetBoundaries = false;
     }
 
-    private void LookAction (CharEnum.LookDirection direction) {
-        currentLookDirection = direction;
+    private void LookedHandler (CharEnum.LookDirections directions) {
+        currentLookDirections = directions;
     }
 
     public void SetAudioListener (bool isEnable) {

@@ -1,22 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using HihiFramework.UI;
 using UnityEngine;
-using HIHIFramework.Core;
-using HIHIFramework.UI;
 using UnityEngine.SceneManagement;
 
 public class LandingSceneManager : MonoBehaviour {
     [SerializeField] private LandingSceneUIManager uiManager;
 
     private void Start () {
-        UIEventManager.AddEventHandler (BtnOnClickType.Landing_Start, OnStartBtnClick);
+        UIEventManager.AddEventHandler (BtnOnClickType.Landing_Start, StartBtnClickedHandler);
     }
 
     private void OnDestroy () {
-        UIEventManager.RemoveEventHandler (BtnOnClickType.Landing_Start, OnStartBtnClick);
+        UIEventManager.RemoveEventHandler (BtnOnClickType.Landing_Start, StartBtnClickedHandler);
     }
 
-    private void OnStartBtnClick (HIHIButton sender) {
+    private void StartBtnClickedHandler (HIHIButton sender) {
         // TODO : Implement TutorialManager.HasDoneTutorial_Opening logic
         //if (TutorialManager.HasDoneTutorial_Opening) {
         //    SceneManager.LoadScene (GameVariable.MainMenuSceneName);

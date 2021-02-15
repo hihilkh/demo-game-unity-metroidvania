@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace HIHIFramework.Core {
+﻿namespace HihiFramework.Core {
     public enum LogLevel {
         Debug = 0,
         Info = 1,

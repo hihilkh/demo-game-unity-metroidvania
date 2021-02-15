@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using HIHIFramework.Core;
+﻿using UnityEngine;
 
 public static partial class GameVariable {
 
@@ -77,7 +74,7 @@ public static partial class GameVariable {
 
     public const string UnknownTextKey = "UnknownText";
 
-    public static Color DisabledUIMaskColor = new Color (200f / 255f, 200f / 255f, 200f / 255f, 128f / 255f);
+    public static Color DisabledUIMaskColor = new Color32 (200, 200, 200, 128);
 
     #endregion
 }

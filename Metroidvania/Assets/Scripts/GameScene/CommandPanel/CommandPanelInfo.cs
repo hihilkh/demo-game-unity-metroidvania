@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
-using UnityEngine;
+﻿using System.Collections.Generic;
+using HihiFramework.Core;
 
 public static class CommandPanelInfo {
     private const string ResourcesFolderName = "Commands/";
@@ -75,7 +73,7 @@ public static class CommandPanelInfo {
                 return ResourcesFolderName + SpriteName_Turn;
         }
 
-        Log.PrintError ("Have not implemented tap command sprite for command : " + command + " , isInAir : " + isInAir, LogType.Asset | LogType.Char);
+        Log.PrintError ("Have not implemented tap command sprite for command : " + command + " , isInAir : " + isInAir, LogTypes.Asset | LogTypes.Char);
         return null;
     }
 
@@ -94,11 +92,11 @@ public static class CommandPanelInfo {
             case CharEnum.Command.Arrow:
                 return ResourcesFolderName + SpriteName_Arrow_Straight;
             case CharEnum.Command.Turn:
-                Log.PrintWarning ("Actually should not have Turn command for hold. Please check.", LogType.Char);
+                Log.PrintWarning ("Actually should not have Turn command for hold. Please check.", LogTypes.Char);
                 return ResourcesFolderName + SpriteName_Turn;
         }
 
-        Log.PrintError ("Have not implemented hold command sprite for command : " + command + " , isInAir : " + isInAir, LogType.Asset | LogType.Char);
+        Log.PrintError ("Have not implemented hold command sprite for command : " + command + " , isInAir : " + isInAir, LogTypes.Asset | LogTypes.Char);
         return null;
     }
 
@@ -128,7 +126,7 @@ public static class CommandPanelInfo {
                 return ResourcesFolderName + SpriteName_Turn;
         }
 
-        Log.PrintError ("Have not implemented release command sprite for command : " + command + " , isInAir : " + isInAir + " , isSameWithHoldCommand : " + isSameWithHoldCommand, LogType.Asset | LogType.Char);
+        Log.PrintError ("Have not implemented release command sprite for command : " + command + " , isInAir : " + isInAir + " , isSameWithHoldCommand : " + isSameWithHoldCommand, LogTypes.Asset | LogTypes.Char);
         return null;
     }
 

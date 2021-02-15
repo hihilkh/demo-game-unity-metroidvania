@@ -1,6 +1,2 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class EnemyInvincibleSMB : EnemySMBBase {
+﻿public class EnemyInvincibleSMB : EnemySMBBase {
 }

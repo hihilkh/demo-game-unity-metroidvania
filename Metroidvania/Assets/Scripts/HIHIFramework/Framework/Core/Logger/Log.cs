@@ -1,45 +1,43 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 
-namespace HIHIFramework.Core {
+namespace HihiFramework.Core {
     public static class Log {
 
-        public static void PrintDebug (object obj, LogType logType = LogType.General) {
-            Print (obj, logType, LogLevel.Debug);
+        public static void PrintDebug (object obj, LogTypes logTypes = LogTypes.General) {
+            Print (obj, logTypes, LogLevel.Debug);
         }
 
-        public static void PrintDebug (string message, LogType logType = LogType.General) {
-            Print (message, logType, LogLevel.Debug);
+        public static void PrintDebug (string message, LogTypes logTypes = LogTypes.General) {
+            Print (message, logTypes, LogLevel.Debug);
         }
 
-        public static void PrintWarning (object obj, LogType logType = LogType.General) {
-            Print (obj, logType, LogLevel.Warning);
+        public static void PrintWarning (object obj, LogTypes logTypes = LogTypes.General) {
+            Print (obj, logTypes, LogLevel.Warning);
         }
 
-        public static void PrintWarning (string message, LogType logType = LogType.General) {
-            Print (message, logType, LogLevel.Warning);
+        public static void PrintWarning (string message, LogTypes logTypes = LogTypes.General) {
+            Print (message, logTypes, LogLevel.Warning);
         }
 
-        public static void PrintError (object obj, LogType logType = LogType.General) {
-            Print (obj, logType, LogLevel.Error);
+        public static void PrintError (object obj, LogTypes logTypes = LogTypes.General) {
+            Print (obj, logTypes, LogLevel.Error);
         }
 
-        public static void PrintError (string message, LogType logType = LogType.General) {
-            Print (message, logType, LogLevel.Error);
+        public static void PrintError (string message, LogTypes logTypes = LogTypes.General) {
+            Print (message, logTypes, LogLevel.Error);
         }
 
-        public static void Print (object obj, LogType logType = LogType.General, LogLevel logLevel = LogLevel.Info) {
+        public static void Print (object obj, LogTypes logTypes = LogTypes.General, LogLevel logLevel = LogLevel.Info) {
             if (obj == null) {
-                Print ("<null>", logType, logLevel);
+                Print ("<null>", logTypes, logLevel);
             } else {
-                Print (obj.ToString (), logType, logLevel);
+                Print (obj.ToString (), logTypes, logLevel);
             }
         }
 
-        public static void Print (string message, LogType logType = LogType.General, LogLevel logLevel = LogLevel.Info) {
+        public static void Print (string message, LogTypes logType = LogTypes.General, LogLevel logLevel = LogLevel.Info) {
             if (!CheckIsPrintLog (logLevel, logType)) {
                 return;
             }
@@ -62,12 +60,12 @@ namespace HIHIFramework.Core {
             }
         }
 
-        private static bool CheckIsPrintLog (LogLevel logLevel, LogType logType) {
+        private static bool CheckIsPrintLog (LogLevel logLevel, LogTypes logType) {
             if (!GameVariable.IsLogForReleaseBuild && FrameworkUtils.GetIsReleaseBuild ()) {
                 return false;
             }
 
-            if (logLevel < GameVariable.GetMinLogLevel (logType)) {
+            if (logLevel < GameUtils.GetMinLogLevel (logType)) {
                 return false;
             }
 

@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using HIHIFramework.Core;
-using HIHIFramework.UI;
+using HihiFramework.Core;
+using HihiFramework.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,12 +14,12 @@ public class MainMenuSceneManager : MonoBehaviour {
     /// <summary>
     /// int : missionId
     /// </summary>
-    private Dictionary<int, SelectMissionItem> selectMissionItemDict;
+    private readonly Dictionary<int, SelectMissionItem> selectMissionItemDict = new Dictionary<int, SelectMissionItem> ();
 
     private void Start () {
-        UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_SelectMission, OnSelectMissionClick);
-        UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_SelectEntry, OnSelectEntryClick);
-        UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_OpenNotesPanel, OnOpenNotesPanelClick);
+        UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_SelectMission, SelectMissionBtnClickedHandler);
+        UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_SelectEntry, SelectEntryBtnClickedHandler);
+        UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_OpenNotesPanel, OpenNotesPanelBtnClickedHandler);
         InitSelectMissionItems ();
 
         Action onFadeOutFinished = () => {
@@ -31,26 +30,24 @@ public class MainMenuSceneManager : MonoBehaviour {
     }
 
     private void OnDestroy () {
-        UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_SelectMission, OnSelectMissionClick);
-        UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_SelectEntry, OnSelectEntryClick);
-        UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_OpenNotesPanel, OnOpenNotesPanelClick);
+        UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_SelectMission, SelectMissionBtnClickedHandler);
+        UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_SelectEntry, SelectEntryBtnClickedHandler);
+        UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_OpenNotesPanel, OpenNotesPanelBtnClickedHandler);
     }
 
     private void InitSelectMissionItems () {
-        selectMissionItemDict = new Dictionary<int, SelectMissionItem> ();
-
         if (selectMissionItemsInOrder.Count != MissionManager.MissionListInOrder.Count) {
-            Log.PrintWarning ("No. of selectMissionItems are not equal to no. of mission. Please check.", LogType.GameFlow);
+            Log.PrintWarning ("No. of selectMissionItems are not equal to no. of mission. Please check.", LogTypes.GameFlow);
         }
 
         var count = Mathf.Min (selectMissionItemsInOrder.Count, MissionManager.MissionListInOrder.Count);
         for (var i = 0; i < count; i++) {
             var mission = MissionManager.MissionListInOrder[i];
 
-            var progress = UserManager.GetMissionProgress (mission.id);
+            var progress = UserManager.GetMissionProgress (mission.Id);
             selectMissionItemsInOrder[i].Init (mission, progress);
 
-            selectMissionItemDict.Add (mission.id, selectMissionItemsInOrder[i]);
+            selectMissionItemDict.Add (mission.Id, selectMissionItemsInOrder[i]);
         }
     }
 
@@ -60,7 +57,7 @@ public class MainMenuSceneManager : MonoBehaviour {
             if (selectMissionItemDict.ContainsKey (missionId)) {
                 selectMissionItemDict[missionId].ShowNewEntryUnlocked ();
             } else {
-                Log.PrintWarning ("No mapping in selectMissionItemDict for mission id : " + missionId + " . Cannot show entry just unlocked effect.", LogType.GameFlow);
+                Log.PrintWarning ("No mapping in selectMissionItemDict for mission id : " + missionId + " . Cannot show entry just unlocked effect.", LogTypes.GameFlow);
             }
 
             UserManager.ClearEntryJustUnlockedMissionId ();
@@ -69,26 +66,26 @@ public class MainMenuSceneManager : MonoBehaviour {
 
     #region Events
 
-    private void OnSelectMissionClick (HIHIButton sender, object info) {
+    private void SelectMissionBtnClickedHandler (HIHIButton sender, object info) {
         if (!(info is Mission)) {
-            Log.PrintError ("OnSelectMissionClick failed. Getting invalid info type : " + info.GetType (), LogType.UI | LogType.Input | LogType.GameFlow);
+            Log.PrintError ("OnSelectMissionClick failed. Getting invalid info type : " + info.GetType (), LogTypes.UI | LogTypes.Input | LogTypes.GameFlow);
             return;
         }
 
         var mission = (Mission)info;
-        missionDetailsPanel.Show (mission, UserManager.GetMissionProgress (mission.id));
+        missionDetailsPanel.Show (mission, UserManager.GetMissionProgress (mission.Id));
     }
 
-    private void OnSelectEntryClick (HIHIButton sender, object info) {
+    private void SelectEntryBtnClickedHandler (HIHIButton sender, object info) {
         if (!(info is Mission.Entry)) {
-            Log.PrintError ("OnSelectEntryClick failed. Getting invalid info type : " + info.GetType (), LogType.UI | LogType.Input | LogType.GameFlow);
+            Log.PrintError ("OnSelectEntryClick failed. Getting invalid info type : " + info.GetType (), LogTypes.UI | LogTypes.Input | LogTypes.GameFlow);
             return;
         }
 
         var entry = (Mission.Entry)info;
-        var mission = MissionManager.GetMissionByEntry (entry.id);
-        UserManager.SelectedMissionId = mission.id;
-        UserManager.SelectedEntryId = entry.id;
+        var mission = MissionManager.GetMissionByEntry (entry.Id);
+        UserManager.SelectedMissionId = mission.Id;
+        UserManager.SelectedEntryId = entry.Id;
 
         Action onFadeInFinished = () => {
             SceneManager.LoadScene (GameVariable.GameSceneName);
@@ -97,7 +94,7 @@ public class MainMenuSceneManager : MonoBehaviour {
         GameUtils.ScreenFadeIn (onFadeInFinished);
     }
 
-    private void OnOpenNotesPanelClick (HIHIButton sender) {
+    private void OpenNotesPanelBtnClickedHandler (HIHIButton sender) {
         notesPanel.Show (UserManager.GetAllCollectedCollectable ());
     }
 

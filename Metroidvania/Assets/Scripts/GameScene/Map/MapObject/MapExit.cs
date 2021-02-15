@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
 using UnityEngine;
 
 public class MapExit : MapInvisibleTriggerBase<MapData.ExitData> {
@@ -9,9 +6,9 @@ public class MapExit : MapInvisibleTriggerBase<MapData.ExitData> {
     /// Input :<br />
     /// int : the entry id that the exit point goes to
     /// </summary>
-    public static event Action<int> ExitedEvent;
+    public static event Action<int> ExitReached;
 
-    protected override bool isDisposeWhenMapReset => false;
+    protected override bool IsDisposeWhenMapReset => false;
 
     public override void Init (MapData.ExitData data) {
         base.Init (data);
@@ -28,6 +25,6 @@ public class MapExit : MapInvisibleTriggerBase<MapData.ExitData> {
     }
 
     protected override void OnTriggered () {
-        ExitedEvent?.Invoke (data.toEntryId);
+        ExitReached?.Invoke (Data.toEntryId);
     }
 }

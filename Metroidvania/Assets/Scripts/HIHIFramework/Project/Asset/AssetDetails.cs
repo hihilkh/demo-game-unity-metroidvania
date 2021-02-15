@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
-using UnityEngine;
+﻿using System.Collections.Generic;
+using HihiFramework.Core;
 
 public static partial class AssetDetails {
 
     private const string MapDataJSONFileFormat = "map_data_{0}.json";
 
-    private static List<string> PracticalStreamingAssetsFileNames_MapData = new List<string> () {
+    private static readonly List<string> PracticalStreamingAssetsFileNames_MapData = new List<string> () {
         "map_data.zip",
     };
 

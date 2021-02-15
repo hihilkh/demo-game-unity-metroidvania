@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 
 public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
-    public static event Action<MapCollectableObject> CollectedEvent;
+    public static event Action<MapCollectableObject> Collected;
 
     [SerializeField] private GameObject baseGO;
     [SerializeField] private Animator animator;
@@ -16,27 +14,27 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
     private bool isAddedEnemyEventListeners = false;
 
     public override void Init (MapData.CollectableData data) {
-        this.data = data;
+        this.Data = data;
 
         var collectable = CollectableManager.GetCollectable (data.type);
         if (collectable == null) {
             baseGO.SetActive (false);
-            Log.PrintError ("Cannot init map collectable object : Collectable is null.", LogType.MapData);
+            Log.PrintError ("Cannot init map collectable object : Collectable is null.", LogTypes.MapData);
             return;
         }
 
         var icon = Resources.Load<Sprite> (collectable.GetIconResourcesName ());
-        if (collectable.isWithCircleFrame) {
+        if (collectable.IsWithCircleFrame) {
             additionalSpriteRenderer.sprite = icon;
         } else {
             baseSpriteRenderer.sprite = icon;
         }
 
-        if (data.isFromEnemy) {
+        if (data.IsFromEnemy) {
             baseGO.SetActive (false);
             if (!isAddedEnemyEventListeners) {
                 isAddedEnemyEventListeners = true;
-                EnemyModelBase.DiedEvent += EnemyDied;
+                EnemyModelBase.Died += EnemyDiedHandler;
             }
         } else {
             baseGO.SetActive (true);
@@ -56,7 +54,7 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
         base.OnDestroy ();
 
         if (isAddedEnemyEventListeners) {
-            EnemyModelBase.DiedEvent -= EnemyDied;
+            EnemyModelBase.Died -= EnemyDiedHandler;
         }
     }
 
@@ -68,18 +66,8 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
         return true;
     }
 
-    protected override void OnTriggered () {
-        CollectedEvent?.Invoke (this);
-    }
-
-    private void EnemyDied (int enemyId) {
-        if (data.isFromEnemy && data.fromEnemyId == enemyId) {
-            OnTriggered ();
-        }
-    }
-
     public Collectable.Type GetCollectableType () {
-        return data.type;
+        return Data.type;
     }
 
     public void StartCollectedAnim (Vector3 startPos, Action onAnimFinished = null) {
@@ -93,4 +81,18 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
 
         FrameworkUtils.Instance.StartSingleAnim (animator, CollectAnimStateName, onCollectAnimFinished);
     }
+
+    protected override void OnTriggered () {
+        Collected?.Invoke (this);
+    }
+
+    #region Events
+
+    private void EnemyDiedHandler (int enemyId) {
+        if (Data.IsFromEnemy && Data.fromEnemyId == enemyId) {
+            OnTriggered ();
+        }
+    }
+
+    #endregion
 }

@@ -1,173 +1,172 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu (fileName = "CharParams", menuName = "ScriptableObjects/CharParams", order = 1)]
 public class CharParams : ScriptableObject {
     [Header ("Life")]
     [SerializeField] private int _totalHP;
-    public int totalHP => _totalHP;
+    public int TotalHP => _totalHP;
 
     [SerializeField] private float _invinciblePeriod;
     /// <summary>
     /// In second.
     /// </summary>
-    public float invinciblePeriod => _invinciblePeriod;
+    public float InvinciblePeriod => _invinciblePeriod;
 
     [SerializeField] private float _beatBackInitSpeed;
     /// <summary>
     /// Magnitude only. The direction is base on hurt direction and derived LifeBase class
     /// </summary>
-    public float beatBackInitSpeed => _beatBackInitSpeed;
+    public float BeatBackInitSpeed => _beatBackInitSpeed;
 
     [SerializeField] private float _beatBackPeriod;
     /// <summary>
     /// In second.
     /// </summary>
-    public float beatBackPeriod => _beatBackPeriod;
+    public float BeatBackPeriod => _beatBackPeriod;
 
     [SerializeField] private float _dyingPeriod;
     /// <summary>
     /// In second.
     /// </summary>
-    public float dyingPeriod => _dyingPeriod;
+    public float DyingPeriod => _dyingPeriod;
 
     [SerializeField] private float _hpRecoveryPeriod;
     /// <summary>
     /// Recover 1 hp for each hpRecoveryPeriod. In second.
     /// </summary>
-    public float hpRecoveryPeriod => _hpRecoveryPeriod;
+    public float HPRecoveryPeriod => _hpRecoveryPeriod;
 
     [Header ("Physics")]
     [SerializeField] private float _gravityScale;
-    public float gravityScale => _gravityScale;
+    public float GravityScale => _gravityScale;
 
     [SerializeField] private float _minFallDownVelocity;
-    public float minFallDownVelocity => _minFallDownVelocity;
+    public float MinFallDownVelocity => _minFallDownVelocity;
 
     [Header ("Walk")]
     [SerializeField] private float _walkingSpeed;
-    public float walkingSpeed => _walkingSpeed;
+    public float WalkingSpeed => _walkingSpeed;
 
     [Header ("Slide")]
     [SerializeField] private float _slideDownVelocity;
-    public float slideDownVelocity => _slideDownVelocity;
+    public float SlideDownVelocity => _slideDownVelocity;
 
     [Header ("Jump")]
     [SerializeField] private float _normalJumpInitSpeed;
-    public float normalJumpInitSpeed => _normalJumpInitSpeed;
+    public float NormalJumpInitSpeed => _normalJumpInitSpeed;
 
     [SerializeField] private float _chargedJumpInitSpeed;
-    public float chargeJumpInitSpeed => _chargedJumpInitSpeed;
+    public float ChargeJumpInitSpeed => _chargedJumpInitSpeed;
 
     [Header ("Dash")]
     [SerializeField] private float _dashingSpeed;
-    public float dashingSpeed => _dashingSpeed;
+    public float DashingSpeed => _dashingSpeed;
 
     [SerializeField] private float _oneShotDashPeriod;
-    public float oneShotDashPeriod => _oneShotDashPeriod;
+    public float OneShotDashPeriod => _oneShotDashPeriod;
 
     [SerializeField] private float _dashCoolDownPeriod;
-    public float dashCoolDownPeriod => _dashCoolDownPeriod;
+    public float DashCoolDownPeriod => _dashCoolDownPeriod;
 
     [Header ("Hit")]
     [SerializeField] private float _hitCoolDownPeriod_Normal;
-    public float hitCoolDownPeriod_Normal => _hitCoolDownPeriod_Normal;
+    public float HitCoolDownPeriod_Normal => _hitCoolDownPeriod_Normal;
 
     [SerializeField] private float _hitCoolDownPeriod_Charged;
-    public float hitCoolDownPeriod_Charged => _hitCoolDownPeriod_Charged;
+    public float HitCoolDownPeriod_Charged => _hitCoolDownPeriod_Charged;
 
     [SerializeField] private float _hitCoolDownPeriod_Finishing;
-    public float hitCoolDownPeriod_Finishing => _hitCoolDownPeriod_Finishing;
+    public float HitCoolDownPeriod_Finishing => _hitCoolDownPeriod_Finishing;
 
     [SerializeField] private float _hitCoolDownPeriod_Drop;
-    public float hitCoolDownPeriod_Drop => _hitCoolDownPeriod_Drop;
+    public float HitCoolDownPeriod_Drop => _hitCoolDownPeriod_Drop;
 
     [SerializeField] private int _hitDP_Normal;
-    public int hitDP_Normal => _hitDP_Normal;
+    public int HitDP_Normal => _hitDP_Normal;
 
     [SerializeField] private int _hitDP_Charged;
-    public int hitDP_Charged => _hitDP_Charged;
+    public int HitDP_Charged => _hitDP_Charged;
 
     [SerializeField] private int _hitDP_Finishing;
-    public int hitDP_Finishing => _hitDP_Finishing;
+    public int HitDP_Finishing => _hitDP_Finishing;
 
     [SerializeField] private int _hitDP_Drop;
-    public int hitDP_Drop => _hitDP_Drop;
+    public int HitDP_Drop => _hitDP_Drop;
 
     [SerializeField] private float _dropHitVelocity;
-    public float dropHitVelocity => _dropHitVelocity;
+    public float DropHitVelocity => _dropHitVelocity;
 
     [Header ("Arrow")]
     [SerializeField] private float _arrowCoolDownPeriod_Target;
-    public float arrowCoolDownPeriod_Target => _arrowCoolDownPeriod_Target;
+    public float ArrowCoolDownPeriod_Target => _arrowCoolDownPeriod_Target;
 
     [SerializeField] private float _arrowCoolDownPeriod_Straight;
-    public float arrowCoolDownPeriod_Straight => _arrowCoolDownPeriod_Straight;
+    public float ArrowCoolDownPeriod_Straight => _arrowCoolDownPeriod_Straight;
 
     [SerializeField] private float _arrowCoolDownPeriod_Triple;
-    public float arrowCoolDownPeriod_Triple => _arrowCoolDownPeriod_Triple;
+    public float ArrowCoolDownPeriod_Triple => _arrowCoolDownPeriod_Triple;
 
     [SerializeField] private float _arrowInitialSpeed_Target;
-    public float arrowInitialSpeed_Target => _arrowInitialSpeed_Target;
+    public float ArrowInitialSpeed_Target => _arrowInitialSpeed_Target;
 
     [SerializeField] private float _arrowInitialSpeed_Straight;
-    public float arrowInitialSpeed_Straight => _arrowInitialSpeed_Straight;
+    public float ArrowInitialSpeed_Straight => _arrowInitialSpeed_Straight;
 
     [SerializeField] private float _arrowInitialSpeed_Triple;
-    public float arrowInitialSpeed_Triple => _arrowInitialSpeed_Triple;
+    public float ArrowInitialSpeed_Triple => _arrowInitialSpeed_Triple;
 
     [SerializeField] private int _arrowDP_Target;
-    public int arrowDP_Target => _arrowDP_Target;
+    public int ArrowDP_Target => _arrowDP_Target;
 
     [SerializeField] private int _arrowDP_Straight;
-    public int arrowDP_Straight => _arrowDP_Straight;
+    public int ArrowDP_Straight => _arrowDP_Straight;
 
     [SerializeField] private int _arrowDP_Triple;
-    public int arrowDP_Triple => _arrowDP_Triple;
+    public int ArrowDP_Triple => _arrowDP_Triple;
 
     [SerializeField] private float _targetArrowMaxInitShootGradient;
     /// <summary>
     /// tan(theta)
     /// </summary>
-    public float targetArrowMaxInitShootGradient => _targetArrowMaxInitShootGradient;
+    public float TargetArrowMaxInitShootGradient => _targetArrowMaxInitShootGradient;
 
     [SerializeField] private float _targetArrowMaxTargetDistanceSquare;
-    public float targetArrowMaxTargetDistanceSquare => _targetArrowMaxTargetDistanceSquare;
+    public float TargetArrowMaxTargetDistanceSquare => _targetArrowMaxTargetDistanceSquare;
 
     [SerializeField] private List<float> _tripleArrowShootingAngleList;
     /// <summary>
     /// In degree
     /// </summary>
-    public List<float> tripleArrowShootingAngleList => _tripleArrowShootingAngleList;
+    public List<float> TripleArrowShootingAngleList => _tripleArrowShootingAngleList;
 
     [Header ("Turn")]
     [SerializeField] private float _repelFromWallDistByTurn;
-    public float repelFromWallDistByTurn => _repelFromWallDistByTurn;
+    public float RepelFromWallDistByTurn => _repelFromWallDistByTurn;
 
     [Header ("Dev Only")]
     [SerializeField] private LifeEnum.HorizontalDirection _initDirection;
-    public LifeEnum.HorizontalDirection initDirection => _initDirection;
+    public LifeEnum.HorizontalDirection InitDirection => _initDirection;
 
     [SerializeField] private bool _isUseDebugCommandSettings;
-    public bool isUseDebugCommandSettings => _isUseDebugCommandSettings;
+    public bool IsUseDebugCommandSettings => _isUseDebugCommandSettings;
 
     [SerializeField] private CharEnum.Command _groundTapCommand;
-    public CharEnum.Command groundTapCommand => _groundTapCommand;
+    public CharEnum.Command GroundTapCommand => _groundTapCommand;
 
     [SerializeField] private CharEnum.Command _groundHoldCommand;
-    public CharEnum.Command groundHoldCommand => _groundHoldCommand;
+    public CharEnum.Command GroundHoldCommand => _groundHoldCommand;
 
     [SerializeField] private CharEnum.Command _groundReleaseCommand;
-    public CharEnum.Command groundReleaseCommand => _groundReleaseCommand;
+    public CharEnum.Command GroundReleaseCommand => _groundReleaseCommand;
 
     [SerializeField] private CharEnum.Command _airTapCommand;
-    public CharEnum.Command airTapCommand => _airTapCommand;
+    public CharEnum.Command AirTapCommand => _airTapCommand;
 
     [SerializeField] private CharEnum.Command _airHoldCommand;
-    public CharEnum.Command airHoldCommand => _airHoldCommand;
+    public CharEnum.Command AirHoldCommand => _airHoldCommand;
 
     [SerializeField] private CharEnum.Command _airReleaseCommand;
-    public CharEnum.Command airReleaseCommand => _airReleaseCommand;
+    public CharEnum.Command AirReleaseCommand => _airReleaseCommand;
 
 }

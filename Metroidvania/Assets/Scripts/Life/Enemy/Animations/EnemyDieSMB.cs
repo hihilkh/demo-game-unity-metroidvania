@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemyDieSMB : EnemyBeatBackSMB {
     private bool isAnimFinished = false;
@@ -18,7 +16,7 @@ public class EnemyDieSMB : EnemyBeatBackSMB {
             if (stateInfo.normalizedTime >= 1) {
                 isAnimFinished = true;
 
-                animUtils.model.DestroySelf (true);
+                AnimUtils.Model.DestroySelf (true);
             }
         }
     }

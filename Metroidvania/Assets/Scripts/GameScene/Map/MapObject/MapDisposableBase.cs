@@ -1,12 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public abstract class MapDisposableBase : MonoBehaviour {
 
-    protected virtual bool isDisposeWhenMapReset => true;
+    protected virtual bool IsDisposeWhenMapReset => true;
 
     private bool isAddedEventListeners = false;
+
+    protected abstract void Dispose ();
 
     protected virtual void Awake () {
         AddEventListeners ();
@@ -20,23 +20,21 @@ public abstract class MapDisposableBase : MonoBehaviour {
         if (!isAddedEventListeners) {
             isAddedEventListeners = true;
 
-            MapManager.MapResetingEvent += CheckDispose;
+            MapManager.MapReseting += MapResetingHandler;
         }
     }
 
     private void RemoveEventListeners () {
         if (isAddedEventListeners) {
-            MapManager.MapResetingEvent -= CheckDispose;
+            MapManager.MapReseting -= MapResetingHandler;
 
             isAddedEventListeners = false;
         }
     }
 
-    private void CheckDispose () {
-        if (isDisposeWhenMapReset) {
+    private void MapResetingHandler () {
+        if (IsDisposeWhenMapReset) {
             Dispose ();
         }
     }
-
-    protected abstract void Dispose ();
 }

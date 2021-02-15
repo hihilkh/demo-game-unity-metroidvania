@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
-using HIHIFramework.UI;
+using HihiFramework.Core;
+using HihiFramework.UI;
 using UnityEngine;
 
-public abstract class GeneralPanel : MonoBehaviour {
+public abstract class GeneralPanelBase : MonoBehaviour {
     [SerializeField] private Animator animator;
     [SerializeField] private HIHIButton closeBtn;
 
     private bool isAddedEventListeners = false;
-    public event Action panelHiddenEvent;
+    public event Action PanelHid;
 
     protected virtual void OnDestroy () {
         RemoveEventListeners ();
@@ -25,7 +23,7 @@ public abstract class GeneralPanel : MonoBehaviour {
     protected virtual void Hide () {
         Action onFinished = () => {
             gameObject.SetActive (false);
-            panelHiddenEvent?.Invoke ();
+            PanelHid?.Invoke ();
         };
 
         RemoveEventListeners ();
@@ -38,19 +36,19 @@ public abstract class GeneralPanel : MonoBehaviour {
         if (!isAddedEventListeners) {
             isAddedEventListeners = true;
 
-            UIEventManager.AddEventHandler (BtnOnClickType.Panel_CloseBtn, OnCloseBtnClick);
+            UIEventManager.AddEventHandler (BtnOnClickType.Panel_CloseBtn, CloseBtnClickedHandler);
         }
     }
 
     private void RemoveEventListeners () {
         if (isAddedEventListeners) {
-            UIEventManager.RemoveEventHandler (BtnOnClickType.Panel_CloseBtn, OnCloseBtnClick);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Panel_CloseBtn, CloseBtnClickedHandler);
 
             isAddedEventListeners = false;
         }
     }
 
-    private void OnCloseBtnClick (HIHIButton sender) {
+    private void CloseBtnClickedHandler (HIHIButton sender) {
         if (sender == closeBtn) {
             Hide ();
         }

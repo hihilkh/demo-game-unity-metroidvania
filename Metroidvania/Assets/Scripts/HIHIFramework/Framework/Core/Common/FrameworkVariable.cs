@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace HIHIFramework.Core {
+﻿namespace HihiFramework.Core {
     public static class FrameworkVariable {
 
         public const string FrameworkVersion = "1.0.0";
@@ -15,7 +11,7 @@ namespace HIHIFramework.Core {
 
         #region GameConfig
 
-        public const string GameConfigSetNameFieldName = "gameConfigSetName";
+        public const string GameConfigSetNameFieldName = "GameConfigSetName";
         public const string GameConfigCustomStringSuffix = "_CustomString";
 
         #endregion

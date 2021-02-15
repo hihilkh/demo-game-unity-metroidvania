@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using TMPro;
 using UnityEngine;
-using TMPro;
-using HIHIFramework.Core;
-using System;
 
 public class LandingSceneUIManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI startText;

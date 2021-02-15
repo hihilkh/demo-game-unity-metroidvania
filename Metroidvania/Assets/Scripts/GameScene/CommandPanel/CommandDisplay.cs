@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using HIHIFramework.Core;
-using HIHIFramework.UI;
+using HihiFramework.Core;
+using HihiFramework.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CommandDisplay : Selectable {
 
-    public enum Type {
+    public enum DisplayType {
         Picker,
         Container,
         Display,
@@ -21,13 +21,13 @@ public class CommandDisplay : Selectable {
     [SerializeField] private GameObject targetEffect;
     [SerializeField] private List<Graphic> targetRaycastList;
 
-    public Type type { get; private set; }
-    public CharEnum.Command? command { get; private set; }
+    public DisplayType Type { get; private set; }
+    public CharEnum.Command? Command { get; private set; }
 
     private bool isInitialized = false;
     private bool isAddedEventListeners = false;
 
-    public static event Action<CommandDisplay, CharEnum.Command> UserRemovedCommandEvent;
+    public static event Action<CommandDisplay, CharEnum.Command> UserRemovedCommand;
 
     protected override void OnDestroy () {
         RemoveEventListeners ();
@@ -35,8 +35,8 @@ public class CommandDisplay : Selectable {
         base.OnDestroy ();
     }
 
-    public void Reset (Type type) {
-        this.type = type;
+    public void Reset (DisplayType type) {
+        Type = type;
 
         SetClickable (true);
 
@@ -44,7 +44,7 @@ public class CommandDisplay : Selectable {
 
         if (!isInitialized) {
             switch (type) {
-                case Type.Container:
+                case DisplayType.Container:
                     AddEventListeners ();
                     break;
             }
@@ -56,19 +56,19 @@ public class CommandDisplay : Selectable {
     #region Set command
 
     public void RemoveCommand (bool isFromUser) {
-        var temp = command;
-        command = null;
+        var temp = Command;
+        Command = null;
 
         commandImage.enabled = false;
         commandImage.sprite = null;
 
-        switch (type) {
-            case Type.Display:
+        switch (Type) {
+            case DisplayType.Display:
                 SetDisplay (false);
                 break;
-            case Type.Container:
+            case DisplayType.Container:
                 if (isFromUser && temp != null) {
-                    UserRemovedCommandEvent?.Invoke (this, (CharEnum.Command)temp);
+                    UserRemovedCommand?.Invoke (this, (CharEnum.Command)temp);
                 }
                 break;
         }
@@ -77,7 +77,7 @@ public class CommandDisplay : Selectable {
     public void SetTapCommand (CharEnum.Command command, bool isInAir) {
         var resourcesName = CommandPanelInfo.GetTapCommandSpriteResourcesName (command, isInAir);
         if (string.IsNullOrEmpty (resourcesName)) {
-            Log.PrintError ("Generate tap command sprite failed : resourcesName is empty for command : " + command + " , isInAir : " + isInAir, LogType.UI | LogType.Asset | LogType.Char);
+            Log.PrintError ("Generate tap command sprite failed : resourcesName is empty for command : " + command + " , isInAir : " + isInAir, LogTypes.UI | LogTypes.Asset | LogTypes.Char);
             return;
         }
 
@@ -87,7 +87,7 @@ public class CommandDisplay : Selectable {
     public void SetHoldCommand (CharEnum.Command command, bool isInAir) {
         var resourcesName = CommandPanelInfo.GetHoldCommandSpriteResourcesName (command, isInAir);
         if (string.IsNullOrEmpty (resourcesName)) {
-            Log.PrintError ("Generate hold command sprite failed : resourcesName is empty for command : " + command + " , isInAir : " + isInAir, LogType.UI | LogType.Asset | LogType.Char);
+            Log.PrintError ("Generate hold command sprite failed : resourcesName is empty for command : " + command + " , isInAir : " + isInAir, LogTypes.UI | LogTypes.Asset | LogTypes.Char);
             return;
         }
 
@@ -97,7 +97,7 @@ public class CommandDisplay : Selectable {
     public void SetReleaseCommand (CharEnum.Command command, bool isInAir, bool isSameWithHoldCommand) {
         var resourcesName = CommandPanelInfo.GetReleaseCommandSpriteResourcesName (command, isInAir, isSameWithHoldCommand);
         if (string.IsNullOrEmpty (resourcesName)) {
-            Log.PrintError ("Generate release command sprite failed : resourcesName is empty for command : " + command + " , isInAir : " + isInAir + " , isSameWithHoldCommand : " + isSameWithHoldCommand, LogType.UI | LogType.Asset | LogType.Char);
+            Log.PrintError ("Generate release command sprite failed : resourcesName is empty for command : " + command + " , isInAir : " + isInAir + " , isSameWithHoldCommand : " + isSameWithHoldCommand, LogTypes.UI | LogTypes.Asset | LogTypes.Char);
             return;
         }
 
@@ -105,11 +105,11 @@ public class CommandDisplay : Selectable {
     }
 
     private void SetCommandCommon (CharEnum.Command command, string spriteResourcesName) {
-        this.command = command;
+        Command = command;
 
         var sprite = Resources.Load<Sprite> (spriteResourcesName);
         if (sprite == null) {
-            Log.PrintError ("Generate command sprite failed : Cannot load sprite for resourcesName : " + spriteResourcesName, LogType.UI | LogType.Asset | LogType.Char);
+            Log.PrintError ("Generate command sprite failed : Cannot load sprite for resourcesName : " + spriteResourcesName, LogTypes.UI | LogTypes.Asset | LogTypes.Char);
             return;
         }
 
@@ -138,7 +138,7 @@ public class CommandDisplay : Selectable {
     }
 
     public void SetClickable (bool isClickable) {
-        if (isClickable && type == Type.Container) {
+        if (isClickable && Type == DisplayType.Container) {
             interactable = true;
         } else {
             interactable = false;
@@ -157,19 +157,19 @@ public class CommandDisplay : Selectable {
         if (!isAddedEventListeners) {
             isAddedEventListeners = true;
 
-            UIEventManager.AddEventHandler (BtnOnClickType.Game_RemoveCommand, OnRemoveCommandClick);
+            UIEventManager.AddEventHandler (BtnOnClickType.Game_RemoveCommand, RemoveCommandBtnClickedHandler);
         }
     }
 
     private void RemoveEventListeners () {
         if (isAddedEventListeners) {
-            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_RemoveCommand, OnRemoveCommandClick);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_RemoveCommand, RemoveCommandBtnClickedHandler);
 
             isAddedEventListeners = false;
         }
     }
 
-    private void OnRemoveCommandClick (HIHIButton sender) {
+    private void RemoveCommandBtnClickedHandler (HIHIButton sender) {
         if (sender == crossBtn) {
             RemoveCommand (true);
 
@@ -177,12 +177,14 @@ public class CommandDisplay : Selectable {
         }
     }
 
+    #region Selectable
+
     public override void OnSelect (BaseEventData eventData) {
         base.OnSelect (eventData);
 
-        switch (type) {
-            case Type.Container:
-                if (command != null) {
+        switch (Type) {
+            case DisplayType.Container:
+                if (Command != null) {
                     crossBtn.gameObject.SetActive (true);
                 }
                 return;
@@ -205,6 +207,8 @@ public class CommandDisplay : Selectable {
             crossBtn.gameObject.SetActive (false);
         }
     }
+
+    #endregion
 
     #endregion
 }

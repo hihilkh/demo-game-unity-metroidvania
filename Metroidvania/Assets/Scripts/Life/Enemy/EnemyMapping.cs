@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
-using UnityEngine;
+﻿using System.Collections.Generic;
+using HihiFramework.Core;
 
 public static class EnemyMapping {
     private const string ResourcesFolderName = "Enemies/";
@@ -16,7 +14,7 @@ public static class EnemyMapping {
         if (EnemyResourcesNameDict.ContainsKey (enemyType)) {
             return ResourcesFolderName + EnemyResourcesNameDict[enemyType];
         } else {
-            Log.PrintError ("No matched enemy resources name for enemyType : " + enemyType, LogType.MapData);
+            Log.PrintError ("No matched enemy resources name for enemyType : " + enemyType, LogTypes.MapData);
             return null;
         }
     }

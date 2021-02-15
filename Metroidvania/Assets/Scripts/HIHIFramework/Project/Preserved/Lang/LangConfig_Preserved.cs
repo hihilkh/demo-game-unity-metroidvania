@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 
 public static partial class LangConfig {
@@ -43,7 +43,7 @@ public static partial class LangConfig {
             case LangType.English: return "en-us";
         }
 
-        Log.PrintError ("LangType : " + langType + " has not been assigned lang code. Return null.", LogType.Lang);
+        Log.PrintError ("LangType : " + langType + " has not been assigned lang code. Return null.", LogTypes.Lang);
         return null;
     }
 
@@ -53,7 +53,7 @@ public static partial class LangConfig {
     public static string GetLocalizationFileName (LangType langType) {
         var langCode = GetLangCode (langType);
         if (string.IsNullOrEmpty(langCode)) {
-            Log.PrintError ("GetLocalizationFileName failed. LangType : " + langType, LogType.Lang);
+            Log.PrintError ("GetLocalizationFileName failed. LangType : " + langType, LogTypes.Lang);
             return null;
         } else {
             return langCode + "." + FrameworkVariable.LocalizationFileExtension;

@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharNormalHit : CharHitBase {
-    protected override int dp => charParams.hitDP_Normal;
+    protected override int DP => Params.HitDP_Normal;
 
     public override void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed) {
         base.StartAttack (refPoint, direction, charHorizontalSpeed);
@@ -14,13 +12,13 @@ public class CharNormalHit : CharHitBase {
         if (direction == LifeEnum.HorizontalDirection.Left) {
             InversePSShape ();
 
-            var psr = ps.GetComponent<ParticleSystemRenderer> ();
+            var psr = PS.GetComponent<ParticleSystemRenderer> ();
             psr.flip = new Vector3 (1, 0, 0);
 
             velocity = -velocity;
         }
 
-        rb.velocity = new Vector3 (velocity, 0, 0);
+        RB.velocity = new Vector3 (velocity, 0, 0);
 
         StartCoroutine (PSNotAliveDestroyCoroutine ());
     }

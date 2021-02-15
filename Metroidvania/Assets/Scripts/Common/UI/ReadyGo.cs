@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using TMPro;
 using UnityEngine;
 

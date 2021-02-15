@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharDieSMB : CharSMBBase {
     private float startDieTime = -1;
@@ -10,7 +7,7 @@ public class CharDieSMB : CharSMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        animUtils.SetDieFeature (true);
+        AnimUtils.SetDieFeature (true);
 
         startDieTime = Time.time;
         hasFinishedDying = false;
@@ -23,16 +20,16 @@ public class CharDieSMB : CharSMBBase {
             return;
         }
 
-        if (!animUtils.model.isDying) {
+        if (!AnimUtils.Model.IsDying) {
             hasFinishedDying = true;
             return;
         }
 
         var deltaTime = Time.time - startDieTime;
-        var period = animUtils.model.param.dyingPeriod;
+        var period = AnimUtils.Model.Params.DyingPeriod;
 
         var alpha = Mathf.Lerp (1, 0, Mathf.Min (deltaTime / period, 1));
-        animUtils.SetCharAlpha (alpha);
+        AnimUtils.SetCharAlpha (alpha);
 
         if (deltaTime >= period) {
             hasFinishedDying = true;

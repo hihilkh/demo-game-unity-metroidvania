@@ -5,7 +5,7 @@ using System.IO;
 using System.Security.Cryptography;
 using UnityEngine;
 
-namespace HIHIFramework.Core {
+namespace HihiFramework.Core {
     public class FrameworkUtils : Singleton<FrameworkUtils> {
 
         private static bool IsGameSettingsInitialized = false;
@@ -59,7 +59,7 @@ namespace HIHIFramework.Core {
             try {
                 return String.Format (stringBase, replaceStrings);
             } catch (Exception ex) {
-                Log.PrintError (ex.Message, LogType.General);
+                Log.PrintError (ex.Message, LogTypes.General);
             }
 
             return stringBase;
@@ -113,7 +113,7 @@ namespace HIHIFramework.Core {
             try {
                 convertedValue = Convert.ChangeType (value, underlyingType);
             } catch (Exception ex) {
-                Log.PrintError ("TryParseToEnum failed. " + ex.Message, LogType.General);
+                Log.PrintError ("TryParseToEnum failed. " + ex.Message, LogTypes.General);
                 enumValue = default;
                 return false;
             }
@@ -122,7 +122,7 @@ namespace HIHIFramework.Core {
                 enumValue = (TEnum)convertedValue;
                 return true;
             } else {
-                Log.PrintWarning ("TryParseToEnum failed. EnumType : " + typeof (TEnum) + " , value : " + value, LogType.General);
+                Log.PrintWarning ("TryParseToEnum failed. EnumType : " + typeof (TEnum) + " , value : " + value, LogTypes.General);
                 enumValue = default;
                 return false;
             }
@@ -137,7 +137,7 @@ namespace HIHIFramework.Core {
                 enumValue = (TEnum)Enum.Parse (typeof (TEnum), valueName, true);
                 return true;
             } catch (Exception ex) {
-                Log.PrintError ("TryParseToEnumByName failed. " + ex.Message, LogType.General);
+                Log.PrintError ("TryParseToEnumByName failed. " + ex.Message, LogTypes.General);
                 enumValue = default;
                 return false;
             }
@@ -267,7 +267,7 @@ namespace HIHIFramework.Core {
                 using (var stream = File.OpenRead (fileName)) {
                     var hash = md5.ComputeHash (stream);
                     var value = BitConverter.ToString (hash).Replace ("-", "").ToLowerInvariant ();
-                    Log.PrintDebug ("MD5 = " + value + " . file : " + fileName, LogType.IO);
+                    Log.PrintDebug ("MD5 = " + value + " . file : " + fileName, LogTypes.IO);
                     return value;
                 }
             }
@@ -283,7 +283,7 @@ namespace HIHIFramework.Core {
             try {
                 filePaths = Directory.GetFiles (folderPath, "*." + extension, isRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
             } catch (Exception ex) {
-                Log.PrintWarning (ex.Message, LogType.IO);
+                Log.PrintWarning (ex.Message, LogTypes.IO);
             }
 
             var resultList = new List<string> ();
@@ -311,9 +311,9 @@ namespace HIHIFramework.Core {
         /// It <b>will override</b> original file in destFolder if existed
         /// </summary>
         public static void Unzip (string zipFilePath, string destFolder, bool isDeleteOriginalZipFile = true) {
-            Log.Print ("Start unzip file. zipFilePath : " + zipFilePath + " , exportPath : " + destFolder, LogType.IO);
+            Log.Print ("Start unzip file. zipFilePath : " + zipFilePath + " , exportPath : " + destFolder, LogTypes.IO);
             ZipUtils.Unzip (zipFilePath, destFolder);
-            Log.Print ("Finish unzip file. zipFilePath : " + zipFilePath + " , exportPath : " + destFolder, LogType.IO);
+            Log.Print ("Finish unzip file. zipFilePath : " + zipFilePath + " , exportPath : " + destFolder, LogTypes.IO);
 
             if (isDeleteOriginalZipFile) {
                 DeleteFile (zipFilePath);
@@ -321,13 +321,13 @@ namespace HIHIFramework.Core {
         }
 
         public static void DeleteFile (string filePath) {
-            Log.Print ("Start delete file. filePath : " + filePath, LogType.IO);
+            Log.Print ("Start delete file. filePath : " + filePath, LogTypes.IO);
             if (!File.Exists (filePath)) {
-                Log.Print ("File do not exist. No need to delete. filePath : " + filePath, LogType.IO);
+                Log.Print ("File do not exist. No need to delete. filePath : " + filePath, LogTypes.IO);
                 return;
             }
             File.Delete (filePath);
-            Log.Print ("Finish delete file. filePath : " + filePath, LogType.IO);
+            Log.Print ("Finish delete file. filePath : " + filePath, LogTypes.IO);
         }
 
         /// <summary>
@@ -348,14 +348,14 @@ namespace HIHIFramework.Core {
             }
 
             if (File.Exists (fullFilePath) && !isOverwrite) {
-                Log.PrintWarning ("File already exists. Do not overwrite. Path : " + fullFilePath, LogType.IO);
+                Log.PrintWarning ("File already exists. Do not overwrite. Path : " + fullFilePath, LogTypes.IO);
                 return false;
             } else {
                 try {
                     File.WriteAllLines (fullFilePath, lines);
                     return true;
                 } catch (Exception ex) {
-                    Log.PrintError ("Error occur : " + ex.Message, LogType.IO);
+                    Log.PrintError ("Error occur : " + ex.Message, LogTypes.IO);
                     return false;
                 }
             }

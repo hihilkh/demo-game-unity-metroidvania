@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using HihiFramework.Core;
 using UnityEngine;
-using HIHIFramework.Core;
 
 public static class UserManager {
 
@@ -37,7 +35,7 @@ public static class UserManager {
     }
 
     private static void LoadUserProgress () {
-        Log.PrintDebug ("Load User Progress", LogType.GameFlow | LogType.UserData);
+        Log.PrintDebug ("Load User Progress", LogTypes.GameFlow | LogTypes.UserData);
         LoadMissionProgressList ();
         LoadEnabledCommandList ();
         LoadCommandSettingsCache ();
@@ -64,25 +62,25 @@ public static class UserManager {
         }
     }
 
-    public static CharEnum.BodyPart GetObtainedBodyParts () {
-        var obtainedBodyPart = CharEnum.BodyPart.None;
+    public static CharEnum.BodyParts GetObtainedBodyParts () {
+        var obtainedBodyParts = CharEnum.BodyParts.None;
         if (EnabledCommandList.Contains(CharEnum.Command.Hit)) {
-            obtainedBodyPart = obtainedBodyPart | CharEnum.BodyPart.Arms;
+            obtainedBodyParts = obtainedBodyParts | CharEnum.BodyParts.Arms;
         }
 
         if (EnabledCommandList.Contains (CharEnum.Command.Jump)) {
-            obtainedBodyPart = obtainedBodyPart | CharEnum.BodyPart.Legs;
+            obtainedBodyParts = obtainedBodyParts | CharEnum.BodyParts.Legs;
         }
 
         if (EnabledCommandList.Contains (CharEnum.Command.Dash)) {
-            obtainedBodyPart = obtainedBodyPart | CharEnum.BodyPart.Thrusters;
+            obtainedBodyParts = obtainedBodyParts | CharEnum.BodyParts.Thrusters;
         }
 
         if (EnabledCommandList.Contains (CharEnum.Command.Arrow)) {
-            obtainedBodyPart = obtainedBodyPart | CharEnum.BodyPart.Arrow;
+            obtainedBodyParts = obtainedBodyParts | CharEnum.BodyParts.Arrow;
         }
 
-        return obtainedBodyPart;
+        return obtainedBodyParts;
     }
 
     public static List<Collectable.Type> GetAllCollectedCollectable () {
@@ -177,7 +175,7 @@ public static class UserManager {
         if (!string.IsNullOrEmpty (str)) {
             var array = str.Split (new string[] { FrameworkVariable.DefaultDelimiter }, System.StringSplitOptions.None);
             if (array.Length % 2 != 0) {
-                Log.PrintWarning ("CommandSettingsCache is somehow with a wrong format. Save an empty cache to overwrite.", LogType.GameFlow | LogType.UserData);
+                Log.PrintWarning ("CommandSettingsCache is somehow with a wrong format. Save an empty cache to overwrite.", LogTypes.GameFlow | LogTypes.UserData);
                 SaveCommandSettingsCache ();
                 return;
             }
@@ -197,20 +195,20 @@ public static class UserManager {
         var firstMissionId = MissionManager.FirstMissionId;
         var progress = GetMissionProgress (firstMissionId);
 
-        if (!progress.isUnlocked) {
+        if (!progress.IsUnlocked) {
             var mission = MissionManager.GetMission (firstMissionId);
 
             if (mission == null) {
-                Log.PrintError ("Cannot get mission with mission id : " + firstMissionId, LogType.GameFlow | LogType.UserData);
+                Log.PrintError ("Cannot get mission with mission id : " + firstMissionId, LogTypes.GameFlow | LogTypes.UserData);
                 return;
             }
 
-            if (mission.entries == null || mission.entries.Count <= 0) {
-                Log.PrintError ("No map entries for mission with mission id : " + firstMissionId, LogType.GameFlow | LogType.UserData);
+            if (mission.Entries == null || mission.Entries.Count <= 0) {
+                Log.PrintError ("No map entries for mission with mission id : " + firstMissionId, LogTypes.GameFlow | LogTypes.UserData);
                 return;
             }
 
-            progress.AddUnlockedEntry (mission.entries[0].id);
+            progress.AddUnlockedEntry (mission.Entries[0].Id);
             SaveMissionProgressList ();
         }
     }
@@ -224,11 +222,11 @@ public static class UserManager {
             var nextMission = MissionManager.GetMissionByEntry (toEntryIdInt);
 
             if (nextMission == null) {
-                Log.PrintError ("Cannot get mission that contain map entry with id : " + toEntryId, LogType.GameFlow | LogType.UserData);
+                Log.PrintError ("Cannot get mission that contain map entry with id : " + toEntryId, LogTypes.GameFlow | LogTypes.UserData);
             } else {
-                var nextMissionProgress = GetMissionProgress (nextMission.id);
+                var nextMissionProgress = GetMissionProgress (nextMission.Id);
                 if (nextMissionProgress.AddUnlockedEntry (toEntryIdInt)) {
-                    EntryJustUnlockedMissionId = nextMission.id;
+                    EntryJustUnlockedMissionId = nextMission.Id;
                 } else {
                     EntryJustUnlockedMissionId = null;
                 }

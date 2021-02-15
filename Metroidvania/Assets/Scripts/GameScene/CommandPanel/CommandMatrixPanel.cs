@@ -1,47 +1,52 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class CommandMatrixPanel : GeneralPanel {
+public class CommandMatrixPanel : GeneralPanelBase {
     [SerializeField] private TextMeshProUGUI airText;
     [SerializeField] private TextMeshProUGUI groundText;
     [SerializeField] private TextMeshProUGUI tapText;
     [SerializeField] private TextMeshProUGUI holdText;
     [SerializeField] private TextMeshProUGUI releaseText;
 
-    [SerializeField] protected CommandDisplay commandMatrix_AirTap;
-    [SerializeField] protected CommandDisplay commandMatrix_AirHold;
-    [SerializeField] protected CommandDisplay commandMatrix_AirRelease;
-    [SerializeField] protected CommandDisplay commandMatrix_GroundTap;
-    [SerializeField] protected CommandDisplay commandMatrix_GroundHold;
-    [SerializeField] protected CommandDisplay commandMatrix_GroundRelease;
+    [SerializeField] private CommandDisplay _commandMatrix_AirTap;
+    protected CommandDisplay CommandMatrix_AirTap => _commandMatrix_AirTap;
+    [SerializeField] private CommandDisplay _commandMatrix_AirHold;
+    protected CommandDisplay CommandMatrix_AirHold => _commandMatrix_AirHold;
+    [SerializeField] private CommandDisplay _commandMatrix_AirRelease;
+    protected CommandDisplay CommandMatrix_AirRelease => _commandMatrix_AirRelease;
+    [SerializeField] private CommandDisplay _commandMatrix_GroundTap;
+    protected CommandDisplay CommandMatrix_GroundTap => _commandMatrix_GroundTap;
+    [SerializeField] private CommandDisplay _commandMatrix_GroundHold;
+    protected CommandDisplay CommandMatrix_GroundHold => _commandMatrix_GroundHold;
+    [SerializeField] private CommandDisplay _commandMatrix_GroundRelease;
+    protected CommandDisplay CommandMatrix_GroundRelease => _commandMatrix_GroundRelease;
 
-    protected Dictionary<CommandDisplay, CharEnum.InputSituation> commandMatrixToSituationDict = new Dictionary<CommandDisplay, CharEnum.InputSituation> ();
+    protected Dictionary<CommandDisplay, CharEnum.InputSituation> CommandMatrixToSituationDict { get; } = new Dictionary<CommandDisplay, CharEnum.InputSituation> ();
 
-    protected bool isInitialized = false;
+    protected bool IsInitialized { get; private set; } = false;
+    
+    protected bool IsGroundHoldBinding { get; set; } = false;
+    protected bool IsAirHoldBinding { get; set; } = false;
 
-    protected virtual bool isCommandMatrixDisplayOnly => true;
-
-    protected bool isGroundHoldBinding = false;
-    protected bool isAirHoldBinding = false;
+    protected virtual bool IsCommandMatrixDisplayOnly => true;
 
     /// <returns><b>false</b> means skip initialization because initialized before</returns>
     protected virtual bool Init () {
-        if (isInitialized) {
+        if (IsInitialized) {
             return false;
         }
 
-        isInitialized = true;
+        IsInitialized = true;
 
         // CommandMatrix
-        commandMatrixToSituationDict.Clear ();
-        commandMatrixToSituationDict.Add (commandMatrix_AirTap, CharEnum.InputSituation.AirTap);
-        commandMatrixToSituationDict.Add (commandMatrix_AirHold, CharEnum.InputSituation.AirHold);
-        commandMatrixToSituationDict.Add (commandMatrix_AirRelease, CharEnum.InputSituation.AirRelease);
-        commandMatrixToSituationDict.Add (commandMatrix_GroundTap, CharEnum.InputSituation.GroundTap);
-        commandMatrixToSituationDict.Add (commandMatrix_GroundHold, CharEnum.InputSituation.GroundHold);
-        commandMatrixToSituationDict.Add (commandMatrix_GroundRelease, CharEnum.InputSituation.GroundRelease);
+        CommandMatrixToSituationDict.Clear ();
+        CommandMatrixToSituationDict.Add (CommandMatrix_AirTap, CharEnum.InputSituation.AirTap);
+        CommandMatrixToSituationDict.Add (CommandMatrix_AirHold, CharEnum.InputSituation.AirHold);
+        CommandMatrixToSituationDict.Add (CommandMatrix_AirRelease, CharEnum.InputSituation.AirRelease);
+        CommandMatrixToSituationDict.Add (CommandMatrix_GroundTap, CharEnum.InputSituation.GroundTap);
+        CommandMatrixToSituationDict.Add (CommandMatrix_GroundHold, CharEnum.InputSituation.GroundHold);
+        CommandMatrixToSituationDict.Add (CommandMatrix_GroundRelease, CharEnum.InputSituation.GroundRelease);
 
         // Localization
         var baseLocalizedTextDetailsList = new List<LocalizedTextDetails> ();
@@ -64,8 +69,8 @@ public class CommandMatrixPanel : GeneralPanel {
     }
 
     protected virtual void ResetCommandMatrix (Dictionary<CharEnum.InputSituation, CharEnum.Command> commandSettings) {
-        isGroundHoldBinding = false;
-        isAirHoldBinding = false;
+        IsGroundHoldBinding = false;
+        IsAirHoldBinding = false;
 
         CharEnum.Command? groundHoldCommand = null;
         CharEnum.Command? airHoldCommand = null;
@@ -78,8 +83,8 @@ public class CommandMatrixPanel : GeneralPanel {
             airHoldCommand = commandSettings[CharEnum.InputSituation.AirHold];
         }
 
-        foreach (var pair in commandMatrixToSituationDict) {
-            var type = isCommandMatrixDisplayOnly ? CommandDisplay.Type.Display : CommandDisplay.Type.Container;
+        foreach (var pair in CommandMatrixToSituationDict) {
+            var type = IsCommandMatrixDisplayOnly ? CommandDisplay.DisplayType.Display : CommandDisplay.DisplayType.Container;
             pair.Key.Reset (type);
 
             if (commandSettings.ContainsKey (pair.Value)) {
@@ -103,7 +108,7 @@ public class CommandMatrixPanel : GeneralPanel {
                         pair.Key.SetReleaseCommand (command, false, isSame);
                         if (isSame) {
                             if (CommandPanelInfo.CheckIsHoldBindedWithRelease (command, false)) {
-                                isGroundHoldBinding = true;
+                                IsGroundHoldBinding = true;
                             }
                         }
                         break;
@@ -112,7 +117,7 @@ public class CommandMatrixPanel : GeneralPanel {
                         pair.Key.SetReleaseCommand (command, true, isSame2);
                         if (isSame2) {
                             if (CommandPanelInfo.CheckIsHoldBindedWithRelease (command, true)) {
-                                isAirHoldBinding = true;
+                                IsAirHoldBinding = true;
                             }
                         }
                         break;

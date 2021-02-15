@@ -1,27 +1,26 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using HIHIFramework.UI;
-using UnityEngine;
+using HihiFramework.Core;
+using HihiFramework.UI;
 using TMPro;
-using HIHIFramework.Core;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class MissionDetailsPanel : GeneralPanel {
+public class MissionDetailsPanel : GeneralPanelBase {
 
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI progressText;
     [SerializeField] private TextMeshProUGUI selectEntryText;
 
     [SerializeField] private List<HIHIButton> entryBtnList;
-    private List<TextMeshProUGUI> entryBtnTextParallelList = new List<TextMeshProUGUI> ();
+    private readonly List<TextMeshProUGUI> entryBtnTextParallelList = new List<TextMeshProUGUI> ();
 
     [SerializeField] private Transform collectableDescriptionBaseTransform;
     [SerializeField] private CollectableDescription collectableDescriptionTemplate;
     [SerializeField] private ScrollRect collectableDescriptionScrollRect;
 
     private bool isInitialized = false;
-    private List<CollectableDescription> collectableDescriptionList = new List<CollectableDescription> ();
+    private readonly List<CollectableDescription> collectableDescriptionList = new List<CollectableDescription> ();
 
     private void Init () {
         if (isInitialized) {
@@ -34,7 +33,7 @@ public class MissionDetailsPanel : GeneralPanel {
         foreach (var btn in entryBtnList) {
             var text = btn.GetComponentInChildren<TextMeshProUGUI> ();
             if (text == null) {
-                Log.PrintError ("Cannot get text component of entry button. Please check.", LogType.UI);
+                Log.PrintError ("Cannot get text component of entry button. Please check.", LogTypes.UI);
             } else {
                 entryBtnTextParallelList.Add (text);
             }
@@ -50,7 +49,7 @@ public class MissionDetailsPanel : GeneralPanel {
         var localizedTextDetailsList = new List<LocalizedTextDetails> ();
         localizedTextDetailsList.Add (new LocalizedTextDetails (progressText, "ProgressDone"));
         localizedTextDetailsList.Add (new LocalizedTextDetails (selectEntryText, "SelectEntry"));
-        localizedTextDetailsList.Add (new LocalizedTextDetails (titleText, mission.displayNameKey));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (titleText, mission.DisplayNameKey));
         LangManager.SetTexts (localizedTextDetailsList);
 
         base.Show ();
@@ -66,7 +65,7 @@ public class MissionDetailsPanel : GeneralPanel {
 
     private void GenerateProgress (Mission mission, MissionProgress progress) {
         var collectableList = new List<Collectable> ();
-        foreach (var type in mission.collectableTypes) {
+        foreach (var type in mission.CollectableTypes) {
             var collectable = CollectableManager.GetCollectable (type);
             if (collectable != null) {
                 collectableList.Add (collectable);
@@ -84,7 +83,7 @@ public class MissionDetailsPanel : GeneralPanel {
             var collectableDescription = collectableDescriptionList[i];
             if (i < collectableList.Count) {
                 var collectable = collectableList[i];
-                var isCollected = progress.collectedCollectables.Contains (collectable.type);
+                var isCollected = progress.collectedCollectables.Contains (collectable.CollectableType);
                 collectableDescription.Show (collectable, isCollected);
             } else {
                 collectableDescription.Hide ();
@@ -103,7 +102,7 @@ public class MissionDetailsPanel : GeneralPanel {
         }
 
         if (entryList.Count > entryBtnList.Count) {
-            Log.PrintError ("Current UI design do not have enough entry button.", LogType.GameFlow | LogType.UI);
+            Log.PrintError ("Current UI design do not have enough entry button.", LogTypes.GameFlow | LogTypes.UI);
             return;
         }
 
@@ -112,7 +111,7 @@ public class MissionDetailsPanel : GeneralPanel {
             if (i < entryList.Count) {
                 btn.gameObject.SetActive (true);
                 btn.SetOnClickInfo (BtnOnClickType.MainMenu_SelectEntry, entryList[i]);
-                LangManager.SetText (new LocalizedTextDetails (entryBtnTextParallelList[i], entryList[i].displayNameKey));
+                LangManager.SetText (new LocalizedTextDetails (entryBtnTextParallelList[i], entryList[i].DisplayNameKey));
             } else {
                 btn.gameObject.SetActive (false);
             }

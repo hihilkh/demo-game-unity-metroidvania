@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eafb0724e544941549056e466204c64f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseTransform: {fileID: 7490466788830117004}
-  lifeCollision: {fileID: 7482690603464969301}
+  _baseTransform: {fileID: 7490466788830117004}
+  _collisionScript: {fileID: 7482690603464969301}
   hpView: {fileID: 833249282218469433}
-  _param: {fileID: 11400000, guid: d29fa61aeba4448b0bc8fd74ba0108b3, type: 2}
+  _params: {fileID: 11400000, guid: d29fa61aeba4448b0bc8fd74ba0108b3, type: 2}
   animator: {fileID: 7490466788830117005}
   targetRefPoint: {fileID: 7124256043389072844}
 --- !u!1001 &183187364126520621

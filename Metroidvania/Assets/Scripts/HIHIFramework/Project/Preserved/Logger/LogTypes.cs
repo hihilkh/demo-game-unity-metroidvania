@@ -1,7 +1,7 @@
 ﻿using System;
 
 [Flags]
-public enum LogType : long {
+public enum LogTypes : long {
 
     // Remarks :
     // For long enum, at most 64 flags enum values can be set. The 0th to 19th is preserved by framework

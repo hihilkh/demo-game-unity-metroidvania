@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharInvincibleSMB : CharSMBBase {
     private const float MaxAlpha = 0.3f;
@@ -25,7 +23,7 @@ public class CharInvincibleSMB : CharSMBBase {
         var from = isAlphaDecreasing ? MaxAlpha : MinAlpha;
         var to = isAlphaDecreasing ? MinAlpha : MaxAlpha;
         var alpha = Mathf.Lerp (from, to, Mathf.Min(deltaTime / HalfPeriod, 1));
-        animUtils.SetCharAlpha (alpha);
+        AnimUtils.SetCharAlpha (alpha);
 
         if (deltaTime >= HalfPeriod) {
             startAlphaChangeTime = Time.time;
@@ -36,6 +34,6 @@ public class CharInvincibleSMB : CharSMBBase {
     public override void OnStateExit (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateExit (animator, stateInfo, layerIndex);
 
-        animUtils.SetCharAlpha (1);
+        AnimUtils.SetCharAlpha (1);
     }
 }

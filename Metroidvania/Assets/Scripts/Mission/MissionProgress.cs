@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 [Serializable]
 public class AllMissionProgress {
@@ -55,7 +53,7 @@ public class MissionProgress {
     public bool isCleared;
     public List<Collectable.Type> collectedCollectables;
 
-    public bool isUnlocked => unlockedEntryIds != null && unlockedEntryIds.Count > 0;
+    public bool IsUnlocked => unlockedEntryIds != null && unlockedEntryIds.Count > 0;
 
     public MissionProgress () {
         unlockedEntryIds = new List<int> ();

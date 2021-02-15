@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
+﻿using HihiFramework.Core;
 using UnityEngine;
 
 public class CharTargetArrow : CharArrowBase {
-    protected override int dp => charParams.arrowDP_Target;
+    protected override int DP => Params.ArrowDP_Target;
 
     private const float DefaultImpulseAngleInRadian = Mathf.PI / 6;
 
@@ -14,11 +12,11 @@ public class CharTargetArrow : CharArrowBase {
         SetInitPos (refPoint.position);
 
         var impulse = CalculateInitialImpulse (facingDirection, targetPos);
-        rb.AddForce (impulse, ForceMode2D.Impulse);
+        RB.AddForce (impulse, ForceMode2D.Impulse);
     }
 
     private void Update () {
-        if (!hasHitAnything) {
+        if (!HasHitAnything) {
             UpdateArrowPointingDirection ();
         }
     }
@@ -31,7 +29,7 @@ public class CharTargetArrow : CharArrowBase {
         var cos = Mathf.Cos (theta);
         var sin = Mathf.Sin (theta);
 
-        return new Vector2 (charParams.arrowInitialSpeed_Target * cos, charParams.arrowInitialSpeed_Target * sin);
+        return new Vector2 (Params.ArrowInitialSpeed_Target * cos, Params.ArrowInitialSpeed_Target * sin);
     }
 
     private float CalculateInitialImpulseAngle (LifeEnum.HorizontalDirection facingDirection, Vector2? optionalTargetPos) {
@@ -50,20 +48,20 @@ public class CharTargetArrow : CharArrowBase {
         var deltaY = targetPos.y - transform.position.y;
 
         if (facingDirection == LifeEnum.HorizontalDirection.Right && deltaX < 0) {
-            Log.PrintWarning ("Wrong direction. Use default impulse.", LogType.Char);
+            Log.PrintWarning ("Wrong direction. Use default impulse.", LogTypes.Char);
             return GetDefaultImpulseAngle (facingDirection);
         } else if (facingDirection == LifeEnum.HorizontalDirection.Left && deltaX > 0) {
-            Log.PrintWarning ("Wrong direction. Use default impulse.", LogType.Char);
+            Log.PrintWarning ("Wrong direction. Use default impulse.", LogTypes.Char);
             return GetDefaultImpulseAngle (facingDirection);
         }
 
         var dist = Vector2.Distance (transform.position, targetPos);
-        var g = rb.gravityScale * Physics2D.gravity.y;
+        var g = RB.gravityScale * Physics2D.gravity.y;
 
-        var cosAngleSum = (deltaY - g * deltaX * deltaX / (charParams.arrowInitialSpeed_Target * charParams.arrowInitialSpeed_Target)) / dist;
+        var cosAngleSum = (deltaY - g * deltaX * deltaX / (Params.ArrowInitialSpeed_Target * Params.ArrowInitialSpeed_Target)) / dist;
 
         if (Mathf.Abs (cosAngleSum) > 1) {
-            Log.Print ("Cannot reach target. Use default impulse.", LogType.Char);
+            Log.Print ("Cannot reach target. Use default impulse.", LogTypes.Char);
             return GetDefaultImpulseAngle (facingDirection);
         }
 
@@ -86,7 +84,7 @@ public class CharTargetArrow : CharArrowBase {
             }
 
             if (theta < lowerLimit) {
-                Log.PrintWarning ("Cannot get impulse within required angle range. Use default impulse.", LogType.Char);
+                Log.PrintWarning ("Cannot get impulse within required angle range. Use default impulse.", LogTypes.Char);
                 return GetDefaultImpulseAngle (facingDirection);
             }
         } else {
@@ -96,7 +94,7 @@ public class CharTargetArrow : CharArrowBase {
             }
 
             if (theta > upperLimit) {
-                Log.PrintWarning ("Cannot get impulse within required angle range. Use default impulse.", LogType.Char);
+                Log.PrintWarning ("Cannot get impulse within required angle range. Use default impulse.", LogTypes.Char);
                 return GetDefaultImpulseAngle (facingDirection);
             }
         }

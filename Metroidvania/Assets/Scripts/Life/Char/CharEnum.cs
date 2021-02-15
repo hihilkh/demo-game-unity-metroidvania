@@ -5,7 +5,7 @@ public class CharEnum {
     /// The direction that the player control the camera to look to
     /// </summary>
     [Flags]
-    public enum LookDirection {
+    public enum LookDirections {
         None = 0,
         Up = 1 << 0,
         Down = 1 << 1,
@@ -20,7 +20,7 @@ public class CharEnum {
     }
 
     // Remarks: Never change the Command enum int value. It is saved in PlayerPrefs to represent the Command
-    public enum Command : int {
+    public enum Command {
         Jump = 0,
         Dash = 1,
         Hit = 2,
@@ -59,7 +59,7 @@ public class CharEnum {
     }
 
     [Flags]
-    public enum BodyPart {
+    public enum BodyParts {
         None = 0,
         Head = 1 << 0,
         Arms = 1 << 1,
@@ -69,7 +69,7 @@ public class CharEnum {
     }
 
     [Flags]
-    public enum Status : int {
+    public enum Statuses {
         Normal = 0,         // status that is no special handling, e.g. idling, walking, free falling, jumping
         BeatingBack = 1 << 0,
         Invincible = 1 << 1,

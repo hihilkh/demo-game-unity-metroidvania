@@ -1,43 +1,42 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 
 public class LifeCollision : MonoBehaviour {
-    private Dictionary<Collider2D, string> currentCollisionDict = new Dictionary<Collider2D, string> ();
+    private readonly Dictionary<Collider2D, string> currentCollisionDict = new Dictionary<Collider2D, string> ();
 
     private const string WallColliderType = "Wall";
     private const string RoofColliderType = "Roof";
 
-    public event Action TouchedGroundEvent;
-    public event Action LeftGroundEvent;
-    public event Action TouchedRoofEvent;
-    public event Action LeftRoofEvent;
+    public event Action TouchedGround;
+    public event Action LeftGround;
+    public event Action TouchedRoof;
+    public event Action LeftRoof;
     /// <summary>
     /// Input :<br />
     /// LifeEnum.HorizontalDirection : wallPosition<br />
     /// bool : isSlippyWall
     /// </summary>
-    public event Action<LifeEnum.HorizontalDirection, bool> TouchedWallEvent;
+    public event Action<LifeEnum.HorizontalDirection, bool> TouchedWall;
     /// <summary>
     /// Input :<br />
     /// bool : isSlippyWall
     /// </summary>
-    public event Action<bool> LeftWallEvent;
-    public event Action TouchedDeathTagEvent;
+    public event Action<bool> LeftWall;
+    public event Action TouchedDeathTag;
     /// <summary>
     /// Input :<br />
     /// CharModel : The CharModel of touched character<br />
     /// Vector2 : collisionNormal
     /// </summary>
-    public event Action<CharModel, Vector2> TouchedCharEvent;
+    public event Action<CharModel, Vector2> TouchedChar;
     /// <summary>
     /// Input :<br />
     /// CharModel : The EnemyModelBase of touched enemy<br />
     /// Vector2 : collisionNormal
     /// </summary>
-    public event Action<EnemyModelBase, Vector2> TouchedEnemyEvent;
+    public event Action<EnemyModelBase, Vector2> TouchedEnemy;
 
     private int originalLayer;
     private int invincibleLayer;
@@ -87,7 +86,7 @@ public class LifeCollision : MonoBehaviour {
         if ((collideType == GameVariable.GroundTag || collideType == GameVariable.SlippyWallTag) && collisionNormal.y < 0) {
             collideType = RoofColliderType;
         }
-        Log.Print (gameObject.name + " : Life Collision Enter : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType + " ; collisionNormal = " + collisionNormal, LogType.Collision | LogType.Life);
+        Log.Print (gameObject.name + " : Life Collision Enter : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType + " ; collisionNormal = " + collisionNormal, LogTypes.Collision | LogTypes.Life);
 
         var isOriginallyTouchingGround = CheckIsTouchingGround ();  // Remarks : Check before amending currentCollisionDict
         if (currentCollisionDict.ContainsKey (collision.collider)) {
@@ -99,68 +98,68 @@ public class LifeCollision : MonoBehaviour {
         switch (collideType) {
             case GameVariable.GroundTag:
                 if (!isOriginallyTouchingGround) {
-                    TouchedGroundEvent?.Invoke ();
+                    TouchedGround?.Invoke ();
                 }
                 break;
             case RoofColliderType:
-                TouchedRoofEvent?.Invoke ();
+                TouchedRoof?.Invoke ();
                 break;
             case WallColliderType:
             case GameVariable.SlippyWallTag:
                 var wallPosition = (collisionNormal.x <= 0) ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
-                TouchedWallEvent?.Invoke (wallPosition, collideType == GameVariable.SlippyWallTag);
+                TouchedWall?.Invoke (wallPosition, collideType == GameVariable.SlippyWallTag);
                 break;
             case GameVariable.DeathTag:
-                TouchedDeathTagEvent?.Invoke ();
+                TouchedDeathTag?.Invoke ();
                 break;
             case GameVariable.PlayerTag:
             case GameVariable.EnemyTag:
                 var lifeBase = collision.gameObject.GetComponentInParent<LifeBase> ();
                 if (lifeBase == null) {
-                    Log.PrintWarning ("No LifeBase is found : " + collision.gameObject.name + " . Please check.", LogType.Collision | LogType.Life);
+                    Log.PrintWarning ("No LifeBase is found : " + collision.gameObject.name + " . Please check.", LogTypes.Collision | LogTypes.Life);
                     break;
                 }
 
                 if (collideType == GameVariable.PlayerTag) {
-                    TouchedCharEvent?.Invoke ((CharModel)lifeBase, collisionNormal);
+                    TouchedChar?.Invoke ((CharModel)lifeBase, collisionNormal);
                 } else {
-                    TouchedEnemyEvent?.Invoke ((EnemyModelBase)lifeBase, collisionNormal);
+                    TouchedEnemy?.Invoke ((EnemyModelBase)lifeBase, collisionNormal);
                 }
                 break;
             default:
-                Log.PrintDebug (gameObject.name + " : No event is implemented for Collision Enter of collideType : " + collideType, LogType.Collision | LogType.Life);
+                Log.PrintDebug (gameObject.name + " : No event is implemented for Collision Enter of collideType : " + collideType, LogTypes.Collision | LogTypes.Life);
                 break;
         }
     }
 
     public void OnCollisionExit2D (Collision2D collision) {
         if (!currentCollisionDict.ContainsKey (collision.collider)) {
-            Log.PrintError (gameObject.name + " : Missing key in currentCollisionDict. collision name : " + collision.gameObject.name, LogType.Collision | LogType.Life);
+            Log.PrintError (gameObject.name + " : Missing key in currentCollisionDict. collision name : " + collision.gameObject.name, LogTypes.Collision | LogTypes.Life);
             return;
         }
 
         var collideType = currentCollisionDict[collision.collider];
         currentCollisionDict.Remove (collision.collider);
 
-        Log.Print (gameObject.name + " : Life Collision Exit : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType, LogType.Collision | LogType.Life);
+        Log.Print (gameObject.name + " : Life Collision Exit : Tag = " + collision.gameObject.tag + " ; collideType = " + collideType, LogTypes.Collision | LogTypes.Life);
 
         switch (collideType) {
             case GameVariable.GroundTag:
                 if (!CheckIsTouchingGround ()) {
-                    LeftGroundEvent?.Invoke ();
+                    LeftGround?.Invoke ();
                 }
                 break;
             case RoofColliderType:
-                LeftRoofEvent?.Invoke ();
+                LeftRoof?.Invoke ();
                 break;
             case WallColliderType:
-                LeftWallEvent?.Invoke (false);
+                LeftWall?.Invoke (false);
                 break;
             case GameVariable.SlippyWallTag:
-                LeftWallEvent?.Invoke (true);
+                LeftWall?.Invoke (true);
                 break;
             default:
-                Log.PrintDebug (gameObject.name + " : No event is implemented for Collision Exit of collideType : " + collideType, LogType.Collision | LogType.Life);
+                Log.PrintDebug (gameObject.name + " : No event is implemented for Collision Exit of collideType : " + collideType, LogTypes.Collision | LogTypes.Life);
                 break;
         }
     }

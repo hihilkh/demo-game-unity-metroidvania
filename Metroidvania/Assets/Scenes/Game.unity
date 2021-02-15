@@ -516,7 +516,7 @@ GameObject:
   - component: {fileID: 133713707}
   - component: {fileID: 133713706}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Content
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2928,12 +2928,12 @@ MonoBehaviour:
   tapText: {fileID: 1562329555}
   holdText: {fileID: 1562329554}
   releaseText: {fileID: 1562329553}
-  commandMatrix_AirTap: {fileID: 1562329551}
-  commandMatrix_AirHold: {fileID: 1562329550}
-  commandMatrix_AirRelease: {fileID: 1562329549}
-  commandMatrix_GroundTap: {fileID: 1562329547}
-  commandMatrix_GroundHold: {fileID: 1562329546}
-  commandMatrix_GroundRelease: {fileID: 1562329545}
+  _commandMatrix_AirTap: {fileID: 1562329551}
+  _commandMatrix_AirHold: {fileID: 1562329550}
+  _commandMatrix_AirRelease: {fileID: 1562329549}
+  _commandMatrix_GroundTap: {fileID: 1562329547}
+  _commandMatrix_GroundHold: {fileID: 1562329546}
+  _commandMatrix_GroundRelease: {fileID: 1562329545}
   titleText: {fileID: 777065504}
   backToMMBtnText: {fileID: 1552581169}
   restartBtnText: {fileID: 741685915}
@@ -4049,17 +4049,17 @@ MonoBehaviour:
   pauseBtn: {fileID: 849232815}
   clickOnScreenBtnObject: {fileID: 1109728585}
   collectedPanelControl:
-    panelBase: {fileID: 777162487}
-    clickIconObject: {fileID: 418638844}
-    titleText: {fileID: 0}
-    contentText: {fileID: 133713706}
-    animator: {fileID: 777162488}
+    PanelBase: {fileID: 777162487}
+    ClickIconObject: {fileID: 418638844}
+    TitleText: {fileID: 0}
+    ContentText: {fileID: 133713706}
+    Animator: {fileID: 777162488}
   notePanelControl:
-    panelBase: {fileID: 714368679}
-    clickIconObject: {fileID: 1825299758}
-    titleText: {fileID: 751608157}
-    contentText: {fileID: 614416772}
-    animator: {fileID: 714368680}
+    PanelBase: {fileID: 714368679}
+    ClickIconObject: {fileID: 1825299758}
+    TitleText: {fileID: 751608157}
+    ContentText: {fileID: 614416772}
+    Animator: {fileID: 714368680}
 --- !u!114 &1519344827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4613,12 +4613,12 @@ MonoBehaviour:
   tapText: {fileID: 2057218862}
   holdText: {fileID: 731968408}
   releaseText: {fileID: 1338992498}
-  commandMatrix_AirTap: {fileID: 203682747}
-  commandMatrix_AirHold: {fileID: 414232887}
-  commandMatrix_AirRelease: {fileID: 1404415251}
-  commandMatrix_GroundTap: {fileID: 1215300123}
-  commandMatrix_GroundHold: {fileID: 422448349}
-  commandMatrix_GroundRelease: {fileID: 1528178607}
+  _commandMatrix_AirTap: {fileID: 203682747}
+  _commandMatrix_AirHold: {fileID: 414232887}
+  _commandMatrix_AirRelease: {fileID: 1404415251}
+  _commandMatrix_GroundTap: {fileID: 1215300123}
+  _commandMatrix_GroundHold: {fileID: 422448349}
+  _commandMatrix_GroundRelease: {fileID: 1528178607}
   titleText: {fileID: 1703182330}
   confirmBtnText: {fileID: 1204432168}
   confirmBtn: {fileID: 1459296531}

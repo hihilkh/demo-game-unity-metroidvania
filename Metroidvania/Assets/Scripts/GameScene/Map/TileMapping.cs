@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
+﻿using System.Collections.Generic;
+using HihiFramework.Core;
 using UnityEngine;
 
 public static class TileMapping {
@@ -60,7 +59,7 @@ public static class TileMapping {
 
         MapEnum.TileType tileType;
         if (!FrameworkUtils.TryParseToEnumByName (resourcesName, out tileType)) {
-            Log.PrintError ("Cannot get TileType. resourcesName : " + resourcesName, LogType.MapData);
+            Log.PrintError ("Cannot get TileType. resourcesName : " + resourcesName, LogTypes.MapData);
             return null;
         }
 
@@ -72,7 +71,7 @@ public static class TileMapping {
             return MapDesignTileTypeDict[tileMapType];
         }
 
-        Log.PrintError ("MapDesignTileType mapping is not yet assigned. tileMapType : " + tileMapType, LogType.MapData);
+        Log.PrintError ("MapDesignTileType mapping is not yet assigned. tileMapType : " + tileMapType, LogTypes.MapData);
         return null;
     }
 

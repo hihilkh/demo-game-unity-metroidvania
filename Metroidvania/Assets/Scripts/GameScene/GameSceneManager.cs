@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Asset;
-using HIHIFramework.Core;
-using HIHIFramework.UI;
+using HihiFramework.Asset;
+using HihiFramework.Core;
+using HihiFramework.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,14 +14,14 @@ public class GameSceneManager : MonoBehaviour {
     [SerializeField] private GamePausePanel pausePanel;
     [SerializeField] private ReadyGo readyGo;
 
-    private CharModel _charModel = null;
-    private CharModel charModel {
+    private CharModel _character = null;
+    private CharModel Character {
         get {
-            if (_charModel == null) {
-                _charModel = GameUtils.FindOrSpawnChar ();
+            if (_character == null) {
+                _character = GameUtils.FindOrSpawnChar ();
             }
 
-            return _charModel;
+            return _character;
         }
     }
 
@@ -31,7 +30,7 @@ public class GameSceneManager : MonoBehaviour {
     private MapData mapData = null;
     private MapData.EntryData selectedEntryData = null;
 
-    protected bool isGameInitialized = false;
+    private bool isGameInitialized = false;
     private bool isAddedEventListeners = false;
 
     private void Awake () {
@@ -48,7 +47,7 @@ public class GameSceneManager : MonoBehaviour {
 
     private void OnDestroy () {
         RemoveEventListeners ();
-        charModel.LeaveGameScene ();
+        Character.LeaveGameScene ();
     }
 
     #region Game Flow
@@ -58,12 +57,12 @@ public class GameSceneManager : MonoBehaviour {
         var isSuccess = AssetHandler.Instance.TryReadPersistentDataFileByLines (AssetEnum.AssetType.MapData, AssetDetails.GetMapDataJSONFileName (missionId), out lines);
 
         if (!isSuccess) {
-            Log.PrintError ("Read map data Failed. missionId : " + missionId, LogType.GameFlow | LogType.Asset);
+            Log.PrintError ("Read map data Failed. missionId : " + missionId, LogTypes.GameFlow | LogTypes.Asset);
             return null;
         }
 
         if (lines == null || lines.Length <= 0) {
-            Log.PrintError ("Read map data Failed. missionId : " + missionId + " , Error : JSON file is empty", LogType.GameFlow | LogType.Asset);
+            Log.PrintError ("Read map data Failed. missionId : " + missionId + " , Error : JSON file is empty", LogTypes.GameFlow | LogTypes.Asset);
             return null;
         }
 
@@ -83,10 +82,10 @@ public class GameSceneManager : MonoBehaviour {
             StartCoroutine (DelayResetCharModel (isGameInitialized));
 
             if (isGameInitialized) {
-                Log.Print ("Reset Game", LogType.GameFlow);
+                Log.Print ("Reset Game", LogTypes.GameFlow);
                 mapManager.ResetMap ();
             } else {
-                Log.Print ("Init Game", LogType.GameFlow);
+                Log.Print ("Init Game", LogTypes.GameFlow);
                 isGameInitialized = true;
 
                 mapManager.GenerateMap (selectedMissionId, mapData);
@@ -103,27 +102,27 @@ public class GameSceneManager : MonoBehaviour {
         yield return null;
 
         if (!isGameInitialized) {
-            charModel.EnterGameScene (mapManager, mapData.boundary);
+            Character.EnterGameScene (mapManager, mapData.boundary);
         }
 
-        charModel.Reset (selectedEntryData);
+        Character.Reset (selectedEntryData);
     }
 
     private void StartGame () {
-        Log.Print ("ReadyGo", LogType.GameFlow);
+        Log.Print ("ReadyGo", LogTypes.GameFlow);
 
         Action onReadyGoFinished = () => {
-            Log.Print ("Start Game", LogType.GameFlow);
+            Log.Print ("Start Game", LogTypes.GameFlow);
 
             uiManager.StartGame ();
-            charModel.SetAllowMove (true);
+            Character.SetAllowMove (true);
         };
 
         readyGo.Play (onReadyGoFinished);
     }
 
     private void LeaveGame () {
-        Log.Print ("Leave Game", LogType.GameFlow);
+        Log.Print ("Leave Game", LogTypes.GameFlow);
 
         Action onFadeInFinished = () => {
             SceneManager.LoadScene (GameVariable.MainMenuSceneName);
@@ -140,43 +139,43 @@ public class GameSceneManager : MonoBehaviour {
         if (!isAddedEventListeners) {
             isAddedEventListeners = true;
 
-            MapCollectableObject.CollectedEvent += CollectCollectable;
-            MapExit.ExitedEvent += Exit;
-            MapTutorialTrigger.TriggeredTutorialEvent += StartTutorial;
+            MapCollectableObject.Collected += CollectedCollectableHandler;
+            MapExit.ExitReached += ExitReachedHandler;
+            MapTutorialTrigger.TutorialTriggered += TutorialTriggeredHandler;
 
-            commandPanel.panelHiddenEvent += StartGame;
-            charModel.diedEvent += CharDied;
+            commandPanel.PanelHid += CommandPanelHidHandler;
+            Character.Died += CharDiedHandler;
 
-            UIEventManager.AddEventHandler (BtnOnClickType.Game_Pause, OnPauseBtnCLick);
-            UIEventManager.AddEventHandler (BtnOnClickType.Game_Restart, OnRestartBtnClick);
-            UIEventManager.AddEventHandler (BtnOnClickType.Game_BackToMM, OnBackToMMBtnClick);
+            UIEventManager.AddEventHandler (BtnOnClickType.Game_Pause, PauseBtnClickedHandler);
+            UIEventManager.AddEventHandler (BtnOnClickType.Game_Restart, RestartBtnClickedHandler);
+            UIEventManager.AddEventHandler (BtnOnClickType.Game_BackToMM, BackToMMBtnClickedHandler);
         }
     }
 
     private void RemoveEventListeners () {
         if (isAddedEventListeners) {
-            MapCollectableObject.CollectedEvent -= CollectCollectable;
-            MapExit.ExitedEvent -= Exit;
-            MapTutorialTrigger.TriggeredTutorialEvent -= StartTutorial;
+            MapCollectableObject.Collected -= CollectedCollectableHandler;
+            MapExit.ExitReached -= ExitReachedHandler;
+            MapTutorialTrigger.TutorialTriggered -= TutorialTriggeredHandler;
 
-            commandPanel.panelHiddenEvent -= StartGame;
-            charModel.diedEvent -= CharDied;
+            commandPanel.PanelHid -= CommandPanelHidHandler;
+            Character.Died -= CharDiedHandler;
 
-            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Pause, OnPauseBtnCLick);
-            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Restart, OnRestartBtnClick);
-            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_BackToMM, OnBackToMMBtnClick);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Pause, PauseBtnClickedHandler);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Restart, RestartBtnClickedHandler);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_BackToMM, BackToMMBtnClickedHandler);
 
             isAddedEventListeners = false;
         }
     }
 
-    private void CollectCollectable (MapCollectableObject collectableObject) {
-        Log.Print ("Character collected collectable : " + collectableObject.ToString (), LogType.GameFlow | LogType.Char);
+    private void CollectedCollectableHandler (MapCollectableObject collectableObject) {
+        Log.Print ("Character collected collectable : " + collectableObject.ToString (), LogTypes.GameFlow | LogTypes.Char);
 
         var collectable = CollectableManager.GetCollectable (collectableObject.GetCollectableType ());
 
         if (collectable == null) {
-            Log.PrintError ("Cannot find collectable. Do not do CollectCollectable action.", LogType.GameFlow);
+            Log.PrintError ("Cannot find collectable. Do not do CollectCollectable action.", LogTypes.GameFlow);
             return;
         }
 
@@ -188,23 +187,23 @@ public class GameSceneManager : MonoBehaviour {
 
             // Command / BodyPart
             CharEnum.Command? enabledCommand = null;
-            var obtainedBodyPart = CharEnum.BodyPart.None;
+            var obtainedBodyPart = CharEnum.BodyParts.None;
             switch (collectableObject.GetCollectableType ()) {
                 case Collectable.Type.Command_Hit:
                     enabledCommand = CharEnum.Command.Hit;
-                    obtainedBodyPart = CharEnum.BodyPart.Arms;
+                    obtainedBodyPart = CharEnum.BodyParts.Arms;
                     break;
                 case Collectable.Type.Command_Jump:
                     enabledCommand = CharEnum.Command.Jump;
-                    obtainedBodyPart = CharEnum.BodyPart.Legs;
+                    obtainedBodyPart = CharEnum.BodyParts.Legs;
                     break;
                 case Collectable.Type.Command_Dash:
                     enabledCommand = CharEnum.Command.Dash;
-                    obtainedBodyPart = CharEnum.BodyPart.Thrusters;
+                    obtainedBodyPart = CharEnum.BodyParts.Thrusters;
                     break;
                 case Collectable.Type.Command_Arrow:
                     enabledCommand = CharEnum.Command.Arrow;
-                    obtainedBodyPart = CharEnum.BodyPart.Arrow;
+                    obtainedBodyPart = CharEnum.BodyParts.Arrow;
                     break;
                 case Collectable.Type.Command_Turn:
                     enabledCommand = CharEnum.Command.Turn;
@@ -215,8 +214,8 @@ public class GameSceneManager : MonoBehaviour {
                 UserManager.EnableCommand ((CharEnum.Command)enabledCommand);
             }
 
-            if (obtainedBodyPart != CharEnum.BodyPart.None) {
-                charModel.ObtainBodyPart (obtainedBodyPart);
+            if (obtainedBodyPart != CharEnum.BodyParts.None) {
+                Character.ObtainBodyPart (obtainedBodyPart);
             }
             
             Time.timeScale = 1;
@@ -240,36 +239,40 @@ public class GameSceneManager : MonoBehaviour {
             uiManager.ShowCollectedPanel (collectable, onShowCollectedPanelFinished);
         };
 
-        collectableObject.StartCollectedAnim (charModel.GetCurrentCollectedCollectablePos (), onCollectedAnimFinished);
+        collectableObject.StartCollectedAnim (Character.GetCurrentCollectedCollectablePos (), onCollectedAnimFinished);
     }
 
-    private void Exit (int toEntryId) {
-        Log.Print ("Character reached exit : " + toEntryId, LogType.GameFlow | LogType.Char);
+    private void ExitReachedHandler (int toEntryId) {
+        Log.Print ("Character reached exit : " + toEntryId, LogTypes.GameFlow | LogTypes.Char);
         UserManager.ClearMission (selectedMissionId, toEntryId);
 
         LeaveGame ();
     }
 
-    private void StartTutorial (TutorialEnum.GameTutorialType tutorialType) {
-        Log.Print ("Character triggered tutorial : " + tutorialType.ToString (), LogType.GameFlow | LogType.Char);
+    private void TutorialTriggeredHandler (TutorialEnum.GameTutorialType tutorialType) {
+        Log.Print ("Character triggered tutorial : " + tutorialType.ToString (), LogTypes.GameFlow | LogTypes.Char);
         // TODO
     }
 
-    private void CharDied () {
-        Log.Print ("Character died.", LogType.GameFlow | LogType.Char);
+    private void CommandPanelHidHandler () {
+        StartGame ();
+    }
+
+    private void CharDiedHandler () {
+        Log.Print ("Character died.", LogTypes.GameFlow | LogTypes.Char);
         ResetGame ();
     }
 
-    private void OnPauseBtnCLick (HIHIButton sender) {
+    private void PauseBtnClickedHandler (HIHIButton sender) {
         pausePanel.Show (UserManager.CommandSettingsCache);
     }
 
-    private void OnRestartBtnClick (HIHIButton sender) {
+    private void RestartBtnClickedHandler (HIHIButton sender) {
         pausePanel.Hide (false);
         ResetGame ();
     }
 
-    private void OnBackToMMBtnClick (HIHIButton sender) {
+    private void BackToMMBtnClickedHandler (HIHIButton sender) {
         LeaveGame ();
     }
 

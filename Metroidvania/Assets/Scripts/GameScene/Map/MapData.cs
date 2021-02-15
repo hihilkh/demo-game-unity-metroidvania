@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using HIHIFramework.Core;
 using UnityEngine;
 
 [Serializable]
@@ -120,7 +118,7 @@ public class MapData {
     public class CollectableData : WorldPosData {
         public Collectable.Type type;
         public int fromEnemyId = -1;
-        public bool isFromEnemy => fromEnemyId > -1;
+        public bool IsFromEnemy => fromEnemyId > -1;
 
         public CollectableData () { }
 

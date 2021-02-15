@@ -355,10 +355,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d222fa3c6a78d499380cc3d79f4ed94b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseTransform: {fileID: 351095058075983932}
-  lifeCollision: {fileID: 5102995114009958925}
+  _baseTransform: {fileID: 351095058075983932}
+  _collisionScript: {fileID: 5102995114009958925}
   hpView: {fileID: 4568770761878209458}
-  _param: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
+  _params: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
   controller: {fileID: 3404561521971273195}
   animator: {fileID: 6176056532493872824}
   cameraModel: {fileID: 894378342}

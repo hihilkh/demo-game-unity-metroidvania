@@ -1,21 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharStraightArrow : CharArrowBase {
-    protected override int dp => charParams.arrowDP_Straight;
+    protected override int DP => Params.ArrowDP_Straight;
 
     public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection) {
         Init (facingDirection);
 
         SetInitPos (refPoint.position);
 
-        var impulseX = charParams.arrowInitialSpeed_Straight;
+        var impulseX = Params.ArrowInitialSpeed_Straight;
         if (facingDirection == LifeEnum.HorizontalDirection.Left) {
             impulseX = -impulseX;
         }
 
-        rb.AddForce (new Vector2 (impulseX, 0), ForceMode2D.Impulse);
+        RB.AddForce (new Vector2 (impulseX, 0), ForceMode2D.Impulse);
         UpdateArrowPointingDirection ();
     }
 }

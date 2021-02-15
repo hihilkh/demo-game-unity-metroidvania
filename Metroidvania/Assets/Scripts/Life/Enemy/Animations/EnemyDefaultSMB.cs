@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemyDefaultSMB : EnemySMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
         // TODO : Flying movement type
-        switch (animUtils.model.movementType) {
+        switch (AnimUtils.Model.MovementType) {
             case EnemyEnum.MovementType.Walking:
-                animUtils.UpdateHorizontalVelocity ();
+                AnimUtils.UpdateHorizontalVelocity ();
                 break;
         }
     }

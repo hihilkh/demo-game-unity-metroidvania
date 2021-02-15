@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharFreeFallSMB : CharSMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
-        animUtils.UpdateVelocityX (null);
-        animUtils.ResetGravity ();
+        AnimUtils.UpdateVelocityX (null);
+        AnimUtils.ResetGravity ();
     }
 }

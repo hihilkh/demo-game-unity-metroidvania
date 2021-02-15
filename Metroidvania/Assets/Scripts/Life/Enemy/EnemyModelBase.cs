@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,8 +8,8 @@ using UnityEngine.SceneManagement;
 // TODO : Ensure no action go after die
 public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
-    [SerializeField] private EnemyParams _param;
-    public EnemyParams param => _param;
+    [SerializeField] private EnemyParams _params;
+    public EnemyParams Params => _params;
     [SerializeField] private Animator animator;
     [SerializeField] private Transform targetRefPoint;
 
@@ -19,16 +17,16 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     /// Input :<br />
     /// int : enemy id
     /// </summary>
-    public static event Action<int> DiedEvent;
-    public event Action<LifeEnum.HorizontalDirection> facingDirectionChangedEvent;
+    public static event Action<int> Died;
+    public event Action<LifeEnum.HorizontalDirection> FacingDirectionChanged;
 
 
-    protected override int posZ => GameVariable.EnemyPosZ;
-    protected override int invincibleLayer => GameVariable.EnemyInvincibleLayer;
-    protected override int totalHP => param.totalHP;
+    protected override int PosZ => GameVariable.EnemyPosZ;
+    protected override int InvincibleLayer => GameVariable.EnemyInvincibleLayer;
+    protected override int TotalHP => Params.TotalHP;
 
     private LifeEnum.HorizontalDirection? _facingDirection = null;
-    public override LifeEnum.HorizontalDirection facingDirection {
+    public override LifeEnum.HorizontalDirection FacingDirection {
         get {
             if (_facingDirection == null) {
                 return default;
@@ -39,15 +37,15 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         protected set {
             if (_facingDirection != value) {
                 _facingDirection = value;
-                facingDirectionChangedEvent?.Invoke (value);
+                FacingDirectionChanged?.Invoke (value);
             }
         }
     }
 
-    public abstract EnemyEnum.MovementType movementType { get; }
+    public abstract EnemyEnum.MovementType MovementType { get; }
 
     private LifeEnum.Location _currentLocation = LifeEnum.Location.Unknown;
-    public override LifeEnum.Location currentLocation {
+    public override LifeEnum.Location CurrentLocation {
         get {
             return _currentLocation;
         }
@@ -62,69 +60,69 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     }
 
     // Status
-    protected EnemyEnum.Status currentStatus;
+    protected EnemyEnum.Statuses CurrentStatuses { get; private set; }
 
-    public override bool isBeatingBack {
+    public override bool IsBeatingBack {
         get {
-            return (currentStatus & EnemyEnum.Status.BeatingBack) == EnemyEnum.Status.BeatingBack;
+            return (CurrentStatuses & EnemyEnum.Statuses.BeatingBack) == EnemyEnum.Statuses.BeatingBack;
         }
         protected set {
             if (value) {
-                currentStatus = currentStatus | EnemyEnum.Status.BeatingBack;
+                CurrentStatuses = CurrentStatuses | EnemyEnum.Statuses.BeatingBack;
             } else {
-                currentStatus = currentStatus & ~EnemyEnum.Status.BeatingBack;
+                CurrentStatuses = CurrentStatuses & ~EnemyEnum.Statuses.BeatingBack;
             }
         }
     }
 
-    public override bool isInvincible {
+    public override bool IsInvincible {
         get {
-            return (currentStatus & EnemyEnum.Status.Invincible) == EnemyEnum.Status.Invincible;
+            return (CurrentStatuses & EnemyEnum.Statuses.Invincible) == EnemyEnum.Statuses.Invincible;
         }
         protected set {
             if (value) {
-                currentStatus = currentStatus | EnemyEnum.Status.Invincible;
+                CurrentStatuses = CurrentStatuses | EnemyEnum.Statuses.Invincible;
             } else {
-                currentStatus = currentStatus & ~EnemyEnum.Status.Invincible;
+                CurrentStatuses = CurrentStatuses & ~EnemyEnum.Statuses.Invincible;
             }
         }
     }
 
-    public override bool isDying {
+    public override bool IsDying {
         get {
-            return (currentStatus & EnemyEnum.Status.Dying) == EnemyEnum.Status.Dying;
+            return (CurrentStatuses & EnemyEnum.Statuses.Dying) == EnemyEnum.Statuses.Dying;
         }
         protected set {
             if (value) {
-                currentStatus = currentStatus | EnemyEnum.Status.Dying;
+                CurrentStatuses = CurrentStatuses | EnemyEnum.Statuses.Dying;
             } else {
-                currentStatus = currentStatus & ~EnemyEnum.Status.Dying;
+                CurrentStatuses = CurrentStatuses & ~EnemyEnum.Statuses.Dying;
             }
         }
     }
 
-    protected override float invinciblePeriod => param.invinciblePeriod;
+    protected override float InvinciblePeriod => Params.InvinciblePeriod;
 
-    public int id { get; private set; }
-    public int collisionDP => param.collisionDP;
+    public int Id { get; private set; }
+    public int CollisionDP => Params.CollisionDP;
 
     // Beat Back
     /// <summary>
     /// Normalized.
     /// </summary>
-    public Vector2 beatBackDirection { get; private set; } = Vector2.one;
+    public Vector2 BeatBackDirection { get; private set; } = Vector2.one;
     private static Vector2 WalkingBeatBackDirection_Right = new Vector2 (1, 0.577f).normalized;    // About 30 degree elevation
     private static Vector2 WalkingBeatBackDirection_Left = Vector2.Scale (WalkingBeatBackDirection_Right, new Vector2 (-1, 1));
 
     // Jump
-    private bool isJumpRecursively => param.recursiveJumpPeriod >= 0;
+    private bool IsJumpRecursively => Params.RecursiveJumpPeriod >= 0;
     private bool isJustJumpedUp = false;
     private bool isPreparingToRecursiveJump = false;
     private float startPrepareRecursiveJumpTime = -1;
 
     private void Start () {
         if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName) {
-            Reset (1, baseTransform.position, LifeEnum.HorizontalDirection.Right);
+            Reset (1, BaseTransform.position, LifeEnum.HorizontalDirection.Right);
         }
     }
 
@@ -148,21 +146,21 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         var hasInitBefore = base.Reset (pos, direction);
 
         if (!hasInitBefore) {
-            this.id = id;
+            this.Id = id;
         }
 
-        currentStatus = EnemyEnum.Status.Normal;
+        CurrentStatuses = EnemyEnum.Statuses.Normal;
         CheckAndPrepareRecursiveJump ();
 
         return hasInitBefore;
     }
 
     private void Update () {
-        if (!isInitialized) {
+        if (!IsInitialized) {
             return;
         }
 
-        if (isBeatingBack || isDying) {
+        if (IsBeatingBack || IsDying) {
             return;
         }
 
@@ -175,7 +173,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     protected virtual void DecideAction () {
         // Jump
         if (isPreparingToRecursiveJump) {
-            if (Time.time - startPrepareRecursiveJumpTime >= param.recursiveJumpPeriod) {
+            if (Time.time - startPrepareRecursiveJumpTime >= Params.RecursiveJumpPeriod) {
                 if (Jump ()) {
                     isPreparingToRecursiveJump = false;
                 } else {
@@ -189,12 +187,12 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     #region Animtor
 
     protected void SetAnimatorTrigger (string triggerName) {
-        Log.PrintDebug (gameObject.name + " : SetAnimatorTrigger : " + triggerName, LogType.Enemy | LogType.Animation);
+        Log.PrintDebug (gameObject.name + " : SetAnimatorTrigger : " + triggerName, LogTypes.Enemy | LogTypes.Animation);
         animator.SetTrigger (triggerName);
     }
 
     protected void SetAnimatorBool (string boolName, bool value) {
-        Log.PrintDebug (gameObject.name + " : SetAnimatorBool : " + boolName + " ; Value : " + value, LogType.Enemy | LogType.Animation);
+        Log.PrintDebug (gameObject.name + " : SetAnimatorBool : " + boolName + " ; Value : " + value, LogTypes.Enemy | LogTypes.Animation);
         animator.SetBool (boolName, value);
     }
 
@@ -205,37 +203,33 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     public override bool Hurt (int dp, LifeEnum.HorizontalDirection hurtDirection) {
         var isAlive = base.Hurt (dp, hurtDirection);
 
-        Log.Print (gameObject.name + " : Hurt! dp : " + dp + " , hurtDirection : " + hurtDirection + " , remain HP : " + currentHP, LogType.Enemy);
+        Log.Print (gameObject.name + " : Hurt! dp : " + dp + " , hurtDirection : " + hurtDirection + " , remain HP : " + CurrentHP, LogTypes.Enemy);
 
         return isAlive;
-    }
-
-    private void DieByTouchedDeathTag () {
-        Die (facingDirection);
     }
 
     protected override void Die (LifeEnum.HorizontalDirection dieDirection) {
         base.Die (dieDirection);
 
-        Log.Print (gameObject.name + " : Die!", LogType.Enemy);
+        Log.Print (gameObject.name + " : Die!", LogTypes.Enemy);
         SetAnimatorTrigger (EnemyAnimConstant.DieTriggerName);
     }
 
     protected override void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection) {
         base.StartBeatingBack (hurtDirection);
 
-        switch (movementType) {
+        switch (MovementType) {
             case EnemyEnum.MovementType.Walking:
-                beatBackDirection = hurtDirection == LifeEnum.HorizontalDirection.Left ? WalkingBeatBackDirection_Left : WalkingBeatBackDirection_Right;
+                BeatBackDirection = hurtDirection == LifeEnum.HorizontalDirection.Left ? WalkingBeatBackDirection_Left : WalkingBeatBackDirection_Right;
                 break;
             case EnemyEnum.MovementType.Flying:
             default:
-                beatBackDirection = hurtDirection == LifeEnum.HorizontalDirection.Left ? new Vector2 (-1, 0) : Vector2.one;
+                BeatBackDirection = hurtDirection == LifeEnum.HorizontalDirection.Left ? new Vector2 (-1, 0) : Vector2.one;
                 break;
         }
 
         // If dying, dominated by die animation
-        if (!isDying) {
+        if (!IsDying) {
             SetAnimatorTrigger (EnemyAnimConstant.BeatBackTriggerName);
         }
     }
@@ -250,7 +244,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         base.StartInvincible ();
 
         // If dying, dominated by die animation
-        if (!isDying) {
+        if (!IsDying) {
             SetAnimatorBool (EnemyAnimConstant.InvincibleBoolName, true);
         }
     }
@@ -263,11 +257,11 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     public virtual void DestroySelf (bool isDie) {
         if (isDie) {
-            DiedEvent?.Invoke (id);
+            Died?.Invoke (Id);
         }
 
-        if (baseTransform.gameObject != null) {
-            Destroy (baseTransform.gameObject);
+        if (BaseTransform.gameObject != null) {
+            Destroy (BaseTransform.gameObject);
         }
     }
 
@@ -276,7 +270,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     #region Location
 
     protected virtual void CurrentLocationChangedAction (LifeEnum.Location fromLocation, LifeEnum.Location toLocation) {
-        if (movementType == EnemyEnum.MovementType.Walking) {
+        if (MovementType == EnemyEnum.MovementType.Walking) {
             if (fromLocation == LifeEnum.Location.Unknown && toLocation == LifeEnum.Location.Air) {
                 StartFreeFall ();
             }
@@ -288,10 +282,10 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     #region Facing Direction
 
     protected void ChangeFacingDirection () {
-        if (facingDirection == LifeEnum.HorizontalDirection.Left) {
-            facingDirection = LifeEnum.HorizontalDirection.Right;
+        if (FacingDirection == LifeEnum.HorizontalDirection.Left) {
+            FacingDirection = LifeEnum.HorizontalDirection.Right;
         } else {
-            facingDirection = LifeEnum.HorizontalDirection.Left;
+            FacingDirection = LifeEnum.HorizontalDirection.Left;
         }
     }
 
@@ -300,7 +294,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     #region Jump
 
     private void CheckAndPrepareRecursiveJump () {
-        if (movementType == EnemyEnum.MovementType.Walking && isJumpRecursively) {
+        if (MovementType == EnemyEnum.MovementType.Walking && IsJumpRecursively) {
             isPreparingToRecursiveJump = true;
             startPrepareRecursiveJumpTime = Time.time;
         }
@@ -308,61 +302,61 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     /// <returns>Is jump success</returns>
     protected bool Jump () {
-        Log.PrintDebug (gameObject.name + " : Jump", LogType.Enemy);
+        Log.PrintDebug (gameObject.name + " : Jump", LogTypes.Enemy);
 
-        if (currentLocation != LifeEnum.Location.Ground) {
-            Log.Print (gameObject.name + " : Do not Jump. It is not in ground", LogType.Enemy);
+        if (CurrentLocation != LifeEnum.Location.Ground) {
+            Log.Print (gameObject.name + " : Do not Jump. It is not in ground", LogTypes.Enemy);
             return false;
         }
 
         isJustJumpedUp = true;
-        currentLocation = LifeEnum.Location.Air;
+        CurrentLocation = LifeEnum.Location.Air;
         SetAnimatorTrigger (EnemyAnimConstant.JumpTriggerName);
 
         return true;
     }
 
     private void StartFreeFall () {
-        currentLocation = LifeEnum.Location.Air;
+        CurrentLocation = LifeEnum.Location.Air;
 
         SetAnimatorTrigger (EnemyAnimConstant.FreeFallTriggerName);
     }
 
     #endregion
 
-    #region Collision
+    #region Collision Events
 
     protected override void RegisterCollisionEventHandler () {
-        lifeCollision.TouchedGroundEvent += TouchGround;
-        lifeCollision.LeftGroundEvent += LeaveGround;
-        lifeCollision.TouchedWallEvent += TouchWall;
-        lifeCollision.LeftWallEvent += LeaveWall;
-        lifeCollision.TouchedDeathTagEvent += DieByTouchedDeathTag;
+        CollisionScript.TouchedGround += TouchedGroundHandler;
+        CollisionScript.LeftGround += LeftGroundHandler;
+        CollisionScript.TouchedWall += TouchedWallHandler;
+        CollisionScript.LeftWall += LeftWallHandler;
+        CollisionScript.TouchedDeathTag += TouchedDeathTagHandler;
     }
 
     protected override void UnregisterCollisionEventHandler () {
-        lifeCollision.TouchedGroundEvent -= TouchGround;
-        lifeCollision.LeftGroundEvent -= LeaveGround;
-        lifeCollision.TouchedWallEvent -= TouchWall;
-        lifeCollision.LeftWallEvent -= LeaveWall;
-        lifeCollision.TouchedDeathTagEvent -= DieByTouchedDeathTag;
+        CollisionScript.TouchedGround -= TouchedGroundHandler;
+        CollisionScript.LeftGround -= LeftGroundHandler;
+        CollisionScript.TouchedWall -= TouchedWallHandler;
+        CollisionScript.LeftWall -= LeftWallHandler;
+        CollisionScript.TouchedDeathTag -= TouchedDeathTagHandler;
     }
 
-    private void TouchGround () {
-        Log.PrintDebug (gameObject.name + " : TouchGround", LogType.Enemy);
+    private void TouchedGroundHandler () {
+        Log.PrintDebug (gameObject.name + " : TouchGround", LogTypes.Enemy);
 
         // Touch ground while init / set position
-        if (currentLocation == LifeEnum.Location.Unknown) {
-            currentLocation = LifeEnum.Location.Ground;
+        if (CurrentLocation == LifeEnum.Location.Unknown) {
+            CurrentLocation = LifeEnum.Location.Ground;
             return;
         }
 
-        switch (currentLocation) {
+        switch (CurrentLocation) {
             case LifeEnum.Location.Air:
-                if (movementType == EnemyEnum.MovementType.Walking) {
-                    if (isDying) {
+                if (MovementType == EnemyEnum.MovementType.Walking) {
+                    if (IsDying) {
                         // Do nothing
-                    } else if (isBeatingBack) {
+                    } else if (IsBeatingBack) {
                         StopBeatingBack ();
                     } else {
                         SetAnimatorTrigger (EnemyAnimConstant.LandingTriggerName);
@@ -376,29 +370,29 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
                 break;
         }
 
-        currentLocation = LifeEnum.Location.Ground;
+        CurrentLocation = LifeEnum.Location.Ground;
     }
 
-    private void LeaveGround () {
-        Log.PrintDebug (gameObject.name + " : LeaveGround", LogType.Enemy);
+    private void LeftGroundHandler () {
+        Log.PrintDebug (gameObject.name + " : LeaveGround", LogTypes.Enemy);
 
-        currentLocation = LifeEnum.Location.Air;
+        CurrentLocation = LifeEnum.Location.Air;
 
-        if (movementType == EnemyEnum.MovementType.Walking) {
+        if (MovementType == EnemyEnum.MovementType.Walking) {
             if (isJustJumpedUp) {
                 isJustJumpedUp = false;
             } else {
-                if (!isBeatingBack) {
+                if (!IsBeatingBack) {
                     StartFreeFall ();
                 }
             }
         }
     }
 
-    private void TouchWall (LifeEnum.HorizontalDirection wallPosition, bool isSlippyWall) {
-        Log.PrintDebug (gameObject.name + " : TouchWall : isSlippyWall = " + isSlippyWall, LogType.Char);
+    private void TouchedWallHandler (LifeEnum.HorizontalDirection wallPosition, bool isSlippyWall) {
+        Log.PrintDebug (gameObject.name + " : TouchWall : isSlippyWall = " + isSlippyWall, LogTypes.Char);
 
-        if (wallPosition != facingDirection) {
+        if (wallPosition != FacingDirection) {
             // Somehow touch wall which is back to facing direction
             return;
         }
@@ -406,8 +400,12 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         ChangeFacingDirection ();
     }
 
-    private void LeaveWall (bool isSlippyWall) {
-        Log.PrintDebug (gameObject.name + " : LeaveWall", LogType.Char);
+    private void LeftWallHandler (bool isSlippyWall) {
+        Log.PrintDebug (gameObject.name + " : LeaveWall", LogTypes.Char);
+    }
+
+    private void TouchedDeathTagHandler () {
+        Die (FacingDirection);
     }
 
     #endregion

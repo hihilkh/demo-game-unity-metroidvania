@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using HihiFramework.Core;
 using UnityEngine;
-using HIHIFramework.Core;
 
 public class TutorialManager {
 	private static string GetPlayerPrefsKey (TutorialEnum.GameTutorialType type) {

@@ -1,44 +1,44 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
+﻿using System.Collections;
+using HihiFramework.Core;
 using UnityEngine;
 
 public abstract class LifeBase : MapDisposableBase {
-    [SerializeField] protected Transform baseTransform;
-    [SerializeField] protected LifeCollision lifeCollision;
+    [SerializeField] private Transform _baseTransform;
+    protected Transform BaseTransform => _baseTransform;
+    [SerializeField] private LifeCollision _collisionScript;
+    protected LifeCollision CollisionScript => _collisionScript;
     [SerializeField] private LifeHPView hpView;
-    public virtual LifeEnum.HorizontalDirection facingDirection { get; protected set; }
-    [SerializeField] public virtual LifeEnum.Location currentLocation { get; protected set; }
+    public virtual LifeEnum.HorizontalDirection FacingDirection { get; protected set; }
+    [SerializeField] public virtual LifeEnum.Location CurrentLocation { get; protected set; }
 
-    protected abstract int posZ { get; }
-    protected abstract int invincibleLayer { get; }
-    protected abstract int totalHP { get; }
+    protected abstract int PosZ { get; }
+    protected abstract int InvincibleLayer { get; }
+    protected abstract int TotalHP { get; }
 
     private int _currentHP;
-    protected int currentHP {
+    protected int CurrentHP {
         get { return _currentHP; }
         set {
             if (_currentHP != value) {
                 _currentHP = value;
-                hpView.UpdateView (totalHP, value);
+                hpView.UpdateView (TotalHP, value);
             }
         }
     }
 
     // Status
-    public abstract bool isBeatingBack { get; protected set; }
-    public abstract bool isInvincible { get; protected set; }
-    public abstract bool isDying { get; protected set; }
+    public abstract bool IsBeatingBack { get; protected set; }
+    public abstract bool IsInvincible { get; protected set; }
+    public abstract bool IsDying { get; protected set; }
 
-    protected abstract float invinciblePeriod { get; }
+    protected abstract float InvinciblePeriod { get; }
 
-    protected bool isInitialized = false;
+    protected bool IsInitialized { get; private set; } = false;
 
     protected override void OnDestroy () {
         base.OnDestroy ();
 
-        if (isInitialized) {
+        if (IsInitialized) {
             UnregisterCollisionEventHandler ();
         }
     }
@@ -49,18 +49,18 @@ public abstract class LifeBase : MapDisposableBase {
     /// <returns>has initialized before</returns>
     protected virtual bool Reset (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         var hasInitializedBefore = false;
-        if (isInitialized) {
-            Log.Print (gameObject.name + " : Reset", LogType.Life);
+        if (IsInitialized) {
+            Log.Print (gameObject.name + " : Reset", LogTypes.Life);
             hasInitializedBefore = true;
         } else {
-            Log.Print (gameObject.name + " : Initialize", LogType.Life);
-            isInitialized = true;
+            Log.Print (gameObject.name + " : Initialize", LogTypes.Life);
+            IsInitialized = true;
 
-            lifeCollision.Init (invincibleLayer);
+            CollisionScript.Init (InvincibleLayer);
             RegisterCollisionEventHandler ();
         }
 
-        currentHP = totalHP;
+        CurrentHP = TotalHP;
         SetPosAndDirection (pos, direction);
 
         return hasInitializedBefore;
@@ -69,17 +69,17 @@ public abstract class LifeBase : MapDisposableBase {
     // TODO : Handle the cases that change pos after init
     protected virtual void SetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         SetPos (pos);
-        facingDirection = direction;
+        FacingDirection = direction;
 
         StartCoroutine (ResetCurrentLocation ());
     }
 
     public virtual void SetPos (Vector2 pos) {
-        baseTransform.position = new Vector3 (pos.x, pos.y, posZ);
+        BaseTransform.position = new Vector3 (pos.x, pos.y, PosZ);
     }
 
     public virtual void SetPosByOffset (Vector2 offset) {
-        baseTransform.position += (Vector3)offset;
+        BaseTransform.position += (Vector3)offset;
     }
 
     #region HP
@@ -89,9 +89,9 @@ public abstract class LifeBase : MapDisposableBase {
     /// </summary>
     /// <returns>isAlive</returns>
     public virtual bool Hurt (int dp, LifeEnum.HorizontalDirection hurtDirection) {
-        currentHP = Mathf.Max (0, currentHP - dp);
+        CurrentHP = Mathf.Max (0, CurrentHP - dp);
 
-        if (currentHP == 0) {
+        if (CurrentHP == 0) {
             Die (hurtDirection);
             return false;
         } else {
@@ -103,19 +103,19 @@ public abstract class LifeBase : MapDisposableBase {
     }
 
     protected virtual void Die (LifeEnum.HorizontalDirection dieDirection) {
-        currentHP = 0;
-        isDying = true;
+        CurrentHP = 0;
+        IsDying = true;
 
         StartBeatingBack (dieDirection);
         StartCoroutine (SetInvincible (false));
     }
 
     protected virtual void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection) {
-        isBeatingBack = true;
+        IsBeatingBack = true;
     }
 
     protected virtual void StopBeatingBack () {
-        isBeatingBack = false;
+        IsBeatingBack = false;
     }
 
     protected IEnumerator SetInvincible (bool isTempInvincible) {
@@ -125,19 +125,19 @@ public abstract class LifeBase : MapDisposableBase {
             yield break;
         }
 
-        yield return new WaitForSeconds (invinciblePeriod);
+        yield return new WaitForSeconds (InvinciblePeriod);
 
         StopInvincible ();
     }
 
     protected virtual void StartInvincible () {
-        lifeCollision.SetLayer (true);
-        isInvincible = true;
+        CollisionScript.SetLayer (true);
+        IsInvincible = true;
     }
 
     protected virtual void StopInvincible () {
-        lifeCollision.SetLayer (false);
-        isInvincible = false;
+        CollisionScript.SetLayer (false);
+        IsInvincible = false;
     }
 
     #endregion
@@ -145,17 +145,17 @@ public abstract class LifeBase : MapDisposableBase {
     #region Location
 
     protected virtual IEnumerator ResetCurrentLocation () {
-        currentLocation = LifeEnum.Location.Unknown;
+        CurrentLocation = LifeEnum.Location.Unknown;
 
         yield return null;
 
         // Wait for a frame and see if currentLocation has already been assigned (e.g. by collision event).
         // If not, assume it is in air.
-        if (currentLocation == LifeEnum.Location.Unknown) {
-            if (lifeCollision.CheckIsTouchingGround ()) {
-                currentLocation = LifeEnum.Location.Ground;
+        if (CurrentLocation == LifeEnum.Location.Unknown) {
+            if (CollisionScript.CheckIsTouchingGround ()) {
+                CurrentLocation = LifeEnum.Location.Ground;
             } else {
-                currentLocation = LifeEnum.Location.Air;
+                CurrentLocation = LifeEnum.Location.Air;
             }
         }
     }

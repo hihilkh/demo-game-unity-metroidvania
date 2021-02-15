@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using HIHIFramework.GameConfiguration;
+﻿using UnityEngine;
 
 public static partial class GameConfig {
 

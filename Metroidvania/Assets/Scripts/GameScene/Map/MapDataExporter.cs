@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -24,7 +23,7 @@ public class MapDataExporter : MonoBehaviour {
     [SerializeField] private RectTransform exportRange;
     [SerializeField] private Transform mapObjectsBaseTransform;
 
-    private Dictionary<MapEnum.TileMapType, Tilemap> tileMapDict => new Dictionary<MapEnum.TileMapType, Tilemap> {
+    private Dictionary<MapEnum.TileMapType, Tilemap> TileMapDict => new Dictionary<MapEnum.TileMapType, Tilemap> {
         { MapEnum.TileMapType.Ground, groundTileMap},
         { MapEnum.TileMapType.Ground2, ground2TileMap},
         { MapEnum.TileMapType.SlippyWall, slippyWallTileMap},
@@ -53,11 +52,11 @@ public class MapDataExporter : MonoBehaviour {
     }
 
     private MapDataTileExportIterator GetMapDataTileExportIterator (MapData.Boundary boundary) {
-        return new MapDataTileExportIterator (tileMapDict, boundary.lowerBound, boundary.upperBound);
+        return new MapDataTileExportIterator (TileMapDict, boundary.lowerBound, boundary.upperBound);
     }
 
     private void CheckMapDesign () {
-        Log.PrintWarning ("Start Check Map Design", LogType.MapData);
+        Log.PrintWarning ("Start Check Map Design", LogTypes.MapData);
 
         var boundary = ExportBoundary ();
         var iterator = GetMapDataTileExportIterator (boundary);
@@ -67,20 +66,20 @@ public class MapDataExporter : MonoBehaviour {
                 var tileMapType = tileData.tileMapType;
                 if (tileMapType == MapEnum.TileMapType.Background) {
                     if (TileMapping.CheckIsMapDesignTileType (tileData.tileType)) {
-                        Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.pos + ", background tile using map design tile type", LogType.MapData);
+                        Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.pos + ", background tile using map design tile type", LogTypes.MapData);
                         return;
                     }
                 } else {
                     var mapDesignTileType = TileMapping.GetMapDesignTileType (tileMapType);
                     if (mapDesignTileType == null || mapDesignTileType != tileData.tileType) {
-                        Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.pos + ", tileType : " + tileData.tileType + " , added to TileMapType : " + tileData.tileMapType, LogType.MapData);
+                        Log.PrintError ("Check Map Design finished : Not match. Pos : " + tileData.pos + ", tileType : " + tileData.tileType + " , added to TileMapType : " + tileData.tileMapType, LogTypes.MapData);
                         return;
                     }
                 }
             }
         }
 
-        Log.PrintWarning ("Check Map Design finished : All match!", LogType.MapData);
+        Log.PrintWarning ("Check Map Design finished : All match!", LogTypes.MapData);
     }
 
     #region Export
@@ -96,7 +95,7 @@ public class MapDataExporter : MonoBehaviour {
     }
 
     private void ExportMapData () {
-        Log.PrintWarning ("Start export MapData", LogType.MapData);
+        Log.PrintWarning ("Start export MapData", LogTypes.MapData);
 
         var mapData = new MapData ();
         var boundary = ExportBoundary ();
@@ -115,25 +114,25 @@ public class MapDataExporter : MonoBehaviour {
 
         var isSuccess = FrameworkUtils.CreateFile (filePath, false, json);
         if (isSuccess) {
-            Log.PrintWarning ("Export MapData success. Path : " + filePath, LogType.MapData);
+            Log.PrintWarning ("Export MapData success. Path : " + filePath, LogTypes.MapData);
         } else {
-            Log.PrintError ("Export MapData failed. Path : " + filePath, LogType.MapData);
+            Log.PrintError ("Export MapData failed. Path : " + filePath, LogTypes.MapData);
         }
     }
 
     private MapData.Boundary ExportBoundary () {
-        Log.PrintWarning ("Start export Boundary", LogType.MapData);
+        Log.PrintWarning ("Start export Boundary", LogTypes.MapData);
 
         var lowerBound = new Vector2Int (Mathf.FloorToInt (exportRange.position.x), Mathf.FloorToInt (exportRange.position.y));
         var upperBound = new Vector2Int (Mathf.CeilToInt (exportRange.position.x + exportRange.sizeDelta.x), Mathf.CeilToInt (exportRange.position.y + exportRange.sizeDelta.y));
         var boundary = new MapData.Boundary (lowerBound, upperBound);
 
-        Log.PrintWarning ("Export Boundary success", LogType.MapData);
+        Log.PrintWarning ("Export Boundary success", LogTypes.MapData);
         return boundary;
     }
 
     private List<MapData.TileData> ExportTileDataList (MapData.Boundary boundary) {
-        Log.PrintWarning ("Start export TileData", LogType.MapData);
+        Log.PrintWarning ("Start export TileData", LogTypes.MapData);
 
         var iterator = GetMapDataTileExportIterator (boundary);
         var tileDataList = new List<MapData.TileData> ();
@@ -144,12 +143,12 @@ public class MapDataExporter : MonoBehaviour {
             }
         }
 
-        Log.PrintWarning ("Export TileData success", LogType.MapData);
+        Log.PrintWarning ("Export TileData success", LogTypes.MapData);
         return tileDataList;
     }
 
     private List<MapData.EntryData> ExportEntryDataList () {
-        Log.PrintWarning ("Start export EntryData", LogType.MapData);
+        Log.PrintWarning ("Start export EntryData", LogTypes.MapData);
 
         var result = new List<MapData.EntryData> ();
         var baseTransform = mapObjectsBaseTransform.Find (EntriesBaseTransformName);
@@ -172,12 +171,12 @@ public class MapDataExporter : MonoBehaviour {
             result.Add (new MapData.EntryData (child.position.x, child.position.y, direction, entryId));
         }
 
-        Log.PrintWarning ("Export EntryData success", LogType.MapData);
+        Log.PrintWarning ("Export EntryData success", LogTypes.MapData);
         return result;
     }
 
     private List<MapData.EnemyData> ExportEnemyDataList () {
-        Log.PrintWarning ("Start export EnemyData", LogType.MapData);
+        Log.PrintWarning ("Start export EnemyData", LogTypes.MapData);
 
         var result = new List<MapData.EnemyData> ();
         var baseTransform = mapObjectsBaseTransform.Find (EnemiesBaseTransformName);
@@ -204,12 +203,12 @@ public class MapDataExporter : MonoBehaviour {
             result.Add (new MapData.EnemyData (child.position.x, child.position.y, direction, enemyId, enemyType));
         }
 
-        Log.PrintWarning ("Export EnemyData success", LogType.MapData);
+        Log.PrintWarning ("Export EnemyData success", LogTypes.MapData);
         return result;
     }
 
     private List<MapData.CollectableData> ExportCollectableDataList (List<MapData.EnemyData> enemies) {
-        Log.PrintWarning ("Start export CollectableData", LogType.MapData);
+        Log.PrintWarning ("Start export CollectableData", LogTypes.MapData);
 
         var result = new List<MapData.CollectableData> ();
         var baseTransform = mapObjectsBaseTransform.Find (CollectablesBaseTransformName);
@@ -241,12 +240,12 @@ public class MapDataExporter : MonoBehaviour {
             }
         }
 
-        Log.PrintWarning ("Export CollectableData success", LogType.MapData);
+        Log.PrintWarning ("Export CollectableData success", LogTypes.MapData);
         return result;
     }
 
     private List<MapData.SwitchData> ExportSwitchDataList (ref MapData mapData) {
-        Log.PrintWarning ("Start export SwitchData", LogType.MapData);
+        Log.PrintWarning ("Start export SwitchData", LogTypes.MapData);
 
         var result = new List<MapData.SwitchData> ();
         var baseTransform = mapObjectsBaseTransform.Find (SwitchesBaseTransformName);
@@ -363,12 +362,12 @@ public class MapDataExporter : MonoBehaviour {
         }
 
 
-        Log.PrintWarning ("Export SwitchData success", LogType.MapData);
+        Log.PrintWarning ("Export SwitchData success", LogTypes.MapData);
         return result;
     }
 
     private List<MapData.ExitData> ExportExitDataList () {
-        Log.PrintWarning ("Start export ExitData", LogType.MapData);
+        Log.PrintWarning ("Start export ExitData", LogTypes.MapData);
 
         var result = new List<MapData.ExitData> ();
         var baseTransform = mapObjectsBaseTransform.Find (ExitsBaseTransformName);
@@ -392,12 +391,12 @@ public class MapDataExporter : MonoBehaviour {
             result.Add (new MapData.ExitData (child.position.x, child.position.y, collider.size.x, collider.size.y, toEntryId));
         }
 
-        Log.PrintWarning ("Export ExitData success", LogType.MapData);
+        Log.PrintWarning ("Export ExitData success", LogTypes.MapData);
         return result;
     }
 
     private List<MapData.TutorialData> ExportTutorialDataList () {
-        Log.PrintWarning ("Start export TutorialData", LogType.MapData);
+        Log.PrintWarning ("Start export TutorialData", LogTypes.MapData);
 
         var result = new List<MapData.TutorialData> ();
         var baseTransform = mapObjectsBaseTransform.Find (TutorialsBaseTransformName);
@@ -424,7 +423,7 @@ public class MapDataExporter : MonoBehaviour {
             result.Add (new MapData.TutorialData (child.position.x, child.position.y, collider.size.x, collider.size.y, tutorialType));
         }
 
-        Log.PrintWarning ("Export TutorialData success", LogType.MapData);
+        Log.PrintWarning ("Export TutorialData success", LogTypes.MapData);
         return result;
     }
 

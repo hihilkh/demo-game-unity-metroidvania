@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
-using HIHIFramework.UI;
+﻿using HihiFramework.Core;
+using HihiFramework.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -20,6 +18,8 @@ public class CommandDragFollower : UIDragSingleFollower {
         transform.localPosition = originalLocalPos;
     }
 
+    #region UIDragSingleFollower
+
     public override void OnBeginDrag (PointerEventData eventData) {
         FrameworkUtils.InsertChildrenToParent (draggingBaseTransform, gameObject, true);
 
@@ -32,4 +32,6 @@ public class CommandDragFollower : UIDragSingleFollower {
         FrameworkUtils.InsertChildrenToParent (baseTransform, gameObject, true);
         transform.localPosition = originalLocalPos;
     }
+
+    #endregion
 }

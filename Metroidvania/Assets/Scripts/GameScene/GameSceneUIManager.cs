@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using HIHIFramework.Core;
-using HIHIFramework.UI;
+using HihiFramework.Core;
+using HihiFramework.UI;
 using TMPro;
 using UnityEngine;
 
@@ -10,11 +10,11 @@ public class GameSceneUIManager : MonoBehaviour {
 
     [Serializable]
     private class PanelControl {
-        public GameObject panelBase;
-        public GameObject clickIconObject;
-        public TextMeshProUGUI titleText;
-        public TextMeshProUGUI contentText;
-        public Animator animator;
+        public GameObject PanelBase;
+        public GameObject ClickIconObject;
+        public TextMeshProUGUI TitleText;
+        public TextMeshProUGUI ContentText;
+        public Animator Animator;
     }
 
     [SerializeField] private HIHIButton pauseBtn;
@@ -30,11 +30,11 @@ public class GameSceneUIManager : MonoBehaviour {
     private Action currentShowPanelFinishedAction = null;
 
     private void Awake () {
-        UIEventManager.AddEventHandler (BtnOnClickType.Game_ClickOnScreen, OnClickOnScreenBtnClick);
+        UIEventManager.AddEventHandler (BtnOnClickType.Game_ClickOnScreen, ClickOnScreenBtnClickedHandler);
     }
 
     private void OnDestroy () {
-        UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ClickOnScreen, OnClickOnScreenBtnClick);
+        UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ClickOnScreen, ClickOnScreenBtnClickedHandler);
     }
 
     public void ResetGame () {
@@ -48,16 +48,16 @@ public class GameSceneUIManager : MonoBehaviour {
     #region General Panel Control
 
     public void ShowCollectedPanel (Collectable collectable, Action onFinished = null) {
-        var detail = new LocalizedTextDetails (collectedPanelControl.contentText, "YouGot");
-        detail.AddReplaceString (collectable.displayNameKey, true);
+        var detail = new LocalizedTextDetails (collectedPanelControl.ContentText, "YouGot");
+        detail.AddReplaceString (collectable.DisplayNameKey, true);
 
         ShowPanel (collectedPanelControl, new List<LocalizedTextDetails> { detail }, onFinished);
     }
 
     public void ShowNotePanel (NoteCollectable noteCollectable, Action onFinished = null) {
         var localizedTextDetailsList = new List<LocalizedTextDetails> ();
-        localizedTextDetailsList.Add (new LocalizedTextDetails (notePanelControl.titleText, noteCollectable.displayNameKey));
-        localizedTextDetailsList.Add (new LocalizedTextDetails (notePanelControl.contentText, noteCollectable.noteContentKey));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (notePanelControl.TitleText, noteCollectable.DisplayNameKey));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (notePanelControl.ContentText, noteCollectable.NoteContentKey));
 
         ShowPanel (notePanelControl, localizedTextDetailsList, onFinished);
     }
@@ -70,7 +70,7 @@ public class GameSceneUIManager : MonoBehaviour {
 
         StartCoroutine (SetPanelClick (panelControl, WaitPeriodBeforeAllowPanelClick));
 
-        panelControl.panelBase.SetActive (true);
+        panelControl.PanelBase.SetActive (true);
         clickOnScreenBtnObject.SetActive (true);
 
     }
@@ -79,7 +79,7 @@ public class GameSceneUIManager : MonoBehaviour {
         SetAllowPanelClick (panelControl, false);
 
         Action onFinished = () => {
-            panelControl.panelBase.SetActive (false);
+            panelControl.PanelBase.SetActive (false);
             clickOnScreenBtnObject.SetActive (false);
 
             currentShowingPanel = null;
@@ -90,7 +90,7 @@ public class GameSceneUIManager : MonoBehaviour {
             tempAction?.Invoke ();
         };
 
-        FrameworkUtils.Instance.StartSingleAnim (panelControl.animator, GameVariable.HidePanelAnimStateName, onFinished);
+        FrameworkUtils.Instance.StartSingleAnim (panelControl.Animator, GameVariable.HidePanelAnimStateName, onFinished);
     }
 
     private IEnumerator SetPanelClick (PanelControl panelControl, float waitPeriodBeforeAllowClick) {
@@ -102,7 +102,7 @@ public class GameSceneUIManager : MonoBehaviour {
     }
 
     private void SetAllowPanelClick (PanelControl panelControl, bool isAllow) {
-        panelControl.clickIconObject.SetActive (isAllow);
+        panelControl.ClickIconObject.SetActive (isAllow);
         isAllowPanelClick = isAllow;
     }
 
@@ -110,7 +110,7 @@ public class GameSceneUIManager : MonoBehaviour {
 
     #region Event Handler
 
-    private void OnClickOnScreenBtnClick (HIHIButton sender) {
+    private void ClickOnScreenBtnClickedHandler (HIHIButton sender) {
         if (!isAllowPanelClick) {
             return;
         }

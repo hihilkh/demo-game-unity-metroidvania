@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace HIHIFramework.Core {
+namespace HihiFramework.Core {
     public class Singleton<T> : MonoBehaviour where T : MonoBehaviour, new() {
         private static object objLock = new object ();
         private static bool IsApplicationQuiting = false;
 
-        private static T instance;
+        private static T _Instance;
         public static T Instance {
             get {
                 // Prevent creating singleton while quiting application
@@ -16,19 +14,19 @@ namespace HIHIFramework.Core {
                 }
 
                 lock (objLock) {
-                    if (instance == null) {
+                    if (_Instance == null) {
                         InitSingleton ();
                     }
                 }
 
-                return instance;
+                return _Instance;
             }
         }
 
         private static void InitSingleton () {
             var go = new GameObject ();
-            instance = go.AddComponent<T> ();
-            go.name = "(Singleton) " + instance.GetType ().Name;
+            _Instance = go.AddComponent<T> ();
+            go.name = "(Singleton) " + _Instance.GetType ().Name;
             DontDestroyOnLoad (go);
         }
 

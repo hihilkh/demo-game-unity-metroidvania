@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 
 public class LifeHPView : MonoBehaviour {
@@ -12,7 +12,7 @@ public class LifeHPView : MonoBehaviour {
     private Coroutine fadeOutCoroutine = null;
     private const float FadeOutPeriod = 0.3f;
 
-    private static Dictionary<float, Color> HPColorThresholdDict = new Dictionary<float, Color> {
+    private static readonly Dictionary<float, Color> HPColorThresholdDict = new Dictionary<float, Color> {
         { 0.6f, Color.green },
         { 0.3f, Color.yellow },
         { 0f, Color.red },
@@ -29,7 +29,7 @@ public class LifeHPView : MonoBehaviour {
             SetVisible (false);
             return;
         } else if (totalHP < currentHP) {
-            Log.PrintWarning ("Somehow totalHP < currentHP. Please check.", LogType.UI | LogType.Life);
+            Log.PrintWarning ("Somehow totalHP < currentHP. Please check.", LogTypes.UI | LogTypes.Life);
             SetVisible (false);
             return;
         }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using HIHIFramework.Core;
+using HihiFramework.Core;
 using UnityEngine;
 
 public class CharAttackTrigger : MonoBehaviour {
@@ -11,16 +9,16 @@ public class CharAttackTrigger : MonoBehaviour {
     /// Transform : colliderTransform<br />
     /// bool : isInvincible
     /// </summary>
-    public event Action<LifeBase, Transform, bool> HitLifeEvent;
+    public event Action<LifeBase, Transform, bool> HitLife;
 
     /// <summary>
     /// Input :<br />
     /// Transform : colliderTransform
     /// </summary>
-    public event Action<Transform> HitEnvironmentEvent;
+    public event Action<Transform> HitEnvironment;
 
-    public event Action<MapSwitch> HitArrowSwitchEvent;
-    public event Action<MapSwitch> HitDropHitSwitchEvent;
+    public event Action<MapSwitch> HitArrowSwitch;
+    public event Action<MapSwitch> HitDropHitSwitch;
 
     private void OnTriggerEnter2D (Collider2D collision) {
         switch (collision.tag) {
@@ -33,7 +31,7 @@ public class CharAttackTrigger : MonoBehaviour {
                     return;
                 }
 
-                HitLifeEvent?.Invoke (lifeBase, collision.transform, lifeBase.isInvincible);
+                HitLife?.Invoke (lifeBase, collision.transform, lifeBase.IsInvincible);
                 return;
             case GameVariable.ArrowSwitchTag:
             case GameVariable.DropHitSwitchTag:
@@ -44,13 +42,13 @@ public class CharAttackTrigger : MonoBehaviour {
                 }
 
                 if (collision.tag == GameVariable.ArrowSwitchTag) {
-                    HitArrowSwitchEvent?.Invoke (mapSwitch);
+                    HitArrowSwitch?.Invoke (mapSwitch);
                 } else {
-                    HitDropHitSwitchEvent?.Invoke (mapSwitch);
+                    HitDropHitSwitch?.Invoke (mapSwitch);
                 }
                 return;
             default:
-                HitEnvironmentEvent?.Invoke (collision.transform);
+                HitEnvironment?.Invoke (collision.transform);
                 return;
         }
     }

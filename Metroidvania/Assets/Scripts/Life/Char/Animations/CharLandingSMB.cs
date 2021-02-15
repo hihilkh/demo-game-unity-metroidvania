@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharLandingSMB : CharSMBBase {
     private bool isAnimFinished = false;
@@ -10,8 +8,8 @@ public class CharLandingSMB : CharSMBBase {
 
         isAnimFinished = false;
 
-        animUtils.UpdateVelocity (null, 0);
-        animUtils.ResetGravity ();
+        AnimUtils.UpdateVelocity (null, 0);
+        AnimUtils.ResetGravity ();
     }
 
     public override void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
@@ -21,15 +19,15 @@ public class CharLandingSMB : CharSMBBase {
             if (stateInfo.normalizedTime >= 1) {
                 isAnimFinished = true;
 
-                if (animUtils.model.currentLocation == LifeEnum.Location.Air) {
+                if (AnimUtils.Model.CurrentLocation == LifeEnum.Location.Air) {
                     return;
                 }
 
-                if (animUtils.model.GetIsInStatus (CharEnum.Status.Dashing)) {
+                if (AnimUtils.Model.GetIsInStatuses (CharEnum.Statuses.Dashing)) {
                     return;
                 }
 
-                animUtils.model.StartIdleOrWalk ();
+                AnimUtils.Model.StartIdleOrWalk ();
             }
         }
     }
