@@ -39,7 +39,7 @@ public abstract class LifeBase : MapDisposableBase {
         base.OnDestroy ();
 
         if (IsInitialized) {
-            UnregisterCollisionEventHandler ();
+            RemoveCollisionEventHandlers ();
         }
     }
 
@@ -57,7 +57,7 @@ public abstract class LifeBase : MapDisposableBase {
             IsInitialized = true;
 
             CollisionScript.Init (InvincibleLayer);
-            RegisterCollisionEventHandler ();
+            AddCollisionEventHandlers ();
         }
 
         CurrentHP = TotalHP;
@@ -164,8 +164,8 @@ public abstract class LifeBase : MapDisposableBase {
 
     #region Collision
 
-    protected abstract void RegisterCollisionEventHandler ();
-    protected abstract void UnregisterCollisionEventHandler ();
+    protected abstract void AddCollisionEventHandlers ();
+    protected abstract void RemoveCollisionEventHandlers ();
 
     #endregion
 }

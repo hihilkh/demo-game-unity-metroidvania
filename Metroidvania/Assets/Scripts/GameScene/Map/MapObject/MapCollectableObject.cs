@@ -11,7 +11,7 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
     [SerializeField] private SpriteRenderer additionalSpriteRenderer;
 
     private const string CollectAnimStateName = "Collect";
-    private bool isAddedEnemyEventListeners = false;
+    private bool isAddedEnemyEventHandlers = false;
 
     public override void Init (MapData.CollectableData data) {
         this.Data = data;
@@ -32,8 +32,8 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
 
         if (data.IsFromEnemy) {
             baseGO.SetActive (false);
-            if (!isAddedEnemyEventListeners) {
-                isAddedEnemyEventListeners = true;
+            if (!isAddedEnemyEventHandlers) {
+                isAddedEnemyEventHandlers = true;
                 EnemyModelBase.Died += EnemyDiedHandler;
             }
         } else {
@@ -53,7 +53,7 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
     protected override void OnDestroy () {
         base.OnDestroy ();
 
-        if (isAddedEnemyEventListeners) {
+        if (isAddedEnemyEventHandlers) {
             EnemyModelBase.Died -= EnemyDiedHandler;
         }
     }

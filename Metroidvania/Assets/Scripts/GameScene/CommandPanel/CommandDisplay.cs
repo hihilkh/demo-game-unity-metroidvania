@@ -25,12 +25,12 @@ public class CommandDisplay : Selectable {
     public CharEnum.Command? Command { get; private set; }
 
     private bool isInitialized = false;
-    private bool isAddedEventListeners = false;
+    private bool isAddedEventHandlers = false;
 
     public static event Action<CommandDisplay, CharEnum.Command> UserRemovedCommand;
 
     protected override void OnDestroy () {
-        RemoveEventListeners ();
+        RemoveEventHandlers ();
 
         base.OnDestroy ();
     }
@@ -45,7 +45,7 @@ public class CommandDisplay : Selectable {
         if (!isInitialized) {
             switch (type) {
                 case DisplayType.Container:
-                    AddEventListeners ();
+                    AddEventHandlers ();
                     break;
             }
         }
@@ -153,19 +153,19 @@ public class CommandDisplay : Selectable {
 
     #region Events
 
-    private void AddEventListeners () {
-        if (!isAddedEventListeners) {
-            isAddedEventListeners = true;
+    private void AddEventHandlers () {
+        if (!isAddedEventHandlers) {
+            isAddedEventHandlers = true;
 
             UIEventManager.AddEventHandler (BtnOnClickType.Game_RemoveCommand, RemoveCommandBtnClickedHandler);
         }
     }
 
-    private void RemoveEventListeners () {
-        if (isAddedEventListeners) {
+    private void RemoveEventHandlers () {
+        if (isAddedEventHandlers) {
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_RemoveCommand, RemoveCommandBtnClickedHandler);
 
-            isAddedEventListeners = false;
+            isAddedEventHandlers = false;
         }
     }
 

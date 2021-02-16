@@ -11,7 +11,7 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget
     /// </summary>
     public static event Action<MapSwitch, bool> Switched;
 
-    private bool isAddedEnemyEventListeners = false;
+    private bool isAddedEnemyEventHandlers = false;
     private bool isSwitchedOn = false;
     private bool allowSwitch = true;
 
@@ -37,8 +37,8 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget
 
         if (data.switchType == MapEnum.SwitchType.Enemy) {
             gameObject.SetActive (false);
-            if (!isAddedEnemyEventListeners) {
-                isAddedEnemyEventListeners = true;
+            if (!isAddedEnemyEventHandlers) {
+                isAddedEnemyEventHandlers = true;
                 EnemyModelBase.Died += EnemyDiedHandler;
             }
         } else {
@@ -49,7 +49,7 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget
     protected override void OnDestroy () {
         base.OnDestroy ();
 
-        if (isAddedEnemyEventListeners) {
+        if (isAddedEnemyEventHandlers) {
             EnemyModelBase.Died -= EnemyDiedHandler;
         }
     }

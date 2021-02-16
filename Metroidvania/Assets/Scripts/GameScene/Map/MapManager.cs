@@ -34,7 +34,7 @@ public class MapManager : MonoBehaviour {
     private readonly Dictionary<MapData.TileData, bool> changedTileDict = new Dictionary<MapData.TileData, bool> ();
     private readonly List<Vector2Int> switchedOnOnOffSwitchBasePosList = new List<Vector2Int> ();
 
-    private bool isAddedEventListeners = false;
+    private bool isAddedEventHandlers = false;
     private const float OpenOneHiddenPathLayerPeriod = 0.1f;
 
     private void Awake () {
@@ -46,7 +46,7 @@ public class MapManager : MonoBehaviour {
     }
 
     private void OnDestroy () {
-        RemoveEventListeners ();
+        RemoveEventHandlers ();
     }
 
     #region Map Generation
@@ -66,7 +66,7 @@ public class MapManager : MonoBehaviour {
         GenerateExits (mapData.exits);
         GenerateMapDisposableObjects ();
 
-        AddEventListeners ();
+        AddEventHandlers ();
     }
 
     public void ResetMap () {
@@ -286,21 +286,21 @@ public class MapManager : MonoBehaviour {
 
     #region Map interaction
 
-    private void AddEventListeners () {
-        if (!isAddedEventListeners) {
-            isAddedEventListeners = true;
+    private void AddEventHandlers () {
+        if (!isAddedEventHandlers) {
+            isAddedEventHandlers = true;
 
             EnemyModelBase.Died += EnemyDiedHandler;
             MapSwitch.Switched += MapSwitchSwitchedHandler;
         }
     }
 
-    private void RemoveEventListeners () {
-        if (isAddedEventListeners) {
+    private void RemoveEventHandlers () {
+        if (isAddedEventHandlers) {
             EnemyModelBase.Died -= EnemyDiedHandler;
             MapSwitch.Switched -= MapSwitchSwitchedHandler;
 
-            isAddedEventListeners = false;
+            isAddedEventHandlers = false;
         }
     }
 

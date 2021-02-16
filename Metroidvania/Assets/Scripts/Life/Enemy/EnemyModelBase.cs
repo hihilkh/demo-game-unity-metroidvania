@@ -326,7 +326,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     #region Collision Events
 
-    protected override void RegisterCollisionEventHandler () {
+    protected override void AddCollisionEventHandlers () {
         CollisionScript.TouchedGround += TouchedGroundHandler;
         CollisionScript.LeftGround += LeftGroundHandler;
         CollisionScript.TouchedWall += TouchedWallHandler;
@@ -334,7 +334,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         CollisionScript.TouchedDeathTag += TouchedDeathTagHandler;
     }
 
-    protected override void UnregisterCollisionEventHandler () {
+    protected override void RemoveCollisionEventHandlers () {
         CollisionScript.TouchedGround -= TouchedGroundHandler;
         CollisionScript.LeftGround -= LeftGroundHandler;
         CollisionScript.TouchedWall -= TouchedWallHandler;

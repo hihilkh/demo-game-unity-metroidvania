@@ -31,7 +31,7 @@ public class GameSceneManager : MonoBehaviour {
     private MapData.EntryData selectedEntryData = null;
 
     private bool isGameInitialized = false;
-    private bool isAddedEventListeners = false;
+    private bool isAddedEventHandlers = false;
 
     private void Awake () {
         selectedMissionId = UserManager.SelectedMissionId;
@@ -41,12 +41,12 @@ public class GameSceneManager : MonoBehaviour {
     }
 
     private void Start () {
-        AddEventListeners ();
+        AddEventHandlers ();
         ResetGame ();
     }
 
     private void OnDestroy () {
-        RemoveEventListeners ();
+        RemoveEventHandlers ();
         Character.LeaveGameScene ();
     }
 
@@ -135,9 +135,9 @@ public class GameSceneManager : MonoBehaviour {
 
     #region Events
 
-    private void AddEventListeners () {
-        if (!isAddedEventListeners) {
-            isAddedEventListeners = true;
+    private void AddEventHandlers () {
+        if (!isAddedEventHandlers) {
+            isAddedEventHandlers = true;
 
             MapCollectableObject.Collected += CollectedCollectableHandler;
             MapExit.ExitReached += ExitReachedHandler;
@@ -152,8 +152,8 @@ public class GameSceneManager : MonoBehaviour {
         }
     }
 
-    private void RemoveEventListeners () {
-        if (isAddedEventListeners) {
+    private void RemoveEventHandlers () {
+        if (isAddedEventHandlers) {
             MapCollectableObject.Collected -= CollectedCollectableHandler;
             MapExit.ExitReached -= ExitReachedHandler;
             MapTutorialTrigger.TutorialTriggered -= TutorialTriggeredHandler;
@@ -165,7 +165,7 @@ public class GameSceneManager : MonoBehaviour {
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Restart, RestartBtnClickedHandler);
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_BackToMM, BackToMMBtnClickedHandler);
 
-            isAddedEventListeners = false;
+            isAddedEventHandlers = false;
         }
     }
 

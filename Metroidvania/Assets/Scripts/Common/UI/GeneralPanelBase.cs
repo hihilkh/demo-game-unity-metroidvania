@@ -7,15 +7,15 @@ public abstract class GeneralPanelBase : MonoBehaviour {
     [SerializeField] private Animator animator;
     [SerializeField] private HIHIButton closeBtn;
 
-    private bool isAddedEventListeners = false;
+    private bool isAddedEventHandlers = false;
     public event Action PanelHid;
 
     protected virtual void OnDestroy () {
-        RemoveEventListeners ();
+        RemoveEventHandlers ();
     }
 
     protected virtual void Show () {
-        AddEventListeners ();
+        AddEventHandlers ();
 
         gameObject.SetActive (true);
     }
@@ -26,25 +26,25 @@ public abstract class GeneralPanelBase : MonoBehaviour {
             PanelHid?.Invoke ();
         };
 
-        RemoveEventListeners ();
+        RemoveEventHandlers ();
         FrameworkUtils.Instance.StartSingleAnim (animator, GameVariable.HidePanelAnimStateName, onFinished);
     }
 
     #region Events
 
-    private void AddEventListeners () {
-        if (!isAddedEventListeners) {
-            isAddedEventListeners = true;
+    private void AddEventHandlers () {
+        if (!isAddedEventHandlers) {
+            isAddedEventHandlers = true;
 
             UIEventManager.AddEventHandler (BtnOnClickType.Panel_CloseBtn, CloseBtnClickedHandler);
         }
     }
 
-    private void RemoveEventListeners () {
-        if (isAddedEventListeners) {
+    private void RemoveEventHandlers () {
+        if (isAddedEventHandlers) {
             UIEventManager.RemoveEventHandler (BtnOnClickType.Panel_CloseBtn, CloseBtnClickedHandler);
 
-            isAddedEventListeners = false;
+            isAddedEventHandlers = false;
         }
     }
 

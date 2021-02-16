@@ -1275,7 +1275,7 @@ public class CharModel : LifeBase, IMapTarget {
 
     #region Collision Event
 
-    protected override void RegisterCollisionEventHandler () {
+    protected override void AddCollisionEventHandlers () {
         CollisionScript.TouchedGround += TouchedGroundHandler;
         CollisionScript.LeftGround += LeftGroundHandler;
         CollisionScript.TouchedWall += TouchedWallHandler;
@@ -1284,7 +1284,7 @@ public class CharModel : LifeBase, IMapTarget {
         CollisionScript.TouchedEnemy += TouchedEnemyHandler;
     }
 
-    protected override void UnregisterCollisionEventHandler () {
+    protected override void RemoveCollisionEventHandlers () {
         CollisionScript.TouchedGround -= TouchedGroundHandler;
         CollisionScript.LeftGround -= LeftGroundHandler;
         CollisionScript.TouchedWall -= TouchedWallHandler;
