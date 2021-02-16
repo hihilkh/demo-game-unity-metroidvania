@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HihiFramework.Core;
 using UnityEngine;
 
 [Serializable]
@@ -67,6 +68,7 @@ public class MapData {
 
     [Serializable]
     public class SwitchData : InvisibleTriggerData {
+        public int id;
         public MapEnum.SwitchType switchType;
         public Vector2Int switchBasePos;    // SwitchBasePos is the bottom left position of the switch
         public List<HiddenPathData> hiddenPaths;
@@ -74,14 +76,15 @@ public class MapData {
 
         public SwitchData () { }
 
-        public SwitchData (float x, float y, float sizeX, float sizeY, MapEnum.SwitchType switchType, Vector2Int switchBasePos) : base (x, y, sizeX, sizeY) {
+        public SwitchData (int id, float x, float y, float sizeX, float sizeY, MapEnum.SwitchType switchType, Vector2Int switchBasePos) : base (x, y, sizeX, sizeY) {
+            this.id = id;
             this.switchType = switchType;
             this.switchBasePos = switchBasePos;
             this.hiddenPaths = new List<HiddenPathData> ();
         }
 
         // pos / collider sizes / switchBasePos of EnemySwitch are just dummy
-        public SwitchData (int fromEnemyId) : this (0, 0, 1, 1, MapEnum.SwitchType.Enemy, Vector2Int.zero) {
+        public SwitchData (int id, int fromEnemyId) : this (id, 0, 0, 1, 1, MapEnum.SwitchType.Enemy, Vector2Int.zero) {
             this.fromEnemyId = fromEnemyId;
         }
 

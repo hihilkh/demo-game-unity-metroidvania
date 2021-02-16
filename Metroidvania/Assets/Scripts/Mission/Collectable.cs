@@ -31,16 +31,18 @@
 
     private const string ResourcesFolderName = "Collectables/";
 
-    public Type CollectableType { get; private set; }
-    public string DisplayNameKey { get; private set; }
+    public Type CollectableType { get; }
+    public string DisplayNameKey { get; }
     private string iconResourcesName;
-    public bool IsWithCircleFrame { get; private set; }
+    public bool IsWithCircleFrame { get; }
+    public MissionEventEnum.EventType? EventType { get; }
 
-    public Collectable (Type type, string displayNameKey, string iconResourcesName, bool isWithCircleFrame) {
+    public Collectable (Type type, string displayNameKey, string iconResourcesName, bool isWithCircleFrame, MissionEventEnum.EventType? eventType = null) {
         this.CollectableType = type;
         this.DisplayNameKey = displayNameKey;
         this.iconResourcesName = iconResourcesName;
         this.IsWithCircleFrame = isWithCircleFrame;
+        this.EventType = eventType;
     }
 
     public string GetIconResourcesName () {
@@ -51,16 +53,16 @@
 public class NoteCollectable : Collectable {
     public string NoteContentKey { get; private set; }
 
-    private NoteCollectable (Type type, string displayNameKey, string iconResourcesName, bool isWithCircleFrame) : base (type, displayNameKey, iconResourcesName, isWithCircleFrame) {
+    private NoteCollectable (Type type, string displayNameKey, string iconResourcesName, bool isWithCircleFrame, MissionEventEnum.EventType? eventType = null) : base (type, displayNameKey, iconResourcesName, isWithCircleFrame, eventType) {
         // Do not allow constructor without note info
     }
 
-    public NoteCollectable (Type type, string displayNameKey, string noteContentKey) : base (type, displayNameKey, "Collectable_Note", false) {
+    public NoteCollectable (Type type, string displayNameKey, string noteContentKey, MissionEventEnum.EventType? eventType = null) : base (type, displayNameKey, "Collectable_Note", false, eventType) {
         NoteContentKey = noteContentKey;
     }
 }
 
 public class EndingCollectable : Collectable {
-    public EndingCollectable (Type type, string displayNameKey) : base (type, displayNameKey, "Collectable_Ending", false) {
+    public EndingCollectable (Type type, string displayNameKey, MissionEventEnum.EventType? eventType = null) : base (type, displayNameKey, "Collectable_Ending", false, eventType) {
     }
 }

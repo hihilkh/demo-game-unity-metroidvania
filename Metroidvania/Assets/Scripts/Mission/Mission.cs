@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 
 public class Mission {
-    public int Id { get; private set; }
-    public string DisplayNameKey { get; private set; }
+    public int Id { get; }
+    public string DisplayNameKey { get; }
     public List<Entry> Entries { get; } = new List<Entry> ();
     public List<Collectable.Type> CollectableTypes { get; } = new List<Collectable.Type> ();
 
     public class Entry {
-        public int Id { get; private set; }
-        public string DisplayNameKey { get; private set; }
+        public int Id { get; }
+        public string DisplayNameKey { get; }
 
         public Entry (int id, string displayNameKey) {
             Id = id;

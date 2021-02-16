@@ -2,12 +2,12 @@
 using HihiFramework.Core;
 
 public static class CollectableManager {
-    public static List<Collectable> AllCollectables { get; } = new List<Collectable> () {
-        new Collectable (Collectable.Type.Command_Hit, "Command_Hit", "Collectable_Hit", true),
-        new Collectable (Collectable.Type.Command_Jump, "Command_Jump", "Collectable_Jump", true),
-        new Collectable (Collectable.Type.Command_Dash, "Command_Dash", "Collectable_Dash", true),
-        new Collectable (Collectable.Type.Command_Arrow, "Command_Arrow", "Collectable_Arrow", true),
-        new Collectable (Collectable.Type.Command_Turn, "Command_Turn", "Collectable_Turn", true),
+    private static readonly List<Collectable> AllCollectables = new List<Collectable> () {
+        new Collectable (Collectable.Type.Command_Hit, "Command_Hit", "Collectable_Hit", true, MissionEventEnum.EventType.Command_Hit),
+        new Collectable (Collectable.Type.Command_Jump, "Command_Jump", "Collectable_Jump", true, MissionEventEnum.EventType.Command_Jump),
+        new Collectable (Collectable.Type.Command_Dash, "Command_Dash", "Collectable_Dash", true, MissionEventEnum.EventType.Command_Dash),
+        new Collectable (Collectable.Type.Command_Arrow, "Command_Arrow", "Collectable_Arrow", true, MissionEventEnum.EventType.Command_Arrow),
+        new Collectable (Collectable.Type.Command_Turn, "Command_Turn", "Collectable_Turn", true, MissionEventEnum.EventType.Command_Turn),
 
         new NoteCollectable (Collectable.Type.Note_1, "Note_1", "Note_1_Content"),
         new NoteCollectable (Collectable.Type.Note_2, "Note_2", "Note_2_Content"),
@@ -34,7 +34,7 @@ public static class CollectableManager {
             }
         }
 
-        Log.PrintWarning ("Cannot find Collectable of type : " + type.ToString (), LogTypes.General);
+        Log.PrintWarning ("Cannot find Collectable of type : " + type, LogTypes.General);
         return null;
     }
 

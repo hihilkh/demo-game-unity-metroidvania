@@ -271,7 +271,7 @@ public class MapDataExporter : MonoBehaviour {
                 throw new Exception ("Export SwitchData failed. Invalid transform name : " + switchTransform.name);
             }
 
-            var switchName = array[0];
+            var switchId = int.Parse (array[0]);
             MapEnum.SwitchType switchType;
             if (!FrameworkUtils.TryParseToEnum (array[1], out switchType)) {
                 throw new Exception ("Export SwitchData failed. Invalid SwitchType : " + array[1]);
@@ -279,7 +279,7 @@ public class MapDataExporter : MonoBehaviour {
 
             var collider = switchTransform.GetComponent<BoxCollider2D> ();
             if (collider == null && switchType != MapEnum.SwitchType.Enemy) {
-                throw new Exception ("Export SwitchData failed. Cannot find BoxCollider2D : " + switchName);
+                throw new Exception ("Export SwitchData failed. Cannot find BoxCollider2D for switchId : " + switchId);
             }
 
             MapData.SwitchData switchData;
@@ -290,14 +290,14 @@ public class MapDataExporter : MonoBehaviour {
                     throw new Exception ("Export SwitchData failed. No matched enemy to fromEnemyId : " + fromEnemyId);
                 }
                 
-                switchData = new MapData.SwitchData (fromEnemyId);
+                switchData = new MapData.SwitchData (switchId, fromEnemyId);
             } else {
                 var colliderPosX = switchTransform.position.x + collider.offset.x;
                 var colliderPosY = switchTransform.position.y + collider.offset.y;
 
                 // Remarks : Must use local position in order to get the correct tile position instead of world position
                 var switchBasePos = new Vector2Int ((int)switchTransform.localPosition.x, (int)switchTransform.localPosition.y);
-                switchData = new MapData.SwitchData (colliderPosX, colliderPosY, collider.size.x, collider.size.y, switchType, switchBasePos);
+                switchData = new MapData.SwitchData (switchId, colliderPosX, colliderPosY, collider.size.x, collider.size.y, switchType, switchBasePos);
             }
 
             foreach (Transform trans in hiddenPathsBaseTransform) {
@@ -306,7 +306,7 @@ public class MapDataExporter : MonoBehaviour {
                     throw new Exception ("Export SwitchData failed. Invalid transform name : " + switchTransform.name);
                 }
 
-                if (hiddenPathNameArray[0] != switchName) {
+                if (hiddenPathNameArray[0] != switchId.ToString ()) {
                     continue;
                 }
 

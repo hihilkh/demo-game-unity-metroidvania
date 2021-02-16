@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-// TODO : Thin of getting mission and collectable details by map export to JSON
+// TODO : Think of getting mission and collectable details by map export to JSON
 public static class MissionManager {
     public const int FirstMissionId = 1;
 
