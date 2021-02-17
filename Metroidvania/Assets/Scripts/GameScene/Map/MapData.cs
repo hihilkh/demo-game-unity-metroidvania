@@ -83,6 +83,10 @@ public class MapData {
             this.hiddenPaths = new List<HiddenPathData> ();
         }
 
+        // pos / collider sizes / switchBasePos of MissionEventSwitch are just dummy
+        public SwitchData (int id) : this (id, 0, 0, 1, 1, MapEnum.SwitchType.MissionEvent, Vector2Int.zero) {
+        }
+
         // pos / collider sizes / switchBasePos of EnemySwitch are just dummy
         public SwitchData (int id, int fromEnemyId) : this (id, 0, 0, 1, 1, MapEnum.SwitchType.Enemy, Vector2Int.zero) {
             this.fromEnemyId = fromEnemyId;

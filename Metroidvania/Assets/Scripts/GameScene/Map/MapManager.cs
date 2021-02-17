@@ -33,6 +33,7 @@ public class MapManager : MonoBehaviour {
     /// </summary>
     private readonly Dictionary<MapData.TileData, bool> changedTileDict = new Dictionary<MapData.TileData, bool> ();
     private readonly List<Vector2Int> switchedOnOnOffSwitchBasePosList = new List<Vector2Int> ();
+    private readonly List<MapSwitch> missionEventSwitchList = new List<MapSwitch> ();
 
     private bool isAddedEventHandlers = false;
     private const float OpenOneHiddenPathLayerPeriod = 0.1f;
@@ -83,6 +84,7 @@ public class MapManager : MonoBehaviour {
         }
 
         ArrowTargetList.Clear ();
+        missionEventSwitchList.Clear ();
 
         GenerateEnemy (mapData.enemies);
         GenerateCollectables (missionId, mapData.collectables);
@@ -250,8 +252,13 @@ public class MapManager : MonoBehaviour {
             var script = go.AddComponent<MapSwitch> ();
             script.Init (data);
 
-            if (data.switchType == MapEnum.SwitchType.Arrow) {
-                ArrowTargetList.Add (script);
+            switch (data.switchType) {
+                case MapEnum.SwitchType.Arrow:
+                    ArrowTargetList.Add (script);
+                    break;
+                case MapEnum.SwitchType.MissionEvent:
+                    missionEventSwitchList.Add (script);
+                    break;
             }
         }
 
@@ -316,7 +323,22 @@ public class MapManager : MonoBehaviour {
     }
 
     private void MapSwitchSwitchedHandler (MapSwitch mapSwitch, bool isSwitchOn) {
-        Log.Print ("Switch switched on : Pos : " + mapSwitch.GetTargetPos (), LogTypes.GameFlow | LogTypes.MapData);
+        TriggerMapSwitch (mapSwitch, isSwitchOn);
+    }
+
+    public void SwitchOnMapSwitch (MapSwitchSubEvent subEvent, Action onFinished = null) {
+        foreach (var mapSwitch in missionEventSwitchList) {
+            if (mapSwitch.GetSwitchId () == subEvent.MapSwitchId) {
+                TriggerMapSwitch (mapSwitch, true, onFinished);
+                return;
+            }
+        }
+
+        Log.PrintWarning ("Cannot find mission event switch with id : " + subEvent.MapSwitchId + " . Do not switch on anything.", LogTypes.GameFlow | LogTypes.MapData | LogTypes.MissionEvent);
+    }
+
+    private void TriggerMapSwitch (MapSwitch mapSwitch, bool isSwitchOn, Action onFinished = null) {
+        Log.Print ("TriggerMapSwitch : Pos : " + mapSwitch.GetTargetPos () + " ; isSwitchOn : " + isSwitchOn, LogTypes.GameFlow | LogTypes.MapData);
 
         switch (mapSwitch.GetSwitchType ()) {
             case MapEnum.SwitchType.Arrow:
@@ -335,7 +357,7 @@ public class MapManager : MonoBehaviour {
 
         }
 
-        StartCoroutine (OpenHiddenPath (mapSwitch, isSwitchOn));
+        StartCoroutine (OpenHiddenPath (mapSwitch, isSwitchOn, onFinished));
     }
 
     /// <param name="isChangedInGame">If true, the tile is changed during game and would do some logic with switchedOnOnOffSwitchBasePosList</param>
@@ -368,7 +390,7 @@ public class MapManager : MonoBehaviour {
         }
     }
     
-    private IEnumerator OpenHiddenPath (MapSwitch mapSwitch, bool isSwitchOn) {
+    private IEnumerator OpenHiddenPath (MapSwitch mapSwitch, bool isSwitchOn, Action onFinished = null) {
         if (mapSwitch == null) {
             yield break;
         }
@@ -415,6 +437,7 @@ public class MapManager : MonoBehaviour {
         }
 
         mapSwitch.FinishSwitched ();
+        onFinished?.Invoke ();
     }
 
     private void UpdateOneHiddenPathLayer (List<MapData.TileData> tileDataList, bool isShow) {

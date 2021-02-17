@@ -283,21 +283,27 @@ public class MapDataExporter : MonoBehaviour {
             }
 
             MapData.SwitchData switchData;
-            if (switchType == MapEnum.SwitchType.Enemy) {
-                var fromEnemyId = int.Parse (array[2]);
+            switch (switchType) {
+                case MapEnum.SwitchType.Enemy:
+                    var fromEnemyId = int.Parse (array[2]);
 
-                if (!CheckEnemyExist (mapData.enemies, fromEnemyId)) {
-                    throw new Exception ("Export SwitchData failed. No matched enemy to fromEnemyId : " + fromEnemyId);
-                }
-                
-                switchData = new MapData.SwitchData (switchId, fromEnemyId);
-            } else {
-                var colliderPosX = switchTransform.position.x + collider.offset.x;
-                var colliderPosY = switchTransform.position.y + collider.offset.y;
+                    if (!CheckEnemyExist (mapData.enemies, fromEnemyId)) {
+                        throw new Exception ("Export SwitchData failed. No matched enemy to fromEnemyId : " + fromEnemyId);
+                    }
 
-                // Remarks : Must use local position in order to get the correct tile position instead of world position
-                var switchBasePos = new Vector2Int ((int)switchTransform.localPosition.x, (int)switchTransform.localPosition.y);
-                switchData = new MapData.SwitchData (switchId, colliderPosX, colliderPosY, collider.size.x, collider.size.y, switchType, switchBasePos);
+                    switchData = new MapData.SwitchData (switchId, fromEnemyId);
+                    break;
+                case MapEnum.SwitchType.MissionEvent:
+                    switchData = new MapData.SwitchData (switchId);
+                    break;
+                default:
+                    var colliderPosX = switchTransform.position.x + collider.offset.x;
+                    var colliderPosY = switchTransform.position.y + collider.offset.y;
+
+                    // Remarks : Must use local position in order to get the correct tile position instead of world position
+                    var switchBasePos = new Vector2Int ((int)switchTransform.localPosition.x, (int)switchTransform.localPosition.y);
+                    switchData = new MapData.SwitchData (switchId, colliderPosX, colliderPosY, collider.size.x, collider.size.y, switchType, switchBasePos);
+                    break;
             }
 
             foreach (Transform trans in hiddenPathsBaseTransform) {

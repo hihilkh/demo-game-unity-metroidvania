@@ -27,8 +27,12 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget
                 gameObject.tag = GameVariable.DropHitSwitchTag;
                 gameObject.layer = GameVariable.DefaultLayer;
                 break;
-            case MapEnum.SwitchType.OnOff:
             case MapEnum.SwitchType.Enemy:
+            case MapEnum.SwitchType.MissionEvent:
+                gameObject.tag = GameVariable.DefaultTag;
+                gameObject.layer = GameVariable.DefaultLayer;
+                break;
+            case MapEnum.SwitchType.OnOff:
             default:
                 gameObject.tag = GameVariable.DefaultTag;
                 gameObject.layer = GameVariable.PlayerInteractableLayer;
@@ -41,6 +45,8 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget
                 isAddedEnemyEventHandlers = true;
                 EnemyModelBase.Died += EnemyDiedHandler;
             }
+        } else if (data.switchType == MapEnum.SwitchType.MissionEvent) {
+            gameObject.SetActive (false);
         } else {
             gameObject.SetActive (true);
         }
@@ -86,6 +92,10 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget
         if (Data.switchType == MapEnum.SwitchType.OnOff) {
             allowSwitch = true;
         }
+    }
+
+    public int GetSwitchId () {
+        return Data.id;
     }
 
     public MapEnum.SwitchType GetSwitchType () {

@@ -98,6 +98,7 @@
         Arrow = 1,
         DropHit = 2,
         Enemy = 3,
+        MissionEvent = 4,
     }
 
     // Remarks: Never change the HiddenPathType enum int value. It is used in map json data.
@@ -107,6 +108,11 @@
     }
 
     // Remarks: Never change the HiddenPathOrdering enum int value. It is used in map json data.
+    /// <summary>
+    /// The ordering while switched on.<br />
+    /// If HiddenPathType = HideWhenSwitchOn, it will hide by this order.<br />
+    /// If HiddenPathType = ShowWhenSwitchOn, it will show by this order.
+    /// </summary>
     public enum HiddenPathOrdering {
         DownToUp = 0,   // The default value 0 is used for any fallback cases
         UpToDown = 1,
