@@ -22,4 +22,5 @@ public enum LogTypes : long {
     Life = 1 << 21,
     Char = 1 << 22,
     Enemy = 1 << 23,
+    MissionEvent = 1 << 24,
 }

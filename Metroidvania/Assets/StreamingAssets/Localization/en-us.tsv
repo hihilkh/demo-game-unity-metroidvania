@@ -82,3 +82,11 @@ Note_6_Content	Note_6_Content
 Ending_1	Ending_1
 Ending_2	Ending_2
 Ending_3	Ending_3
+
+// Mission Events
+Event_Command_Hit_0	O, these are my hands... Why are they here?
+Event_Command_Hit_1	Anyway, let's put them on first.
+
+Event_Command_Hit_Panel_0	Drag the above command to below to activate the action.
+Event_Command_Hit_Panel_Confirm_0	That's it. You can now <b>tap</b> the <b>right side</b> of the screen while <b>on ground</b> to perform the hit action.
+

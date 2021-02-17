@@ -1,6 +1,7 @@
 ﻿using HihiFramework.Core;
 using UnityEngine;
 
+// TODO : Replace by MissionEventManager
 public class TutorialManager {
 	private static string GetPlayerPrefsKey (TutorialEnum.GameTutorialType type) {
 		return FrameworkUtils.StringReplace (GameVariable.HasDoneGameTutorialKey, ((int)type).ToString ());

@@ -1,17 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public class MissionEvent {
-    public MissionEventEnum.EventType EventType { get; private set; }
-    public List<SubEventBase> SubEventList { get; private set; }
+    public MissionEventEnum.EventType EventType { get; }
+    private List<SubEventBase> subEventList;
 
     public MissionEvent (MissionEventEnum.EventType eventType, params SubEventBase[] subEvents) {
         EventType = eventType;
         if (subEvents == null) {
-            SubEventList = new List<SubEventBase> ();
+            subEventList = new List<SubEventBase> ();
         } else {
-            SubEventList = new List<SubEventBase> (subEvents);
+            subEventList = new List<SubEventBase> (subEvents);
         }
+    }
+
+    public List<SubEventBase> GetSubEventListClone () {
+        return new List<SubEventBase> (subEventList);
     }
 }

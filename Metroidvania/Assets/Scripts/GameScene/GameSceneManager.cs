@@ -10,6 +10,7 @@ public class GameSceneManager : MonoBehaviour {
 
     [SerializeField] private GameSceneUIManager uiManager;
     [SerializeField] private MapManager mapManager;
+    [SerializeField] private MissionEventManager missionEventManager;
     [SerializeField] private CommandPanel commandPanel;
     [SerializeField] private GamePausePanel pausePanel;
     [SerializeField] private ReadyGo readyGo;
@@ -223,8 +224,11 @@ public class GameSceneManager : MonoBehaviour {
 
         // Include collect panel and note panel
         Action onAllCollectActionFinished = () => {
-            // TODO : events
-            onAllActionFinished ();
+            if (collectable.EventType == null) {
+                onAllActionFinished ();
+            } else {
+                missionEventManager.StartEvent ((MissionEventEnum.EventType)collectable.EventType, onAllActionFinished);
+            }
         };
 
         Action onShowCollectedPanelFinished = () => {

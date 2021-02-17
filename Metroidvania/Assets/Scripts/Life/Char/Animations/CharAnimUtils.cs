@@ -95,7 +95,7 @@ public class CharAnimUtils : MonoBehaviour {
     }
 
     private void Start () {
-        SetBodyParts (Model.GetObtainedBodyParts ());
+        SetBodyParts (Model.ObtainedBodyParts);
     }
 
     private void Reset () {
@@ -186,7 +186,7 @@ public class CharAnimUtils : MonoBehaviour {
             SetFace (CharEnum.FaceType.Normal_Inversed);
         } else {
             var faceType = CharEnum.FaceType.Normal;
-            if ((Model.GetObtainedBodyParts () & ~CharEnum.BodyParts.Head) == CharEnum.BodyParts.None) {  // Only have head
+            if ((Model.ObtainedBodyParts & ~CharEnum.BodyParts.Head) == CharEnum.BodyParts.None) {  // Only have head
                 faceType = CharEnum.FaceType.Confused;
             }
 

@@ -276,5 +276,27 @@ namespace HihiFramework.Lang {
         }
 
         #endregion
+
+        #region LocalizationKeyBase
+
+        public static List<string> GetLocalizedStrList (string localizationKeyBase) {
+            var result = new List<string> ();
+
+            var counter = 0;
+            var localizationKey = localizationKeyBase + "_" + counter.ToString ();
+            var localizedStr = GetLocalizedStr (localizationKey);
+
+            while (string.IsNullOrEmpty (localizedStr)) {
+                result.Add (localizedStr);
+                counter++;
+                localizationKey = localizationKeyBase + "_" + counter.ToString ();
+                localizedStr = GetLocalizedStr (localizationKey);
+            }
+
+            return result;
+        }
+
+        #endregion
+
     }
 }

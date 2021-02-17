@@ -338,10 +338,6 @@ public class CharModel : LifeBase, IMapTarget {
 
     #region Body Parts
 
-    public CharEnum.BodyParts GetObtainedBodyParts () {
-        return ObtainedBodyParts;
-    }
-
     public void ObtainBodyPart (CharEnum.BodyParts part) {
         if (!ObtainedBodyParts.HasFlag (part)) {
             ObtainedBodyParts = ObtainedBodyParts | part;

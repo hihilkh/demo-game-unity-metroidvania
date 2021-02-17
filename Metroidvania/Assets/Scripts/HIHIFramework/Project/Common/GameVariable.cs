@@ -75,6 +75,7 @@ public static partial class GameVariable {
     public const string UnknownTextKey = "UnknownText";
 
     public static Color DisabledUIMaskColor = new Color32 (200, 200, 200, 128);
+    public static Color DisabledUIMaskColor_NoAlpha = new Color32 (128, 128, 128, 255);
 
     #endregion
 }
