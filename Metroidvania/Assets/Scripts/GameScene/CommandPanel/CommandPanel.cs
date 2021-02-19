@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using HihiFramework.Core;
 using HihiFramework.UI;
@@ -24,6 +25,11 @@ public class CommandPanel : CommandMatrixPanel {
 
     private CharEnum.Command currentDraggingCommand;
     private readonly List<CommandDisplay> currentTargetContainerList = new List<CommandDisplay> ();
+
+    // Command Panel Mission Sub Event
+    private CommandPanelSubEvent currentSubEvent = null;
+    private Action missionEventCommandSetAction = null;
+    private Action missionEventConfirmBtnClickedAction = null;
 
     #region CommandMatrixPanel
 
@@ -76,10 +82,59 @@ public class CommandPanel : CommandMatrixPanel {
 
     #endregion
 
-    public void Show (List<CharEnum.Command> enabledCommandList, Dictionary<CharEnum.InputSituation, CharEnum.Command> defaultCommandSettings) {
-        base.Show (defaultCommandSettings);
+    new public void Show () {
+        Show (null, null, null);
+    }
 
-        GenerateCommandPickers (enabledCommandList);
+    /// <returns>
+    /// First RectTransform : The command picker display<br />
+    /// Second RectTransform : The target command container
+    /// </returns>
+    public (RectTransform, RectTransform) Show (CommandPanelSubEvent subEvent, Action commandSetAction, Action confirmBtnClickedAction) {
+        currentSubEvent = subEvent;
+        missionEventCommandSetAction = commandSetAction;
+        missionEventConfirmBtnClickedAction = confirmBtnClickedAction;
+
+        base.Show (UserManager.CommandSettingsCache);
+
+        if (subEvent == null) {
+            GenerateCommandPickers (UserManager.EnabledCommandList);
+        } else {
+            var enabledCommandList = new List<CharEnum.Command> (UserManager.EnabledCommandList);
+            enabledCommandList.Add (subEvent.Command);
+            GenerateCommandPickers (enabledCommandList);
+        }
+
+        (RectTransform, RectTransform) result = (null, null);
+
+        if (subEvent == null) {
+            foreach (var pair in CommandMatrixToSituationDict) {
+                pair.Key.SetClickable (true);
+            }
+        } else {
+            foreach (var pair in commandPickerDisplayDict) {
+                if (pair.Key == subEvent.Command) {
+                    pair.Value.gameObject.SetActive (true);
+                    result.Item1 = pair.Value.GetComponent<RectTransform> ();
+                } else {
+                    pair.Value.gameObject.SetActive (false);
+                }
+            }
+
+            foreach (var pair in CommandMatrixToSituationDict) {
+                pair.Key.SetClickable (false);
+                if (pair.Value == subEvent.InputSituation) {
+                    result.Item2 = pair.Key.GetComponent<RectTransform> ();
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public RectTransform GetConfirmBtnRectTransform () {
+        return confirmBtn.GetComponent<RectTransform> ();
     }
 
     private void GenerateCommandPickers (List<CharEnum.Command> enabledCommandList) {
@@ -94,7 +149,7 @@ public class CommandPanel : CommandMatrixPanel {
             }
         }
 
-        // Pickers
+        // Pickers - Wait for the auto layout of display to be settled
         StartCoroutine (WaitAndGenerateCommandPickersFromDisplay ());
     }
 
@@ -113,6 +168,7 @@ public class CommandPanel : CommandMatrixPanel {
                 commandPickerDict.Add (pair.Key, picker);
             } else {
                 picker = commandPickerDict[pair.Key];
+                picker.gameObject.SetActive (true);
             }
 
             var follower = picker.GetComponent<CommandDragFollower> ();
@@ -173,6 +229,17 @@ public class CommandPanel : CommandMatrixPanel {
     #region Command Settings
 
     private void UpdateConfirmBtn () {
+        if (currentSubEvent != null) {
+            if (missionEventCommandSetAction == null) {
+                // It means the Command Panel sub event has been set command and can go to next step (confirm command)
+                confirmBtn.SetInteractable (true);
+            } else {
+                confirmBtn.SetInteractable (false);
+            }
+
+            return;
+        }
+        
         foreach (var pair in CommandMatrixToSituationDict) {
             if (pair.Key.Command != null) {
                 confirmBtn.SetInteractable (true);
@@ -183,7 +250,7 @@ public class CommandPanel : CommandMatrixPanel {
         confirmBtn.SetInteractable (false);
     }
 
-    private void UpdateCharCommandSettings () {
+    public void UpdateCharCommandSettings () {
         var commandSettings = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
 
         foreach (var pair in CommandMatrixToSituationDict) {
@@ -213,12 +280,21 @@ public class CommandPanel : CommandMatrixPanel {
 
         currentDraggingCommand = (CharEnum.Command)draggingCommandDisplay.Command;
 
-        var disallowList = CommandPanelInfo.GetDisallowInputSituationList (currentDraggingCommand);
-        foreach (var pair in CommandMatrixToSituationDict) {
-            pair.Key.SetClickable (false);
+        List<CharEnum.InputSituation> list;
+        bool isListForAllow;
 
-            if (disallowList.Contains (pair.Value)) {
-                pair.Key.SetTargetable (false);
+        if (currentSubEvent == null) {
+            list = CommandPanelInfo.GetDisallowInputSituationList (currentDraggingCommand);
+            isListForAllow = false;
+        } else {
+            list = new List<CharEnum.InputSituation> { currentSubEvent.InputSituation };
+            isListForAllow = true;
+        }
+
+        if (list != null && list.Count > 0) {
+            foreach (var pair in CommandMatrixToSituationDict) {
+                pair.Key.SetClickable (false);
+                pair.Key.SetTargetable (isListForAllow == list.Contains (pair.Value));
             }
         }
     }
@@ -344,12 +420,24 @@ public class CommandPanel : CommandMatrixPanel {
                     }
                     break;
             }
+
+            if (currentSubEvent != null) {
+                if (currentDraggingCommand == currentSubEvent.Command && situation == currentSubEvent.InputSituation) {
+                    // Do not allow drag again
+                    sender.gameObject.SetActive (false);
+
+                    missionEventCommandSetAction?.Invoke ();
+                    missionEventCommandSetAction = null;
+                }
+            }
         }
 
         currentTargetContainerList.Clear ();
 
         foreach (var pair in CommandMatrixToSituationDict) {
-            pair.Key.SetClickable (true);
+            if (currentSubEvent == null) {
+                pair.Key.SetClickable (true);
+            }
             pair.Key.SetTargetable (true);
         }
 
@@ -380,8 +468,15 @@ public class CommandPanel : CommandMatrixPanel {
 
 
     private void ConfirmCommandBtnClickedHandler (HIHIButton sender) {
-        UpdateCharCommandSettings ();
+        // If it is in command panel mission sub event, delay the update until whole mission event finished
+        if (currentSubEvent == null) {
+            UpdateCharCommandSettings ();
+        }
+
         Hide ();
+
+        missionEventConfirmBtnClickedAction?.Invoke ();
+        missionEventConfirmBtnClickedAction = null;
     }
 
     #endregion

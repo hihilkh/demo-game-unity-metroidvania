@@ -7,6 +7,11 @@ using UnityEngine;
 public class MissionEventManager : MonoBehaviour {
     [SerializeField] private GameSceneUIManager uiManager;
     [SerializeField] private MapManager mapManager;
+    [SerializeField] private TutorialFinger tutorialFinger;
+    [SerializeField] private CommandPanel commandPanel;
+
+    public static MissionEvent CurrentMissionEvent { get; private set; } = null;
+    public static SubEventBase CurrentMissionSubEvent { get; private set; } = null;
 
     #region All mission events
 
@@ -14,11 +19,16 @@ public class MissionEventManager : MonoBehaviour {
         new MissionEvent (
             MissionEventEnum.EventType.Command_Hit,
             new DialogSubEvent (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Event_Command_Hit"),
-            new CommandPanelSubEvent (CharEnum.Command.Hit, CharEnum.InputSituation.GroundTap, null, "Event_Command_Hit_Panel", "Event_Command_Hit_Panel_Confirm")
+            new CommandPanelSubEvent (CharEnum.Command.Hit, CharEnum.InputSituation.GroundTap, "Event_Command_Hit_Panel", null, "Event_Command_Hit_Panel_Confirm")
         ),
     };
 
     #endregion
+
+    private void OnDestroy () {
+        CurrentMissionEvent = null;
+        CurrentMissionSubEvent = null;
+    }
 
     private static MissionEvent GetMissionEvent (MissionEventEnum.EventType eventType) {
         foreach (var missionEvent in AllMissionEvents) {
@@ -47,7 +57,18 @@ public class MissionEventManager : MonoBehaviour {
             return;
         }
 
-        StartSubEventRecursive (eventType, subEventListClone, onFinished);
+        Log.Print ("Start Mission Event : eventType = " + eventType, LogTypes.MissionEvent);
+
+        CurrentMissionEvent = missionEvent;
+
+        Action onEventFinished = () => {
+            CurrentMissionEvent = null;
+            CurrentMissionSubEvent = null;
+
+            onFinished?.Invoke ();
+        };
+
+        StartSubEventRecursive (eventType, subEventListClone, onEventFinished);
     }
 
     private void StartSubEventRecursive (MissionEventEnum.EventType eventType, List<SubEventBase> remainingSubEventList, Action onAllFinished = null) {
@@ -58,6 +79,10 @@ public class MissionEventManager : MonoBehaviour {
             Action onSubEventFinished = () => {
                 StartSubEventRecursive (eventType, remainingSubEventList, onAllFinished);
             };
+
+            Log.Print ("Start Mission SubEvent : subEventType = " + currentSubEvent.SubEventType, LogTypes.MissionEvent);
+
+            CurrentMissionSubEvent = currentSubEvent;
 
             switch (currentSubEvent.SubEventType) {
                 case MissionEventEnum.SubEventType.Dialog:
@@ -89,6 +114,7 @@ public class MissionEventManager : MonoBehaviour {
 
     private void StartCommandPanelSubEvent (CommandPanelSubEvent subEvent, Action onFinished = null) {
         Action onConfirmed = () => {
+            tutorialFinger.Hide ();
             if (string.IsNullOrEmpty (subEvent.AfterConfirmLocalizationKeyBase)) {
                 onFinished?.Invoke ();
             } else {
@@ -97,10 +123,11 @@ public class MissionEventManager : MonoBehaviour {
         };
 
         Action onAfterSetCommandFinished = () => {
-            // TODO
+            tutorialFinger.ShowTap (commandPanel.GetConfirmBtnRectTransform ());
         };
 
         Action onSetCommandFinished = () => {
+            tutorialFinger.Hide ();
             if (string.IsNullOrEmpty (subEvent.AfterSetCommandLocalizationKeyBase)) {
                 onAfterSetCommandFinished ();
             } else {
@@ -108,11 +135,13 @@ public class MissionEventManager : MonoBehaviour {
             }
         };
 
+        var targets = commandPanel.Show (subEvent, onSetCommandFinished, onConfirmed);
+
         Action onBeforeSetCommandFinished = () => {
-            // TODO
+            tutorialFinger.ShowDragAndDrop (targets.Item1, targets.Item2);
         };
 
-        if (string.IsNullOrEmpty(subEvent.BeforeSetCommandLocalizationKeyBase)) {
+        if (string.IsNullOrEmpty (subEvent.BeforeSetCommandLocalizationKeyBase)) {
             onBeforeSetCommandFinished ();
         } else {
             uiManager.ShowInstructionPanel (subEvent.BeforeSetCommandLocalizationKeyBase, onBeforeSetCommandFinished);

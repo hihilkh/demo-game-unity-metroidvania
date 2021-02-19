@@ -217,13 +217,13 @@ namespace HihiFramework.Lang {
 
             // TODO : Think of the bug that if inputting a langType that not yet loaded LocalizationFile, it will fail
             if (!LangKeyValueMappingDict.ContainsKey (langType)) {
-                Log.PrintError ("Cannot get word. LangKeyValueMapping of LangType : " + langType + " is missing.", LogTypes.Lang);
+                Log.PrintWarning ("Cannot get word. LangKeyValueMapping of LangType : " + langType + " is missing.", LogTypes.Lang);
                 return failedAction ();
             }
 
             var mapping = LangKeyValueMappingDict[langType];
             if (!mapping.ContainsKey (key)) {
-                Log.PrintError ("Cannot get word. The key value mapping is missing. key : " + key + " , LangType : " + langType, LogTypes.Lang);
+                Log.PrintWarning ("Cannot get word. The key value mapping is missing. key : " + key + " , LangType : " + langType, LogTypes.Lang);
                 return failedAction ();
             }
 
@@ -286,7 +286,7 @@ namespace HihiFramework.Lang {
             var localizationKey = localizationKeyBase + "_" + counter.ToString ();
             var localizedStr = GetLocalizedStr (localizationKey);
 
-            while (string.IsNullOrEmpty (localizedStr)) {
+            while (!string.IsNullOrEmpty (localizedStr)) {
                 result.Add (localizedStr);
                 counter++;
                 localizationKey = localizationKeyBase + "_" + counter.ToString ();

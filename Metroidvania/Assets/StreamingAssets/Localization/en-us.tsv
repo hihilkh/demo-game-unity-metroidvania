@@ -88,5 +88,5 @@ Event_Command_Hit_0	O, these are my hands... Why are they here?
 Event_Command_Hit_1	Anyway, let's put them on first.
 
 Event_Command_Hit_Panel_0	Drag the above command to below to activate the action.
-Event_Command_Hit_Panel_Confirm_0	That's it. You can now <b>tap</b> the <b>right side</b> of the screen while <b>on ground</b> to perform the hit action.
+Event_Command_Hit_Panel_Confirm_0	That's it. You can now <b>tap the right side</b> of the screen while <b>on ground</b> to perform the hit action.
 

@@ -53,7 +53,7 @@ MonoBehaviour:
   - 50
   _repelFromWallDistByTurn: 0.05
   _initDirection: 1
-  _isUseDebugCommandSettings: 1
+  _isUseDebugCommandSettings: 0
   _groundTapCommand: 0
   _groundHoldCommand: 1
   _groundReleaseCommand: 1

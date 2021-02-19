@@ -73,7 +73,7 @@ public class GameSceneManager : MonoBehaviour {
     private void ResetGame () {
 
         Action onFadeOutFinished = () => {
-            commandPanel.Show (UserManager.EnabledCommandList, UserManager.CommandSettingsCache);
+            commandPanel.Show ();
         };
 
         Action onFadeInFinished = () => {
@@ -183,8 +183,11 @@ public class GameSceneManager : MonoBehaviour {
         Time.timeScale = 0;
 
         // Include collect panel, note panel and coresponding event
-        Action onAllActionFinished = () => {
+        Action<bool> onAllActionFinished = (bool isUpdateCharCommandSettings) => {
             UserManager.CollectCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
+            if (isUpdateCharCommandSettings) {
+                commandPanel.UpdateCharCommandSettings ();
+            }
 
             // Command / BodyPart
             CharEnum.Command? enabledCommand = null;
@@ -222,12 +225,16 @@ public class GameSceneManager : MonoBehaviour {
             Time.timeScale = 1;
         };
 
+        Action onMissionEventFinished = () => {
+            onAllActionFinished (true);
+        };
+
         // Include collect panel and note panel
         Action onAllCollectActionFinished = () => {
             if (collectable.EventType == null) {
-                onAllActionFinished ();
+                onAllActionFinished (false);
             } else {
-                missionEventManager.StartEvent ((MissionEventEnum.EventType)collectable.EventType, onAllActionFinished);
+                missionEventManager.StartEvent ((MissionEventEnum.EventType)collectable.EventType, onMissionEventFinished);
             }
         };
 
@@ -259,6 +266,12 @@ public class GameSceneManager : MonoBehaviour {
     }
 
     private void CommandPanelHidHandler () {
+        var subEvent = MissionEventManager.CurrentMissionSubEvent;
+        if (subEvent != null && subEvent.SubEventType == MissionEventEnum.SubEventType.CommandPanel) {
+            // Control by MissionEventManager
+            return;
+        }
+
         StartGame ();
     }
 

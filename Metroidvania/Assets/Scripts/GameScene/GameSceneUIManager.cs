@@ -117,6 +117,13 @@ public class GameSceneUIManager : MonoBehaviour {
 
     }
 
+    private void OnShowPanelFinished () {
+        // Remarks : tempAction is to prevent the case that currentShowPanelFinishedAction set to some other action while invoke and then immediately set to null 
+        var tempAction = currentShowPanelFinishedAction;
+        currentShowPanelFinishedAction = null;
+        tempAction?.Invoke ();
+    }
+
     private void HidePanel (PanelControl panelControl) {
         SetAllowPanelClick (panelControl, false);
 
@@ -126,18 +133,10 @@ public class GameSceneUIManager : MonoBehaviour {
 
             currentShowingPanel = null;
 
-            // Remarks : tempAction is to prevent the case that currentShowPanelFinishedAction set to some other action while invoke and then immediately set to null 
-            var tempAction = currentShowPanelFinishedAction;
-            currentShowPanelFinishedAction = null;
-            tempAction?.Invoke ();
+            OnShowPanelFinished ();
         };
 
-        if (hasShownAllTexts) {
-            FrameworkUtils.Instance.StartSingleAnim (panelControl.Animator, GameVariable.HidePanelAnimStateName, onFinished);
-        } else {
-            onFinished ();
-        }
-
+        FrameworkUtils.Instance.StartSingleAnim (panelControl.Animator, GameVariable.HidePanelAnimStateName, onFinished);
     }
 
     private IEnumerator SetPanelClick (PanelControl panelControl, float waitPeriodBeforeAllowClick) {
@@ -162,8 +161,8 @@ public class GameSceneUIManager : MonoBehaviour {
             cache.Hide ();
         }
 
-        SetCharacter (speakerBaseTransform, MissionEventEnum.Character.None);
-        SetCharacter (listenerBaseTransform, MissionEventEnum.Character.None);
+        SetCharacter (speakerBaseTransform, MissionEventEnum.Character.None, MissionEventEnum.Expression.Normal, false);
+        SetCharacter (listenerBaseTransform, MissionEventEnum.Character.None, MissionEventEnum.Expression.Normal, false);
     }
 
     private void PrepareDialogPanel (DialogSubEvent dialogSubEvent) {
@@ -171,11 +170,11 @@ public class GameSceneUIManager : MonoBehaviour {
             cache.Hide ();
         }
 
-        SetCharacter (speakerBaseTransform, dialogSubEvent.Speaker);
-        SetCharacter (listenerBaseTransform, dialogSubEvent.Listener);
+        SetCharacter (speakerBaseTransform, dialogSubEvent.Speaker, dialogSubEvent.SpeakerExpression, false);
+        SetCharacter (listenerBaseTransform, dialogSubEvent.Listener, dialogSubEvent.ListenerExpression, true);
     }
 
-    private void SetCharacter (Transform baseTransform, MissionEventEnum.Character character) {
+    private void SetCharacter (Transform baseTransform, MissionEventEnum.Character character, MissionEventEnum.Expression expression, bool isDim) {
         if (character == MissionEventEnum.Character.None) {
             baseTransform.gameObject.SetActive (false);
             return;
@@ -187,6 +186,8 @@ public class GameSceneUIManager : MonoBehaviour {
             baseTransform.gameObject.SetActive (false);
             return;
         }
+
+        dialogCharacter.Show (expression, isDim);
 
         FrameworkUtils.InsertChildrenToParent (baseTransform, dialogCharacter, true, false, -1, false);
         baseTransform.gameObject.SetActive (true);
@@ -224,7 +225,11 @@ public class GameSceneUIManager : MonoBehaviour {
             return;
         }
 
-        HidePanel (currentShowingPanel);
+        if (hasShownAllTexts) {
+            HidePanel (currentShowingPanel);
+        } else {
+            OnShowPanelFinished ();
+        }
     }
 
     #endregion
