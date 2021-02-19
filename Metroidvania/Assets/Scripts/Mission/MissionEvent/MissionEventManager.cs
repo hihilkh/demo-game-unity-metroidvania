@@ -18,7 +18,7 @@ public class MissionEventManager : MonoBehaviour {
     private static readonly List<MissionEvent> AllMissionEvents = new List<MissionEvent> () {
         new MissionEvent (
             MissionEventEnum.EventType.Command_Hit,
-            new DialogSubEvent (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Event_Command_Hit"),
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Event_Command_Hit")),
             new CommandPanelSubEvent (CharEnum.Command.Hit, CharEnum.InputSituation.GroundTap, "Event_Command_Hit_Panel", null, "Event_Command_Hit_Panel_Confirm")
         ),
     };

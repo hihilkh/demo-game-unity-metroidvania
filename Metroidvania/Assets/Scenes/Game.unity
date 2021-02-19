@@ -4504,8 +4504,8 @@ MonoBehaviour:
     TitleText: {fileID: 0}
     ContentText: {fileID: 515949833}
     Animator: {fileID: 1434899526}
-  speakerBaseTransform: {fileID: 2146520081}
-  listenerBaseTransform: {fileID: 1734134401}
+  dialogLeftSideBaseTransform: {fileID: 2146520081}
+  dialogRightSideBaseTransform: {fileID: 1734134401}
   dialogCharacterTemplateList:
   - {fileID: 5336181252256899679, guid: 8d282b7d3e0c6403e9ad7137e4a89615, type: 3}
   - {fileID: 3337063814549813726, guid: aac02272ce98844328787bb4caea2b7b, type: 3}
@@ -5056,7 +5056,7 @@ GameObject:
   - component: {fileID: 1734134403}
   - component: {fileID: 1734134402}
   m_Layer: 5
-  m_Name: Listener
+  m_Name: RightSide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5501,7 +5501,7 @@ GameObject:
   - component: {fileID: 2146520083}
   - component: {fileID: 2146520082}
   m_Layer: 5
-  m_Name: Speaker
+  m_Name: LeftSide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

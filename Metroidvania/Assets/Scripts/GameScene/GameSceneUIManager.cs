@@ -24,8 +24,8 @@ public class GameSceneUIManager : MonoBehaviour {
     [SerializeField] private PanelControl dialogPanelControl;
 
     [Header("Dialog Panel")]
-    [SerializeField] private Transform speakerBaseTransform;
-    [SerializeField] private Transform listenerBaseTransform;
+    [SerializeField] private Transform dialogLeftSideBaseTransform;
+    [SerializeField] private Transform dialogRightSideBaseTransform;
     [SerializeField] private List<DialogCharacterBase> dialogCharacterTemplateList;
 
     private const float WaitPeriodBeforeAllowPanelClick = 1f;
@@ -74,27 +74,45 @@ public class GameSceneUIManager : MonoBehaviour {
         PrepareInstructionPanel ();
         var localizedStrList = LangManager.GetLocalizedStrList (localizationKeyBase);
 
-        ShowContentRecursive (dialogPanelControl, localizedStrList, onFinished);
+        ShowContentRecursive (dialogPanelControl, localizedStrList, true, onFinished);
     }
 
     public void ShowDialogPanel (DialogSubEvent dialogSubEvent, Action onFinished = null) {
-        PrepareDialogPanel (dialogSubEvent);
-        var localizedStrList = LangManager.GetLocalizedStrList (dialogSubEvent.DialogLocalizationKeyBase);
-
-        ShowContentRecursive (dialogPanelControl, localizedStrList, onFinished);
+        ShowContentRecursive (dialogPanelControl, dialogSubEvent.GetDialogDetailsListClone (), onFinished);
     }
 
-    private void ShowContentRecursive (PanelControl panelControl, List<string> localizedStrList, Action onAllFinished = null) {
+    private void ShowContentRecursive (PanelControl panelControl, List<DialogSubEvent.DialogDetails> dialogDetailsList, Action onAllFinished = null) {
+        if (dialogDetailsList != null && dialogDetailsList.Count > 0) {
+            var dialogDetails = dialogDetailsList[0];
+            dialogDetailsList.RemoveAt (0);
+
+            PrepareDialogPanel (dialogDetails);
+            var localizedStrList = LangManager.GetLocalizedStrList (dialogDetails.DialogLocalizationKeyBase);
+
+            var isContainLastText = dialogDetailsList.Count == 0;
+
+            Action onShowOneFinished = () => {
+                ShowContentRecursive (panelControl, dialogDetailsList, onAllFinished);
+            };
+
+            ShowContentRecursive (panelControl, localizedStrList, isContainLastText, onShowOneFinished);
+
+        } else {
+            onAllFinished?.Invoke ();
+        }
+    }
+
+    private void ShowContentRecursive (PanelControl panelControl, List<string> localizedStrList, bool isContainLastText, Action onAllFinished = null) {
         if (localizedStrList != null && localizedStrList.Count > 0) {
             var localizedTextDetailsList = new List<LocalizedTextDetails> ();
             localizedTextDetailsList.Add (new LocalizedTextDetails (panelControl.ContentText, localizedStrList[0], false));
 
             localizedStrList.RemoveAt (0);
 
-            var isLastText = localizedStrList.Count == 0;
+            var isLastText = isContainLastText ? localizedStrList.Count == 0 : false;
 
             Action onShowOneFinished = () => {
-                ShowContentRecursive (panelControl, localizedStrList, onAllFinished);
+                ShowContentRecursive (panelControl, localizedStrList, isContainLastText, onAllFinished);
             };
 
             ShowPanel (panelControl, localizedTextDetailsList, isLastText, onShowOneFinished);
@@ -161,20 +179,20 @@ public class GameSceneUIManager : MonoBehaviour {
             cache.Hide ();
         }
 
-        SetCharacter (speakerBaseTransform, MissionEventEnum.Character.None, MissionEventEnum.Expression.Normal, false);
-        SetCharacter (listenerBaseTransform, MissionEventEnum.Character.None, MissionEventEnum.Expression.Normal, false);
+        SetCharacter (dialogLeftSideBaseTransform, MissionEventEnum.Character.None, MissionEventEnum.Expression.Normal, false);
+        SetCharacter (dialogRightSideBaseTransform, MissionEventEnum.Character.None, MissionEventEnum.Expression.Normal, false);
     }
 
-    private void PrepareDialogPanel (DialogSubEvent dialogSubEvent) {
+    private void PrepareDialogPanel (DialogSubEvent.DialogDetails dialogDetails) {
         foreach (var cache in dialogCharacterCacheList) {
             cache.Hide ();
         }
 
-        SetCharacter (speakerBaseTransform, dialogSubEvent.Speaker, dialogSubEvent.SpeakerExpression, false);
-        SetCharacter (listenerBaseTransform, dialogSubEvent.Listener, dialogSubEvent.ListenerExpression, true);
+        SetCharacter (dialogLeftSideBaseTransform, dialogDetails.LeftSide, dialogDetails.LeftSideExpression, dialogDetails.IsLeftSideTalking);
+        SetCharacter (dialogRightSideBaseTransform, dialogDetails.RightSide, dialogDetails.RightSideExpression, !dialogDetails.IsLeftSideTalking);
     }
 
-    private void SetCharacter (Transform baseTransform, MissionEventEnum.Character character, MissionEventEnum.Expression expression, bool isDim) {
+    private void SetCharacter (Transform baseTransform, MissionEventEnum.Character character, MissionEventEnum.Expression expression, bool isTalking) {
         if (character == MissionEventEnum.Character.None) {
             baseTransform.gameObject.SetActive (false);
             return;
@@ -187,7 +205,7 @@ public class GameSceneUIManager : MonoBehaviour {
             return;
         }
 
-        dialogCharacter.Show (expression, isDim);
+        dialogCharacter.Show (expression, !isTalking);
 
         FrameworkUtils.InsertChildrenToParent (baseTransform, dialogCharacter, true, false, -1, false);
         baseTransform.gameObject.SetActive (true);
