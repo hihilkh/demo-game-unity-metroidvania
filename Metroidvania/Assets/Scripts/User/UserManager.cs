@@ -7,6 +7,7 @@ public static class UserManager {
     public static Dictionary<int, MissionProgress> MissionProgressDict { get; private set; }
     public static List<CharEnum.Command> EnabledCommandList { get; private set; }
     public static Dictionary<CharEnum.InputSituation, CharEnum.Command> CommandSettingsCache { get; private set; }
+    public static List<MissionEventEnum.EventType> DoneMissionEventTypeList { get; private set; }
 
     #region PlayerPrefs
 
@@ -39,11 +40,16 @@ public static class UserManager {
         LoadMissionProgressList ();
         LoadEnabledCommandList ();
         LoadCommandSettingsCache ();
+        LoadDoneMissionEventTypeList ();
+
+        // For development testing
+        //ClearAllCollectedCollectables (1);
+        //ClearAllEnabledCommand ();
     }
 
     #endregion
 
-    #region getter
+    #region getter / checking
 
     /// <summary>
     /// Get the MissionProgress of the corresponding missionId.<br />
@@ -95,6 +101,22 @@ public static class UserManager {
         }
 
         return list;
+    }
+
+    public static bool CheckIsDoneMissionEvent (MissionEventEnum.EventType eventType) {
+        return DoneMissionEventTypeList.Contains (eventType);
+    }
+
+    public static bool GetIsAllowUserInput () {
+        if (CheckIsDoneMissionEvent (MissionEventEnum.EventType.FirstHit)) {
+            return true;
+        }
+
+        if (MissionEventManager.CurrentMissionEvent != null && MissionEventManager.CurrentMissionEvent.EventType == MissionEventEnum.EventType.FirstHit) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     #endregion
@@ -180,13 +202,39 @@ public static class UserManager {
                 return;
             }
 
-            var count = array.Length / 2;
-            for (var i = 0; i < count; i++) {
+            for (var i = 0; i < array.Length; i += 2) {
                 CommandSettingsCache.Add ((CharEnum.InputSituation)int.Parse (array[i]), (CharEnum.Command)int.Parse (array[i + 1]));
             }
         }
     }
-    
+
+    private static void SaveDoneMissionEventTypeList () {
+        var str = "";
+        if (DoneMissionEventTypeList != null && DoneMissionEventTypeList.Count > 0) {
+            var tempList = new List<int> ();
+            foreach (var eventType in DoneMissionEventTypeList) {
+                tempList.Add ((int)eventType);
+            }
+
+            str = string.Join (FrameworkVariable.DefaultDelimiter, tempList);
+        }
+
+        PlayerPrefs.SetString (GameVariable.DoneMissionEventTypeListKey, str);
+    }
+
+    private static void LoadDoneMissionEventTypeList () {
+        DoneMissionEventTypeList = new List<MissionEventEnum.EventType> ();
+
+        var str = PlayerPrefs.GetString (GameVariable.DoneMissionEventTypeListKey, null);
+
+        if (!string.IsNullOrEmpty (str)) {
+            var array = str.Split (new string[] { FrameworkVariable.DefaultDelimiter }, System.StringSplitOptions.None);
+            foreach (var eventType in array) {
+                DoneMissionEventTypeList.Add ((MissionEventEnum.EventType)int.Parse (eventType));
+            }
+        }
+    }
+
     #endregion
 
     #region Logic
@@ -257,6 +305,18 @@ public static class UserManager {
         }
 
         SaveEnabledCommandList ();
+    }
+
+    public static void SetMissionEventDone (MissionEventEnum.EventType eventType) {
+        if (DoneMissionEventTypeList == null) {
+            DoneMissionEventTypeList = new List<MissionEventEnum.EventType> ();
+        }
+
+        if (!DoneMissionEventTypeList.Contains (eventType)) {
+            DoneMissionEventTypeList.Add (eventType);
+        }
+
+        SaveDoneMissionEventTypeList ();
     }
 
     public static void SetCommandSettingsCache (Dictionary<CharEnum.InputSituation, CharEnum.Command> settings) {

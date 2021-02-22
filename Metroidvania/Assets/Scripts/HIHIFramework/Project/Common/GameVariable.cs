@@ -54,13 +54,11 @@ public static partial class GameVariable {
     public const string BaseURLKey = "BASE_URL";
     public const string AnalyticsTypeKey = "ANALYTICS_TYPE";
 
-    // Tutorial
-    public const string HasDoneGameTutorialKey = "HAS_DONE_GAME_TUTORIAL_{0}";
-
     // User Manager
     public const string AllMissionProgressKey = "ALL_MISSION_PROGRESS";
     public const string EnabledCommandListKey = "ENABLED_COMMAND_LIST";
     public const string CommandSettingsCacheKey = "COMMAND_SETTINGS_CACHE";
+    public const string DoneMissionEventTypeListKey = "DONE_MISSION_EVENT_TYPE_LIST";
     public const string SelectedMissionIdKey = "SELECTED_MISSION_ID";
     public const string SelectedEntryIdKey = "SELECTED_ENTRY_ID";
 

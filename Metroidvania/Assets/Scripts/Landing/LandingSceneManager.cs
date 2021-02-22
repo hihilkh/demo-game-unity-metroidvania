@@ -14,12 +14,8 @@ public class LandingSceneManager : MonoBehaviour {
     }
 
     private void StartBtnClickedHandler (HIHIButton sender) {
-        // TODO : Implement TutorialManager.HasDoneTutorial_Opening logic
-        //if (TutorialManager.HasDoneTutorial_Opening) {
-        //    SceneManager.LoadScene (GameVariable.MainMenuSceneName);
-        //} else {
-        //    SceneManager.LoadScene (GameVariable.GameSceneName);
-        //}
+        // TODO : Implement MissionEventEnum.EventType.Opening logic
+
         SceneManager.LoadScene (GameVariable.MainMenuSceneName);
     }
 }

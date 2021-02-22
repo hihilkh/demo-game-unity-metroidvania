@@ -160,6 +160,9 @@ public class CharModel : LifeBase, IMapTarget {
     private bool isJustTouchWall;
     private bool isTouchingWall;
 
+    // Mission Event
+    private Action inputMissionEventHandler = null;
+
     protected override void Awake () {
         base.Awake ();
 
@@ -199,6 +202,8 @@ public class CharModel : LifeBase, IMapTarget {
         cameraModel?.UnsetMissionBoundaries ();
         cameraModel?.SetAudioListener (false);
         gameObject.SetActive (false);
+
+        inputMissionEventHandler = null;
     }
 
     /// <summary>
@@ -310,7 +315,7 @@ public class CharModel : LifeBase, IMapTarget {
     public void SetAllowMove (bool isAllowMove) {
         this.isAllowMove = isAllowMove;
 
-        controller.enabled = isAllowMove;
+        SetAllowUserControl (isAllowMove);
 
         if (isAllowMove) {
             StartWalking ();
@@ -416,6 +421,39 @@ public class CharModel : LifeBase, IMapTarget {
         }
 
         var situation = (CharEnum.InputSituation)optionalSituation;
+
+        if (inputMissionEventHandler != null) {
+            if (MissionEventManager.CurrentMissionSubEvent != null && MissionEventManager.CurrentMissionSubEvent is CommandInputSubEvent) {
+                var targetSituation = ((CommandInputSubEvent)MissionEventManager.CurrentMissionSubEvent).InputSituation;
+
+                if (targetSituation == situation) {
+                    inputMissionEventHandler?.Invoke ();
+                    inputMissionEventHandler = null;
+                } else {
+                    // Some cases would need to discard action
+                    switch (targetSituation) {
+                        case CharEnum.InputSituation.GroundTap:
+                        case CharEnum.InputSituation.AirTap:
+                        case CharEnum.InputSituation.GroundHold:
+                        case CharEnum.InputSituation.AirHold:
+                            if (situation != targetSituation) {
+                                Log.Print ("Discard action due to Command Input Mission Event", LogTypes.Char | LogTypes.MissionEvent);
+                                SetCurrentCommandStatus (null, null);
+                                return;
+                            }
+                            break;
+                        case CharEnum.InputSituation.GroundRelease:
+                        case CharEnum.InputSituation.AirRelease:
+                            if (situation == CharEnum.InputSituation.GroundTap || situation == CharEnum.InputSituation.AirTap) {
+                                Log.Print ("Discard action due to Command Input Mission Event", LogTypes.Char | LogTypes.MissionEvent);
+                                SetCurrentCommandStatus (null, null);
+                                return;
+                            }
+                            break;
+                    }
+                }
+            }
+        }
 
         if (situation == CharEnum.InputSituation.GroundHold || situation == CharEnum.InputSituation.AirHold) {
             if (isIgnoreHold) {
@@ -1216,7 +1254,7 @@ public class CharModel : LifeBase, IMapTarget {
         base.StartBeatingBack (hurtDirection);
 
         BreakInProgressAction (false, false);
-        controller.enabled = false;
+        SetAllowUserControl (false);
 
         // If dying, dominated by die animation
         if (!IsDying) {
@@ -1238,7 +1276,7 @@ public class CharModel : LifeBase, IMapTarget {
     protected override void StopBeatingBack () {
         base.StopBeatingBack ();
 
-        controller.enabled = true;
+        SetAllowUserControl (true);
     }
 
     protected override void StartInvincible () {
@@ -1441,7 +1479,22 @@ public class CharModel : LifeBase, IMapTarget {
 
     #endregion
 
-    #region Controller Event
+    #region Controller
+
+    public void SetAllowUserControl (bool isAllow, bool isForceAllow = false) {
+        var isReallyAllow = isAllow;
+        if (!isForceAllow) {
+            if (isAllow) {
+                isReallyAllow = UserManager.GetIsAllowUserInput ();
+
+                if (!isReallyAllow) {
+                    Log.Print ("Not yet allow user control.", LogTypes.Char | LogTypes.MissionEvent);
+                }
+            }
+        }
+
+        controller.enabled = isReallyAllow;
+    }
 
     private void TappedHandler () {
         if (isHolding) {
@@ -1451,6 +1504,9 @@ public class CharModel : LifeBase, IMapTarget {
 
         Log.PrintDebug ("TriggerTapAction", LogTypes.Char);
         isJustTapped = true;
+
+
+
     }
 
     private void StartedHoldHandler () {
@@ -1467,6 +1523,29 @@ public class CharModel : LifeBase, IMapTarget {
         Log.PrintDebug ("StopHoldAction", LogTypes.Char);
         isHolding = false;
         isJustReleaseHold = true;
+    }
+
+    #endregion
+
+    #region Mission Event
+
+    public void SetMissionEventTapHandler (Action handler) {
+        inputMissionEventHandler = handler;
+    }
+
+    private void CheckAndTriggerInputMissionEventHandler (CharEnum.InputSituation inputSituation) {
+        if (MissionEventManager.CurrentMissionEvent == null) {
+            return;
+        }
+
+        if (MissionEventManager.CurrentMissionSubEvent == null || MissionEventManager.CurrentMissionSubEvent.SubEventType != MissionEventEnum.SubEventType.CommandInput) {
+            return;
+        }
+
+        if (((CommandInputSubEvent)MissionEventManager.CurrentMissionSubEvent).InputSituation == inputSituation) {
+            inputMissionEventHandler?.Invoke ();
+            inputMissionEventHandler = null;
+        }
     }
 
     #endregion

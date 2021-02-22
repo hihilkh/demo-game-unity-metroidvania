@@ -32,6 +32,7 @@ public class GameSceneManager : MonoBehaviour {
     private MapData.EntryData selectedEntryData = null;
 
     private bool isGameInitialized = false;
+    private bool isGameStarted = false;
     private bool isAddedEventHandlers = false;
 
     private void Awake () {
@@ -92,6 +93,7 @@ public class GameSceneManager : MonoBehaviour {
                 mapManager.GenerateMap (selectedMissionId, mapData);
             }
 
+            isGameStarted = false;
             GameUtils.ScreenFadeOut (onFadeOutFinished);
         };
 
@@ -115,6 +117,7 @@ public class GameSceneManager : MonoBehaviour {
         Action onReadyGoFinished = () => {
             Log.Print ("Start Game", LogTypes.GameFlow);
 
+            isGameStarted = true;
             uiManager.StartGame ();
             Character.SetAllowMove (true);
         };
@@ -142,7 +145,7 @@ public class GameSceneManager : MonoBehaviour {
 
             MapCollectableObject.Collected += CollectedCollectableHandler;
             MapExit.ExitReached += ExitReachedHandler;
-            MapTutorialTrigger.TutorialTriggered += TutorialTriggeredHandler;
+            MissionEventTrigger.MissionEventTriggered += MissionEventTriggeredHandler;
 
             commandPanel.PanelHid += CommandPanelHidHandler;
             Character.Died += CharDiedHandler;
@@ -157,7 +160,7 @@ public class GameSceneManager : MonoBehaviour {
         if (isAddedEventHandlers) {
             MapCollectableObject.Collected -= CollectedCollectableHandler;
             MapExit.ExitReached -= ExitReachedHandler;
-            MapTutorialTrigger.TutorialTriggered -= TutorialTriggeredHandler;
+            MissionEventTrigger.MissionEventTriggered -= MissionEventTriggeredHandler;
 
             commandPanel.PanelHid -= CommandPanelHidHandler;
             Character.Died -= CharDiedHandler;
@@ -180,46 +183,46 @@ public class GameSceneManager : MonoBehaviour {
             return;
         }
 
+        // Command / BodyPart
+        CharEnum.Command? enabledCommand = null;
+        var obtainedBodyPart = CharEnum.BodyParts.None;
+        switch (collectableObject.GetCollectableType ()) {
+            case Collectable.Type.Command_Hit:
+                enabledCommand = CharEnum.Command.Hit;
+                obtainedBodyPart = CharEnum.BodyParts.Arms;
+                break;
+            case Collectable.Type.Command_Jump:
+                enabledCommand = CharEnum.Command.Jump;
+                obtainedBodyPart = CharEnum.BodyParts.Legs;
+                break;
+            case Collectable.Type.Command_Dash:
+                enabledCommand = CharEnum.Command.Dash;
+                obtainedBodyPart = CharEnum.BodyParts.Thrusters;
+                break;
+            case Collectable.Type.Command_Arrow:
+                enabledCommand = CharEnum.Command.Arrow;
+                obtainedBodyPart = CharEnum.BodyParts.Arrow;
+                break;
+            case Collectable.Type.Command_Turn:
+                enabledCommand = CharEnum.Command.Turn;
+                break;
+        }
+
         Time.timeScale = 0;
 
         // Include collect panel, note panel and coresponding event
         Action<bool> onAllActionFinished = (bool isUpdateCharCommandSettings) => {
             UserManager.CollectCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
-            if (isUpdateCharCommandSettings) {
-                commandPanel.UpdateCharCommandSettings ();
+            if (collectable.EventType != null) {
+                UserManager.SetMissionEventDone ((MissionEventEnum.EventType)collectable.EventType);
             }
 
-            // Command / BodyPart
-            CharEnum.Command? enabledCommand = null;
-            var obtainedBodyPart = CharEnum.BodyParts.None;
-            switch (collectableObject.GetCollectableType ()) {
-                case Collectable.Type.Command_Hit:
-                    enabledCommand = CharEnum.Command.Hit;
-                    obtainedBodyPart = CharEnum.BodyParts.Arms;
-                    break;
-                case Collectable.Type.Command_Jump:
-                    enabledCommand = CharEnum.Command.Jump;
-                    obtainedBodyPart = CharEnum.BodyParts.Legs;
-                    break;
-                case Collectable.Type.Command_Dash:
-                    enabledCommand = CharEnum.Command.Dash;
-                    obtainedBodyPart = CharEnum.BodyParts.Thrusters;
-                    break;
-                case Collectable.Type.Command_Arrow:
-                    enabledCommand = CharEnum.Command.Arrow;
-                    obtainedBodyPart = CharEnum.BodyParts.Arrow;
-                    break;
-                case Collectable.Type.Command_Turn:
-                    enabledCommand = CharEnum.Command.Turn;
-                    break;
+            if (isUpdateCharCommandSettings) {
+                commandPanel.UpdateCharCommandSettings (true);
             }
 
             if (enabledCommand != null) {
                 UserManager.EnableCommand ((CharEnum.Command)enabledCommand);
-            }
-
-            if (obtainedBodyPart != CharEnum.BodyParts.None) {
-                Character.ObtainBodyPart (obtainedBodyPart);
             }
             
             Time.timeScale = 1;
@@ -231,10 +234,14 @@ public class GameSceneManager : MonoBehaviour {
 
         // Include collect panel and note panel
         Action onAllCollectActionFinished = () => {
+            if (obtainedBodyPart != CharEnum.BodyParts.None) {
+                Character.ObtainBodyPart (obtainedBodyPart);
+            }
+
             if (collectable.EventType == null) {
                 onAllActionFinished (false);
             } else {
-                missionEventManager.StartEvent ((MissionEventEnum.EventType)collectable.EventType, onMissionEventFinished);
+                missionEventManager.StartEvent ((MissionEventEnum.EventType)collectable.EventType, true, onMissionEventFinished);
             }
         };
 
@@ -260,15 +267,14 @@ public class GameSceneManager : MonoBehaviour {
         LeaveGame ();
     }
 
-    private void TutorialTriggeredHandler (TutorialEnum.GameTutorialType tutorialType) {
-        Log.Print ("Character triggered tutorial : " + tutorialType.ToString (), LogTypes.GameFlow | LogTypes.Char);
-        // TODO
+    private void MissionEventTriggeredHandler (MissionEventEnum.EventType eventType) {
+        Log.Print ("Character triggered mission event : " + eventType.ToString (), LogTypes.GameFlow | LogTypes.Char);
+
+        missionEventManager.StartEvent (eventType, false);
     }
 
     private void CommandPanelHidHandler () {
-        var subEvent = MissionEventManager.CurrentMissionSubEvent;
-        if (subEvent != null && subEvent.SubEventType == MissionEventEnum.SubEventType.CommandPanel) {
-            // Control by MissionEventManager
+        if (isGameStarted) {
             return;
         }
 

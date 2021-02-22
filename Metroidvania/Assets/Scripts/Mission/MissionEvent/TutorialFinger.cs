@@ -22,6 +22,7 @@ public class TutorialFinger : MonoBehaviour {
     private const string FinderDownAnimStateName = "FingerDown";
     private const string FinderUpAnimStateName = "FingerUp";
     private const string LoopTapAnimStateName = "LoopTap";
+    private const string LoopHoldReleaseAnimStateName = "LoopHoldRelease";
 
     private const float LoopDragAndDropWaitPeriod = 1f;
     private const float DragAndDropPeriod = 1f;
@@ -51,12 +52,20 @@ public class TutorialFinger : MonoBehaviour {
 
     #endregion
 
-    #region Tap
+    #region Tap / HoldRelease
 
     public void ShowLoopTap_RightScreen () {
+        ShowLoopAnim_RightScreen (LoopTapAnimStateName);
+    }
+
+    public void ShowLoopHoldRelease_RightScreen () {
+        ShowLoopAnim_RightScreen (LoopHoldReleaseAnimStateName);
+    }
+
+    private void ShowLoopAnim_RightScreen (string stateName) {
         var totalWidth = SelfCanvas.GetComponent<RectTransform> ().sizeDelta.x;
         var pos = new Vector3 (totalWidth / 4, 0, 0);
-        ShowTap (pos, true);
+        ShowLoopAnim (pos, true, stateName);
     }
 
     /// <summary>
@@ -64,16 +73,16 @@ public class TutorialFinger : MonoBehaviour {
     /// May need to modify logic if the target is not in the same canvas
     /// </summary>
     public void ShowTap (RectTransform rectTransform) {
-        ShowTap (rectTransform.position, false);
+        ShowLoopAnim (rectTransform.position, false, LoopTapAnimStateName);
     }
 
-    private void ShowTap (Vector3 pos, bool isLocalPos) {
+    private void ShowLoopAnim (Vector3 pos, bool isLocalPos, string stateName) {
         StopAllCoroutines ();
 
         SetFingerPos (pos, isLocalPos);
 
         finger.SetActive (true);
-        animator.Play (LoopTapAnimStateName);
+        animator.Play (stateName);
     }
 
     #endregion

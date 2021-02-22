@@ -6,6 +6,9 @@
         Command_Jump = 1,
         Command_Dash = 2,
 
+        FirstHit = 100,
+
+        Opening = 200,
     }
 
     public enum SubEventType {
@@ -14,6 +17,7 @@
         CameraInput,
         CommandInput,
         MapSwitch,
+        Wait,
     }
 
     public enum Character {

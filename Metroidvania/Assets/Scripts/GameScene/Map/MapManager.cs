@@ -89,7 +89,7 @@ public class MapManager : MonoBehaviour {
         GenerateEnemy (mapData.enemies);
         GenerateCollectables (missionId, mapData.collectables);
         GenerateSwitches (mapData.switches);
-        GenerateTutorials (mapData.tutorials);
+        GenerateMissionEvents (mapData.events);
     }
 
     private void InitializeTiles (List<MapData.TileData> dataList) {
@@ -265,26 +265,26 @@ public class MapManager : MonoBehaviour {
         Log.Print ("Finish GenerateSwitches", LogTypes.MapData);
     }
 
-    private void GenerateTutorials (List<MapData.TutorialData> dataList) {
+    private void GenerateMissionEvents (List<MapData.MissionEventData> dataList) {
         if (dataList == null || dataList.Count <= 0) {
-            Log.Print ("Skip GenerateTutorials : No tutorial data.", LogTypes.MapData);
+            Log.Print ("Skip GenerateMissionEvents : No mission event data.", LogTypes.MapData);
             return;
         } else {
-            Log.Print ("Start GenerateTutorials", LogTypes.MapData);
+            Log.Print ("Start GenerateMissionEvents", LogTypes.MapData);
         }
 
         foreach (var data in dataList) {
-            if (TutorialManager.GetHasDoneGameTutorial (data.type)) {
-                // Tutorial already done
+            if (UserManager.CheckIsDoneMissionEvent (data.type)) {
+                // Mission event is already done
                 continue;
             }
-            var go = new GameObject ("MapTutorial");
+            var go = new GameObject ("MissionEvent");
             FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go, false);
-            var script = go.AddComponent<MapTutorialTrigger> ();
+            var script = go.AddComponent<MissionEventTrigger> ();
             script.Init (data);
         }
 
-        Log.Print ("Finish GenerateTutorials", LogTypes.MapData);
+        Log.Print ("Finish GenerateMissionEvents", LogTypes.MapData);
     }
 
     #endregion

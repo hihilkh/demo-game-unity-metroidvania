@@ -85,8 +85,21 @@ Ending_3	Ending_3
 
 // Mission Events
 Event_Command_Hit_0	O, these are my hands... Why are they here?
-Event_Command_Hit_1	Anyway, let's put them on first.
 
-Event_Command_Hit_Panel_0	Drag the above command to below to activate the action.
-Event_Command_Hit_Panel_Confirm_0	That's it. You can now <b>tap the right side</b> of the screen while <b>on ground</b> to perform the hit action.
+Event_Command_Hit_Panel_0	Drag the hand to below to activate the <b>Hit</b> action.
 
+Event_FirstHit_0	There is an enemy. I can beat it!
+
+Event_FirstHit_Instruction_0	<b>Tap the right side</b> of the screen to perform the <b>Hit</b> action you just activated.
+
+Event_SecondHit_Instruction_0	Enemies will become invincible after being attacked. Continue to attack the enemies after their invincible period finished.
+
+Event_Command_Jump_0	This enemy keeps my legs. How come?
+
+Event_Command_Jump_Panel_0	Drag the legs to below to activate the <b>Jump</b> action.
+
+Event_Command_Jump_Panel_Done_0	You may see that while you put the command to <b>Hold</b>, it also change the <b>Release</b> action.
+Event_Command_Jump_Panel_Done_1	For some commands like <b>Jump</b>, if you want to trigger it by <b>Hold</b>, it must link to <b>Release</b> and perform a <b>Charged Jump</b>.
+Event_Command_Jump_Panel_Done_2	Some commands have seperated <b>Hold</b> and <b>Release</b> action. Try it yourself to discover more combinations!
+
+Event_ChargeJump_Instruction_0	<b>Hold the tap of the right side</b> of the screen and then <b>Release</b> to perform the <b>Charged Jump</b> action you just activated.

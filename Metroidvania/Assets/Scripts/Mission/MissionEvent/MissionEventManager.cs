@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using HihiFramework.Core;
 using UnityEngine;
@@ -19,7 +20,22 @@ public class MissionEventManager : MonoBehaviour {
         new MissionEvent (
             MissionEventEnum.EventType.Command_Hit,
             new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Event_Command_Hit")),
-            new CommandPanelSubEvent (CharEnum.Command.Hit, CharEnum.InputSituation.GroundTap, "Event_Command_Hit_Panel", null, "Event_Command_Hit_Panel_Confirm")
+            new CommandPanelSubEvent (CharEnum.Command.Hit, CharEnum.InputSituation.GroundTap, "Event_Command_Hit_Panel", null)
+        ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.Command_Jump,
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Event_Command_Jump")),
+            new CommandPanelSubEvent (CharEnum.Command.Jump, CharEnum.InputSituation.GroundHold, "Event_Command_Jump_Panel", "Event_Command_Jump_Panel_Done"),
+            new CommandInputSubEvent (CharEnum.InputSituation.GroundRelease, "Event_ChargeJump_Instruction")
+        ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.FirstHit,
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, "Event_FirstHit")),
+            new CommandInputSubEvent (CharEnum.InputSituation.GroundTap, "Event_FirstHit_Instruction"),
+            new WaitSubEvent (1.5f),
+            new CommandInputSubEvent (CharEnum.InputSituation.GroundTap, "Event_SecondHit_Instruction")
         ),
     };
 
@@ -29,6 +45,8 @@ public class MissionEventManager : MonoBehaviour {
         CurrentMissionEvent = null;
         CurrentMissionSubEvent = null;
     }
+
+    #region getter
 
     private static MissionEvent GetMissionEvent (MissionEventEnum.EventType eventType) {
         foreach (var missionEvent in AllMissionEvents) {
@@ -41,7 +59,11 @@ public class MissionEventManager : MonoBehaviour {
         return null;
     }
 
-    public void StartEvent (MissionEventEnum.EventType eventType, Action onFinished = null) {
+    #endregion
+
+    #region Start event
+
+    public void StartEvent (MissionEventEnum.EventType eventType, bool isFromCollectable, Action onFinished = null) {
         var missionEvent = GetMissionEvent (eventType);
 
         if (missionEvent == null) {
@@ -60,10 +82,18 @@ public class MissionEventManager : MonoBehaviour {
         Log.Print ("Start Mission Event : eventType = " + eventType, LogTypes.MissionEvent);
 
         CurrentMissionEvent = missionEvent;
+        Time.timeScale = 0;
 
         Action onEventFinished = () => {
             CurrentMissionEvent = null;
             CurrentMissionSubEvent = null;
+
+            Time.timeScale = 1;
+
+            // If it is from collectable, set mission event done together with UserManager.CollectCollectable ()
+            if (!isFromCollectable) {
+                UserManager.SetMissionEventDone (missionEvent.EventType);
+            }
 
             onFinished?.Invoke ();
         };
@@ -100,6 +130,9 @@ public class MissionEventManager : MonoBehaviour {
                 case MissionEventEnum.SubEventType.MapSwitch:
                     StartMapSwitchSubEvent ((MapSwitchSubEvent)currentSubEvent, onSubEventFinished);
                     break;
+                case MissionEventEnum.SubEventType.Wait:
+                    StartCoroutine (StartWaitSubEvent ((WaitSubEvent)currentSubEvent, onSubEventFinished));
+                    break;
             }
         } else {
             onAllFinished?.Invoke ();
@@ -115,11 +148,7 @@ public class MissionEventManager : MonoBehaviour {
     private void StartCommandPanelSubEvent (CommandPanelSubEvent subEvent, Action onFinished = null) {
         Action onConfirmed = () => {
             tutorialFinger.Hide ();
-            if (string.IsNullOrEmpty (subEvent.AfterConfirmLocalizationKeyBase)) {
-                onFinished?.Invoke ();
-            } else {
-                uiManager.ShowInstructionPanel (subEvent.AfterConfirmLocalizationKeyBase, onFinished);
-            }
+            onFinished?.Invoke ();
         };
 
         Action onAfterSetCommandFinished = () => {
@@ -170,15 +199,20 @@ public class MissionEventManager : MonoBehaviour {
 
     private void StartCommandInputSubEvent (CommandInputSubEvent subEvent, Action onFinished = null) {
         Action onInputFinished = () => {
-            if (string.IsNullOrEmpty (subEvent.AfterInputLocalizationKeyBase)) {
-                onFinished?.Invoke ();
-            } else {
-                uiManager.ShowInstructionPanel (subEvent.AfterInputLocalizationKeyBase, onFinished);
-            }
+            tutorialFinger.Hide ();
+            onFinished?.Invoke ();
         };
 
         Action onBeforeInputFinished = () => {
-            // TODO
+            if (subEvent.InputSituation == CharEnum.InputSituation.GroundTap || subEvent.InputSituation == CharEnum.InputSituation.AirTap) {
+                tutorialFinger.ShowLoopTap_RightScreen ();
+            } else {
+                tutorialFinger.ShowLoopHoldRelease_RightScreen ();
+            }
+
+            var charModel = GameUtils.FindOrSpawnChar ();
+            charModel.SetAllowUserControl (true, true);
+            charModel.SetMissionEventTapHandler (onInputFinished);
         };
 
         if (string.IsNullOrEmpty (subEvent.BeforeInputLocalizationKeyBase)) {
@@ -191,6 +225,20 @@ public class MissionEventManager : MonoBehaviour {
     private void StartMapSwitchSubEvent (MapSwitchSubEvent subEvent, Action onFinished = null) {
         mapManager.SwitchOnMapSwitch (subEvent, onFinished);
     }
+
+    private IEnumerator StartWaitSubEvent (WaitSubEvent subEvent, Action onFinished = null) {
+        GameUtils.FindOrSpawnChar ().SetAllowUserControl (false);
+        Time.timeScale = 1;
+
+        yield return new WaitForSeconds (subEvent.WaitTime);
+
+        GameUtils.FindOrSpawnChar ().SetAllowUserControl (true);
+        Time.timeScale = 0;
+
+        onFinished?.Invoke ();
+    }
+
+    #endregion
 
     #endregion
 }

@@ -102,7 +102,8 @@ public class CommandPanel : CommandMatrixPanel {
         } else {
             var enabledCommandList = new List<CharEnum.Command> (UserManager.EnabledCommandList);
             enabledCommandList.Add (subEvent.Command);
-            GenerateCommandPickers (enabledCommandList);
+
+            GenerateCommandPickers (enabledCommandList, subEvent.Command);
         }
 
         (RectTransform, RectTransform) result = (null, null);
@@ -112,20 +113,14 @@ public class CommandPanel : CommandMatrixPanel {
                 pair.Key.SetClickable (true);
             }
         } else {
-            foreach (var pair in commandPickerDisplayDict) {
-                if (pair.Key == subEvent.Command) {
-                    pair.Value.gameObject.SetActive (true);
-                    result.Item1 = pair.Value.GetComponent<RectTransform> ();
-                } else {
-                    pair.Value.gameObject.SetActive (false);
-                }
+            if (commandPickerDisplayDict.ContainsKey(subEvent.Command)) {
+                result.Item1 = commandPickerDisplayDict[subEvent.Command].GetComponent<RectTransform> ();
             }
 
             foreach (var pair in CommandMatrixToSituationDict) {
                 pair.Key.SetClickable (false);
                 if (pair.Value == subEvent.InputSituation) {
                     result.Item2 = pair.Key.GetComponent<RectTransform> ();
-                    break;
                 }
             }
         }
@@ -137,7 +132,7 @@ public class CommandPanel : CommandMatrixPanel {
         return confirmBtn.GetComponent<RectTransform> ();
     }
 
-    private void GenerateCommandPickers (List<CharEnum.Command> enabledCommandList) {
+    private void GenerateCommandPickers (List<CharEnum.Command> enabledCommandList, CharEnum.Command? onlyDragableCommand = null) {
         // Display
         foreach (var command in enabledCommandList) {
             if (!commandPickerDisplayDict.ContainsKey (command)) {
@@ -150,10 +145,10 @@ public class CommandPanel : CommandMatrixPanel {
         }
 
         // Pickers - Wait for the auto layout of display to be settled
-        StartCoroutine (WaitAndGenerateCommandPickersFromDisplay ());
+        StartCoroutine (WaitAndGenerateCommandPickersFromDisplay (onlyDragableCommand));
     }
 
-    private IEnumerator WaitAndGenerateCommandPickersFromDisplay () {
+    private IEnumerator WaitAndGenerateCommandPickersFromDisplay (CharEnum.Command? onlyDragableCommand = null) {
         yield return null;
 
         foreach (var pair in commandPickerDisplayDict) {
@@ -168,7 +163,12 @@ public class CommandPanel : CommandMatrixPanel {
                 commandPickerDict.Add (pair.Key, picker);
             } else {
                 picker = commandPickerDict[pair.Key];
+            }
+
+            if (onlyDragableCommand == null) {
                 picker.gameObject.SetActive (true);
+            } else {
+                picker.gameObject.SetActive (onlyDragableCommand == pair.Key);
             }
 
             var follower = picker.GetComponent<CommandDragFollower> ();
@@ -250,7 +250,7 @@ public class CommandPanel : CommandMatrixPanel {
         confirmBtn.SetInteractable (false);
     }
 
-    public void UpdateCharCommandSettings () {
+    public void UpdateCharCommandSettings (bool isSaveCache) {
         var commandSettings = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
 
         foreach (var pair in CommandMatrixToSituationDict) {
@@ -260,7 +260,10 @@ public class CommandPanel : CommandMatrixPanel {
         }
 
         GameUtils.FindOrSpawnChar ().SetCommandSettings (commandSettings);
-        UserManager.SetCommandSettingsCache (commandSettings);
+
+        if (isSaveCache) {
+            UserManager.SetCommandSettingsCache (commandSettings);
+        }
     }
 
     #endregion
@@ -468,9 +471,11 @@ public class CommandPanel : CommandMatrixPanel {
 
 
     private void ConfirmCommandBtnClickedHandler (HIHIButton sender) {
-        // If it is in command panel mission sub event, delay the update until whole mission event finished
         if (currentSubEvent == null) {
-            UpdateCharCommandSettings ();
+            UpdateCharCommandSettings (true);
+        } else {
+            // If it is in command panel mission sub event, delay to save the cache until whole mission event finished
+            UpdateCharCommandSettings (false);
         }
 
         Hide ();

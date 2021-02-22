@@ -39,7 +39,7 @@ public class MapDataExporter : MonoBehaviour {
     private const string SwitchesBaseTransformName = "Switches";
     private const string HiddenPathsBaseTransformName = "HiddenPaths";
     private const string ExitsBaseTransformName = "Exits";
-    private const string TutorialsBaseTransformName = "Tutorials";
+    private const string MissionEventsBaseTransformName = "MissionEvents";
 
     private void OnGUI () {
         if (GUI.Button (new Rect (10, 10, 150, 50), "Check Map Design")) {
@@ -106,7 +106,7 @@ public class MapDataExporter : MonoBehaviour {
         mapData.collectables = ExportCollectableDataList (mapData.enemies);
         mapData.switches = ExportSwitchDataList (ref mapData);  // Must be after exporting tiles and enemies
         mapData.exits = ExportExitDataList ();
-        mapData.tutorials = ExportTutorialDataList ();
+        mapData.events = ExportMissionEventDataList ();
 
         var json = JsonUtility.ToJson (mapData);
         var fileName = FrameworkUtils.StringReplace (ExportFileNameFormat, AssetDetails.GetMapDataJSONFileName (missionId), FrameworkUtils.ConvertDateTimeToTimestampMS (System.DateTime.Now).ToString ());
@@ -401,35 +401,35 @@ public class MapDataExporter : MonoBehaviour {
         return result;
     }
 
-    private List<MapData.TutorialData> ExportTutorialDataList () {
-        Log.PrintWarning ("Start export TutorialData", LogTypes.MapData);
+    private List<MapData.MissionEventData> ExportMissionEventDataList () {
+        Log.PrintWarning ("Start export MissionEventData", LogTypes.MapData);
 
-        var result = new List<MapData.TutorialData> ();
-        var baseTransform = mapObjectsBaseTransform.Find (TutorialsBaseTransformName);
+        var result = new List<MapData.MissionEventData> ();
+        var baseTransform = mapObjectsBaseTransform.Find (MissionEventsBaseTransformName);
         if (baseTransform == null) {
-            throw new Exception ("Export TutorialData failed. Cannot find the base transform.");
+            throw new Exception ("Export MissionEventData failed. Cannot find the base transform.");
         }
 
         foreach (Transform child in baseTransform) {
             var array = child.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
             if (array.Length < 1) {
-                throw new Exception ("Export TutorialData failed. Invalid transform name : " + child.name);
+                throw new Exception ("Export MissionEventData failed. Invalid transform name : " + child.name);
             }
 
-            TutorialEnum.GameTutorialType tutorialType;
-            if (!FrameworkUtils.TryParseToEnum (array[0], out tutorialType)) {
-                throw new Exception ("Export TutorialData failed. Invalid TutorialEnum.GameTutorialType : " + array[0]);
+            MissionEventEnum.EventType eventType;
+            if (!FrameworkUtils.TryParseToEnum (array[0], out eventType)) {
+                throw new Exception ("Export MissionEventData failed. Invalid MissionEventEnum.EventType : " + array[0]);
             }
 
             var collider = child.GetComponent<BoxCollider2D> ();
             if (collider == null) {
-                throw new Exception ("Export TutorialData failed. Cannot find BoxCollider2D : " + child.name);
+                throw new Exception ("Export MissionEventData failed. Cannot find BoxCollider2D : " + child.name);
             }
 
-            result.Add (new MapData.TutorialData (child.position.x, child.position.y, collider.size.x, collider.size.y, tutorialType));
+            result.Add (new MapData.MissionEventData (child.position.x, child.position.y, collider.size.x, collider.size.y, eventType));
         }
 
-        Log.PrintWarning ("Export TutorialData success", LogTypes.MapData);
+        Log.PrintWarning ("Export MissionEventData success", LogTypes.MapData);
         return result;
     }
 

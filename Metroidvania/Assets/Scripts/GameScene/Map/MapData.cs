@@ -12,7 +12,7 @@ public class MapData {
     public List<CollectableData> collectables;  // WorldPosData
     public List<SwitchData> switches;           // InvisibleTriggerData
     public List<ExitData> exits;                // InvisibleTriggerData
-    public List<TutorialData> tutorials;        // InvisibleTriggerData
+    public List<MissionEventData> events;        // InvisibleTriggerData
 
     public MapData () { }
 
@@ -150,12 +150,12 @@ public class MapData {
     }
 
     [Serializable]
-    public class TutorialData : InvisibleTriggerData {
-        public TutorialEnum.GameTutorialType type;
+    public class MissionEventData : InvisibleTriggerData {
+        public MissionEventEnum.EventType type;
 
-        public TutorialData () { }
+        public MissionEventData () { }
 
-        public TutorialData (float x, float y, float sizeX, float sizeY, TutorialEnum.GameTutorialType type) : base (x, y, sizeX, sizeY) {
+        public MissionEventData (float x, float y, float sizeX, float sizeY, MissionEventEnum.EventType type) : base (x, y, sizeX, sizeY) {
             this.type = type;
         }
     }

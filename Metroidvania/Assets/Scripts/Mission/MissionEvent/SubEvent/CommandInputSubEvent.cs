@@ -3,11 +3,9 @@
 
     public CharEnum.InputSituation InputSituation { get; }
     public string BeforeInputLocalizationKeyBase { get; }
-    public string AfterInputLocalizationKeyBase { get; }
 
-    public CommandInputSubEvent (CharEnum.InputSituation inputSituation, string beforeInputLocalizationKeyBase, string afterInputLocalizationKeyBase) : base () {
+    public CommandInputSubEvent (CharEnum.InputSituation inputSituation, string beforeInputLocalizationKeyBase) : base () {
         InputSituation = inputSituation;
         BeforeInputLocalizationKeyBase = beforeInputLocalizationKeyBase;
-        AfterInputLocalizationKeyBase = afterInputLocalizationKeyBase;
     }
 }

@@ -8,13 +8,11 @@ public class CommandPanelSubEvent : SubEventBase {
 
     public string BeforeSetCommandLocalizationKeyBase { get; }
     public string AfterSetCommandLocalizationKeyBase { get; }
-    public string AfterConfirmLocalizationKeyBase { get; }
 
-    public CommandPanelSubEvent (CharEnum.Command command, CharEnum.InputSituation inputSituation, string beforeSetCommandLocalizationKeyBase, string afterSetCommandLocalizationKeyBase, string afterConfirmLocalizationKeyBase) : base () {
+    public CommandPanelSubEvent (CharEnum.Command command, CharEnum.InputSituation inputSituation, string beforeSetCommandLocalizationKeyBase, string afterSetCommandLocalizationKeyBase) : base () {
         Command = command;
         InputSituation = inputSituation;
         BeforeSetCommandLocalizationKeyBase = beforeSetCommandLocalizationKeyBase;
         AfterSetCommandLocalizationKeyBase = afterSetCommandLocalizationKeyBase;
-        AfterConfirmLocalizationKeyBase = afterConfirmLocalizationKeyBase;
     }
 }
