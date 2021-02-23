@@ -228,7 +228,6 @@ public class MapData {
         public MapEnum.HiddenPathType type;
         public MapEnum.HiddenPathOrdering ordering;
         public List<TileData> tiles;
-        public List<Vector2Int> tilesPos;
 
         public HiddenPathData () { }
 

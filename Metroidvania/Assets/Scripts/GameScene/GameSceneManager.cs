@@ -31,9 +31,10 @@ public class GameSceneManager : MonoBehaviour {
     private MapData mapData = null;
     private MapData.EntryData selectedEntryData = null;
 
-    private bool isGameInitialized = false;
-    private bool isGameStarted = false;
     private bool isAddedEventHandlers = false;
+
+    public static bool IsGameInitialized { get; private set; } = false;
+    public static bool IsGameStarted { get; private set; } = false;
 
     private void Awake () {
         selectedMissionId = UserManager.SelectedMissionId;
@@ -50,6 +51,9 @@ public class GameSceneManager : MonoBehaviour {
     private void OnDestroy () {
         RemoveEventHandlers ();
         Character.LeaveGameScene ();
+
+        IsGameInitialized = false;
+        IsGameStarted = false;
     }
 
     #region Game Flow
@@ -81,19 +85,19 @@ public class GameSceneManager : MonoBehaviour {
             Time.timeScale = 1;
 
             // Remarks : To ensure everything is ready so that CharModel has no strange behaviour 
-            StartCoroutine (DelayResetCharModel (isGameInitialized));
+            StartCoroutine (DelayResetCharModel (IsGameInitialized));
 
-            if (isGameInitialized) {
+            if (IsGameInitialized) {
                 Log.Print ("Reset Game", LogTypes.GameFlow);
                 mapManager.ResetMap ();
             } else {
                 Log.Print ("Init Game", LogTypes.GameFlow);
-                isGameInitialized = true;
+                IsGameInitialized = true;
 
                 mapManager.GenerateMap (selectedMissionId, mapData);
             }
 
-            isGameStarted = false;
+            IsGameStarted = false;
             GameUtils.ScreenFadeOut (onFadeOutFinished);
         };
 
@@ -117,7 +121,7 @@ public class GameSceneManager : MonoBehaviour {
         Action onReadyGoFinished = () => {
             Log.Print ("Start Game", LogTypes.GameFlow);
 
-            isGameStarted = true;
+            IsGameStarted = true;
             uiManager.StartGame ();
             Character.SetAllowMove (true);
         };
@@ -274,7 +278,7 @@ public class GameSceneManager : MonoBehaviour {
     }
 
     private void CommandPanelHidHandler () {
-        if (isGameStarted) {
+        if (IsGameStarted) {
             return;
         }
 

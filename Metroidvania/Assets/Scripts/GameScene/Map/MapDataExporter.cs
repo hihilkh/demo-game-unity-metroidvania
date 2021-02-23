@@ -278,7 +278,7 @@ public class MapDataExporter : MonoBehaviour {
             }
 
             var collider = switchTransform.GetComponent<BoxCollider2D> ();
-            if (collider == null && switchType != MapEnum.SwitchType.Enemy) {
+            if (collider == null && switchType != MapEnum.SwitchType.Enemy && switchType != MapEnum.SwitchType.MissionEvent) {
                 throw new Exception ("Export SwitchData failed. Cannot find BoxCollider2D for switchId : " + switchId);
             }
 

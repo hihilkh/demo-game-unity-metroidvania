@@ -433,7 +433,7 @@ public class MapManager : MonoBehaviour {
                 UpdateOneHiddenPathLayer (tilesDataToShowByOrdering[i], true);
             }
 
-            yield return new WaitForSeconds (OpenOneHiddenPathLayerPeriod);
+            yield return new WaitForSecondsRealtime (OpenOneHiddenPathLayerPeriod);
         }
 
         mapSwitch.FinishSwitched ();

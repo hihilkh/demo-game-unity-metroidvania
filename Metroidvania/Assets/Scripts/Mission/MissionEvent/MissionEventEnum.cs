@@ -12,6 +12,10 @@
         WallAction = 103,
         AirFinishingHit = 104,
         CameraMovement = 105,
+        WarningIfNoDash = 106,
+        Boss = 107,
+        Boss_NotYetBeaten = 108,
+        Boss_Beaten = 109,
 
         Opening = 200,
     }

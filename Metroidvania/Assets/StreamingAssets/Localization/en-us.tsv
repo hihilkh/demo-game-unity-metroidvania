@@ -88,12 +88,14 @@ Event_Command_Hit_0	O, these are my hands... Why are they here?
 Event_Command_Hit_Panel_0	Drag the <b>Hit</b> command to below to activate it.
 
 Event_Command_Jump_0	This enemy keeps my legs. How come?
-
 Event_Command_Jump_Panel_0	Drag the <b>Jump</b> command to below to activate it.
 Event_Command_Jump_Panel_Done_0	You may see that while you put the command to <b>Hold</b>, it also change the <b>Release</b> action.
 Event_Command_Jump_Panel_Done_1	For some commands like <b>Jump</b>, if you want to trigger it by <b>Hold</b>, it must link to <b>Release</b> and perform a <b>Charged Jump</b>.
 Event_Command_Jump_Panel_Done_2	Some commands have seperated <b>Hold</b> and <b>Release</b> action. Try it yourself to discover more combinations!
 Event_Command_Jump_Instruction_0	<b>Hold the tap of the right side</b> of the screen and then <b>Release</b> to perform the <b>Charged Jump</b> action you just activated.
+
+Event_Command_Dash_0	My thrusters! I don't remember I have thrown them here.
+Event_Command_Dash_Panel_0	Drag the <b>Dash</b> command to below to activate it.
 
 Event_FirstHit_0	There is an enemy. I can beat it!
 Event_FirstHit_Instruction0_0	<b>Tap the right side</b> of the screen to perform the <b>Hit</b> action you just activated.
@@ -124,5 +126,15 @@ Event_CameraMovement_Instruction0_0	<b>Drag the left side</b> of the screen from
 Event_CameraMovement_Instruction1_0	You can also drag to other directions to look at those directions.
 Event_CameraMovement_Instruction1_1	By looking around, you may know more about the environment and may have more time to react to it.
 Event_CameraMovement_Instruction1_2	You may also discover some unexpected stuff!
-
 Event_CameraMovement_ValleyTip_0	I cannot see the bottom even looking down. I must be careful not to fall down the valley.
+
+Event_WarningIfNoDash_0	Um...There are some stings in front. It seems very dangerous.
+Event_WarningIfNoDash_Tip_0	Maybe I should search to see if I can get anything to go through it.
+
+Event_Boss_NotYetBeaten_Dialog0_0	Who are you?
+Event_Boss_NotYetBeaten_Dialog1_0	......
+Event_Boss_NotYetBeaten_Dialog2_0	Why are you look just like me?
+Event_Boss_NotYetBeaten_Dialog3_0	......
+
+Event_Boss_Beaten_Dialog_0	You want to practise with me?
+Event_Boss_Beaten_Dialog_1	Let's go!

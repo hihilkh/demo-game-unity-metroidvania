@@ -15,7 +15,7 @@ MonoBehaviour:
   _lookThreshold: 0.3
   _camMaxLoopUpMagnitude: 3
   _camMaxLoopDownMagnitude: 6
-  _camMaxLoopLeftMagnitude: 4
-  _camMaxLoopRightMagnitude: 4
+  _camMaxLoopLeftMagnitude: 6
+  _camMaxLoopRightMagnitude: 6
   _camHorizontalMoveSpeed: 9
   _camVerticalMoveSpeed: 9

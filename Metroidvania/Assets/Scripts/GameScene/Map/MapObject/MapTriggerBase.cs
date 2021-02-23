@@ -10,6 +10,10 @@ public abstract class MapTriggerBase<T> : MapDisposableBase {
     protected abstract void OnTriggered ();
 
     private void OnTriggerEnter2D (Collider2D collision) {
+        if (!GameSceneManager.IsGameStarted) {
+            return;
+        }
+
         if (Data == null) {
             Log.PrintError ("Not yet initialized. Please check.");
             return;

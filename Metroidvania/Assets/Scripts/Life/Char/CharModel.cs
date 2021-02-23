@@ -197,13 +197,6 @@ public class CharModel : LifeBase, IMapTarget {
     }
 
     public void LeaveGameScene () {
-        // Remarks :
-        // While development, there are some cases that the GameObject is destroyed before LeaveGameScene ().
-        // Hence, add some null reference checking to prevent error log.
-        if (gameObject == null) {
-            return;
-        }
-
         this.mapManager = null;
         cameraModel.UnsetMissionBoundaries ();
         cameraModel.SetAudioListener (false);
@@ -1267,7 +1260,7 @@ public class CharModel : LifeBase, IMapTarget {
         base.StartBeatingBack (hurtDirection);
 
         BreakInProgressAction (false, false);
-        SetAllowUserControl (false);
+        SetAllowUserControl (false, true);
 
         // If dying, dominated by die animation
         if (!IsDying) {
@@ -1289,7 +1282,7 @@ public class CharModel : LifeBase, IMapTarget {
     protected override void StopBeatingBack () {
         base.StopBeatingBack ();
 
-        SetAllowUserControl (true);
+        SetAllowUserControl (true, true);
     }
 
     protected override void StartInvincible () {
@@ -1494,7 +1487,7 @@ public class CharModel : LifeBase, IMapTarget {
 
     #region Controller
 
-    public void SetAllowUserControl (bool isAllow, bool isForceAllow = false) {
+    public void SetAllowUserControl (bool isAllow, bool isOnlyActionInput = false, bool isForceAllow = false) {
         var isReallyAllow = isAllow;
         if (!isForceAllow) {
             if (isAllow) {
@@ -1506,7 +1499,12 @@ public class CharModel : LifeBase, IMapTarget {
             }
         }
 
-        controller.SetAllInputActive (isReallyAllow);
+        if (isOnlyActionInput) {
+            controller.SetCharActionInputActive (isReallyAllow);
+        } else {
+            controller.SetAllInputActive (isReallyAllow);
+        }
+
     }
 
     private void TappedHandler () {

@@ -43,9 +43,9 @@ public static class UserManager {
         LoadDoneMissionEventTypeList ();
 
         // For development testing
-        //ClearAllCollectedCollectables (1);
-        //ClearAllEnabledCommands ();
-        //ClearDoneMissionEvent (MissionEventEnum.EventType.AirJump);
+        //ClearAllCollectedCollectables (2);
+        //ClearEnabledCommand (CharEnum.Command.Dash);
+        //ClearDoneMissionEvent (MissionEventEnum.EventType.WarningIfNoDash);
     }
 
     #endregion
@@ -330,6 +330,10 @@ public static class UserManager {
         SaveCommandSettingsCache ();
     }
 
+    #endregion
+
+    #region Development use only
+
     /// <summary>
     /// For development use only
     /// </summary>
@@ -345,6 +349,15 @@ public static class UserManager {
     /// </summary>
     private static void ClearAllEnabledCommands () {
         EnabledCommandList.Clear ();
+
+        SaveEnabledCommandList ();
+    }
+
+    /// <summary>
+    /// For development use only. You would need to call ClearAllCollectedCollectables in order to get the corresponding collectable again.
+    /// </summary>
+    private static void ClearEnabledCommand (CharEnum.Command command) {
+        EnabledCommandList.Remove (command);
 
         SaveEnabledCommandList ();
     }

@@ -19,6 +19,8 @@ public class MissionEventManager : MonoBehaviour {
 
     #region All mission events
 
+    private const int BossMapSwitchId = 11;
+
     private static readonly List<MissionEvent> AllMissionEvents = new List<MissionEvent> () {
         new MissionEvent (
             MissionEventEnum.EventType.Command_Hit,
@@ -35,6 +37,14 @@ public class MissionEventManager : MonoBehaviour {
             new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Event_Command_Jump")),
             new CommandPanelSubEvent (CharEnum.Command.Jump, CharEnum.InputSituation.GroundHold, "Event_Command_Jump_Panel", "Event_Command_Jump_Panel_Done"),
             new CommandInputSubEvent (CharEnum.InputSituation.GroundRelease, "Event_Command_Jump_Instruction")
+        ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.Command_Dash,
+            false,
+            true,
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Event_Command_Dash")),
+            new CommandPanelSubEvent (CharEnum.Command.Dash, CharEnum.InputSituation.AirHold, "Event_Command_Dash_Panel", null)
         ),
 
         new MissionEvent (
@@ -95,6 +105,38 @@ public class MissionEventManager : MonoBehaviour {
             new CameraInputSubEvent (CharEnum.LookDirections.Down, "Event_CameraMovement_Instruction0", "Event_CameraMovement_Instruction1"),
             new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, "Event_CameraMovement_ValleyTip"))
         ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.WarningIfNoDash,
+            true,
+            false,
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, "Event_WarningIfNoDash")),
+            new CameraInputSubEvent (CharEnum.LookDirections.Right, null, null),
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, "Event_WarningIfNoDash_Tip"))
+        ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.Boss_NotYetBeaten,
+            true,
+            false,
+            new MapSwitchSubEvent (BossMapSwitchId),
+            new DialogSubEvent (
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, true, "Event_Boss_NotYetBeaten_Dialog0"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, false, "Event_Boss_NotYetBeaten_Dialog1"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, true, "Event_Boss_NotYetBeaten_Dialog2"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, false, "Event_Boss_NotYetBeaten_Dialog3")
+            )
+        ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.Boss_Beaten,
+            true,
+            false,
+            new MapSwitchSubEvent (BossMapSwitchId),
+            new DialogSubEvent (
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, false, "Event_Boss_Beaten_Dialog")
+            )
+        ),
     };
 
     #endregion
@@ -122,10 +164,9 @@ public class MissionEventManager : MonoBehaviour {
     #region Start event
 
     public void StartEvent (MissionEventEnum.EventType eventType, bool isFromCollectable, Action onFinished = null) {
-        var missionEvent = GetMissionEvent (eventType);
+        var missionEvent = GetMissionEventWithSpecialEventChecking (eventType);
 
         if (missionEvent == null) {
-            Log.PrintWarning ("Start event failed. eventType : " + eventType, LogTypes.MissionEvent);
             onFinished?.Invoke ();
             return;
         }
@@ -180,6 +221,26 @@ public class MissionEventManager : MonoBehaviour {
             charModel.BreakUserControl ();
             reallyStartEventAction ();
         }
+    }
+
+    private MissionEvent GetMissionEventWithSpecialEventChecking (MissionEventEnum.EventType eventType) {
+        var runtimeEventType = eventType;
+        switch (eventType) {
+            case MissionEventEnum.EventType.WarningIfNoDash:
+                if (UserManager.EnabledCommandList.Contains (CharEnum.Command.Dash)) {
+                    return null;
+                }
+                break;
+            case MissionEventEnum.EventType.Boss:
+                if (UserManager.GetAllCollectedCollectable ().Contains (Collectable.Type.Ending_1)) {
+                    runtimeEventType = MissionEventEnum.EventType.Boss_Beaten;
+                } else {
+                    runtimeEventType = MissionEventEnum.EventType.Boss_NotYetBeaten;
+                }
+                break;
+        }
+
+        return GetMissionEvent (runtimeEventType);
     }
 
     private void StartSubEventRecursive (MissionEventEnum.EventType eventType, List<SubEventBase> remainingSubEventList, Action onAllFinished = null) {
@@ -301,7 +362,7 @@ public class MissionEventManager : MonoBehaviour {
             }
 
             var charModel = GameUtils.FindOrSpawnChar ();
-            charModel.SetAllowUserControl (true, true);
+            charModel.SetAllowUserControl (true, false, true);
             charModel.SetCommandInputMissionEvent (subEvent, onInputFinished);
         };
 
