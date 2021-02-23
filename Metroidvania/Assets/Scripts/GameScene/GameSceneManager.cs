@@ -214,7 +214,7 @@ public class GameSceneManager : MonoBehaviour {
         Action<bool> onAllActionFinished = (bool isUpdateCharCommandSettings) => {
             UserManager.CollectCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
             if (collectable.EventType != null) {
-                UserManager.SetMissionEventDone ((MissionEventEnum.EventType)collectable.EventType);
+                MissionEventManager.CheckAndSetMissionEventDone ((MissionEventEnum.EventType)collectable.EventType);
             }
 
             if (isUpdateCharCommandSettings) {

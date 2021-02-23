@@ -39,10 +39,14 @@ public class GameSceneUIManager : MonoBehaviour {
 
     private void Awake () {
         UIEventManager.AddEventHandler (BtnOnClickType.Game_ClickOnScreen, ClickOnScreenBtnClickedHandler);
+        MissionEventManager.MissionEventStarted += MissionEventStartedHandler;
+        MissionEventManager.MissionEventFinished += MissionEventFinishedHandler;
     }
 
     private void OnDestroy () {
         UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ClickOnScreen, ClickOnScreenBtnClickedHandler);
+        MissionEventManager.MissionEventStarted -= MissionEventStartedHandler;
+        MissionEventManager.MissionEventFinished -= MissionEventFinishedHandler;
     }
 
     public void ResetGame () {
@@ -249,6 +253,21 @@ public class GameSceneUIManager : MonoBehaviour {
             OnShowPanelFinished ();
         }
     }
+
+    #region Mission Event
+
+    private bool isPauseBtnInteractableBeforeMissionEvent;
+
+    private void MissionEventStartedHandler () {
+        isPauseBtnInteractableBeforeMissionEvent = pauseBtn.interactable;
+        pauseBtn.SetInteractable (false);
+    }
+
+    private void MissionEventFinishedHandler () {
+        pauseBtn.SetInteractable (isPauseBtnInteractableBeforeMissionEvent);
+    }
+
+    #endregion
 
     #endregion
 }

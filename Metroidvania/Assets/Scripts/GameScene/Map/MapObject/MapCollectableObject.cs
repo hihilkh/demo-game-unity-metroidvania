@@ -95,4 +95,14 @@ public class MapCollectableObject : MapTriggerBase<MapData.CollectableData> {
     }
 
     #endregion
+
+    #region MapDisposableBase
+
+    protected override void Dispose () {
+        if (baseGO != null) {
+            Destroy (baseGO);
+        }
+    }
+
+    #endregion
 }

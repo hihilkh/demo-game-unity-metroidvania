@@ -21,5 +21,6 @@ public class MissionEventTrigger : MapInvisibleTriggerBase<MapData.MissionEventD
 
     protected override void OnTriggered () {
         MissionEventTriggered?.Invoke (Data.type);
+        Dispose ();
     }
 }

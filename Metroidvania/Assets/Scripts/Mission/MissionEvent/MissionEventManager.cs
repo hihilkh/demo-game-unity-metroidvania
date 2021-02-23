@@ -14,6 +14,9 @@ public class MissionEventManager : MonoBehaviour {
     public static MissionEvent CurrentMissionEvent { get; private set; } = null;
     public static SubEventBase CurrentMissionSubEvent { get; private set; } = null;
 
+    public static event Action MissionEventStarted;
+    public static event Action MissionEventFinished;
+
     #region All mission events
 
     private static readonly List<MissionEvent> AllMissionEvents = new List<MissionEvent> () {
@@ -106,6 +109,7 @@ public class MissionEventManager : MonoBehaviour {
         Log.Print ("Start Mission Event : eventType = " + eventType, LogTypes.MissionEvent);
 
         CurrentMissionEvent = missionEvent;
+        MissionEventStarted?.Invoke ();
         var charModel = GameUtils.FindOrSpawnChar ();
 
         Action reallyStartEventAction = () => {
@@ -125,7 +129,7 @@ public class MissionEventManager : MonoBehaviour {
 
                 // If it is from collectable, set mission event done together with UserManager.CollectCollectable ()
                 if (!isFromCollectable) {
-                    UserManager.SetMissionEventDone (missionEvent.EventType);
+                    CheckAndSetMissionEventDone (missionEvent.EventType);
 
                     foreach (var subEvent in subEventListClone) {
                         if (subEvent.SubEventType == MissionEventEnum.SubEventType.CommandPanel) {
@@ -134,6 +138,7 @@ public class MissionEventManager : MonoBehaviour {
                     }
                 }
 
+                MissionEventFinished?.Invoke ();
                 onFinished?.Invoke ();
             };
 
@@ -293,6 +298,32 @@ public class MissionEventManager : MonoBehaviour {
     }
 
     #endregion
+
+    #endregion
+
+    #region Done Event
+
+    public static void CheckAndSetMissionEventDone (MissionEventEnum.EventType eventType) {
+        var missionEvent = GetMissionEvent (eventType);
+
+        if (missionEvent == null) {
+            Log.PrintWarning ("CheckAndSetMissionEventDone failed. MissionEvent is null. eventType : " + eventType, LogTypes.MissionEvent);
+            return;
+        }
+
+        CheckAndSetMissionEventDone (missionEvent);
+    }
+
+    public static void CheckAndSetMissionEventDone (MissionEvent missionEvent) {
+        if (missionEvent == null) {
+            Log.PrintWarning ("CheckAndSetMissionEventDone failed. missionEvent is null.", LogTypes.MissionEvent);
+            return;
+        }
+
+        if (missionEvent.IsOneTimeEvent) {
+            UserManager.SetMissionEventDone (missionEvent.EventType);
+        }
+    }
 
     #endregion
 }
