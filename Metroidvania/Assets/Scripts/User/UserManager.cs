@@ -44,7 +44,8 @@ public static class UserManager {
 
         // For development testing
         //ClearAllCollectedCollectables (1);
-        //ClearAllEnabledCommand ();
+        //ClearAllEnabledCommands ();
+        //ClearDoneMissionEvent (MissionEventEnum.EventType.AirJump);
     }
 
     #endregion
@@ -342,10 +343,29 @@ public static class UserManager {
     /// <summary>
     /// For development use only. You would need to call ClearAllCollectedCollectables in order to get the corresponding collectable again.
     /// </summary>
-    private static void ClearAllEnabledCommand () {
+    private static void ClearAllEnabledCommands () {
         EnabledCommandList.Clear ();
 
         SaveEnabledCommandList ();
     }
+
+    /// <summary>
+    /// For development use only. You would need to call ClearAllCollectedCollectables in order to get the corresponding collectable again.
+    /// </summary>
+    private static void ClearAllDoneMissionEvents () {
+        DoneMissionEventTypeList.Clear ();
+
+        SaveDoneMissionEventTypeList ();
+    }
+
+    /// <summary>
+    /// For development use only. You would need to call ClearAllCollectedCollectables in order to get the corresponding collectable again.
+    /// </summary>
+    private static void ClearDoneMissionEvent (MissionEventEnum.EventType eventType) {
+        DoneMissionEventTypeList.Remove (eventType);
+
+        SaveDoneMissionEventTypeList ();
+    }
+
     #endregion
 }

@@ -162,15 +162,13 @@ public class CharModel : LifeBase, IMapTarget {
     private bool isTouchingWall;
 
     // Mission Event
-    private Action inputMissionEventHandler = null;
+    private Action missionEventInputFinishedAction = null;
 
     protected override void Awake () {
         base.Awake ();
 
         ObtainedBodyParts = UserManager.GetObtainedBodyParts ();
-        // Remarks :
-        // Currently do not add StartedLeft, StoppedLeft, StartedRight, StoppedRight handling to prevent complicated code.
-        // Add them back if found them to be useful for development or debugging.
+
         controller.Tapped += TappedHandler;
         controller.StartedHold += StartedHoldHandler;
         controller.StoppedHold += StoppedHoldHandler;
@@ -202,12 +200,16 @@ public class CharModel : LifeBase, IMapTarget {
         // Remarks :
         // While development, there are some cases that the GameObject is destroyed before LeaveGameScene ().
         // Hence, add some null reference checking to prevent error log.
-        this.mapManager = null;
-        cameraModel?.UnsetMissionBoundaries ();
-        cameraModel?.SetAudioListener (false);
-        gameObject?.SetActive (false);
+        if (gameObject == null) {
+            return;
+        }
 
-        inputMissionEventHandler = null;
+        this.mapManager = null;
+        cameraModel.UnsetMissionBoundaries ();
+        cameraModel.SetAudioListener (false);
+        gameObject.SetActive (false);
+
+        missionEventInputFinishedAction = null;
     }
 
     /// <summary>
@@ -427,13 +429,13 @@ public class CharModel : LifeBase, IMapTarget {
 
         var situation = (CharEnum.InputSituation)optionalSituation;
 
-        if (inputMissionEventHandler != null) {
+        if (missionEventInputFinishedAction != null) {
             if (MissionEventManager.CurrentMissionSubEvent != null && MissionEventManager.CurrentMissionSubEvent is CommandInputSubEvent) {
                 var targetSituation = ((CommandInputSubEvent)MissionEventManager.CurrentMissionSubEvent).InputSituation;
 
                 if (targetSituation == situation) {
-                    inputMissionEventHandler?.Invoke ();
-                    inputMissionEventHandler = null;
+                    missionEventInputFinishedAction?.Invoke ();
+                    missionEventInputFinishedAction = null;
                 } else {
                     // Some cases would need to discard action
                     switch (targetSituation) {
@@ -1504,7 +1506,7 @@ public class CharModel : LifeBase, IMapTarget {
             }
         }
 
-        controller.enabled = isReallyAllow;
+        controller.SetAllInputActive (isReallyAllow);
     }
 
     private void TappedHandler () {
@@ -1591,12 +1593,28 @@ public class CharModel : LifeBase, IMapTarget {
 
         isAllowMove = true;
         SetAllowUserControl (true);
-        CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
+        StartWalking ();
         isWaitingLandingToStopChar = false;
     }
 
-    public void SetMissionEventTapHandler (Action handler) {
-        inputMissionEventHandler = handler;
+    public void SetCommandInputMissionEvent (CommandInputSubEvent subEvent, Action onInputFinished) {
+        Action onCommandInputFinished = () => {
+            controller.SetCameraMovementInputActive (true);
+            onInputFinished.Invoke ();
+        };
+
+        controller.SetCameraMovementInputActive (false);
+        missionEventInputFinishedAction = onCommandInputFinished;
+    }
+
+    public void SetCameraInputMissionEvent (CameraInputSubEvent subEvent, Action onInputFinished) {
+        Action onCameraInputFinished = () => {
+            controller.SetCharActionInputActive (true);
+            onInputFinished.Invoke ();
+        };
+
+        controller.SetCharActionInputActive (false);
+        cameraModel.SetCameraInputMissionEvent (subEvent, onCameraInputFinished);
     }
 
     #endregion

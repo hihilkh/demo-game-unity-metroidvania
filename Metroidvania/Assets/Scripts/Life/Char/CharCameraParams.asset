@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: CharCameraParams
   m_EditorClassIdentifier: 
   _lookThreshold: 0.3
-  _camMaxHorizontalMovement: 3
-  _camMaxVerticalMovement: 3
+  _camMaxLoopUpMagnitude: 3
+  _camMaxLoopDownMagnitude: 6
+  _camMaxLoopLeftMagnitude: 4
+  _camMaxLoopRightMagnitude: 4
   _camHorizontalMoveSpeed: 9
   _camVerticalMoveSpeed: 9

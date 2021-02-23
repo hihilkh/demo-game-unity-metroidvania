@@ -42,9 +42,9 @@ public class MissionEventManager : MonoBehaviour {
             false,
             true,
             new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, "Event_FirstHit")),
-            new CommandInputSubEvent (CharEnum.InputSituation.GroundTap, "Event_FirstHit_Instruction1"),
+            new CommandInputSubEvent (CharEnum.InputSituation.GroundTap, "Event_FirstHit_Instruction0"),
             new WaitSubEvent (1.5f),
-            new CommandInputSubEvent (CharEnum.InputSituation.GroundTap, "Event_FirstHit_Instruction2")
+            new CommandInputSubEvent (CharEnum.InputSituation.GroundTap, "Event_FirstHit_Instruction1")
         ),
 
         new MissionEvent (
@@ -60,9 +60,40 @@ public class MissionEventManager : MonoBehaviour {
             true,
             new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, "Event_AirJump")),
             new CommandPanelSubEvent (CharEnum.Command.Jump, CharEnum.InputSituation.AirTap, "Event_AirJump_Panel", null),
-            new CommandInputSubEvent (CharEnum.InputSituation.GroundRelease, "Event_AirJump_Instruction1"),
+            new CommandInputSubEvent (CharEnum.InputSituation.GroundRelease, "Event_AirJump_Instruction0"),
             new WaitSubEvent (0.6f),
-            new CommandInputSubEvent (CharEnum.InputSituation.AirTap, "Event_AirJump_Instruction2")
+            new CommandInputSubEvent (CharEnum.InputSituation.AirTap, "Event_AirJump_Instruction1")
+        ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.WallAction,
+            true,
+            true,
+            new CommandInputSubEvent (CharEnum.InputSituation.GroundRelease, "Event_WallAction_Instruction0"),
+            new WaitSubEvent (1f),
+            new CommandInputSubEvent (CharEnum.InputSituation.AirTap, "Event_WallAction_Instruction1"),
+            new WaitSubEvent (0.8f),
+            new CommandInputSubEvent (CharEnum.InputSituation.AirTap, "Event_WallAction_Instruction2")
+        ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.AirFinishingHit,
+            true,
+            true,
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, "Event_AirFinishingHit")),
+            new CommandPanelSubEvent (CharEnum.Command.Hit, CharEnum.InputSituation.AirRelease, "Event_AirFinishingHit_Panel", null),
+            new CommandInputSubEvent (CharEnum.InputSituation.GroundRelease, "Event_AirFinishingHit_Instruction0"),
+            new WaitSubEvent (1f),
+            new CommandInputSubEvent (CharEnum.InputSituation.AirRelease, "Event_AirFinishingHit_Instruction1")
+        ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.CameraMovement,
+            true,
+            true,
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Event_CameraMovement")),
+            new CameraInputSubEvent (CharEnum.LookDirections.Down, "Event_CameraMovement_Instruction0", "Event_CameraMovement_Instruction1"),
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, "Event_CameraMovement_ValleyTip"))
         ),
     };
 
@@ -131,10 +162,8 @@ public class MissionEventManager : MonoBehaviour {
                 if (!isFromCollectable) {
                     CheckAndSetMissionEventDone (missionEvent.EventType);
 
-                    foreach (var subEvent in subEventListClone) {
-                        if (subEvent.SubEventType == MissionEventEnum.SubEventType.CommandPanel) {
-                            commandPanel.UpdateCharCommandSettings (true);
-                        }
+                    if (missionEvent.CheckHasSubEventType (MissionEventEnum.SubEventType.CommandPanel)) {
+                        commandPanel.UpdateCharCommandSettings (true);
                     }
                 }
 
@@ -238,6 +267,7 @@ public class MissionEventManager : MonoBehaviour {
 
     private void StartCameraInputSubEvent (CameraInputSubEvent subEvent, Action onFinished = null) {
         Action onInputFinished = () => {
+            tutorialFinger.Hide ();
             if (string.IsNullOrEmpty (subEvent.AfterInputLocalizationKeyBase)) {
                 onFinished?.Invoke ();
             } else {
@@ -246,7 +276,8 @@ public class MissionEventManager : MonoBehaviour {
         };
 
         Action onBeforeInputFinished = () => {
-            // TODO
+            tutorialFinger.ShowDragAndDrop_LeftScreen (subEvent.LookDirections);
+            GameUtils.FindOrSpawnChar ().SetCameraInputMissionEvent (subEvent, onInputFinished);
         };
 
         if (string.IsNullOrEmpty (subEvent.BeforeInputLocalizationKeyBase)) {
@@ -271,7 +302,7 @@ public class MissionEventManager : MonoBehaviour {
 
             var charModel = GameUtils.FindOrSpawnChar ();
             charModel.SetAllowUserControl (true, true);
-            charModel.SetMissionEventTapHandler (onInputFinished);
+            charModel.SetCommandInputMissionEvent (subEvent, onInputFinished);
         };
 
         if (string.IsNullOrEmpty (subEvent.BeforeInputLocalizationKeyBase)) {

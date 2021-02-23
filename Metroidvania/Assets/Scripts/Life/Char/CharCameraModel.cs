@@ -1,4 +1,5 @@
-﻿using HihiFramework.Core;
+﻿using System;
+using HihiFramework.Core;
 using UnityEngine;
 
 public class CharCameraModel : MonoBehaviour
@@ -21,14 +22,17 @@ public class CharCameraModel : MonoBehaviour
     private Vector2 missionMinGlobalPos;
     private bool hasSetBoundaries;
 
+    private CameraInputSubEvent currentSubEvent = null;
+    private Action missionEventInputFinishedAction = null;
+
     private void Awake () {
         cam = GetComponent<Camera> ();
         audioListener = GetComponent<AudioListener> ();
         camTransform = cam.transform;
         originalLocalPos = camTransform.localPosition;
 
-        generalMaxLocalPos = new Vector2 (originalLocalPos.x + camParams.CamMaxHorizontalMovement, originalLocalPos.y + camParams.CamMaxVerticalMovement);
-        generalMinLocalPos = new Vector2 (originalLocalPos.x - camParams.CamMaxHorizontalMovement, originalLocalPos.y - camParams.CamMaxVerticalMovement);
+        generalMaxLocalPos = new Vector2 (originalLocalPos.x + camParams.CamMaxLoopRightMagnitude, originalLocalPos.y + camParams.CamMaxLoopUpMagnitude);
+        generalMinLocalPos = new Vector2 (originalLocalPos.x - camParams.CamMaxLoopLeftMagnitude, originalLocalPos.y - camParams.CamMaxLoopDownMagnitude);
 
         currentLookDirections = CharEnum.LookDirections.None;
         hasSetBoundaries = false;
@@ -44,11 +48,18 @@ public class CharCameraModel : MonoBehaviour
         if (currentLookDirections == CharEnum.LookDirections.None && camTransform.localPosition == originalLocalPos) {
             // Skip below update
         } else {
+            if (currentSubEvent != null) {
+                if (currentLookDirections != currentSubEvent.LookDirections) {
+                    // For inputs other than required, treat as no input
+                    currentLookDirections = CharEnum.LookDirections.None;
+                }
+            }
+
             // Move camera base on looking direction
             var targetPosX = camTransform.localPosition.x;
             var targetPosY = camTransform.localPosition.y;
 
-            var horizontalDeltaPos = camParams.CamHorizontalMoveSpeed * Time.deltaTime;
+            var horizontalDeltaPos = camParams.CamHorizontalMoveSpeed * Time.unscaledDeltaTime;
             var horizontalDirection = currentLookDirections & (CharEnum.LookDirections.Left | CharEnum.LookDirections.Right);
             switch (horizontalDirection) {
                 case CharEnum.LookDirections.Left:
@@ -66,7 +77,7 @@ public class CharCameraModel : MonoBehaviour
                     break;
             }
 
-            var verticalDeltaPos = camParams.CamVerticalMoveSpeed * Time.deltaTime;
+            var verticalDeltaPos = camParams.CamVerticalMoveSpeed * Time.unscaledDeltaTime;
             var verticalDirection = currentLookDirections & (CharEnum.LookDirections.Down | CharEnum.LookDirections.Up);
             switch (verticalDirection) {
                 case CharEnum.LookDirections.Down:
@@ -84,6 +95,14 @@ public class CharCameraModel : MonoBehaviour
                     break;
             }
 
+            if (currentSubEvent != null && currentLookDirections == currentSubEvent.LookDirections) {
+                if (Mathf.Approximately (targetPosX, camTransform.localPosition.x) && Mathf.Approximately (targetPosY, camTransform.localPosition.y)) {
+                    // It means the camera totally moved to the target direction of the sub event
+                    missionEventInputFinishedAction?.Invoke ();
+                    currentSubEvent = null;
+                    missionEventInputFinishedAction = null;
+                }
+            }
             camTransform.localPosition = new Vector3 (targetPosX, targetPosY, camTransform.localPosition.z);
         }
 
@@ -125,5 +144,10 @@ public class CharCameraModel : MonoBehaviour
         if (audioListener != null) {
             audioListener.enabled = isEnable;
         }
+    }
+
+    public void SetCameraInputMissionEvent (CameraInputSubEvent subEvent, Action onInputFinished = null) {
+        currentSubEvent = subEvent;
+        missionEventInputFinishedAction = onInputFinished;
     }
 }

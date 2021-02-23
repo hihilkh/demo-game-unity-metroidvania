@@ -9,6 +9,9 @@
         FirstHit = 100,
         TouchWallAndTurn = 101,
         AirJump = 102,
+        WallAction = 103,
+        AirFinishingHit = 104,
+        CameraMovement = 105,
 
         Opening = 200,
     }

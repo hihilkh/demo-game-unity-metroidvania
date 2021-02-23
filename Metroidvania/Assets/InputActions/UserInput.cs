@@ -15,29 +15,13 @@ public class @UserInput : IInputActionCollection, IDisposable
     ""name"": ""UserInput"",
     ""maps"": [
         {
-            ""name"": ""Character"",
-            ""id"": ""5a410ea8-fb55-4f39-941d-604e38279bb6"",
+            ""name"": ""CharAction"",
+            ""id"": ""3e25b07e-430e-49c3-8419-b10ed7a35ab3"",
             ""actions"": [
-                {
-                    ""name"": ""Left"",
-                    ""type"": ""Button"",
-                    ""id"": ""87bad1ca-71d6-40be-ac0e-7f91fe0d8877"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""Right"",
-                    ""type"": ""Button"",
-                    ""id"": ""ca8761d2-ebb7-4e5d-b48b-d11e4429437f"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
                 {
                     ""name"": ""Tap"",
                     ""type"": ""Button"",
-                    ""id"": ""da240b9c-66e1-4cbb-a107-64a5770ac52d"",
+                    ""id"": ""595f3166-015c-4aef-9b8e-c4092407bef9"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Tap""
@@ -45,11 +29,63 @@ public class @UserInput : IInputActionCollection, IDisposable
                 {
                     ""name"": ""Hold"",
                     ""type"": ""PassThrough"",
-                    ""id"": ""ff56f1c7-4dc4-4fae-829e-85e859c63c5a"",
+                    ""id"": ""b372810b-5ee8-46a5-8545-109327f921ed"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Hold""
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""3a590e88-ad79-4692-85fa-8a4399570fcb"",
+                    ""path"": ""<Keyboard>/j"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 },
+                {
+                    ""name"": """",
+                    ""id"": ""632f5d12-29ff-4b75-acfc-59b8853a6181"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""13cbd21c-6111-42dc-80f7-0aa9eef5d2ad"",
+                    ""path"": ""<Keyboard>/j"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2f3d93fa-865b-4562-b085-abc58f4630f3"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""CameraMovement"",
+            ""id"": ""5a410ea8-fb55-4f39-941d-604e38279bb6"",
+            ""actions"": [
                 {
                     ""name"": ""Look"",
                     ""type"": ""Value"",
@@ -60,72 +96,6 @@ public class @UserInput : IInputActionCollection, IDisposable
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""76004bcd-a7b6-43b1-b632-82c757f62ac8"",
-                    ""path"": ""<Keyboard>/f"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""1f3a251d-14cf-4fce-a43a-69339f96dc1e"",
-                    ""path"": ""<Keyboard>/g"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Right"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""f09a7ae3-20ad-4b78-96f2-96e333d24a85"",
-                    ""path"": ""<Keyboard>/j"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Tap"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""9c825758-6beb-41e3-835c-a1971f83da2c"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Tap"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""145f8015-595b-4109-b111-39850daab7a7"",
-                    ""path"": ""<Keyboard>/j"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Hold"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""65c522ed-b2e6-45b9-9997-ecb505d17760"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Hold"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
                 {
                     ""name"": ""Dpad"",
                     ""id"": ""9d4c9ebd-751c-4767-a157-7f99c9929acb"",
@@ -193,17 +163,67 @@ public class @UserInput : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""NotInUse"",
+            ""id"": ""42d44bae-1405-4aec-8418-32a4d9efb517"",
+            ""actions"": [
+                {
+                    ""name"": ""Left"",
+                    ""type"": ""Button"",
+                    ""id"": ""ab1ecac5-bbe1-4225-ae32-c5cbab64ef58"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Right"",
+                    ""type"": ""Button"",
+                    ""id"": ""d93d08da-7e7f-4441-b39d-baf9ad1afe8c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""87bfd08e-5aed-48b7-8c0e-689f82fe2856"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f95d97cf-c3b0-47ff-b1e5-232b52a7f4c2"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
 }");
-        // Character
-        m_Character = asset.FindActionMap("Character", throwIfNotFound: true);
-        m_Character_Left = m_Character.FindAction("Left", throwIfNotFound: true);
-        m_Character_Right = m_Character.FindAction("Right", throwIfNotFound: true);
-        m_Character_Tap = m_Character.FindAction("Tap", throwIfNotFound: true);
-        m_Character_Hold = m_Character.FindAction("Hold", throwIfNotFound: true);
-        m_Character_Look = m_Character.FindAction("Look", throwIfNotFound: true);
+        // CharAction
+        m_CharAction = asset.FindActionMap("CharAction", throwIfNotFound: true);
+        m_CharAction_Tap = m_CharAction.FindAction("Tap", throwIfNotFound: true);
+        m_CharAction_Hold = m_CharAction.FindAction("Hold", throwIfNotFound: true);
+        // CameraMovement
+        m_CameraMovement = asset.FindActionMap("CameraMovement", throwIfNotFound: true);
+        m_CameraMovement_Look = m_CameraMovement.FindAction("Look", throwIfNotFound: true);
+        // NotInUse
+        m_NotInUse = asset.FindActionMap("NotInUse", throwIfNotFound: true);
+        m_NotInUse_Left = m_NotInUse.FindAction("Left", throwIfNotFound: true);
+        m_NotInUse_Right = m_NotInUse.FindAction("Right", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -250,49 +270,108 @@ public class @UserInput : IInputActionCollection, IDisposable
         asset.Disable();
     }
 
-    // Character
-    private readonly InputActionMap m_Character;
-    private ICharacterActions m_CharacterActionsCallbackInterface;
-    private readonly InputAction m_Character_Left;
-    private readonly InputAction m_Character_Right;
-    private readonly InputAction m_Character_Tap;
-    private readonly InputAction m_Character_Hold;
-    private readonly InputAction m_Character_Look;
-    public struct CharacterActions
+    // CharAction
+    private readonly InputActionMap m_CharAction;
+    private ICharActionActions m_CharActionActionsCallbackInterface;
+    private readonly InputAction m_CharAction_Tap;
+    private readonly InputAction m_CharAction_Hold;
+    public struct CharActionActions
     {
         private @UserInput m_Wrapper;
-        public CharacterActions(@UserInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Left => m_Wrapper.m_Character_Left;
-        public InputAction @Right => m_Wrapper.m_Character_Right;
-        public InputAction @Tap => m_Wrapper.m_Character_Tap;
-        public InputAction @Hold => m_Wrapper.m_Character_Hold;
-        public InputAction @Look => m_Wrapper.m_Character_Look;
-        public InputActionMap Get() { return m_Wrapper.m_Character; }
+        public CharActionActions(@UserInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Tap => m_Wrapper.m_CharAction_Tap;
+        public InputAction @Hold => m_Wrapper.m_CharAction_Hold;
+        public InputActionMap Get() { return m_Wrapper.m_CharAction; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(CharacterActions set) { return set.Get(); }
-        public void SetCallbacks(ICharacterActions instance)
+        public static implicit operator InputActionMap(CharActionActions set) { return set.Get(); }
+        public void SetCallbacks(ICharActionActions instance)
         {
-            if (m_Wrapper.m_CharacterActionsCallbackInterface != null)
+            if (m_Wrapper.m_CharActionActionsCallbackInterface != null)
             {
-                @Left.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLeft;
-                @Left.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLeft;
-                @Left.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLeft;
-                @Right.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnRight;
-                @Right.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnRight;
-                @Right.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnRight;
-                @Tap.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnTap;
-                @Tap.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnTap;
-                @Tap.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnTap;
-                @Hold.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnHold;
-                @Hold.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnHold;
-                @Hold.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnHold;
-                @Look.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
-                @Look.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
-                @Look.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
+                @Tap.started -= m_Wrapper.m_CharActionActionsCallbackInterface.OnTap;
+                @Tap.performed -= m_Wrapper.m_CharActionActionsCallbackInterface.OnTap;
+                @Tap.canceled -= m_Wrapper.m_CharActionActionsCallbackInterface.OnTap;
+                @Hold.started -= m_Wrapper.m_CharActionActionsCallbackInterface.OnHold;
+                @Hold.performed -= m_Wrapper.m_CharActionActionsCallbackInterface.OnHold;
+                @Hold.canceled -= m_Wrapper.m_CharActionActionsCallbackInterface.OnHold;
             }
-            m_Wrapper.m_CharacterActionsCallbackInterface = instance;
+            m_Wrapper.m_CharActionActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Tap.started += instance.OnTap;
+                @Tap.performed += instance.OnTap;
+                @Tap.canceled += instance.OnTap;
+                @Hold.started += instance.OnHold;
+                @Hold.performed += instance.OnHold;
+                @Hold.canceled += instance.OnHold;
+            }
+        }
+    }
+    public CharActionActions @CharAction => new CharActionActions(this);
+
+    // CameraMovement
+    private readonly InputActionMap m_CameraMovement;
+    private ICameraMovementActions m_CameraMovementActionsCallbackInterface;
+    private readonly InputAction m_CameraMovement_Look;
+    public struct CameraMovementActions
+    {
+        private @UserInput m_Wrapper;
+        public CameraMovementActions(@UserInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Look => m_Wrapper.m_CameraMovement_Look;
+        public InputActionMap Get() { return m_Wrapper.m_CameraMovement; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(CameraMovementActions set) { return set.Get(); }
+        public void SetCallbacks(ICameraMovementActions instance)
+        {
+            if (m_Wrapper.m_CameraMovementActionsCallbackInterface != null)
+            {
+                @Look.started -= m_Wrapper.m_CameraMovementActionsCallbackInterface.OnLook;
+                @Look.performed -= m_Wrapper.m_CameraMovementActionsCallbackInterface.OnLook;
+                @Look.canceled -= m_Wrapper.m_CameraMovementActionsCallbackInterface.OnLook;
+            }
+            m_Wrapper.m_CameraMovementActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Look.started += instance.OnLook;
+                @Look.performed += instance.OnLook;
+                @Look.canceled += instance.OnLook;
+            }
+        }
+    }
+    public CameraMovementActions @CameraMovement => new CameraMovementActions(this);
+
+    // NotInUse
+    private readonly InputActionMap m_NotInUse;
+    private INotInUseActions m_NotInUseActionsCallbackInterface;
+    private readonly InputAction m_NotInUse_Left;
+    private readonly InputAction m_NotInUse_Right;
+    public struct NotInUseActions
+    {
+        private @UserInput m_Wrapper;
+        public NotInUseActions(@UserInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Left => m_Wrapper.m_NotInUse_Left;
+        public InputAction @Right => m_Wrapper.m_NotInUse_Right;
+        public InputActionMap Get() { return m_Wrapper.m_NotInUse; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(NotInUseActions set) { return set.Get(); }
+        public void SetCallbacks(INotInUseActions instance)
+        {
+            if (m_Wrapper.m_NotInUseActionsCallbackInterface != null)
+            {
+                @Left.started -= m_Wrapper.m_NotInUseActionsCallbackInterface.OnLeft;
+                @Left.performed -= m_Wrapper.m_NotInUseActionsCallbackInterface.OnLeft;
+                @Left.canceled -= m_Wrapper.m_NotInUseActionsCallbackInterface.OnLeft;
+                @Right.started -= m_Wrapper.m_NotInUseActionsCallbackInterface.OnRight;
+                @Right.performed -= m_Wrapper.m_NotInUseActionsCallbackInterface.OnRight;
+                @Right.canceled -= m_Wrapper.m_NotInUseActionsCallbackInterface.OnRight;
+            }
+            m_Wrapper.m_NotInUseActionsCallbackInterface = instance;
             if (instance != null)
             {
                 @Left.started += instance.OnLeft;
@@ -301,25 +380,22 @@ public class @UserInput : IInputActionCollection, IDisposable
                 @Right.started += instance.OnRight;
                 @Right.performed += instance.OnRight;
                 @Right.canceled += instance.OnRight;
-                @Tap.started += instance.OnTap;
-                @Tap.performed += instance.OnTap;
-                @Tap.canceled += instance.OnTap;
-                @Hold.started += instance.OnHold;
-                @Hold.performed += instance.OnHold;
-                @Hold.canceled += instance.OnHold;
-                @Look.started += instance.OnLook;
-                @Look.performed += instance.OnLook;
-                @Look.canceled += instance.OnLook;
             }
         }
     }
-    public CharacterActions @Character => new CharacterActions(this);
-    public interface ICharacterActions
+    public NotInUseActions @NotInUse => new NotInUseActions(this);
+    public interface ICharActionActions
+    {
+        void OnTap(InputAction.CallbackContext context);
+        void OnHold(InputAction.CallbackContext context);
+    }
+    public interface ICameraMovementActions
+    {
+        void OnLook(InputAction.CallbackContext context);
+    }
+    public interface INotInUseActions
     {
         void OnLeft(InputAction.CallbackContext context);
         void OnRight(InputAction.CallbackContext context);
-        void OnTap(InputAction.CallbackContext context);
-        void OnHold(InputAction.CallbackContext context);
-        void OnLook(InputAction.CallbackContext context);
     }
 }

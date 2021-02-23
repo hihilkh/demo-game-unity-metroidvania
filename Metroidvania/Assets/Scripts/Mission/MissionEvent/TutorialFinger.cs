@@ -89,11 +89,34 @@ public class TutorialFinger : MonoBehaviour {
 
     #region Drag And Drop
 
-    public void ShowDragAndDrop_LeftToRight () {
+    public void ShowDragAndDrop_LeftScreen (CharEnum.LookDirections directions) {
         var totalWidth = SelfCanvas.GetComponent<RectTransform> ().sizeDelta.x;
 
         startDragAndDropPos = new Vector3 (-totalWidth / 4, 0, 0);
-        endDragAndDropPos = Vector3.zero;
+
+        var moveLength = totalWidth / 8;
+        endDragAndDropPos = startDragAndDropPos;
+
+        var horizontalDirection = directions & (CharEnum.LookDirections.Left | CharEnum.LookDirections.Right);
+        switch (horizontalDirection) {
+            case CharEnum.LookDirections.Left:
+                endDragAndDropPos -= new Vector3 (moveLength, 0, 0);
+                break;
+            case CharEnum.LookDirections.Right:
+                endDragAndDropPos += new Vector3 (moveLength, 0, 0);
+                break;
+        }
+
+        var verticalDirection = directions & (CharEnum.LookDirections.Down | CharEnum.LookDirections.Up);
+        switch (verticalDirection) {
+            case CharEnum.LookDirections.Up:
+                endDragAndDropPos += new Vector3 (0, moveLength, 0);
+                break;
+            case CharEnum.LookDirections.Down:
+                endDragAndDropPos -= new Vector3 (0, moveLength, 0);
+                break;
+        }
+
         isDragAndDropUsingLocalPos = true;
 
         StopAllCoroutines ();

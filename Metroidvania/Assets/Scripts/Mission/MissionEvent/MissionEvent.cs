@@ -20,4 +20,14 @@ public class MissionEvent {
     public List<SubEventBase> GetSubEventListClone () {
         return new List<SubEventBase> (subEventList);
     }
+
+    public bool CheckHasSubEventType (MissionEventEnum.SubEventType subEventType) {
+        foreach (var subEvent in subEventList) {
+            if (subEvent.SubEventType == subEventType) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

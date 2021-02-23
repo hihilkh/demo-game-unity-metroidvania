@@ -3,15 +3,16 @@ using HihiFramework.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class CharController : MonoBehaviour, UserInput.ICharacterActions {
+public class CharController : MonoBehaviour, UserInput.ICharActionActions, UserInput.ICameraMovementActions {
 
     [SerializeField] private CharCameraParams cameraParams;
     private UserInput userInput;
 
-    public event Action StartedLeft;
-    public event Action StoppedLeft;
-    public event Action StartedRight;
-    public event Action StoppedRight;
+    // Not In Use
+    //public event Action StartedLeft;
+    //public event Action StoppedLeft;
+    //public event Action StartedRight;
+    //public event Action StoppedRight;
     public event Action Tapped;
     public event Action StartedHold;
     public event Action StoppedHold;
@@ -19,36 +20,55 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
 
     private bool isHolding = false;
 
-    void OnEnable () {
-        if (userInput == null) {
-            userInput = new UserInput ();
-            userInput.Character.SetCallbacks (this);
-        }
+    private void Awake () {
+        userInput = new UserInput ();
+        userInput.CharAction.SetCallbacks (this);
+        userInput.CameraMovement.SetCallbacks (this);
 
-        userInput.Character.Enable ();
+        SetAllInputActive (true);
     }
 
-    void OnDisable () {
-        userInput?.Character.Disable ();
+    public void SetAllInputActive (bool isActive) {
+        SetCharActionInputActive (isActive);
+        SetCameraMovementInputActive (isActive);
     }
 
-    public void OnLeft (InputAction.CallbackContext context) {
-        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogTypes.Input);
-        if (context.phase == InputActionPhase.Started) {
-            StartedLeft?.Invoke ();
-        } else if (context.phase == InputActionPhase.Canceled) {
-            StoppedLeft?.Invoke ();
-        }
-    }
-
-    public void OnRight (InputAction.CallbackContext context) {
-        Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogTypes.Input);
-        if (context.phase == InputActionPhase.Started) {
-            StartedRight?.Invoke ();
-        } else if (context.phase == InputActionPhase.Canceled) {
-            StoppedRight?.Invoke ();
+    public void SetCharActionInputActive (bool isActive) {
+        if (isActive) {
+            userInput.CharAction.Enable ();
+        } else {
+            userInput.CharAction.Disable ();
         }
     }
+
+    public void SetCameraMovementInputActive (bool isActive) {
+        if (isActive) {
+            userInput.CameraMovement.Enable ();
+        } else {
+            userInput.CameraMovement.Disable ();
+        }
+    }
+
+    // Not In Use
+    //public void OnLeft (InputAction.CallbackContext context) {
+    //    Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogTypes.Input);
+    //    if (context.phase == InputActionPhase.Started) {
+    //        StartedLeft?.Invoke ();
+    //    } else if (context.phase == InputActionPhase.Canceled) {
+    //        StoppedLeft?.Invoke ();
+    //    }
+    //}
+
+    //public void OnRight (InputAction.CallbackContext context) {
+    //    Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogTypes.Input);
+    //    if (context.phase == InputActionPhase.Started) {
+    //        StartedRight?.Invoke ();
+    //    } else if (context.phase == InputActionPhase.Canceled) {
+    //        StoppedRight?.Invoke ();
+    //    }
+    //}
+
+    #region UserInput.ICharActionActions
 
     public void OnTap (InputAction.CallbackContext context) {
         Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogTypes.Input);
@@ -69,6 +89,10 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
             isHolding = false;
         }
     }
+
+    #endregion
+
+    #region UserInput.ICameraMovementActions
 
     public void OnLook (InputAction.CallbackContext context) {
         Log.PrintDebug ("Action name : " + context.action.name + " , Phase : " + context.phase, LogTypes.Input);
@@ -94,4 +118,6 @@ public class CharController : MonoBehaviour, UserInput.ICharacterActions {
             Looked?.Invoke (CharEnum.LookDirections.None);
         }
     }
+
+    #endregion
 }

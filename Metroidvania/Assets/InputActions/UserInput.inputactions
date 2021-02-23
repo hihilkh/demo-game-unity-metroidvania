@@ -2,29 +2,13 @@
     "name": "UserInput",
     "maps": [
         {
-            "name": "Character",
-            "id": "5a410ea8-fb55-4f39-941d-604e38279bb6",
+            "name": "CharAction",
+            "id": "3e25b07e-430e-49c3-8419-b10ed7a35ab3",
             "actions": [
-                {
-                    "name": "Left",
-                    "type": "Button",
-                    "id": "87bad1ca-71d6-40be-ac0e-7f91fe0d8877",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Right",
-                    "type": "Button",
-                    "id": "ca8761d2-ebb7-4e5d-b48b-d11e4429437f",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
                 {
                     "name": "Tap",
                     "type": "Button",
-                    "id": "da240b9c-66e1-4cbb-a107-64a5770ac52d",
+                    "id": "595f3166-015c-4aef-9b8e-c4092407bef9",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "Tap"
@@ -32,11 +16,63 @@
                 {
                     "name": "Hold",
                     "type": "PassThrough",
-                    "id": "ff56f1c7-4dc4-4fae-829e-85e859c63c5a",
+                    "id": "b372810b-5ee8-46a5-8545-109327f921ed",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "Hold"
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "3a590e88-ad79-4692-85fa-8a4399570fcb",
+                    "path": "<Keyboard>/j",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 },
+                {
+                    "name": "",
+                    "id": "632f5d12-29ff-4b75-acfc-59b8853a6181",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "13cbd21c-6111-42dc-80f7-0aa9eef5d2ad",
+                    "path": "<Keyboard>/j",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Hold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2f3d93fa-865b-4562-b085-abc58f4630f3",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Hold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "CameraMovement",
+            "id": "5a410ea8-fb55-4f39-941d-604e38279bb6",
+            "actions": [
                 {
                     "name": "Look",
                     "type": "Value",
@@ -47,72 +83,6 @@
                 }
             ],
             "bindings": [
-                {
-                    "name": "",
-                    "id": "76004bcd-a7b6-43b1-b632-82c757f62ac8",
-                    "path": "<Keyboard>/f",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Left",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1f3a251d-14cf-4fce-a43a-69339f96dc1e",
-                    "path": "<Keyboard>/g",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Right",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f09a7ae3-20ad-4b78-96f2-96e333d24a85",
-                    "path": "<Keyboard>/j",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Tap",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "9c825758-6beb-41e3-835c-a1971f83da2c",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Tap",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "145f8015-595b-4109-b111-39850daab7a7",
-                    "path": "<Keyboard>/j",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Hold",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "65c522ed-b2e6-45b9-9997-ecb505d17760",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Hold",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
                 {
                     "name": "Dpad",
                     "id": "9d4c9ebd-751c-4767-a157-7f99c9929acb",
@@ -176,6 +146,52 @@
                     "processors": "",
                     "groups": "",
                     "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "NotInUse",
+            "id": "42d44bae-1405-4aec-8418-32a4d9efb517",
+            "actions": [
+                {
+                    "name": "Left",
+                    "type": "Button",
+                    "id": "ab1ecac5-bbe1-4225-ae32-c5cbab64ef58",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Right",
+                    "type": "Button",
+                    "id": "d93d08da-7e7f-4441-b39d-baf9ad1afe8c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "87bfd08e-5aed-48b7-8c0e-689f82fe2856",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Left",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f95d97cf-c3b0-47ff-b1e5-232b52a7f4c2",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Right",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
