@@ -18,6 +18,7 @@ MonoBehaviour:
   _beatBackPeriod: 0.5
   _dyingPeriod: 1
   _hpRecoveryPeriod: 1
+  _stopCharMinWaitTime: 0.5
   _gravityScale: 4
   _minFallDownVelocity: -25
   _walkingSpeed: 5

@@ -19,23 +19,47 @@ public class MissionEventManager : MonoBehaviour {
     private static readonly List<MissionEvent> AllMissionEvents = new List<MissionEvent> () {
         new MissionEvent (
             MissionEventEnum.EventType.Command_Hit,
+            false,
+            true,
             new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Event_Command_Hit")),
             new CommandPanelSubEvent (CharEnum.Command.Hit, CharEnum.InputSituation.GroundTap, "Event_Command_Hit_Panel", null)
         ),
 
         new MissionEvent (
             MissionEventEnum.EventType.Command_Jump,
+            false,
+            true,
             new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Event_Command_Jump")),
             new CommandPanelSubEvent (CharEnum.Command.Jump, CharEnum.InputSituation.GroundHold, "Event_Command_Jump_Panel", "Event_Command_Jump_Panel_Done"),
-            new CommandInputSubEvent (CharEnum.InputSituation.GroundRelease, "Event_ChargeJump_Instruction")
+            new CommandInputSubEvent (CharEnum.InputSituation.GroundRelease, "Event_Command_Jump_Instruction")
         ),
 
         new MissionEvent (
             MissionEventEnum.EventType.FirstHit,
+            false,
+            true,
             new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, "Event_FirstHit")),
-            new CommandInputSubEvent (CharEnum.InputSituation.GroundTap, "Event_FirstHit_Instruction"),
+            new CommandInputSubEvent (CharEnum.InputSituation.GroundTap, "Event_FirstHit_Instruction1"),
             new WaitSubEvent (1.5f),
-            new CommandInputSubEvent (CharEnum.InputSituation.GroundTap, "Event_SecondHit_Instruction")
+            new CommandInputSubEvent (CharEnum.InputSituation.GroundTap, "Event_FirstHit_Instruction2")
+        ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.TouchWallAndTurn,
+            false,
+            true,
+            new InstructionSubEvent ("Event_TouchWallAndTurn")
+        ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.AirJump,
+            true,
+            true,
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, "Event_AirJump")),
+            new CommandPanelSubEvent (CharEnum.Command.Jump, CharEnum.InputSituation.AirTap, "Event_AirJump_Panel", null),
+            new CommandInputSubEvent (CharEnum.InputSituation.GroundRelease, "Event_AirJump_Instruction1"),
+            new WaitSubEvent (0.6f),
+            new CommandInputSubEvent (CharEnum.InputSituation.AirTap, "Event_AirJump_Instruction2")
         ),
     };
 
@@ -82,23 +106,46 @@ public class MissionEventManager : MonoBehaviour {
         Log.Print ("Start Mission Event : eventType = " + eventType, LogTypes.MissionEvent);
 
         CurrentMissionEvent = missionEvent;
-        Time.timeScale = 0;
+        var charModel = GameUtils.FindOrSpawnChar ();
 
-        Action onEventFinished = () => {
-            CurrentMissionEvent = null;
-            CurrentMissionSubEvent = null;
+        Action reallyStartEventAction = () => {
+            Log.Print ("Really start Mission Event : eventType = " + eventType, LogTypes.MissionEvent);
 
-            Time.timeScale = 1;
+            Time.timeScale = 0;
 
-            // If it is from collectable, set mission event done together with UserManager.CollectCollectable ()
-            if (!isFromCollectable) {
-                UserManager.SetMissionEventDone (missionEvent.EventType);
+            if (missionEvent.IsNeedToStopChar) {
+                charModel.CancelStopChar ();
             }
 
-            onFinished?.Invoke ();
+            Action onEventFinished = () => {
+                CurrentMissionEvent = null;
+                CurrentMissionSubEvent = null;
+
+                Time.timeScale = 1;
+
+                // If it is from collectable, set mission event done together with UserManager.CollectCollectable ()
+                if (!isFromCollectable) {
+                    UserManager.SetMissionEventDone (missionEvent.EventType);
+
+                    foreach (var subEvent in subEventListClone) {
+                        if (subEvent.SubEventType == MissionEventEnum.SubEventType.CommandPanel) {
+                            commandPanel.UpdateCharCommandSettings (true);
+                        }
+                    }
+                }
+
+                onFinished?.Invoke ();
+            };
+
+            StartSubEventRecursive (eventType, subEventListClone, onEventFinished);
         };
 
-        StartSubEventRecursive (eventType, subEventListClone, onEventFinished);
+        if (missionEvent.IsNeedToStopChar) {
+            charModel.StopChar (reallyStartEventAction);
+        } else {
+            charModel.BreakUserControl ();
+            reallyStartEventAction ();
+        }
     }
 
     private void StartSubEventRecursive (MissionEventEnum.EventType eventType, List<SubEventBase> remainingSubEventList, Action onAllFinished = null) {
@@ -117,6 +164,9 @@ public class MissionEventManager : MonoBehaviour {
             switch (currentSubEvent.SubEventType) {
                 case MissionEventEnum.SubEventType.Dialog:
                     StartDialogSubEvent ((DialogSubEvent)currentSubEvent, onSubEventFinished);
+                    break;
+                case MissionEventEnum.SubEventType.Instructrion:
+                    StartInstructionSubEvent ((InstructionSubEvent)currentSubEvent, onSubEventFinished);
                     break;
                 case MissionEventEnum.SubEventType.CommandPanel:
                     StartCommandPanelSubEvent ((CommandPanelSubEvent)currentSubEvent, onSubEventFinished);
@@ -143,6 +193,10 @@ public class MissionEventManager : MonoBehaviour {
 
     private void StartDialogSubEvent (DialogSubEvent subEvent, Action onFinished = null) {
         uiManager.ShowDialogPanel (subEvent, onFinished);
+    }
+
+    private void StartInstructionSubEvent (InstructionSubEvent subEvent, Action onFinished = null) {
+        uiManager.ShowInstructionPanel (subEvent.LocalizationKeyBase, onFinished);
     }
 
     private void StartCommandPanelSubEvent (CommandPanelSubEvent subEvent, Action onFinished = null) {

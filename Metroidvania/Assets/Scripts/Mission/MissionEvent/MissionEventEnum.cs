@@ -7,12 +7,15 @@
         Command_Dash = 2,
 
         FirstHit = 100,
+        TouchWallAndTurn = 101,
+        AirJump = 102,
 
         Opening = 200,
     }
 
     public enum SubEventType {
         Dialog,
+        Instructrion,
         CommandPanel,
         CameraInput,
         CommandInput,

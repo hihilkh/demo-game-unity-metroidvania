@@ -122,6 +122,8 @@ public class CharCameraModel : MonoBehaviour
     }
 
     public void SetAudioListener (bool isEnable) {
-        audioListener.enabled = isEnable;
+        if (audioListener != null) {
+            audioListener.enabled = isEnable;
+        }
     }
 }

@@ -27,7 +27,7 @@ public class CharLandingSMB : CharSMBBase {
                     return;
                 }
 
-                AnimUtils.Model.StartIdleOrWalk ();
+                AnimUtils.Model.LandingFinishedAction ();
             }
         }
     }

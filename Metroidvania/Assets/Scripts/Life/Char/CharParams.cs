@@ -37,6 +37,12 @@ public class CharParams : ScriptableObject {
     /// </summary>
     public float HPRecoveryPeriod => _hpRecoveryPeriod;
 
+    [SerializeField] private float _stopCharMinWaitTime;
+    /// <summary>
+    /// The min wait time when stopping char in order to let most of the visual effect disappear. In second.
+    /// </summary>
+    public float StopCharMinWaitTime => _stopCharMinWaitTime;
+
     [Header ("Physics")]
     [SerializeField] private float _gravityScale;
     public float GravityScale => _gravityScale;

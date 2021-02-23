@@ -133,6 +133,7 @@ public class CharModel : LifeBase, IMapTarget {
     public CharEnum.ArrowType? CurrentArrowType { get; private set; }
     private bool isAllowMove;
     private bool isAllowAirJump;
+    private bool isWaitingLandingToStopChar;
 
     // User Input Control
     private bool isJustTapped;
@@ -193,15 +194,18 @@ public class CharModel : LifeBase, IMapTarget {
     public void EnterGameScene (MapManager mapManager, MapData.Boundary boundary) {
         gameObject.SetActive (true);
         this.mapManager = mapManager;
-        cameraModel?.SetMissionBoundaries (boundary.lowerBound, boundary.upperBound);
-        cameraModel?.SetAudioListener (true);
+        cameraModel.SetMissionBoundaries (boundary.lowerBound, boundary.upperBound);
+        cameraModel.SetAudioListener (true);
     }
 
     public void LeaveGameScene () {
+        // Remarks :
+        // While development, there are some cases that the GameObject is destroyed before LeaveGameScene ().
+        // Hence, add some null reference checking to prevent error log.
         this.mapManager = null;
         cameraModel?.UnsetMissionBoundaries ();
         cameraModel?.SetAudioListener (false);
-        gameObject.SetActive (false);
+        gameObject?.SetActive (false);
 
         inputMissionEventHandler = null;
     }
@@ -235,6 +239,7 @@ public class CharModel : LifeBase, IMapTarget {
         CurrentHitType = null;
         CurrentArrowType = null;
         isAllowAirJump = true;
+        isWaitingLandingToStopChar = false;
 
         isJustJumpedUp = false;
 
@@ -712,7 +717,9 @@ public class CharModel : LifeBase, IMapTarget {
         currentInputSituation = situation;
         currentCommand = command;
 
-        //Log.PrintDebug ("SetCurrentCommandStatus  : InputSituation : " + currentInputSituation + "   Command : " + currentCommand, LogType.Char);
+        //if (situation != null && command != null) {
+        //    Log.PrintDebug ("SetCurrentCommandStatus  : InputSituation : " + currentInputSituation + "   Command : " + currentCommand, LogTypes.Char);
+        //}
     }
 
     /// <param name="isOnlyStopHoldingDash"><b>true</b> means allow one shot dash to keep on</param>
@@ -787,8 +794,12 @@ public class CharModel : LifeBase, IMapTarget {
     #endregion
 
     #region Idle / Walk
+    public void LandingFinishedAction () {
+        isWaitingLandingToStopChar = false;
+        StartIdleOrWalk ();
+    }
 
-    public void StartIdleOrWalk () {
+    private void StartIdleOrWalk () {
         switch (CurrentHorizontalSpeed) {
             case CharEnum.HorizontalSpeed.Idle:
                 StartIdling ();
@@ -1529,23 +1540,63 @@ public class CharModel : LifeBase, IMapTarget {
 
     #region Mission Event
 
-    public void SetMissionEventTapHandler (Action handler) {
-        inputMissionEventHandler = handler;
+    /// <summary>
+    /// It is mainly used to break the hold input and force going to release input action
+    /// </summary>
+    public void BreakUserControl () {
+        StartCoroutine (BreakUserControlCoroutine ());
     }
 
-    private void CheckAndTriggerInputMissionEventHandler (CharEnum.InputSituation inputSituation) {
-        if (MissionEventManager.CurrentMissionEvent == null) {
-            return;
+    private IEnumerator BreakUserControlCoroutine () {
+        SetAllowUserControl (false);
+
+        yield return null;
+
+        SetAllowUserControl (true);
+    }
+
+    public void StopChar (Action onFinished = null) {
+        Log.Print ("StopChar", LogTypes.Char);
+
+        BreakInProgressAction (false, false);
+        isAllowMove = false;
+        SetAllowUserControl (false);
+
+        switch (CurrentLocation) {
+            case LifeEnum.Location.Air:
+                CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
+                StartFreeFall ();
+                isWaitingLandingToStopChar = true;
+                break;
+            case LifeEnum.Location.Ground:
+            default:
+                StartIdling ();
+                isWaitingLandingToStopChar = false;
+                break;
         }
 
-        if (MissionEventManager.CurrentMissionSubEvent == null || MissionEventManager.CurrentMissionSubEvent.SubEventType != MissionEventEnum.SubEventType.CommandInput) {
-            return;
-        }
+        StartCoroutine (CheckIsStoppedCharCoroutine (onFinished));
+    }
 
-        if (((CommandInputSubEvent)MissionEventManager.CurrentMissionSubEvent).InputSituation == inputSituation) {
-            inputMissionEventHandler?.Invoke ();
-            inputMissionEventHandler = null;
-        }
+    private IEnumerator CheckIsStoppedCharCoroutine (Action onFinished = null) {
+        yield return new WaitForSeconds (Params.StopCharMinWaitTime);
+
+        yield return new WaitWhile (() => isWaitingLandingToStopChar);
+
+        onFinished?.Invoke ();
+    }
+
+    public void CancelStopChar () {
+        Log.Print ("CancelStopChar", LogTypes.Char);
+
+        isAllowMove = true;
+        SetAllowUserControl (true);
+        CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
+        isWaitingLandingToStopChar = false;
+    }
+
+    public void SetMissionEventTapHandler (Action handler) {
+        inputMissionEventHandler = handler;
     }
 
     #endregion
