@@ -85,6 +85,17 @@ public class MissionProgress {
         }
     }
 
+    #region Development use only
+
+    /// <summary>
+    /// For development use only
+    /// </summary>
+    public void ClearAllProgress () {
+        unlockedEntryIds = new List<int> ();
+        isCleared = false;
+        collectedCollectables = new List<Collectable.Type> ();
+    }
+
     /// <summary>
     /// For development use only
     /// </summary>
@@ -95,4 +106,6 @@ public class MissionProgress {
 
         collectedCollectables.Clear ();
     }
+
+    #endregion
 }

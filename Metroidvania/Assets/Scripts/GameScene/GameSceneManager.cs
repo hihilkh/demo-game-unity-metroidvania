@@ -76,9 +76,16 @@ public class GameSceneManager : MonoBehaviour {
     }
 
     private void ResetGame () {
-
         Action onFadeOutFinished = () => {
-            commandPanel.Show ();
+            if (UserManager.CheckIsFirstMissionCleared ()) {
+                commandPanel.Show ();
+
+                if (!UserManager.CheckIsDoneMissionEvent (MissionEventEnum.EventType.FirstTimeCommandPanel)) {
+                    missionEventManager.StartEvent (MissionEventEnum.EventType.FirstTimeCommandPanel, false);
+                }
+            } else {
+                StartGame ();
+            }
         };
 
         Action onFadeInFinished = () => {
@@ -102,6 +109,20 @@ public class GameSceneManager : MonoBehaviour {
         };
 
         uiManager.ResetGame ();
+        GameUtils.ScreenFadeIn (onFadeInFinished);
+    }
+
+    private void BackToCaveEntry () {
+        Action onFadeOutFinished = () => {
+            Character.SetAllowMove (true);
+            missionEventManager.StartEvent (MissionEventEnum.EventType.BackToCaveEntry, false);
+        };
+
+        Action onFadeInFinished = () => {
+            Character.Reset (selectedEntryData);
+            GameUtils.ScreenFadeOut (onFadeOutFinished);
+        };
+
         GameUtils.ScreenFadeIn (onFadeInFinished);
     }
 
@@ -212,8 +233,6 @@ public class GameSceneManager : MonoBehaviour {
                 break;
         }
 
-        Time.timeScale = 0;
-
         // Include collect panel, note panel and coresponding event
         Action<bool> onAllActionFinished = (bool isUpdateCharCommandSettings) => {
             UserManager.CollectCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
@@ -259,16 +278,24 @@ public class GameSceneManager : MonoBehaviour {
 
         Action onCollectedAnimFinished = () => {
             uiManager.ShowCollectedPanel (collectable, onShowCollectedPanelFinished);
+            Character.SetAllowUserControl (true);
         };
 
+        Time.timeScale = 0;
+        Character.SetAllowUserControl (false);
         collectableObject.StartCollectedAnim (Character.GetCurrentCollectedCollectablePos (), onCollectedAnimFinished);
     }
 
     private void ExitReachedHandler (int toEntryId) {
         Log.Print ("Character reached exit : " + toEntryId, LogTypes.GameFlow | LogTypes.Char);
-        UserManager.ClearMission (selectedMissionId, toEntryId);
 
-        LeaveGame ();
+        if (toEntryId == MissionManager.CaveEntryId && selectedMissionId == MissionManager.FirstMissionId) {
+            // Cannot leave the cave
+            BackToCaveEntry ();
+        } else {
+            UserManager.ClearMission (selectedMissionId, toEntryId);
+            LeaveGame ();
+        }
     }
 
     private void MissionEventTriggeredHandler (MissionEventEnum.EventType eventType) {

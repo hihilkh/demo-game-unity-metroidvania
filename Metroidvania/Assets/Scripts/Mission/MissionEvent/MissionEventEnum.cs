@@ -18,6 +18,8 @@
         Boss_Beaten = 109,
 
         Opening = 200,
+        FirstTimeCommandPanel = 201,
+        BackToCaveEntry = 202,
     }
 
     public enum SubEventType {

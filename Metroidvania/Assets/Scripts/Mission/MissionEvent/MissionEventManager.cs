@@ -137,6 +137,33 @@ public class MissionEventManager : MonoBehaviour {
                 new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, false, "Event_Boss_Beaten_Dialog")
             )
         ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.Opening,
+            false,
+            true,
+            new DialogSubEvent (
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Confused, "Event_Opening0"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Event_Opening1")
+            )
+        ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.FirstTimeCommandPanel,
+            false,
+            true,
+            new InstructionSubEvent ("Event_FirstTimeCommandPanel")
+        ),
+
+        new MissionEvent (
+            MissionEventEnum.EventType.BackToCaveEntry,
+            false,
+            false,
+            new DialogSubEvent (
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Confused, "Event_BackToCaveEntry0"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Event_BackToCaveEntry1")
+            )
+        ),
     };
 
     #endregion

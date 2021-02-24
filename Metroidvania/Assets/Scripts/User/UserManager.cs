@@ -43,9 +43,10 @@ public static class UserManager {
         LoadDoneMissionEventTypeList ();
 
         // For development testing
+        //ClearMissionProgress (1);
         //ClearAllCollectedCollectables (2);
         //ClearEnabledCommand (CharEnum.Command.Dash);
-        //ClearDoneMissionEvent (MissionEventEnum.EventType.WarningIfNoDash);
+        //ClearDoneMissionEvent (MissionEventEnum.EventType.FirstTimeCommandPanel);
     }
 
     #endregion
@@ -285,6 +286,11 @@ public static class UserManager {
         SaveMissionProgressList ();
     }
 
+    public static bool CheckIsFirstMissionCleared () {
+        var progress = GetMissionProgress (MissionManager.FirstMissionId);
+        return progress.isCleared;
+    }
+
     public static void ClearEntryJustUnlockedMissionId () {
         EntryJustUnlockedMissionId = null;
     }
@@ -333,6 +339,16 @@ public static class UserManager {
     #endregion
 
     #region Development use only
+
+    /// <summary>
+    /// For development use only
+    /// </summary>
+    private static void ClearMissionProgress (int missionId) {
+        var missionProgress = GetMissionProgress (missionId);
+        missionProgress.ClearAllProgress ();
+
+        SaveMissionProgressList ();
+    }
 
     /// <summary>
     /// For development use only

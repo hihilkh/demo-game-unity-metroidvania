@@ -78,6 +78,10 @@ public class GameSceneUIManager : MonoBehaviour {
         PrepareInstructionPanel ();
         var localizedStrList = LangManager.GetLocalizedStrList (localizationKeyBase);
 
+        if (localizedStrList == null || localizedStrList.Count <= 0) {
+            Log.PrintError ("There is no localized string for localizationKeyBase : " + localizationKeyBase, LogTypes.MissionEvent | LogTypes.UI);
+        }
+
         ShowContentRecursive (dialogPanelControl, localizedStrList, true, onFinished);
     }
 
@@ -92,6 +96,10 @@ public class GameSceneUIManager : MonoBehaviour {
 
             PrepareDialogPanel (dialogDetails);
             var localizedStrList = LangManager.GetLocalizedStrList (dialogDetails.DialogLocalizationKeyBase);
+
+            if (localizedStrList == null || localizedStrList.Count <= 0) {
+                Log.PrintError ("There is no localized string for localizationKeyBase : " + dialogDetails.DialogLocalizationKeyBase, LogTypes.MissionEvent | LogTypes.UI);
+            }
 
             var isContainLastText = dialogDetailsList.Count == 0;
 

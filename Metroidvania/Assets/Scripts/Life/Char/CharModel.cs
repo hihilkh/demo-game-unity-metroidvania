@@ -210,6 +210,7 @@ public class CharModel : LifeBase, IMapTarget {
     /// </summary>
     /// <returns>has initialized before</returns>
     public bool Reset (MapData.EntryData entryData) {
+        cameraModel.ResetPos ();
         return Reset (entryData.pos, entryData.direction);
     }
 

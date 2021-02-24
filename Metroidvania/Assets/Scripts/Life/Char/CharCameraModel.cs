@@ -124,6 +124,10 @@ public class CharCameraModel : MonoBehaviour
         }
     }
 
+    public void ResetPos () {
+        camTransform.localPosition = originalLocalPos;
+    }
+
     public void SetMissionBoundaries (Vector2 lowerBound, Vector2 upperBound) {
         var offset = new Vector2 (cam.orthographicSize * (float)Screen.width / (float)Screen.height, cam.orthographicSize);
         missionMaxGlobalPos = upperBound - offset;
@@ -136,10 +140,6 @@ public class CharCameraModel : MonoBehaviour
         hasSetBoundaries = false;
     }
 
-    private void LookedHandler (CharEnum.LookDirections directions) {
-        currentLookDirections = directions;
-    }
-
     public void SetAudioListener (bool isEnable) {
         if (audioListener != null) {
             audioListener.enabled = isEnable;
@@ -150,4 +150,12 @@ public class CharCameraModel : MonoBehaviour
         currentSubEvent = subEvent;
         missionEventInputFinishedAction = onInputFinished;
     }
+
+    #region Events
+
+    private void LookedHandler (CharEnum.LookDirections directions) {
+        currentLookDirections = directions;
+    }
+
+    #endregion
 }

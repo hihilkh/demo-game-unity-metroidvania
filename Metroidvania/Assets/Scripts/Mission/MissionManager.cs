@@ -3,6 +3,7 @@
 // TODO : Think of getting mission and collectable details by map export to JSON
 public static class MissionManager {
     public const int FirstMissionId = 1;
+    public const int CaveEntryId = 1;
 
     private static readonly Mission Mission_1 = new Mission (1, "Mission_1");
     private static readonly Mission Mission_2 = new Mission (2, "Mission_2");
@@ -20,7 +21,7 @@ public static class MissionManager {
 
     static MissionManager () {
         // Mission_1
-        Mission_1.SetEntries (new Mission.Entry (1, "Entry_1"));
+        Mission_1.SetEntries (new Mission.Entry (CaveEntryId, "Entry_1"));
         Mission_1.SetCollectables (
             Collectable.Type.Command_Hit,
             Collectable.Type.Command_Jump,
