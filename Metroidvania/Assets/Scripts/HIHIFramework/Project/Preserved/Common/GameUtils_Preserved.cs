@@ -13,12 +13,11 @@ public partial class GameUtils : Singleton<GameUtils> {
 
     #region Logger
 
-    public static LogLevel GetMinLogLevel (LogTypes logType) {
-        //if ((logType & LogType.Enemy) == LogType.Enemy) {
-        //    return LogLevel.Error;
-        //}
-        //if ((logType & LogType.Animation) == LogType.Animation) {
+    public static LogLevel GetMinLogLevel (LogTypes logTypes) {
+        //if ((logTypes & LogTypes.Char) == LogTypes.Char) {
         //    return LogLevel.Debug;
+        //} else {
+        //    return LogLevel.Error;
         //}
 
         return LogLevel.Info;

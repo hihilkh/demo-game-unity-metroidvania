@@ -3,6 +3,7 @@
 // TODO : Think of getting mission and collectable details by map export to JSON
 public static class MissionManager {
     public const int FirstMissionId = 1;
+    public const int FromLandingEntryId = 0;
     public const int CaveEntryId = 1;
 
     private static readonly Mission Mission_1 = new Mission (1, "Mission_1");

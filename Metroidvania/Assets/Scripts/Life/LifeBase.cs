@@ -78,6 +78,10 @@ public abstract class LifeBase : MapDisposableBase {
         BaseTransform.position = new Vector3 (pos.x, pos.y, PosZ);
     }
 
+    public virtual Vector3 GetPos () {
+        return BaseTransform.position;
+    }
+
     public virtual void SetPosByOffset (Vector2 offset) {
         BaseTransform.position += (Vector3)offset;
     }

@@ -1,7 +1,9 @@
 ﻿using TMPro;
 using UnityEngine;
+using HihiFramework.UI;
 
 public class LandingSceneUIManager : MonoBehaviour {
+    [SerializeField] private GameObject baseUI;
     [SerializeField] private TextMeshProUGUI startText;
 
     private void Start () {
@@ -12,4 +14,7 @@ public class LandingSceneUIManager : MonoBehaviour {
         LangManager.SetText (new LocalizedTextDetails (startText, "PressToStart"));
     }
 
+    public void HideUI () {
+        baseUI.SetActive (false);
+    }
 }

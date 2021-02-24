@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 namespace HihiFramework.Core {
     public class FrameworkUtils : Singleton<FrameworkUtils> {
 
         private static bool IsGameSettingsInitialized = false;
+
         #region Game Initialization
 
         public static void InitGameSettings (Action<bool> onFinished = null) {
@@ -385,6 +388,23 @@ namespace HihiFramework.Core {
             }
 
             onAnimFinished?.Invoke ();
+        }
+
+        #endregion
+
+        #region Scene Management
+
+        public static void UnloadSceneAndResourcesAsync (string sceneName) {
+            var ao = SceneManager.UnloadSceneAsync (sceneName);
+
+            ao.completed += (AsyncOperation obj) => {
+                Resources.UnloadUnusedAssets ();
+
+                // Seems somehow the event system would fail after unload an additive scene, so set it inactive and active again to ensure it is working
+                var eventSystemGO = EventSystem.current.gameObject;
+                eventSystemGO.SetActive (false);
+                eventSystemGO.SetActive (true);
+            };
         }
 
         #endregion

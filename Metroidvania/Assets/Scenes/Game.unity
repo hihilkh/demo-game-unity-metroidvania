@@ -880,7 +880,7 @@ GameObject:
   m_Component:
   - component: {fileID: 267389636}
   m_Layer: 5
-  m_Name: BottomObjects
+  m_Name: BottomUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4567,6 +4567,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0376930f4866f4561b0b45a465761315, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiBase: {fileID: 267389635}
   pauseBtn: {fileID: 849232815}
   clickOnScreenBtnObject: {fileID: 1109728585}
   collectedPanelControl:

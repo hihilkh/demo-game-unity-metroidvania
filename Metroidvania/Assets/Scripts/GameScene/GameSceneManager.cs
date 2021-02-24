@@ -15,17 +15,7 @@ public class GameSceneManager : MonoBehaviour {
     [SerializeField] private GamePausePanel pausePanel;
     [SerializeField] private ReadyGo readyGo;
 
-    private CharModel _character = null;
-    private CharModel Character {
-        get {
-            if (_character == null) {
-                _character = GameUtils.FindOrSpawnChar ();
-            }
-
-            return _character;
-        }
-    }
-
+    private CharModel charModel;
     private int selectedMissionId = -1;
     private int selectedEntryId = -1;
     private MapData mapData = null;
@@ -37,6 +27,7 @@ public class GameSceneManager : MonoBehaviour {
     public static bool IsGameStarted { get; private set; } = false;
 
     private void Awake () {
+        charModel = GameUtils.FindOrSpawnChar ();
         selectedMissionId = UserManager.SelectedMissionId;
         selectedEntryId = UserManager.SelectedEntryId;
         mapData = GetMapData (selectedMissionId);
@@ -45,18 +36,20 @@ public class GameSceneManager : MonoBehaviour {
 
     private void Start () {
         AddEventHandlers ();
-        ResetGame ();
+
+        var isControllerByLandingScene = SceneManager.GetActiveScene ().name == GameVariable.LandingSceneName;
+        ResetGame (isControllerByLandingScene);
     }
 
     private void OnDestroy () {
         RemoveEventHandlers ();
-        Character.LeaveGameScene ();
+        charModel.LeaveGameScene ();
 
         IsGameInitialized = false;
         IsGameStarted = false;
     }
 
-    #region Game Flow
+    #region getter
 
     private MapData GetMapData (int missionId) {
         string[] lines = null;
@@ -75,24 +68,34 @@ public class GameSceneManager : MonoBehaviour {
         return JsonUtility.FromJson<MapData> (lines[0]);
     }
 
-    private void ResetGame () {
+    public Vector2 GetSelectedEntryPos () {
+        return selectedEntryData.pos;
+    }
+
+    #endregion
+
+    #region Game Flow
+
+    private void ResetGame (bool isControlledByLandingScene = false) {
         Action onFadeOutFinished = () => {
             if (UserManager.CheckIsFirstMissionCleared ()) {
                 commandPanel.Show ();
 
                 if (!UserManager.CheckIsDoneMissionEvent (MissionEventEnum.EventType.FirstTimeCommandPanel)) {
-                    missionEventManager.StartEvent (MissionEventEnum.EventType.FirstTimeCommandPanel, false);
+                    missionEventManager.StartEvent (MissionEventEnum.EventType.FirstTimeCommandPanel);
                 }
             } else {
-                StartGame ();
+                StartGame (true);
             }
         };
 
         Action onFadeInFinished = () => {
             Time.timeScale = 1;
 
-            // Remarks : To ensure everything is ready so that CharModel has no strange behaviour 
-            StartCoroutine (DelayResetCharModel (IsGameInitialized));
+            // Remarks : To ensure everything is ready so that CharModel has no strange behaviour
+            if (!isControlledByLandingScene) {
+                StartCoroutine (DelayResetCharModel (IsGameInitialized));
+            }
 
             if (IsGameInitialized) {
                 Log.Print ("Reset Game", LogTypes.GameFlow);
@@ -105,38 +108,57 @@ public class GameSceneManager : MonoBehaviour {
             }
 
             IsGameStarted = false;
-            GameUtils.ScreenFadeOut (onFadeOutFinished);
+
+            if (!isControlledByLandingScene) {
+                GameUtils.ScreenFadeOut (onFadeOutFinished);
+            }
         };
 
-        uiManager.SetUIInteractable (false);
-        GameUtils.ScreenFadeIn (onFadeInFinished);
-    }
-
-    private void BackToCaveEntry () {
-        Action onFadeOutFinished = () => {
-            Character.SetAllowMove (true);
-            missionEventManager.StartEvent (MissionEventEnum.EventType.BackToCaveEntry, false);
-        };
-
-        Action onFadeInFinished = () => {
-            Character.Reset (selectedEntryData);
-            GameUtils.ScreenFadeOut (onFadeOutFinished);
-        };
-
-        GameUtils.ScreenFadeIn (onFadeInFinished);
+        if (isControlledByLandingScene) {
+            uiManager.HideUI ();
+            onFadeInFinished ();
+        } else {
+            uiManager.ShowUI ();
+            uiManager.SetUIInteractable (false);
+            GameUtils.ScreenFadeIn (onFadeInFinished);
+        }
     }
 
     private IEnumerator DelayResetCharModel (bool isGameInitialized) {
         yield return null;
 
         if (!isGameInitialized) {
-            Character.EnterGameScene (mapManager, mapData.boundary);
+            charModel.EnterGameScene (mapManager, mapData.boundary);
         }
 
-        Character.Reset (selectedEntryData);
+        charModel.Reset (selectedEntryData);
     }
 
-    private void StartGame () {
+    public void StartGameFromLanding () {
+        charModel.EnterGameScene (mapManager, mapData.boundary);
+        uiManager.ShowUI ();
+        StartGame (true, false);
+
+        if (!UserManager.CheckIsDoneMissionEvent (MissionEventEnum.EventType.Opening)) {
+            missionEventManager.StartEvent (MissionEventEnum.EventType.Opening);
+        }
+    }
+
+    private void BackToCaveEntry () {
+        Action onFadeOutFinished = () => {
+            charModel.SetAllowMove (true);
+            missionEventManager.StartEvent (MissionEventEnum.EventType.BackToCaveEntry);
+        };
+
+        Action onFadeInFinished = () => {
+            charModel.Reset (selectedEntryData);
+            GameUtils.ScreenFadeOut (onFadeOutFinished);
+        };
+
+        GameUtils.ScreenFadeIn (onFadeInFinished);
+    }
+
+    private void StartGame (bool isNeedToSetCachedCommandSettings = false, bool isNeedReadyGo = true) {
         Log.Print ("ReadyGo", LogTypes.GameFlow);
 
         Action onReadyGoFinished = () => {
@@ -144,10 +166,18 @@ public class GameSceneManager : MonoBehaviour {
 
             IsGameStarted = true;
             uiManager.SetUIInteractable (true);
-            Character.SetAllowMove (true);
+            charModel.SetAllowMove (true);
+
+            if (isNeedToSetCachedCommandSettings) {
+                GameUtils.FindOrSpawnChar ().SetCommandSettings (UserManager.CommandSettingsCache);
+            }
         };
 
-        readyGo.Play (onReadyGoFinished);
+        if (isNeedReadyGo) {
+            readyGo.Play (onReadyGoFinished);
+        } else {
+            onReadyGoFinished ();
+        }
     }
 
     private void LeaveGame () {
@@ -173,7 +203,7 @@ public class GameSceneManager : MonoBehaviour {
             MissionEventTrigger.MissionEventTriggered += MissionEventTriggeredHandler;
 
             commandPanel.PanelHid += CommandPanelHidHandler;
-            Character.Died += CharDiedHandler;
+            charModel.Died += CharDiedHandler;
 
             UIEventManager.AddEventHandler (BtnOnClickType.Game_Pause, PauseBtnClickedHandler);
             UIEventManager.AddEventHandler (BtnOnClickType.Game_Restart, RestartBtnClickedHandler);
@@ -188,7 +218,7 @@ public class GameSceneManager : MonoBehaviour {
             MissionEventTrigger.MissionEventTriggered -= MissionEventTriggeredHandler;
 
             commandPanel.PanelHid -= CommandPanelHidHandler;
-            Character.Died -= CharDiedHandler;
+            charModel.Died -= CharDiedHandler;
 
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Pause, PauseBtnClickedHandler);
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Restart, RestartBtnClickedHandler);
@@ -259,13 +289,13 @@ public class GameSceneManager : MonoBehaviour {
         // Include collect panel and note panel
         Action onAllCollectActionFinished = () => {
             if (obtainedBodyPart != CharEnum.BodyParts.None) {
-                Character.ObtainBodyPart (obtainedBodyPart);
+                charModel.ObtainBodyPart (obtainedBodyPart);
             }
 
             if (collectable.EventType == null) {
                 onAllActionFinished (false);
             } else {
-                missionEventManager.StartEvent ((MissionEventEnum.EventType)collectable.EventType, true, onMissionEventFinished);
+                missionEventManager.StartEvent ((MissionEventEnum.EventType)collectable.EventType, onMissionEventFinished, true);
             }
         };
 
@@ -279,13 +309,13 @@ public class GameSceneManager : MonoBehaviour {
 
         Action onCollectedAnimFinished = () => {
             uiManager.ShowCollectedPanel (collectable, onShowCollectedPanelFinished);
-            Character.SetAllowUserControl (true);
+            charModel.SetAllowUserControl (true);
         };
 
         Time.timeScale = 0;
-        Character.SetAllowUserControl (false);
+        charModel.SetAllowUserControl (false);
         uiManager.SetUIInteractable (false);
-        collectableObject.StartCollectedAnim (Character.GetCurrentCollectedCollectablePos (), onCollectedAnimFinished);
+        collectableObject.StartCollectedAnim (charModel.GetCurrentCollectedCollectablePos (), onCollectedAnimFinished);
     }
 
     private void ExitReachedHandler (int toEntryId) {
@@ -303,7 +333,7 @@ public class GameSceneManager : MonoBehaviour {
     private void MissionEventTriggeredHandler (MissionEventEnum.EventType eventType) {
         Log.Print ("Character triggered mission event : " + eventType.ToString (), LogTypes.GameFlow | LogTypes.Char);
 
-        missionEventManager.StartEvent (eventType, false);
+        missionEventManager.StartEvent (eventType);
     }
 
     private void CommandPanelHidHandler () {

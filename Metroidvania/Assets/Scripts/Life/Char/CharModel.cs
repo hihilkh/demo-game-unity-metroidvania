@@ -172,6 +172,8 @@ public class CharModel : LifeBase, IMapTarget {
         controller.Tapped += TappedHandler;
         controller.StartedHold += StartedHoldHandler;
         controller.StoppedHold += StoppedHoldHandler;
+
+        DontDestroyOnLoad (this);
     }
 
     private void Start () {

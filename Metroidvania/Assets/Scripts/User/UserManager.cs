@@ -12,12 +12,12 @@ public static class UserManager {
     #region PlayerPrefs
 
     public static int SelectedMissionId {
-        get { return PlayerPrefs.GetInt (GameVariable.SelectedMissionIdKey, -1); }
+        get { return PlayerPrefs.GetInt (GameVariable.SelectedMissionIdKey, MissionManager.FirstMissionId); }
         set { PlayerPrefs.SetInt (GameVariable.SelectedMissionIdKey, value); }
     }
 
     public static int SelectedEntryId {
-        get { return PlayerPrefs.GetInt (GameVariable.SelectedEntryIdKey, -1); }
+        get { return PlayerPrefs.GetInt (GameVariable.SelectedEntryIdKey, MissionManager.FromLandingEntryId); }
         set { PlayerPrefs.SetInt (GameVariable.SelectedEntryIdKey, value); }
     }
 

@@ -23,7 +23,6 @@ public partial class GameUtils : Singleton<GameUtils> {
                 // Do Reset() explicitly instead of doing inside Awake() to ensure after getting the model from this method,
                 // the model is already initialized
                 Character.Reset (Vector3.zero, LifeEnum.HorizontalDirection.Right);
-                DontDestroyOnLoad (Character);
             }
         }
 
@@ -51,12 +50,12 @@ public partial class GameUtils : Singleton<GameUtils> {
         GetTransitionCanvas ().SetFadedIn (isBlockedSight);
     }
 
-    public static void ScreenFadeIn (Action onFInished = null) {
-        GetTransitionCanvas ().FadeIn (onFInished);
+    public static void ScreenFadeIn (Action onFinished = null) {
+        GetTransitionCanvas ().FadeIn (onFinished);
     }
 
-    public static void ScreenFadeOut (Action onFInished = null) {
-        GetTransitionCanvas ().FadeOut (onFInished);
+    public static void ScreenFadeOut (Action onFinished = null) {
+        GetTransitionCanvas ().FadeOut (onFinished);
     }
 
     #endregion

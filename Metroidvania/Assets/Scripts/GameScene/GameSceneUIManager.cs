@@ -17,6 +17,7 @@ public class GameSceneUIManager : MonoBehaviour {
         public Animator Animator;
     }
 
+    [SerializeField] private GameObject uiBase;
     [SerializeField] private HIHIButton pauseBtn;
     [SerializeField] private GameObject clickOnScreenBtnObject;
     [SerializeField] private PanelControl collectedPanelControl;
@@ -47,6 +48,14 @@ public class GameSceneUIManager : MonoBehaviour {
         UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ClickOnScreen, ClickOnScreenBtnClickedHandler);
         MissionEventManager.MissionEventStarted -= MissionEventStartedHandler;
         MissionEventManager.MissionEventFinished -= MissionEventFinishedHandler;
+    }
+
+    public void ShowUI () {
+        uiBase.SetActive (true);
+    }
+
+    public void HideUI () {
+        uiBase.SetActive (false);
     }
 
     public void SetUIInteractable (bool isInteractable) {

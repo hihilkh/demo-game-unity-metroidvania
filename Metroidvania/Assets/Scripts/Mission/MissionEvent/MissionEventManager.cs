@@ -190,7 +190,7 @@ public class MissionEventManager : MonoBehaviour {
 
     #region Start event
 
-    public void StartEvent (MissionEventEnum.EventType eventType, bool isFromCollectable, Action onFinished = null) {
+    public void StartEvent (MissionEventEnum.EventType eventType, Action onFinished = null, bool isFromCollectable = false) {
         var missionEvent = GetMissionEventWithSpecialEventChecking (eventType);
 
         if (missionEvent == null) {
