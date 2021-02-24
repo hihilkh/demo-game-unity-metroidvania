@@ -49,12 +49,12 @@ public class GameSceneUIManager : MonoBehaviour {
         MissionEventManager.MissionEventFinished -= MissionEventFinishedHandler;
     }
 
-    public void ResetGame () {
-        pauseBtn.SetInteractable (false);
+    public void SetUIInteractable (bool isInteractable) {
+        pauseBtn.SetInteractable (isInteractable);
     }
 
-    public void StartGame () {
-        pauseBtn.SetInteractable (true);
+    private bool GetUIInteractable () {
+        return pauseBtn.interactable;
     }
 
     #region General Panel Control
@@ -264,15 +264,15 @@ public class GameSceneUIManager : MonoBehaviour {
 
     #region Mission Event
 
-    private bool isPauseBtnInteractableBeforeMissionEvent;
+    private bool isUIInteractableBeforeMissionEvent;
 
     private void MissionEventStartedHandler () {
-        isPauseBtnInteractableBeforeMissionEvent = pauseBtn.interactable;
-        pauseBtn.SetInteractable (false);
+        isUIInteractableBeforeMissionEvent = GetUIInteractable ();
+        SetUIInteractable (false);
     }
 
     private void MissionEventFinishedHandler () {
-        pauseBtn.SetInteractable (isPauseBtnInteractableBeforeMissionEvent);
+        SetUIInteractable (isUIInteractableBeforeMissionEvent);
     }
 
     #endregion

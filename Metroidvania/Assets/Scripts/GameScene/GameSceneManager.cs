@@ -108,7 +108,7 @@ public class GameSceneManager : MonoBehaviour {
             GameUtils.ScreenFadeOut (onFadeOutFinished);
         };
 
-        uiManager.ResetGame ();
+        uiManager.SetUIInteractable (false);
         GameUtils.ScreenFadeIn (onFadeInFinished);
     }
 
@@ -143,7 +143,7 @@ public class GameSceneManager : MonoBehaviour {
             Log.Print ("Start Game", LogTypes.GameFlow);
 
             IsGameStarted = true;
-            uiManager.StartGame ();
+            uiManager.SetUIInteractable (true);
             Character.SetAllowMove (true);
         };
 
@@ -247,7 +247,8 @@ public class GameSceneManager : MonoBehaviour {
             if (enabledCommand != null) {
                 UserManager.EnableCommand ((CharEnum.Command)enabledCommand);
             }
-            
+
+            uiManager.SetUIInteractable (true);
             Time.timeScale = 1;
         };
 
@@ -283,6 +284,7 @@ public class GameSceneManager : MonoBehaviour {
 
         Time.timeScale = 0;
         Character.SetAllowUserControl (false);
+        uiManager.SetUIInteractable (false);
         collectableObject.StartCollectedAnim (Character.GetCurrentCollectedCollectablePos (), onCollectedAnimFinished);
     }
 
