@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using HihiFramework.Core;
 using UnityEngine;
 
@@ -34,6 +35,8 @@ public abstract class LifeBase : MapDisposableBase {
     protected abstract float InvinciblePeriod { get; }
 
     protected bool IsInitialized { get; private set; } = false;
+
+    #region Initialization related
 
     protected override void OnDestroy () {
         base.OnDestroy ();
@@ -84,6 +87,13 @@ public abstract class LifeBase : MapDisposableBase {
 
     public virtual void SetPosByOffset (Vector2 offset) {
         BaseTransform.position += (Vector3)offset;
+    }
+
+    #endregion
+
+    protected virtual void Update () {
+        var collisionAnalysis = AnalyseCollision ();
+        HandleCollision (collisionAnalysis);
     }
 
     #region HP
@@ -168,6 +178,50 @@ public abstract class LifeBase : MapDisposableBase {
 
     #region Collision
 
+    protected class CollisionAnalysis {
+        public Dictionary<LifeEnum.CollisionType, List<LifeCollision.CollisionDetails>> CollisionDetailsDict { get; }
+        public LifeEnum.CollisionChangedType GroundCollisionChangedType { get; }
+        public LifeEnum.CollisionChangedType WallCollisionChangedType { get; }
+
+        public CollisionAnalysis (Dictionary<LifeEnum.CollisionType, List<LifeCollision.CollisionDetails>> collisionDetailsDict, LifeEnum.CollisionChangedType groundCollisionChangedType, LifeEnum.CollisionChangedType wallCollisionChangedType) {
+            CollisionDetailsDict = collisionDetailsDict;
+            GroundCollisionChangedType = groundCollisionChangedType;
+            WallCollisionChangedType = wallCollisionChangedType;
+        }
+    }
+
+    private bool isTouchingGround = false;
+    private bool isTouchingWall = false;
+
+    private CollisionAnalysis AnalyseCollision () {
+        var collisionDetailsDict = CollisionScript.GetCollisionDetailsDict ();
+
+        var isNowTouchingGround = collisionDetailsDict.ContainsKey (LifeEnum.CollisionType.Ground);
+        var isNowTouchingWall = collisionDetailsDict.ContainsKey (LifeEnum.CollisionType.Wall);
+
+        var groundCollisionChangedType = LifeEnum.CollisionChangedType.None;
+        if (isTouchingGround && !isNowTouchingGround) {
+            groundCollisionChangedType = LifeEnum.CollisionChangedType.Exit;
+        } else if (!isTouchingGround && isNowTouchingGround) {
+            groundCollisionChangedType = LifeEnum.CollisionChangedType.Enter;
+        }
+
+        var wallCollisionChangedType = LifeEnum.CollisionChangedType.None;
+        if (isTouchingWall && !isNowTouchingWall) {
+            wallCollisionChangedType = LifeEnum.CollisionChangedType.Exit;
+        } else if (!isTouchingWall && isNowTouchingWall) {
+            wallCollisionChangedType = LifeEnum.CollisionChangedType.Enter;
+        }
+
+        isTouchingGround = isNowTouchingGround;
+        isTouchingWall = isNowTouchingWall;
+
+        return new CollisionAnalysis (collisionDetailsDict, groundCollisionChangedType, wallCollisionChangedType);
+    }
+
+    protected abstract void HandleCollision (CollisionAnalysis collisionAnalysis);
+
+    // TODO : Remove
     protected abstract void AddCollisionEventHandlers ();
     protected abstract void RemoveCollisionEventHandlers ();
 

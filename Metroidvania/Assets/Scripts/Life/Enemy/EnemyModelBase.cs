@@ -155,10 +155,12 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         return hasInitBefore;
     }
 
-    private void Update () {
+    protected override void Update () {
         if (!IsInitialized) {
             return;
         }
+
+        base.Update ();
 
         if (IsBeatingBack || IsDying) {
             return;
@@ -325,6 +327,10 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     #endregion
 
     #region Collision Events
+
+    protected override void HandleCollision (CollisionAnalysis collisionAnalysis) {
+        // TODO
+    }
 
     protected override void AddCollisionEventHandlers () {
         CollisionScript.TouchedGround += TouchedGroundHandler;

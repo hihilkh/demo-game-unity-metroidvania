@@ -10,4 +10,18 @@
         Ground,
         Air,
     }
+
+    public enum CollisionType {
+        Ground,
+        Wall,
+        Death,
+        Char,
+        Enemy,
+    }
+
+    public enum CollisionChangedType {
+        None,
+        Enter,
+        Exit,
+    }
 }

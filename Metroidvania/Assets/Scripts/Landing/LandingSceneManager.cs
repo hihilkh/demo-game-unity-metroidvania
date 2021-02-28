@@ -1,4 +1,5 @@
-﻿using HihiFramework.Core;
+﻿using System.Collections;
+using HihiFramework.Core;
 using HihiFramework.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -65,12 +66,19 @@ public class LandingSceneManager : MonoBehaviour {
                     isControlledByGameScene = true;
                     charModel.SetPosByOffset (landingToGameOffset);
                     gameSceneManager.StartGameFromLanding ();
-                    FrameworkUtils.UnloadSceneAndResourcesAsync (GameVariable.LandingSceneName);
+                    // Wait a frame to prevent any unfinished logic of starting game (e.g. OnCollisionExit2D)
+                    StartCoroutine (WaitAndUnloadScene ());
                 }
             } else {
                 charModel.SetPosByOffset (shiftBackOffset);
             }
         }
+    }
+
+    private IEnumerator WaitAndUnloadScene () {
+        yield return null;
+
+        FrameworkUtils.UnloadSceneAndResourcesAsync (GameVariable.LandingSceneName);
     }
 
     #region Events
