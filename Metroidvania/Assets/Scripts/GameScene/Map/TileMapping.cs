@@ -9,14 +9,12 @@ public static class TileMapping {
     private static readonly Dictionary<MapEnum.TileType, string> TileResourcesCustomNameDict = new Dictionary<MapEnum.TileType, string> () {
         // TODO : Change TileTag to upper tile
         { MapEnum.TileType.GroundTag, "TileTag/GroundTag" },
-        { MapEnum.TileType.Ground2Tag, "TileTag/Ground2Tag" },
         { MapEnum.TileType.SlippyWallTag, "TileTag/SlippyWallTag" },
         { MapEnum.TileType.DeathTag, "TileTag/DeathTag" },
     };
 
     private static readonly Dictionary<MapEnum.TileMapType, MapEnum.TileType> MapDesignTileTypeDict = new Dictionary<MapEnum.TileMapType, MapEnum.TileType> () {
         { MapEnum.TileMapType.Ground, MapEnum.TileType.GroundTag },
-        { MapEnum.TileMapType.Ground2, MapEnum.TileType.Ground2Tag },
         { MapEnum.TileMapType.SlippyWall, MapEnum.TileType.SlippyWallTag },
         { MapEnum.TileMapType.Death, MapEnum.TileType.DeathTag },
     };

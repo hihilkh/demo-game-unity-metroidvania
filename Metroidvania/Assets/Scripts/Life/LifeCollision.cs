@@ -149,11 +149,11 @@ public class LifeCollision : MonoBehaviour {
             return;
         }
 
-        var collideType = collision.gameObject.tag;
         var collisionDetailsList = collisionDict[collision.collider];
         collisionDetailsList.Clear ();
 
         for (var i = 0; i < collision.contactCount; i++) {
+            var collideType = collision.gameObject.tag;
             var collisionNormal = collision.GetContact (i).normal;
 
             var absX = Mathf.Abs (collisionNormal.x);

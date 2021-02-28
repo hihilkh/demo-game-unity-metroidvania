@@ -1710,7 +1710,20 @@ public class CharModel : LifeBase, IMapTarget {
 
     protected override void HandleCollision (CollisionAnalysis collisionAnalysis) {
         var collisionDetailsDict = collisionAnalysis.CollisionDetailsDict;
+
         var isNowTouchingGround = collisionDetailsDict.ContainsKey (LifeEnum.CollisionType.Ground);
+        var isNowTouchingWall = collisionDetailsDict.ContainsKey (LifeEnum.CollisionType.Wall);
+        var isNowTouchingWallSlippy = false;
+
+        // Only get the first collision details among Wall and SlippyWall collision
+        var wallPosition = LifeEnum.HorizontalDirection.Left;
+        if (isNowTouchingWall) {
+            var wallCollisionDetails = collisionDetailsDict[LifeEnum.CollisionType.Wall][0];
+            wallPosition = wallCollisionDetails.CollisionNormal.x < 0 ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
+            if ((bool)wallCollisionDetails.AdditionalDetails == true) {
+                isNowTouchingWallSlippy = true;
+            }
+        }
 
         currentHandleCollisionResult = new HandleCollisionResult ();
 
@@ -1736,7 +1749,15 @@ public class CharModel : LifeBase, IMapTarget {
                 if (details.AdditionalDetails is EnemyModelBase) {
                     var enemy = (EnemyModelBase)details.AdditionalDetails;
                     Log.Print ("CollideToEnemy : " + enemy.gameObject.name + " , collisionNormal : " + details.CollisionNormal, LogTypes.Char | LogTypes.Collision);
+
                     var hurtDirection = details.CollisionNormal.x < 0 ? LifeEnum.HorizontalDirection.Left : LifeEnum.HorizontalDirection.Right;
+                    if (collisionAnalysis.WallCollisionChangedType == LifeEnum.CollisionChangedType.Enter) {
+                        if (wallPosition == hurtDirection) {
+                            // Change the hurt direction to away from the wall to prevent error due to being hurt + touch wall at the same frame
+                            hurtDirection = hurtDirection == LifeEnum.HorizontalDirection.Left ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
+                        }
+                    }
+
                     Hurt (enemy.CollisionDP, hurtDirection);
                     CurrentLocation = isNowTouchingGround ? LifeEnum.Location.Ground : LifeEnum.Location.Air;
                     currentHandleCollisionResult.IsIgnoreCommand = true;
@@ -1744,20 +1765,6 @@ public class CharModel : LifeBase, IMapTarget {
                 } else {
                     Log.PrintError ("The AdditionalDetails for enemy collision type has wrong object type : " + details.AdditionalDetails.GetType () + ". Please check.", LogTypes.Char | LogTypes.Collision);
                 }
-            }
-        }
-
-
-        var isNowTouchingWall = collisionDetailsDict.ContainsKey (LifeEnum.CollisionType.Wall);
-        var isNowTouchingWallSlippy = false;
-
-        // Only get the first collision details among Wall and SlippyWall collision
-        var wallPosition = LifeEnum.HorizontalDirection.Left;
-        if (isNowTouchingWall) {
-            var wallCollisionDetails = collisionDetailsDict[LifeEnum.CollisionType.Wall][0];
-            wallPosition = wallCollisionDetails.CollisionNormal.x < 0 ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
-            if ((bool)wallCollisionDetails.AdditionalDetails == true) {
-                isNowTouchingWallSlippy = true;
             }
         }
 

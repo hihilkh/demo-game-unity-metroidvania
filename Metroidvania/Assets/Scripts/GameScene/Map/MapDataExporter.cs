@@ -13,7 +13,6 @@ public class MapDataExporter : MonoBehaviour {
 
     [Header ("Tilemap")]
     [SerializeField] private Tilemap groundTileMap;
-    [SerializeField] private Tilemap ground2TileMap;
     [SerializeField] private Tilemap slippyWallTileMap;
     [SerializeField] private Tilemap deathTileMap;
     [SerializeField] private Tilemap bgTileMap;
@@ -25,7 +24,6 @@ public class MapDataExporter : MonoBehaviour {
 
     private Dictionary<MapEnum.TileMapType, Tilemap> TileMapDict => new Dictionary<MapEnum.TileMapType, Tilemap> {
         { MapEnum.TileMapType.Ground, groundTileMap},
-        { MapEnum.TileMapType.Ground2, ground2TileMap},
         { MapEnum.TileMapType.SlippyWall, slippyWallTileMap},
         { MapEnum.TileMapType.Death, deathTileMap },
         { MapEnum.TileMapType.Background, bgTileMap },

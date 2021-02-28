@@ -86,10 +86,9 @@
     // Remarks: Never change the TileMapType enum int value. It is used in map json data.
     public enum TileMapType {
         Ground = 0,   // The default value 0 is used for any fallback cases
-        Ground2 = 1,
-        SlippyWall = 2,
-        Death = 3,
-        Background = 4,
+        SlippyWall = 1,
+        Death = 2,
+        Background = 3,
     }
 
     // Remarks: Never change the SwitchType enum int value. It is used in map json data.

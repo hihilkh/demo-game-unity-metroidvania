@@ -8,7 +8,6 @@ using UnityEngine.Tilemaps;
 public class MapManager : MonoBehaviour {
     [Header ("Tilemap")]
     [SerializeField] private Tilemap groundTileMap;
-    [SerializeField] private Tilemap ground2TileMap;
     [SerializeField] private Tilemap slippyWallTileMap;
     [SerializeField] private Tilemap deathTileMap;
     [SerializeField] private Tilemap bgTileMap;
@@ -40,7 +39,6 @@ public class MapManager : MonoBehaviour {
 
     private void Awake () {
         tileMapDict.Add (MapEnum.TileMapType.Ground, groundTileMap);
-        tileMapDict.Add (MapEnum.TileMapType.Ground2, ground2TileMap);
         tileMapDict.Add (MapEnum.TileMapType.SlippyWall, slippyWallTileMap);
         tileMapDict.Add (MapEnum.TileMapType.Death, deathTileMap);
         tileMapDict.Add (MapEnum.TileMapType.Background, bgTileMap);
