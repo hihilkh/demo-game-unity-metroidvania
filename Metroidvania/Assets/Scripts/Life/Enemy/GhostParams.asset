@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 191cfb9e87d8c4f939e975aaf5297685, type: 3}
   m_Name: GhostParams
   m_EditorClassIdentifier: 
-  _totalHP: 0
-  _invinciblePeriod: 0
+  _totalHP: 4
+  _invinciblePeriod: 1.3
   _beatBackInitSpeed: 0
   _movementSpeed: 0
   _jumpInitSpeed: 0
   _recursiveJumpPeriod: -1
-  _collisionDP: 0
+  _collisionDP: 20
