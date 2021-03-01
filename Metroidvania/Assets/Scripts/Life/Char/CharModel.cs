@@ -17,12 +17,10 @@ public class CharModel : LifeBase, IMapTarget {
     }
 
     private class HandleCollisionResult {
-        public bool IsIgnoreCommand;
         public bool IsJustChangedDirection;
         public bool IsJustStoppedDashing;
 
         public HandleCollisionResult () {
-            IsIgnoreCommand = false;
             IsJustChangedDirection = false;
             IsJustStoppedDashing = false;
         }
@@ -324,6 +322,31 @@ public class CharModel : LifeBase, IMapTarget {
         MovingDirection = FacingDirection;
     }
 
+    public void SetAllowMove (bool isAllowMove) {
+        this.isAllowMove = isAllowMove;
+
+        SetAllowUserControl (isAllowMove);
+
+        switch (CurrentLocation) {
+            case LifeEnum.Location.Air:
+                if (isAllowMove) {
+                    CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
+                } else {
+                    CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
+                }
+                StartFreeFall ();
+                break;
+            case LifeEnum.Location.Ground:
+            default:
+                if (isAllowMove) {
+                    StartWalking ();
+                } else {
+                    StartIdling ();
+                }
+                break;
+        }
+    }
+
     #endregion
 
     // Remarks :
@@ -370,30 +393,7 @@ public class CharModel : LifeBase, IMapTarget {
         ResetUntriggeredAnimatorTriggers ();
     }
 
-    public void SetAllowMove (bool isAllowMove) {
-        this.isAllowMove = isAllowMove;
-
-        SetAllowUserControl (isAllowMove);
-
-        switch (CurrentLocation) {
-            case LifeEnum.Location.Air:
-                if (isAllowMove) {
-                    CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
-                } else {
-                    CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
-                }
-                StartFreeFall ();
-                break;
-            case LifeEnum.Location.Ground:
-            default:
-                if (isAllowMove) {
-                    StartWalking ();
-                } else {
-                    StartIdling ();
-                }
-                break;
-        }
-    }
+    #region Statuses
 
     private void SetStatuses (CharEnum.Statuses statuses, bool isOn) {
         if (isOn) {
@@ -411,6 +411,8 @@ public class CharModel : LifeBase, IMapTarget {
     public bool GetIsInStatuses (CharEnum.Statuses statuses) {
         return (CurrentStatuses & statuses) == statuses;
     }
+
+    #endregion
 
     #region Body Parts
 
@@ -486,7 +488,7 @@ public class CharModel : LifeBase, IMapTarget {
     }
 
     private void HandleCommand (CharEnum.InputSituation? optionalSituation, HandleCollisionResult handleCollisionResult) {
-        if (optionalSituation == null || handleCollisionResult.IsIgnoreCommand) {
+        if (optionalSituation == null || IsBeatingBack || IsDying) {
             SetCurrentCommandStatus (null, null);
             return;
         }
@@ -1731,7 +1733,6 @@ public class CharModel : LifeBase, IMapTarget {
 
         if (IsDying) {
             CurrentLocation = isNowTouchingGround ? LifeEnum.Location.Ground : LifeEnum.Location.Air;
-            currentHandleCollisionResult.IsIgnoreCommand = true;
             return;
         }
 
@@ -1739,7 +1740,6 @@ public class CharModel : LifeBase, IMapTarget {
         if (collisionDetailsDict.ContainsKey (LifeEnum.CollisionType.Death)) {
             Die (MovingDirection);
             CurrentLocation = isNowTouchingGround ? LifeEnum.Location.Ground : LifeEnum.Location.Air;
-            currentHandleCollisionResult.IsIgnoreCommand = true;
             return;
         }
 
@@ -1762,7 +1762,6 @@ public class CharModel : LifeBase, IMapTarget {
 
                     Hurt (enemy.CollisionDP, hurtDirection);
                     CurrentLocation = isNowTouchingGround ? LifeEnum.Location.Ground : LifeEnum.Location.Air;
-                    currentHandleCollisionResult.IsIgnoreCommand = true;
                     return;
                 } else {
                     Log.PrintError ("The AdditionalDetails for enemy collision type has wrong object type : " + details.AdditionalDetails.GetType () + ". Please check.", LogTypes.Char | LogTypes.Collision);
@@ -1786,6 +1785,7 @@ public class CharModel : LifeBase, IMapTarget {
         switch (CurrentLocation) {
             case LifeEnum.Location.Unknown:
                 if (isNowTouchingGround) {
+                    Log.PrintDebug ("Char : Touching ground while Location = Unknown", LogTypes.Char | LogTypes.Collision);
                     CurrentLocation = LifeEnum.Location.Ground;
                 }
                 break;
@@ -1795,15 +1795,10 @@ public class CharModel : LifeBase, IMapTarget {
                     Log.PrintDebug ("Char : Leave ground", LogTypes.Char | LogTypes.Collision);
                     CurrentLocation = LifeEnum.Location.Air;
 
-                    if (IsBeatingBack) {
-                        // If it is beating back, behaviour is dominated by beat back handling
-                        break;
-                    }
-
-                    var isOnlyStopHoldingDash = collisionAnalysis.WallCollisionChangedType != LifeEnum.CollisionChangedType.Enter;
-                    currentHandleCollisionResult.IsJustStoppedDashing = BreakInProgressAction (isOnlyStopHoldingDash, false);
-
+                    var isOnlyStopHoldingDash = true;
                     if (collisionAnalysis.WallCollisionChangedType == LifeEnum.CollisionChangedType.Enter) {
+                        isOnlyStopHoldingDash = false;
+
                         if (isNowTouchingWallSlippy) {
                             // Ground -> Air + Slippy Wall
                             Log.PrintWarning ("Char : Ground -> Air + Slippy Wall . This case should be very rare. Please check if everything behave alright.", LogTypes.Char | LogTypes.Collision);
@@ -1816,7 +1811,16 @@ public class CharModel : LifeBase, IMapTarget {
                             CheckWithWallAndChangeMovingDirection ();
                             handleCollisionAnimation = HandleCollisionAnimation.Sliding;
                         }
-                    } else {
+                    }
+
+                    if (IsBeatingBack) {
+                        // If it is beating back, behaviour is dominated by beat back handling
+                        break;
+                    }
+
+                    currentHandleCollisionResult.IsJustStoppedDashing = BreakInProgressAction (isOnlyStopHoldingDash, false);
+
+                    if (collisionAnalysis.WallCollisionChangedType != LifeEnum.CollisionChangedType.Enter) {
                         if (GetIsInStatuses (CharEnum.Statuses.Dashing)) {
                             // If it is still dashing, it is one shot dash. Dominated by dash handling
                             break;
@@ -1879,6 +1883,9 @@ public class CharModel : LifeBase, IMapTarget {
                 } else {
                     // keep in air
                     if (GetIsInStatuses (CharEnum.Statuses.DropHitting)) {
+                        if (collisionAnalysis.WallCollisionChangedType == LifeEnum.CollisionChangedType.Enter) {
+                            CheckWithWallAndChangeMovingDirection ();
+                        }
                         // Dominated by DropHitting handling
                         break;
                     }

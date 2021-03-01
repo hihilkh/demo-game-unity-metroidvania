@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 // TODO : Ensure no action go after die
 public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
+    #region Fields / Properties
+
     [SerializeField] private EnemyParams _params;
     public EnemyParams Params => _params;
     [SerializeField] private Animator animator;
@@ -120,6 +122,10 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     private bool isPreparingToRecursiveJump = false;
     private float startPrepareRecursiveJumpTime = -1;
 
+    #endregion
+
+    #region Initialization related
+
     private void Start () {
         if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName) {
             Reset (1, BaseTransform.position, LifeEnum.HorizontalDirection.Right);
@@ -155,6 +161,8 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         return hasInitBefore;
     }
 
+    #endregion
+
     protected override void Update () {
         if (!IsInitialized) {
             return;
@@ -162,17 +170,24 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
         base.Update ();
 
-        if (IsBeatingBack || IsDying) {
-            return;
-        }
-
         DecideAction ();
     }
 
+    private void LateUpdate () {
+        ResetUntriggeredAnimatorTriggers ();
+    }
+
+    #region DecideAction
+
     /// <summary>
-    /// Call at every frame after the script is initialized (except while beating back or dying)
+    /// Call at every frame after the script is initialized
     /// </summary>
-    protected virtual void DecideAction () {
+    /// <returns>Can do action or not</returns>
+    protected virtual bool DecideAction () {
+        if (IsBeatingBack || IsDying) {
+            return false;
+        }
+
         // Jump
         if (isPreparingToRecursiveJump) {
             if (Time.time - startPrepareRecursiveJumpTime >= Params.RecursiveJumpPeriod) {
@@ -184,7 +199,11 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
                 }
             }
         }
+
+        return true;
     }
+
+    #endregion
 
     #region Animtor
 
@@ -196,6 +215,10 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     protected void SetAnimatorBool (string boolName, bool value) {
         Log.PrintDebug (gameObject.name + " : SetAnimatorBool : " + boolName + " ; Value : " + value, LogTypes.Enemy | LogTypes.Animation);
         animator.SetBool (boolName, value);
+    }
+
+    private void ResetUntriggeredAnimatorTriggers () {
+        animator.ResetTrigger (EnemyAnimConstant.LandingTriggerName);
     }
 
     #endregion
@@ -329,90 +352,174 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     #region Collision Events
 
     protected override void HandleCollision (CollisionAnalysis collisionAnalysis) {
-        // TODO
+        var collisionDetailsDict = collisionAnalysis.CollisionDetailsDict;
+
+        var isNowTouchingGround = collisionDetailsDict.ContainsKey (LifeEnum.CollisionType.Ground);
+        var isNowTouchingWall = collisionDetailsDict.ContainsKey (LifeEnum.CollisionType.Wall);
+
+        // Only get the first collision details among Wall and SlippyWall collision
+        var wallPosition = LifeEnum.HorizontalDirection.Left;
+        if (isNowTouchingWall) {
+            var wallCollisionDetails = collisionDetailsDict[LifeEnum.CollisionType.Wall][0];
+            wallPosition = wallCollisionDetails.CollisionNormal.x < 0 ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
+        }
+
+        if (IsDying) {
+            CurrentLocation = isNowTouchingGround ? LifeEnum.Location.Ground : LifeEnum.Location.Air;
+            return;
+        }
+
+        // Check for death
+        if (collisionDetailsDict.ContainsKey (LifeEnum.CollisionType.Death)) {
+            Die (FacingDirection);
+            CurrentLocation = isNowTouchingGround ? LifeEnum.Location.Ground : LifeEnum.Location.Air;
+            return;
+        }
+
+        // Check for touching wall
+        if (collisionAnalysis.WallCollisionChangedType == LifeEnum.CollisionChangedType.Enter) {
+            Log.PrintDebug (gameObject.name + " : Touch wall", LogTypes.Enemy | LogTypes.Collision);
+            if (wallPosition == FacingDirection) {
+                // Change facing direction only when the enemy originally face towards wall
+                ChangeFacingDirection ();
+            }
+        }
+
+        // Changing current location
+        switch (CurrentLocation) {
+            case LifeEnum.Location.Unknown:
+                if (isNowTouchingGround) {
+                    Log.PrintDebug (gameObject.name + " : Touching ground while Location = Unknown", LogTypes.Enemy | LogTypes.Collision);
+                    CurrentLocation = LifeEnum.Location.Ground;
+                }
+                break;
+            case LifeEnum.Location.Ground:
+                if (collisionAnalysis.GroundCollisionChangedType == LifeEnum.CollisionChangedType.Exit) {
+                    // Ground -> Air
+                    Log.PrintDebug (gameObject.name + " : Leave ground", LogTypes.Enemy | LogTypes.Collision);
+                    CurrentLocation = LifeEnum.Location.Air;
+
+                    if (MovementType == EnemyEnum.MovementType.Walking) {
+                        if (IsBeatingBack) {
+                            // If it is beating back, behaviour is dominated by beat back handling
+                            break;
+                        }
+
+                        if (isJustJumpedUp) {
+                            // Dominated by jump handling
+                            isJustJumpedUp = false;
+                        } else {
+                            StartFreeFall ();
+                        }
+                    }
+                }
+                break;
+            case LifeEnum.Location.Air:
+                if (collisionAnalysis.GroundCollisionChangedType == LifeEnum.CollisionChangedType.Enter) {
+                    // Air -> Ground
+                    Log.PrintDebug (gameObject.name + " : Touch ground", LogTypes.Enemy | LogTypes.Collision);
+                    CurrentLocation = LifeEnum.Location.Ground;
+
+                    if (MovementType == EnemyEnum.MovementType.Walking) {
+                        if (IsDying) {
+                            // Do nothing
+                            break;
+                        }
+
+                        if (IsBeatingBack) {
+                            StopBeatingBack ();
+                        } else {
+                            SetAnimatorTrigger (EnemyAnimConstant.LandingTriggerName);
+                        }
+
+                        CheckAndPrepareRecursiveJump ();
+                    }
+                }
+                break;
+        }
     }
 
     protected override void AddCollisionEventHandlers () {
-        CollisionScript.TouchedGround += TouchedGroundHandler;
-        CollisionScript.LeftGround += LeftGroundHandler;
-        CollisionScript.TouchedWall += TouchedWallHandler;
-        CollisionScript.LeftWall += LeftWallHandler;
-        CollisionScript.TouchedDeathTag += TouchedDeathTagHandler;
+        //CollisionScript.TouchedGround += TouchedGroundHandler;
+        //CollisionScript.LeftGround += LeftGroundHandler;
+        //CollisionScript.TouchedWall += TouchedWallHandler;
+        //CollisionScript.LeftWall += LeftWallHandler;
+        //CollisionScript.TouchedDeathTag += TouchedDeathTagHandler;
     }
 
     protected override void RemoveCollisionEventHandlers () {
-        CollisionScript.TouchedGround -= TouchedGroundHandler;
-        CollisionScript.LeftGround -= LeftGroundHandler;
-        CollisionScript.TouchedWall -= TouchedWallHandler;
-        CollisionScript.LeftWall -= LeftWallHandler;
-        CollisionScript.TouchedDeathTag -= TouchedDeathTagHandler;
+        //CollisionScript.TouchedGround -= TouchedGroundHandler;
+        //CollisionScript.LeftGround -= LeftGroundHandler;
+        //CollisionScript.TouchedWall -= TouchedWallHandler;
+        //CollisionScript.LeftWall -= LeftWallHandler;
+        //CollisionScript.TouchedDeathTag -= TouchedDeathTagHandler;
     }
 
-    private void TouchedGroundHandler () {
-        Log.PrintDebug (gameObject.name + " : TouchGround", LogTypes.Enemy);
+    //private void TouchedGroundHandler () {
+    //    Log.PrintDebug (gameObject.name + " : TouchGround", LogTypes.Enemy);
 
-        // Touch ground while init / set position
-        if (CurrentLocation == LifeEnum.Location.Unknown) {
-            CurrentLocation = LifeEnum.Location.Ground;
-            return;
-        }
+    //    // Touch ground while init / set position
+    //    if (CurrentLocation == LifeEnum.Location.Unknown) {
+    //        CurrentLocation = LifeEnum.Location.Ground;
+    //        return;
+    //    }
 
-        switch (CurrentLocation) {
-            case LifeEnum.Location.Air:
-                if (MovementType == EnemyEnum.MovementType.Walking) {
-                    if (IsDying) {
-                        // Do nothing
-                    } else if (IsBeatingBack) {
-                        StopBeatingBack ();
-                    } else {
-                        SetAnimatorTrigger (EnemyAnimConstant.LandingTriggerName);
-                    }
+    //    switch (CurrentLocation) {
+    //        case LifeEnum.Location.Air:
+    //            if (MovementType == EnemyEnum.MovementType.Walking) {
+    //                if (IsDying) {
+    //                    // Do nothing
+    //                } else if (IsBeatingBack) {
+    //                    StopBeatingBack ();
+    //                } else {
+    //                    SetAnimatorTrigger (EnemyAnimConstant.LandingTriggerName);
+    //                }
 
-                    CheckAndPrepareRecursiveJump ();
-                }
-                break;
-            default:
-                // Do nothing
-                break;
-        }
+    //                CheckAndPrepareRecursiveJump ();
+    //            }
+    //            break;
+    //        default:
+    //            // Do nothing
+    //            break;
+    //    }
 
-        CurrentLocation = LifeEnum.Location.Ground;
-    }
+    //    CurrentLocation = LifeEnum.Location.Ground;
+    //}
 
-    private void LeftGroundHandler () {
-        Log.PrintDebug (gameObject.name + " : LeaveGround", LogTypes.Enemy);
+    //private void LeftGroundHandler () {
+    //    Log.PrintDebug (gameObject.name + " : LeaveGround", LogTypes.Enemy);
 
-        CurrentLocation = LifeEnum.Location.Air;
+    //    CurrentLocation = LifeEnum.Location.Air;
 
-        if (MovementType == EnemyEnum.MovementType.Walking) {
-            if (isJustJumpedUp) {
-                isJustJumpedUp = false;
-            } else {
-                if (!IsBeatingBack) {
-                    StartFreeFall ();
-                }
-            }
-        }
-    }
+    //    if (MovementType == EnemyEnum.MovementType.Walking) {
+    //        if (isJustJumpedUp) {
+    //            isJustJumpedUp = false;
+    //        } else {
+    //            if (!IsBeatingBack) {
+    //                StartFreeFall ();
+    //            }
+    //        }
+    //    }
+    //}
 
-    private void TouchedWallHandler (LifeEnum.HorizontalDirection wallPosition, bool isSlippyWall) {
-        Log.PrintDebug (gameObject.name + " : TouchWall : isSlippyWall = " + isSlippyWall, LogTypes.Char);
+    //private void TouchedWallHandler (LifeEnum.HorizontalDirection wallPosition, bool isSlippyWall) {
+    //    Log.PrintDebug (gameObject.name + " : TouchWall : isSlippyWall = " + isSlippyWall, LogTypes.Char);
 
-        if (wallPosition != FacingDirection) {
-            // Somehow touch wall which is back to facing direction
-            return;
-        }
+    //    if (wallPosition != FacingDirection) {
+    //        // Somehow touch wall which is back to facing direction
+    //        return;
+    //    }
 
-        ChangeFacingDirection ();
-    }
+    //    ChangeFacingDirection ();
+    //}
 
-    private void LeftWallHandler (bool isSlippyWall) {
-        Log.PrintDebug (gameObject.name + " : LeaveWall", LogTypes.Char);
-    }
+    //private void LeftWallHandler (bool isSlippyWall) {
+    //    Log.PrintDebug (gameObject.name + " : LeaveWall", LogTypes.Char);
+    //}
 
-    private void TouchedDeathTagHandler () {
-        Die (FacingDirection);
-    }
+    //private void TouchedDeathTagHandler () {
+    //    Die (FacingDirection);
+    //}
 
     #endregion
 
