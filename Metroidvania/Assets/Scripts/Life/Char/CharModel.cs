@@ -1119,6 +1119,8 @@ public class CharModel : LifeBase, IMapTarget {
 
             isIgnoreHold = true;
             isIgnoreRelease = true;
+        } else if (isIgnoreHold) {
+            isIgnoreRelease = true;
         }
 
         return isJustStoppedDashing;
