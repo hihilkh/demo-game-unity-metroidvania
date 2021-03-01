@@ -38,14 +38,6 @@ public abstract class LifeBase : MapDisposableBase {
 
     #region Initialization related
 
-    protected override void OnDestroy () {
-        base.OnDestroy ();
-
-        if (IsInitialized) {
-            RemoveCollisionEventHandlers ();
-        }
-    }
-
     /// <summary>
     /// If not yet initialized, it will initialize. Otherwise, it will reset.
     /// </summary>
@@ -60,7 +52,6 @@ public abstract class LifeBase : MapDisposableBase {
             IsInitialized = true;
 
             CollisionScript.Init (InvincibleLayer);
-            AddCollisionEventHandlers ();
         }
 
         CurrentHP = TotalHP;
@@ -220,10 +211,6 @@ public abstract class LifeBase : MapDisposableBase {
     }
 
     protected abstract void HandleCollision (CollisionAnalysis collisionAnalysis);
-
-    // TODO : Remove
-    protected abstract void AddCollisionEventHandlers ();
-    protected abstract void RemoveCollisionEventHandlers ();
 
     #endregion
 }

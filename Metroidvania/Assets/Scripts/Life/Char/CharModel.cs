@@ -163,7 +163,6 @@ public class CharModel : LifeBase, IMapTarget {
     private bool isJustTapped;
     private bool isHolding;
     private bool isJustReleaseHold;
-    //private bool isIgnoreUserInputInThisFrame;
 
     // Command Control
     private CharEnum.InputSituation? currentInputSituation;
@@ -182,8 +181,6 @@ public class CharModel : LifeBase, IMapTarget {
     private Coroutine attackCoolDownCoroutine;
 
     // Collision
-    //private bool isJustTouchWall;
-    //private bool isTouchingWall;
     private HandleCollisionResult currentHandleCollisionResult;
 
     // Mission Event
@@ -280,8 +277,6 @@ public class CharModel : LifeBase, IMapTarget {
             attackCoolDownCoroutine = null;
         }
 
-        //isTouchingWall = false;
-
         SetCurrentCommandStatus (null, null);
 
         SetHPRecovery (false);
@@ -300,9 +295,6 @@ public class CharModel : LifeBase, IMapTarget {
         currentCommand = null;
         isIgnoreHold = false;
         isIgnoreRelease = false;
-
-        //isJustTouchWall = false;
-        //isIgnoreUserInputInThisFrame = false;
     }
 
     protected override IEnumerator ResetCurrentLocation () {
@@ -368,20 +360,9 @@ public class CharModel : LifeBase, IMapTarget {
         var situation = GetCurrentInputSituation ();
         HandleCommand (situation, currentHandleCollisionResult);
 
-        // TODO : Check old logic :
-        // slippy wall keep dashing towards it
-
-        // TODO : Check new logic :
-        // different Dash + TouchWall combination
-        // isIgnoreUserInputInThisFrame
-
-        //HandleCommand (situation);
-
         // Reset control flags
         isJustTapped = false;
         isJustReleaseHold = false;
-        //isJustTouchWall = false;
-        //isIgnoreUserInputInThisFrame = false;
 
         if (situation == CharEnum.InputSituation.GroundRelease || situation == CharEnum.InputSituation.AirRelease) {
             isIgnoreHold = false;
@@ -795,300 +776,6 @@ public class CharModel : LifeBase, IMapTarget {
 
     }
 
-    //private void HandleCommand (CharEnum.InputSituation? optionalSituation) {
-    //    if (optionalSituation == null) {
-    //        SetCurrentCommandStatus (null, null);
-    //        return;
-    //    }
-
-    //    var situation = (CharEnum.InputSituation)optionalSituation;
-
-    //    if (missionEventInputFinishedAction != null) {
-    //        if (MissionEventManager.CurrentMissionSubEvent != null && MissionEventManager.CurrentMissionSubEvent is CommandInputSubEvent) {
-    //            var targetSituation = ((CommandInputSubEvent)MissionEventManager.CurrentMissionSubEvent).InputSituation;
-
-    //            if (targetSituation == situation) {
-    //                missionEventInputFinishedAction?.Invoke ();
-    //                missionEventInputFinishedAction = null;
-    //            } else {
-    //                // Some cases would need to discard action
-    //                switch (targetSituation) {
-    //                    case CharEnum.InputSituation.GroundTap:
-    //                    case CharEnum.InputSituation.AirTap:
-    //                    case CharEnum.InputSituation.GroundHold:
-    //                    case CharEnum.InputSituation.AirHold:
-    //                        if (situation != targetSituation) {
-    //                            Log.Print ("Discard action due to Command Input Mission Event", LogTypes.Char | LogTypes.MissionEvent);
-    //                            SetCurrentCommandStatus (null, null);
-    //                            return;
-    //                        }
-    //                        break;
-    //                    case CharEnum.InputSituation.GroundRelease:
-    //                    case CharEnum.InputSituation.AirRelease:
-    //                        if (situation == CharEnum.InputSituation.GroundTap || situation == CharEnum.InputSituation.AirTap) {
-    //                            Log.Print ("Discard action due to Command Input Mission Event", LogTypes.Char | LogTypes.MissionEvent);
-    //                            SetCurrentCommandStatus (null, null);
-    //                            return;
-    //                        }
-    //                        break;
-    //                }
-    //            }
-    //        }
-    //    }
-
-    //    if (situation == CharEnum.InputSituation.GroundHold || situation == CharEnum.InputSituation.AirHold) {
-    //        if (isIgnoreHold) {
-    //            SetCurrentCommandStatus (null, null);
-    //            return;
-    //        } else if (currentInputSituation != CharEnum.InputSituation.GroundHold && currentInputSituation != CharEnum.InputSituation.AirHold) {
-    //            // (The situation of just triggered hold)
-
-    //            if (isIgnoreUserInputInThisFrame) {
-    //                // Ignore user input if just trigger hold
-    //                // TODO : It may lead to some wired cases, e.g.:
-    //                // trigger hold while touch wall -> hold action and release action failed, but
-    //                // triggered hold and touch wall later -> hold action and release action success
-    //                SetCurrentCommandStatus (null, null);
-    //                return;
-    //            }
-    //        }
-    //    } else {
-    //        if (isIgnoreUserInputInThisFrame) {
-    //            SetCurrentCommandStatus (null, null);
-    //            return;
-    //        }
-    //    }
-
-    //    if (situation == CharEnum.InputSituation.GroundRelease || situation == CharEnum.InputSituation.AirRelease) {
-    //        if (isIgnoreRelease) {
-    //            SetCurrentCommandStatus (null, null);
-    //            return;
-    //        }
-    //    }
-
-    //    if (GetIsInStatuses (CharEnum.Statuses.DropHitting)) {
-    //        Log.Print ("Ignore InputSituation due to drop hitting. Situation = " + situation, LogTypes.Char);
-    //        SetCurrentCommandStatus (null, null);
-
-    //        if (situation == CharEnum.InputSituation.GroundHold || situation == CharEnum.InputSituation.AirHold) {
-    //            isIgnoreHold = true;
-    //            isIgnoreRelease = true;
-    //        }
-    //        return;
-    //    }
-
-    //    var command = GetCommandBySituation (situation);
-    //    Log.PrintDebug ("Handle/Current : InputSituation : " + situation + " / " + currentInputSituation + " ; Command : " + command + " / " + currentCommand, LogTypes.Char);
-
-    //    // Fisish the hold command
-    //    if (situation == CharEnum.InputSituation.GroundRelease || situation == CharEnum.InputSituation.AirRelease) {
-    //        if (currentInputSituation == CharEnum.InputSituation.GroundHold || currentInputSituation == CharEnum.InputSituation.AirHold) {
-    //            switch (currentCommand) {
-    //                case CharEnum.Command.Dash:
-    //                    if (command == CharEnum.Command.Dash) {
-    //                        StopDashing (CurrentHorizontalSpeed, false, false);
-    //                    } else if (command == CharEnum.Command.Jump) {
-    //                        if (CheckIsAllowJump ()) {
-    //                            StopDashing (CurrentHorizontalSpeed, false, false);
-    //                        } else {
-    //                            StopDashing (CharEnum.HorizontalSpeed.Walk, true, true);
-    //                        }
-    //                    } else {
-    //                        StopDashing (CharEnum.HorizontalSpeed.Walk, true, true);
-    //                    }
-    //                    break;
-    //            }
-    //        }
-    //    }
-
-    //    if (command == null) {
-    //        SetCurrentCommandStatus (situation, null);
-    //        return;
-    //    }
-
-    //    command = (CharEnum.Command)command;
-    //    var isTriggeredCommand = false;
-
-    //    switch (command) {
-    //        case CharEnum.Command.Jump:
-    //            if (!CheckIsAllowJump ()) {
-    //                break;
-    //            }
-
-    //            isTriggeredCommand = true;
-    //            switch (situation) {
-    //                case CharEnum.InputSituation.GroundTap:
-    //                case CharEnum.InputSituation.AirTap:
-    //                    StartCoroutine (Jump ());
-    //                    break;
-    //                case CharEnum.InputSituation.GroundHold:
-    //                case CharEnum.InputSituation.AirHold:
-    //                    if (!GetIsInStatuses (CharEnum.Statuses.JumpCharging)) {
-    //                        JumpCharge ();
-    //                    }
-    //                    break;
-    //                case CharEnum.InputSituation.GroundRelease:
-    //                case CharEnum.InputSituation.AirRelease:
-    //                    var checkSituation = (situation == CharEnum.InputSituation.GroundRelease) ? CharEnum.InputSituation.GroundHold : CharEnum.InputSituation.AirHold;
-    //                    if (GetCommandBySituation (checkSituation) == CharEnum.Command.Jump) {
-    //                        // That mean this release command should be a charged jump
-    //                        if (GetIsInStatuses (CharEnum.Statuses.JumpCharging)) {
-    //                            StartCoroutine (Jump ());
-    //                        } else {
-    //                            // If isJumpCharged = false, the JumpCharge is somehow cancelled. So do not do any action
-    //                            isTriggeredCommand = false;
-    //                        }
-    //                    } else {
-    //                        // That mean this release command is a non charged jump
-    //                        StartCoroutine (Jump ());
-    //                    }
-    //                    break;
-    //            }
-    //            break;
-    //        case CharEnum.Command.Dash:
-    //            if (GetIsInStatuses (CharEnum.Statuses.DashCollingDown)) {
-    //                break;
-    //            }
-
-    //            switch (situation) {
-    //                case CharEnum.InputSituation.GroundTap:
-    //                case CharEnum.InputSituation.AirTap:
-    //                    if (!GetIsInStatuses (CharEnum.Statuses.Dashing)) {
-    //                        StartDashing (true);
-    //                        isTriggeredCommand = true;
-    //                    }
-    //                    break;
-    //                case CharEnum.InputSituation.GroundHold:
-    //                case CharEnum.InputSituation.AirHold:
-    //                    if (currentInputSituation == situation) {    // Already dashing
-    //                        if (!isJustTouchWall) {
-    //                            isTriggeredCommand = true;
-    //                        }
-    //                    } else {
-    //                        if (!GetIsInStatuses (CharEnum.Statuses.Dashing)) { // Ensure not trigger hold dash while doing one tap dash
-    //                            StartDashing (false);
-    //                            isTriggeredCommand = true;
-    //                        }
-    //                    }
-    //                    break;
-    //                case CharEnum.InputSituation.GroundRelease:
-    //                case CharEnum.InputSituation.AirRelease:
-    //                    if (!GetIsInStatuses (CharEnum.Statuses.Dashing)) {
-    //                        StartDashing (true);
-    //                        isTriggeredCommand = true;
-    //                    }
-    //                    break;
-    //            }
-    //            break;
-    //        case CharEnum.Command.Hit:
-    //            if (GetIsInStatuses (CharEnum.Statuses.AttackCoolingDown)) {
-    //                break;
-    //            }
-
-    //            CharEnum.HitType? hitType = null;
-    //            switch (situation) {
-    //                case CharEnum.InputSituation.GroundTap:
-    //                case CharEnum.InputSituation.AirTap:
-    //                    hitType = CharEnum.HitType.Normal;
-    //                    break;
-    //                case CharEnum.InputSituation.GroundHold:
-    //                    hitType = CharEnum.HitType.Charged;
-    //                    isIgnoreHold = true;
-    //                    break;
-    //                case CharEnum.InputSituation.AirHold:
-    //                    if (!GetIsInStatuses (CharEnum.Statuses.DropHitCharging)) {
-    //                        DropHitCharge ();
-    //                    }
-    //                    break;
-    //                case CharEnum.InputSituation.GroundRelease:
-    //                    hitType = CharEnum.HitType.Finishing;
-    //                    break;
-    //                case CharEnum.InputSituation.AirRelease:
-    //                    if (currentCommand == CharEnum.Command.Hit) {  // That means, AirHold command is also Hit
-    //                        hitType = CharEnum.HitType.Drop;
-    //                    } else {
-    //                        hitType = CharEnum.HitType.Finishing;
-    //                    }
-    //                    break;
-    //            }
-
-    //            if (hitType != null) {
-    //                Hit ((CharEnum.HitType)hitType);
-    //            }
-    //            isTriggeredCommand = true;
-
-    //            break;
-    //        case CharEnum.Command.Arrow:
-    //            if (GetIsInStatuses (CharEnum.Statuses.AttackCoolingDown)) {
-    //                break;
-    //            }
-
-    //            CharEnum.ArrowType? arrowType = null;
-    //            switch (situation) {
-    //                case CharEnum.InputSituation.GroundTap:
-    //                case CharEnum.InputSituation.AirTap:
-    //                    arrowType = CharEnum.ArrowType.Target;
-    //                    break;
-    //                case CharEnum.InputSituation.GroundHold:
-    //                case CharEnum.InputSituation.AirHold:
-    //                    arrowType = CharEnum.ArrowType.Straight;
-    //                    isIgnoreHold = true;
-    //                    break;
-    //                case CharEnum.InputSituation.GroundRelease:
-    //                case CharEnum.InputSituation.AirRelease:
-    //                    arrowType = CharEnum.ArrowType.Triple;
-    //                    break;
-    //            }
-
-    //            if (arrowType != null) {
-    //                ShootArrow ((CharEnum.ArrowType)arrowType);
-    //            }
-    //            isTriggeredCommand = true;
-
-    //            break;
-    //        case CharEnum.Command.Turn:
-    //            // Do not do turn action if touching wall and on ground because changing moving direction is trigged while touch wall
-    //            if (isTouchingWall && CurrentLocation == LifeEnum.Location.Ground) {
-    //                break;
-    //            }
-
-    //            if (GetIsInStatuses (CharEnum.Statuses.Dashing)) {
-    //                StopDashing (CharEnum.HorizontalSpeed.Walk, true, true);
-    //            }
-
-    //            switch (situation) {
-    //                case CharEnum.InputSituation.GroundTap:
-    //                case CharEnum.InputSituation.GroundRelease:
-    //                    ChangeFacingDirection (true);
-    //                    isTriggeredCommand = true;
-    //                    break;
-    //                case CharEnum.InputSituation.AirTap:
-    //                case CharEnum.InputSituation.AirRelease:
-    //                    if (GetIsInStatuses (CharEnum.Statuses.Sliding)) {
-    //                        var wallDirection = FacingDirection == LifeEnum.HorizontalDirection.Left ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
-    //                        RepelFromWall (wallDirection, true);
-    //                    } else {
-    //                        ChangeFacingDirection (false);
-    //                    }
-    //                    isTriggeredCommand = true;
-    //                    break;
-    //                case CharEnum.InputSituation.GroundHold:
-    //                case CharEnum.InputSituation.AirHold:
-    //                    Log.PrintWarning ("No action of Turn command is defined for holding. Please check.", LogTypes.Char);
-    //                    break;
-    //            }
-
-    //            break;
-    //    }
-
-    //    if (!isTriggeredCommand) {
-    //        if (situation == CharEnum.InputSituation.GroundHold || situation == CharEnum.InputSituation.AirHold) {
-    //            isIgnoreHold = true;
-    //        }
-    //    }
-    //    SetCurrentCommandStatus (situation, isTriggeredCommand ? command : null);
-    //}
-
     private void SetCurrentCommandStatus (CharEnum.InputSituation? situation, CharEnum.Command? command) {
         currentInputSituation = situation;
         currentCommand = command;
@@ -1289,16 +976,10 @@ public class CharModel : LifeBase, IMapTarget {
         var startTime = Time.time;
 
         while (Time.time - startTime < Params.OneShotDashPeriod) {
-            //if (isJustTouchWall) {
-            //    break;
-            //}
-
             yield return null;
         }
 
         // If touching wall, sliding animation dominate the animation
-        //StopDashing (CharEnum.HorizontalSpeed.Walk, true, isJustTouchWall ? false : true);
-
         StopDashing (CharEnum.HorizontalSpeed.Walk, true, true);
     }
 
@@ -1710,6 +1391,39 @@ public class CharModel : LifeBase, IMapTarget {
     }
     #endregion
 
+    #region In Air related
+
+    private void StartSliding () {
+        SetStatuses (CharEnum.Statuses.Sliding, true);
+        CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
+        isAllowAirJump = true;   // Allow jump in air again
+
+        SetAnimatorTrigger (CharAnimConstant.SlideTriggerName);
+    }
+
+    private void RepelFromWall (LifeEnum.HorizontalDirection wallDirection, bool isFinallyFacingWall, bool isTriggerFreeFallAnim) {
+        SetStatuses (CharEnum.Statuses.Sliding, false);
+
+        var directionMultiplier = wallDirection == LifeEnum.HorizontalDirection.Left ? 1 : -1;
+        SetPosByOffset (new Vector2 (Params.RepelFromWallDistByTurn, 0) * directionMultiplier);
+
+        if (isFinallyFacingWall) {
+            SetMovingDirection (wallDirection);
+        } else {
+            SetMovingDirection (wallDirection == LifeEnum.HorizontalDirection.Left ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left);
+        }
+
+        if (isTriggerFreeFallAnim) {
+            StartFreeFall ();
+        }
+    }
+
+    private void StartFreeFall () {
+        SetAnimatorTrigger (CharAnimConstant.FreeFallTriggerName);
+    }
+
+    #endregion
+
     #region Collision Event
 
     protected override void HandleCollision (CollisionAnalysis collisionAnalysis) {
@@ -1935,168 +1649,6 @@ public class CharModel : LifeBase, IMapTarget {
                 break;
         }
     }
-
-    protected override void AddCollisionEventHandlers () {
-        //CollisionScript.TouchedGround += TouchedGroundHandler;
-        //CollisionScript.LeftGround += LeftGroundHandler;
-        //CollisionScript.TouchedWall += TouchedWallHandler;
-        //CollisionScript.LeftWall += LeftWallHandler;
-        //CollisionScript.TouchedDeathTag += TouchedDeathTagHandler;
-        //CollisionScript.TouchedEnemy += TouchedEnemyHandler;
-    }
-
-    protected override void RemoveCollisionEventHandlers () {
-        //CollisionScript.TouchedGround -= TouchedGroundHandler;
-        //CollisionScript.LeftGround -= LeftGroundHandler;
-        //CollisionScript.TouchedWall -= TouchedWallHandler;
-        //CollisionScript.LeftWall -= LeftWallHandler;
-        //CollisionScript.TouchedDeathTag -= TouchedDeathTagHandler;
-        //CollisionScript.TouchedEnemy -= TouchedEnemyHandler;
-    }
-
-    //private void TouchedGroundHandler () {
-    //    Log.PrintDebug ("Char : TouchGround", LogTypes.Char);
-
-    //    isIgnoreUserInputInThisFrame = true;
-
-    //    // Touch ground while init / set position
-    //    if (CurrentLocation == LifeEnum.Location.Unknown) {
-    //        CurrentLocation = LifeEnum.Location.Ground;
-    //        return;
-    //    }
-
-    //    if (!GetIsInStatuses (CharEnum.Statuses.Dashing)) {
-    //        if (isAllowMove) {
-    //            CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
-    //        } else {
-    //            CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
-    //        }
-            
-    //        AlignMovingWithFacingDirection ();
-
-    //        if (GetIsInStatuses (CharEnum.Statuses.Sliding)) {
-    //            SetStatuses (CharEnum.Statuses.Sliding, false);
-    //            StartWalking ();
-    //        } else if (CurrentLocation == LifeEnum.Location.Air) {
-    //            SetAnimatorTrigger (CharAnimConstant.LandingTriggerName);
-    //        }
-    //    }
-
-    //    isAllowAirJump = true;
-    //    CurrentLocation = LifeEnum.Location.Ground;
-
-    //    BreakInProgressAction (true, true);
-    //}
-
-    //private void LeftGroundHandler () {
-    //    Log.PrintDebug ("Char : LeaveGround", LogTypes.Char);
-
-    //    isIgnoreUserInputInThisFrame = true;
-
-    //    CurrentLocation = LifeEnum.Location.Air;
-
-    //    if (IsBeatingBack) {
-    //        // Dominate by beat back handling
-    //        return;
-    //    }
-
-    //    BreakInProgressAction (true, false);
-
-    //    if (isJustJumpedUp) {
-    //        isJustJumpedUp = false;
-    //    } else if (GetIsInStatuses (CharEnum.Statuses.Dashing)) {
-    //        // Keep dashing
-    //    } else {
-    //        StartFreeFall ();
-    //    }
-    //}
-
-    //private void TouchedWallHandler (LifeEnum.HorizontalDirection wallPosition, bool isSlippyWall) {
-    //    Log.PrintDebug ("Char : TouchWall : isSlippyWall = " + isSlippyWall, LogTypes.Char);
-
-    //    isIgnoreUserInputInThisFrame = true;
-    //    isJustTouchWall = true;
-    //    isTouchingWall = true;
-
-    //    if (wallPosition == MovingDirection) {  // Change moving direction only when char originally move towards wall
-    //        // if it is slippy wall, do not change moving direction when in air
-    //        if (!isSlippyWall || CurrentLocation == LifeEnum.Location.Ground) {
-    //            ChangeMovingDirection ();
-    //        }
-    //    }
-
-    //    if (GetIsInStatuses (CharEnum.Statuses.Dashing)) {
-    //        StopDashing (CharEnum.HorizontalSpeed.Walk, true, CurrentLocation == LifeEnum.Location.Ground);
-
-    //        // Break hold input if "GroundHold - Dash" or "AirHold - Dash"
-    //        if (currentInputSituation == CharEnum.InputSituation.GroundHold || currentInputSituation == CharEnum.InputSituation.AirHold) {
-    //            if (currentCommand == CharEnum.Command.Dash) {
-    //                isIgnoreHold = true;
-    //            }
-    //        }
-    //    }
-
-    //    if (CurrentLocation == LifeEnum.Location.Air) {
-    //        if (isSlippyWall) {
-    //            CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
-    //            RepelFromWall (FacingDirection, true);
-    //        } else {
-    //            StartSliding ();
-    //        }
-    //    }
-    //}
-
-    //private void LeftWallHandler (bool isSlippyWall) {
-    //    Log.PrintDebug ("Char : LeaveWall : isSlippyWall = " + isSlippyWall, LogTypes.Char);
-
-    //    isTouchingWall = false;
-    //    isIgnoreUserInputInThisFrame = true;
-
-    //    if (GetIsInStatuses (CharEnum.Statuses.Sliding)) {  // The case that char is sliding to the end of the wall and then free fall
-    //        SetStatuses (CharEnum.Statuses.Sliding, false);
-    //        ChangeMovingDirection ();
-    //        StartFreeFall ();
-    //    }
-    //}
-
-    private void StartSliding () {
-        SetStatuses (CharEnum.Statuses.Sliding, true);
-        CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
-        isAllowAirJump = true;   // Allow jump in air again
-
-        SetAnimatorTrigger (CharAnimConstant.SlideTriggerName);
-    }
-
-    private void RepelFromWall (LifeEnum.HorizontalDirection wallDirection, bool isFinallyFacingWall, bool isTriggerFreeFallAnim) {
-        SetStatuses (CharEnum.Statuses.Sliding, false);
-
-        var directionMultiplier = wallDirection == LifeEnum.HorizontalDirection.Left ? 1 : -1;
-        SetPosByOffset (new Vector2 (Params.RepelFromWallDistByTurn, 0) * directionMultiplier);
-
-        if (isFinallyFacingWall) {
-            SetMovingDirection (wallDirection);
-        } else {
-            SetMovingDirection (wallDirection == LifeEnum.HorizontalDirection.Left ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left);
-        }
-
-        if (isTriggerFreeFallAnim) {
-            StartFreeFall ();
-        }
-    }
-
-    private void StartFreeFall () {
-        SetAnimatorTrigger (CharAnimConstant.FreeFallTriggerName);
-    }
-
-    //private void TouchedDeathTagHandler () {
-    //    Die (MovingDirection);
-    //}
-
-    //private void TouchedEnemyHandler (EnemyModelBase enemy, Vector2 collisionNormal) {
-    //    Log.Print ("CollideToEnemy : " + enemy.gameObject.name + " , collisionNormal : " + collisionNormal, LogTypes.Char);
-    //    var hurtDirection = collisionNormal.x < 0 ? LifeEnum.HorizontalDirection.Left : LifeEnum.HorizontalDirection.Right;
-    //    Hurt (enemy.CollisionDP, hurtDirection);
-    //}
 
     #endregion
 
