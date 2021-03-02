@@ -29,7 +29,6 @@ public class EnemyAnimUtils : MonoBehaviour {
     private void FixedUpdate () {
         if (isAccelerating) {
             var acceleration = Model.Params.Acceleration * acceleratingDirection;
-            Log.Print (acceleration);
             RB.AddForce (acceleration, ForceMode2D.Force);
 
             if (RB.velocity.sqrMagnitude > maxMovementSpeedSqr) {
