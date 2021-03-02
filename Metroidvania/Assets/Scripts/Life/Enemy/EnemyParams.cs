@@ -8,22 +8,36 @@ public class EnemyParams : ScriptableObject {
 
     [SerializeField] private float _invinciblePeriod;
     /// <summary>
-    /// In second.
+    /// In second.<br />
+    /// If InvinciblePeriod = 0, do not trigger invincible.
     /// </summary>
     public float InvinciblePeriod => _invinciblePeriod;
 
     [SerializeField] private float _beatBackInitSpeed;
     /// <summary>
-    /// Magnitude only. The direction is base on hurt direction and derived LifeBase class
+    /// Magnitude only. The direction is base on hurt direction and derived LifeBase class.<br />
+    /// If BeatBackInitSpeed = 0, do not trigger beat back.
     /// </summary>
     public float BeatBackInitSpeed => _beatBackInitSpeed;
 
     [Header ("Movement")]
-    [SerializeField] private float _movementSpeed;
+    [SerializeField] private float _maxMovementSpeed;
     /// <summary>
     /// For Walking MovementType, it is the horizontal walking speed. For Flying MovementType, it is the flying speed.
     /// </summary>
-    public float MovementSpeed => _movementSpeed;
+    public float MaxMovementSpeed => _maxMovementSpeed;
+
+    [SerializeField] private bool _isSpeedAccelerate;
+    /// <summary>
+    /// If IsSpeedAccelerate = false, the speed would have shape changes
+    /// </summary>
+    public bool IsSpeedAccelerate => _isSpeedAccelerate;
+
+    [SerializeField] private float _acceleration;
+    /// <summary>
+    /// Only work if IsSpeedAccelerate = true
+    /// </summary>
+    public float Acceleration => _acceleration;
 
     [Header ("Jump")]
     [SerializeField] private float _jumpInitSpeed;

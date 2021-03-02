@@ -15,7 +15,9 @@ MonoBehaviour:
   _totalHP: 4
   _invinciblePeriod: 1.3
   _beatBackInitSpeed: 9
-  _movementSpeed: 0
+  _maxMovementSpeed: 0
+  _isSpeedAccelerate: 0
+  _acceleration: 0
   _jumpInitSpeed: 5
   _recursiveJumpPeriod: 1.5
   _collisionDP: 20

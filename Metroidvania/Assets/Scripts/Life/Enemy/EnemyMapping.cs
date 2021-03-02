@@ -8,6 +8,7 @@ public static class EnemyMapping {
     private static readonly Dictionary<EnemyEnum.EnemyType, string> EnemyResourcesNameDict = new Dictionary<EnemyEnum.EnemyType, string> () {
         { EnemyEnum.EnemyType.Slime, "Slime" },
         { EnemyEnum.EnemyType.Ghost, "Ghost" },
+        { EnemyEnum.EnemyType.Tank, "Tank" },
     };
 
     public static string GetEnemyResourcesName (EnemyEnum.EnemyType enemyType) {

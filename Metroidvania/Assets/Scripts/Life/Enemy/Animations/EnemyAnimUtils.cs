@@ -11,13 +11,31 @@ public class EnemyAnimUtils : MonoBehaviour {
     [SerializeField] private Transform _animBaseTransform;
     public Transform AnimBaseTransform => _animBaseTransform;
 
+    private float maxMovementSpeedSqr;
+    private bool isAccelerating = false;
+    private Vector2 acceleratingDirection;
+
     private void Awake () {
         // event handler
         Model.FacingDirectionChanged += FacingDirectionChangedHandler;
+
+        maxMovementSpeedSqr = Model.Params.MaxMovementSpeed * Model.Params.MaxMovementSpeed;
     }
 
     private void OnDestroy () {
         Model.FacingDirectionChanged -= FacingDirectionChangedHandler;
+    }
+
+    private void FixedUpdate () {
+        if (isAccelerating) {
+            var acceleration = Model.Params.Acceleration * acceleratingDirection;
+            Log.Print (acceleration);
+            RB.AddForce (acceleration, ForceMode2D.Force);
+
+            if (RB.velocity.sqrMagnitude > maxMovementSpeedSqr) {
+                RB.velocity = Vector2.ClampMagnitude (RB.velocity, Model.Params.MaxMovementSpeed);
+            }
+        }
     }
 
     #region Movement Related
@@ -52,9 +70,20 @@ public class EnemyAnimUtils : MonoBehaviour {
     }
 
     private void UpdateHorizontalVelocity (LifeEnum.HorizontalDirection facingDirection) {
-        var scale = (facingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
-        var velocityX = Model.Params.MovementSpeed * scale;
-        RB.velocity = new Vector3 (velocityX, RB.velocity.y);
+        if (Model.Params.IsSpeedAccelerate) {
+            isAccelerating = true;
+            acceleratingDirection = (facingDirection == LifeEnum.HorizontalDirection.Right) ? Vector2.right : Vector2.left;
+        } else {
+            isAccelerating = false;
+            var scale = (facingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
+            var velocityX = Model.Params.MaxMovementSpeed * scale;
+            RB.velocity = new Vector2 (velocityX, RB.velocity.y);
+        }
+    }
+
+    public void SetIdleVelocity () {
+        isAccelerating = false;
+        RB.velocity = Vector2.zero;
     }
 
     #endregion

@@ -101,7 +101,9 @@ public abstract class LifeBase : MapDisposableBase {
             return false;
         } else {
             StartBeatingBack (hurtDirection);
-            StartCoroutine (SetInvincible (true));
+            if (InvinciblePeriod > 0) {
+                StartCoroutine (SetInvincible (true));
+            }
 
             return true;
         }

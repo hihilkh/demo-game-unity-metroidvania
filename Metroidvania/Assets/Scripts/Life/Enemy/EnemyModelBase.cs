@@ -241,6 +241,10 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     }
 
     protected override void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection) {
+        if (Params.BeatBackInitSpeed <= 0) {
+            return;
+        }
+
         base.StartBeatingBack (hurtDirection);
 
         switch (MovementType) {
@@ -262,7 +266,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     protected override void StopBeatingBack () {
         base.StopBeatingBack ();
 
-        SetAnimatorTrigger (EnemyAnimConstant.DefaultTriggerName);
+        SetAnimatorTrigger (EnemyAnimConstant.MoveTriggerName);
     }
 
     protected override void StartInvincible () {
@@ -349,7 +353,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     #endregion
 
-    #region Collision Events
+    #region Collision Related
 
     protected override void HandleCollision (CollisionAnalysis collisionAnalysis) {
         var collisionDetailsDict = collisionAnalysis.CollisionDetailsDict;
@@ -378,11 +382,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
         // Check for touching wall
         if (collisionAnalysis.WallCollisionChangedType == LifeEnum.CollisionChangedType.Enter) {
-            Log.PrintDebug (gameObject.name + " : Touch wall", LogTypes.Enemy | LogTypes.Collision);
-            if (wallPosition == FacingDirection) {
-                // Change facing direction only when the enemy originally face towards wall
-                ChangeFacingDirection ();
-            }
+            TouchWallAction (wallPosition);
         }
 
         // Changing current location
@@ -436,6 +436,14 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
                     }
                 }
                 break;
+        }
+    }
+
+    protected virtual void TouchWallAction (LifeEnum.HorizontalDirection wallPosition) {
+        Log.PrintDebug (gameObject.name + " : Touch wall", LogTypes.Enemy | LogTypes.Collision);
+        if (wallPosition == FacingDirection) {
+            // Change facing direction only when the enemy originally face towards wall
+            ChangeFacingDirection ();
         }
     }
 

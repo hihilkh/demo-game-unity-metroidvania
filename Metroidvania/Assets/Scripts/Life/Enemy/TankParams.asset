@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecd29e9c9364e4e2c913a0c05015ae00, type: 3}
+  m_Name: TankParams
+  m_EditorClassIdentifier: 
+  _totalHP: 20
+  _invinciblePeriod: 0
+  _beatBackInitSpeed: 0
+  _maxMovementSpeed: 20
+  _isSpeedAccelerate: 1
+  _acceleration: 13
+  _jumpInitSpeed: 0
+  _recursiveJumpPeriod: -1
+  _collisionDP: 30
+  _touchWallWaitPeriod: 2

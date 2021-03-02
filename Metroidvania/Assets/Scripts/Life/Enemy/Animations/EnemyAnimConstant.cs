@@ -1,5 +1,6 @@
 ﻿public static class EnemyAnimConstant {
-    public const string DefaultTriggerName = "Default";
+    public const string IdleTriggerName = "Idle";
+    public const string MoveTriggerName = "Move";
     public const string JumpTriggerName = "Jump";
     public const string LandingTriggerName = "Landing";
     public const string BeatBackTriggerName = "BeatBack";
