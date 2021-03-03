@@ -9,6 +9,7 @@ public static class EnemyMapping {
         { EnemyEnum.EnemyType.Slime, "Slime" },
         { EnemyEnum.EnemyType.Ghost, "Ghost" },
         { EnemyEnum.EnemyType.Tank, "Tank" },
+        { EnemyEnum.EnemyType.SlimeSenior, "SlimeSenior" },
     };
 
     public static string GetEnemyResourcesName (EnemyEnum.EnemyType enemyType) {

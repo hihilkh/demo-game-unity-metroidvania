@@ -117,7 +117,6 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     private static Vector2 WalkingBeatBackDirection_Left = Vector2.Scale (WalkingBeatBackDirection_Right, new Vector2 (-1, 1));
 
     // Jump
-    private bool IsJumpRecursively => Params.RecursiveJumpPeriod >= 0;
     private bool isJustJumpedUp = false;
     private bool isPreparingToRecursiveJump = false;
     private float startPrepareRecursiveJumpTime = -1;
@@ -323,7 +322,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     #region Jump
 
     private void CheckAndPrepareRecursiveJump () {
-        if (MovementType == EnemyEnum.MovementType.Walking && IsJumpRecursively) {
+        if (MovementType == EnemyEnum.MovementType.Walking && Params.IsJumpRecursively) {
             isPreparingToRecursiveJump = true;
             startPrepareRecursiveJumpTime = Time.time;
         }
@@ -339,15 +338,12 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         }
 
         isJustJumpedUp = true;
-        CurrentLocation = LifeEnum.Location.Air;
         SetAnimatorTrigger (EnemyAnimConstant.JumpTriggerName);
 
         return true;
     }
 
     private void StartFreeFall () {
-        CurrentLocation = LifeEnum.Location.Air;
-
         SetAnimatorTrigger (EnemyAnimConstant.FreeFallTriggerName);
     }
 

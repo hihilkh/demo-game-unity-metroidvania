@@ -19,5 +19,6 @@ MonoBehaviour:
   _isSpeedAccelerate: 0
   _acceleration: 0
   _jumpInitSpeed: 5
+  _isJumpRecursively: 1
   _recursiveJumpPeriod: 1.5
   _collisionDP: 20

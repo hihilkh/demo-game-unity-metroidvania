@@ -7,6 +7,7 @@ public class EnemyEnum {
         Slime = 0,   // The default value 0 is used for any fallback cases
         Ghost = 1,
         Tank = 2,
+        SlimeSenior = 3,
     }
 
     public enum MovementType {
