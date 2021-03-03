@@ -5,5 +5,9 @@ public class EnemyBeatBackSMB : EnemySMBBase {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
         AnimUtils.RB.velocity = AnimUtils.Model.BeatBackDirection * AnimUtils.Model.Params.BeatBackInitSpeed;
+
+        if (AnimUtils.Model.MovementType == EnemyEnum.MovementType.Flying) {
+            AnimUtils.StartUpdateToIdleVelocity ();
+        }
     }
 }

@@ -18,6 +18,7 @@ MonoBehaviour:
   _params: {fileID: 11400000, guid: 1d446dc6c62594e4788e0c6c17e67554, type: 2}
   animator: {fileID: 5921086632676262573}
   targetRefPoint: {fileID: 6270952488724941804}
+  charDetection: {fileID: 5436775218116894273}
 --- !u!1001 &3986346337140869901
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -252,6 +253,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tank
       objectReference: {fileID: 0}
+    - target: {fileID: 7814792192901842491, guid: fb252c10e6aec43ed8c2b1951b766dbe,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 7814792192901842491, guid: fb252c10e6aec43ed8c2b1951b766dbe,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fb252c10e6aec43ed8c2b1951b766dbe, type: 3}
 --- !u!1 &5921086632676262574 stripped
@@ -282,6 +293,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3496eae79ee4c4fd1a8965a966f583f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5436775218116894273 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8944455206812718412, guid: fb252c10e6aec43ed8c2b1951b766dbe,
+    type: 3}
+  m_PrefabInstance: {fileID: 3986346337140869901}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee0df6d778d1e46998aab22ea2c52e10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &4488080015729415705 stripped

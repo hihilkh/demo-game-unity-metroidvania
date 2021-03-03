@@ -10,6 +10,7 @@ public static class EnemyMapping {
         { EnemyEnum.EnemyType.Ghost, "Ghost" },
         { EnemyEnum.EnemyType.Tank, "Tank" },
         { EnemyEnum.EnemyType.SlimeSenior, "SlimeSenior" },
+        { EnemyEnum.EnemyType.GhostSenior, "GhostSenior" },
     };
 
     public static string GetEnemyResourcesName (EnemyEnum.EnemyType enemyType) {

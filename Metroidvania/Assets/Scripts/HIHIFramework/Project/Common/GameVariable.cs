@@ -34,6 +34,7 @@ public static partial class GameVariable {
     public const string MainMenuSceneName = "MainMenu";
     public const string GameSceneName = "Game";
     public const string MapEditorSceneName = "MapEditor";
+    public const string SandboxSceneName = "Sandbox";
 
     #endregion
 

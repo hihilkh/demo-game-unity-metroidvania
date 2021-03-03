@@ -14,6 +14,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     public EnemyParams Params => _params;
     [SerializeField] private Animator animator;
     [SerializeField] private Transform targetRefPoint;
+    [SerializeField] private EnemyCharDetection charDetection;
 
     /// <summary>
     /// Input :<br />
@@ -108,6 +109,9 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     public int Id { get; private set; }
     public int CollisionDP => Params.CollisionDP;
 
+    private bool isIdling = false;
+    private bool isDetectedChar = false;
+
     // Beat Back
     /// <summary>
     /// Normalized.
@@ -126,7 +130,8 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     #region Initialization related
 
     private void Start () {
-        if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName) {
+        if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName ||
+            SceneManager.GetActiveScene ().name == GameVariable.SandboxSceneName) {
             Reset (1, BaseTransform.position, LifeEnum.HorizontalDirection.Right);
         }
     }
@@ -152,12 +157,32 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
         if (!hasInitBefore) {
             this.Id = id;
+            
+            if (Params.IsDetectChar) {
+                charDetection.CharDetected += CharDetectedHandler;
+                charDetection.CharLost += CharLostHandler;
+                charDetection.SetActive (true);
+            } else {
+                charDetection.SetActive (false);
+            }
         }
 
         CurrentStatuses = EnemyEnum.Statuses.Normal;
         CheckAndPrepareRecursiveJump ();
+        StartIdleOrMove ();
 
         return hasInitBefore;
+    }
+
+    protected override void OnDestroy () {
+        base.OnDestroy ();
+
+        if (IsInitialized) {
+            if (Params.IsDetectChar) {
+                charDetection.CharDetected -= CharDetectedHandler;
+                charDetection.CharLost -= CharLostHandler;
+            }
+        }
     }
 
     #endregion
@@ -187,6 +212,22 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
             return false;
         }
 
+        if (isIdling) {
+            if (isDetectedChar) {
+                StartIdleOrMove ();
+            }
+
+            return false;
+        }
+
+        if (!isDetectedChar) {
+            if (!isIdling) {
+                StartIdleOrMove ();
+            }
+
+            return false;
+        }
+
         // Jump
         if (isPreparingToRecursiveJump) {
             if (Time.time - startPrepareRecursiveJumpTime >= Params.RecursiveJumpPeriod) {
@@ -200,6 +241,33 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         }
 
         return true;
+    }
+
+    #endregion
+
+    #region Idle / Move
+
+    protected void StartIdleOrMove () {
+        if (Params.IsDetectChar) {
+            if (isDetectedChar) {
+                StartMoving ();
+            } else {
+                StartIdling ();
+            }
+        } else {
+            isDetectedChar = true;
+            StartMoving ();
+        }
+        
+    }
+    protected void StartIdling () {
+        isIdling = true;
+        SetAnimatorTrigger (EnemyAnimConstant.IdleTriggerName);
+    }
+
+    protected void StartMoving () {
+        isIdling = false;
+        SetAnimatorTrigger (EnemyAnimConstant.MoveTriggerName);
     }
 
     #endregion
@@ -265,7 +333,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     protected override void StopBeatingBack () {
         base.StopBeatingBack ();
 
-        SetAnimatorTrigger (EnemyAnimConstant.MoveTriggerName);
+        StartIdleOrMove ();
     }
 
     protected override void StartInvincible () {
@@ -281,6 +349,10 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         base.StopInvincible ();
 
         SetAnimatorBool (EnemyAnimConstant.InvincibleBoolName, false);
+
+        if (MovementType == EnemyEnum.MovementType.Flying && IsBeatingBack) {
+            StopBeatingBack ();
+        }
     }
 
     public virtual void DestroySelf (bool isDie) {
@@ -309,7 +381,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     #region Facing Direction
 
-    protected void ChangeFacingDirection () {
+    public void ChangeFacingDirection () {
         if (FacingDirection == LifeEnum.HorizontalDirection.Left) {
             FacingDirection = LifeEnum.HorizontalDirection.Right;
         } else {
@@ -345,6 +417,28 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     private void StartFreeFall () {
         SetAnimatorTrigger (EnemyAnimConstant.FreeFallTriggerName);
+    }
+
+    #endregion
+
+    #region Char detection
+
+    protected virtual void CharDetectedHandler () {
+        isDetectedChar = true;
+    }
+
+    protected virtual void CharLostHandler () {
+        isDetectedChar = false;
+    }
+
+    #endregion
+
+    #region Char chasing
+
+    public Vector2 GetChaseCharNormalizedDir () {
+        var charModel = GameUtils.FindOrSpawnChar ();
+        var distVector = (Vector2)charModel.GetPos () - (Vector2)GetPos ();
+        return distVector.normalized;
     }
 
     #endregion
@@ -437,9 +531,11 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     protected virtual void TouchWallAction (LifeEnum.HorizontalDirection wallPosition) {
         Log.PrintDebug (gameObject.name + " : Touch wall", LogTypes.Enemy | LogTypes.Collision);
-        if (wallPosition == FacingDirection) {
-            // Change facing direction only when the enemy originally face towards wall
-            ChangeFacingDirection ();
+        if (!Params.IsChaseChar) {
+            if (wallPosition == FacingDirection) {
+                // Change facing direction only when the enemy originally face towards wall
+                ChangeFacingDirection ();
+            }
         }
     }
 

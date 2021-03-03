@@ -2,6 +2,12 @@
 using UnityEngine;
 
 public class EnemyAnimUtils : MonoBehaviour {
+    private enum AccelerationMode {
+        None,
+        Direction,
+        ToIdle,
+    }
+
     [SerializeField] private EnemyModelBase _model;
     public EnemyModelBase Model => _model;
 
@@ -12,7 +18,13 @@ public class EnemyAnimUtils : MonoBehaviour {
     public Transform AnimBaseTransform => _animBaseTransform;
 
     private float maxMovementSpeedSqr;
-    private bool isAccelerating = false;
+    private AccelerationMode currentAccelerationMode = AccelerationMode.None;
+
+    private const float NearZeroSpeedSqr = 0.2F;
+
+    /// <summary>
+    /// It is assumed to be nomalized
+    /// </summary>
     private Vector2 acceleratingDirection;
 
     private void Awake () {
@@ -27,13 +39,23 @@ public class EnemyAnimUtils : MonoBehaviour {
     }
 
     private void FixedUpdate () {
-        if (isAccelerating) {
-            var acceleration = Model.Params.Acceleration * acceleratingDirection;
-            RB.AddForce (acceleration, ForceMode2D.Force);
+        switch (currentAccelerationMode) {
+            case AccelerationMode.Direction:
+                var acceleration = Model.Params.Acceleration * acceleratingDirection;
+                RB.AddForce (acceleration, ForceMode2D.Force);
 
-            if (RB.velocity.sqrMagnitude > maxMovementSpeedSqr) {
-                RB.velocity = Vector2.ClampMagnitude (RB.velocity, Model.Params.MaxMovementSpeed);
-            }
+                if (RB.velocity.sqrMagnitude > maxMovementSpeedSqr) {
+                    RB.velocity = Vector2.ClampMagnitude (RB.velocity, Model.Params.MaxMovementSpeed);
+                }
+                break;
+            case AccelerationMode.ToIdle:
+                RB.velocity = RB.velocity * Model.Params.DecelerationFactor;
+
+                if (RB.velocity.sqrMagnitude <= NearZeroSpeedSqr) {
+                    RB.velocity = Vector2.zero;
+                    currentAccelerationMode = AccelerationMode.None;
+                }
+                break;
         }
     }
 
@@ -69,20 +91,38 @@ public class EnemyAnimUtils : MonoBehaviour {
     }
 
     private void UpdateHorizontalVelocity (LifeEnum.HorizontalDirection facingDirection) {
+        var targetDir = (facingDirection == LifeEnum.HorizontalDirection.Right) ? Vector2.right : Vector2.left;
+        UpdateVelocity (targetDir, true);
+    }
+
+    /// <param name="targetDir">It is assumed to be nomalized</param>
+    public void UpdateVelocity (Vector2 targetDir) {
+        UpdateVelocity (targetDir, false);
+    }
+
+    /// <param name="targetDir">It is assumed to be nomalized</param>
+    private void UpdateVelocity (Vector2 targetDir, bool isUpdateHorizontalOnly) {
         if (Model.Params.IsSpeedAccelerate) {
-            isAccelerating = true;
-            acceleratingDirection = (facingDirection == LifeEnum.HorizontalDirection.Right) ? Vector2.right : Vector2.left;
+            currentAccelerationMode = AccelerationMode.Direction;
+            acceleratingDirection = targetDir;
         } else {
-            isAccelerating = false;
-            var scale = (facingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
-            var velocityX = Model.Params.MaxMovementSpeed * scale;
-            RB.velocity = new Vector2 (velocityX, RB.velocity.y);
+            currentAccelerationMode = AccelerationMode.None;
+            var velocity = Model.Params.MaxMovementSpeed * targetDir;
+            if (isUpdateHorizontalOnly) {
+                RB.velocity = new Vector2 (velocity.x, RB.velocity.y);
+            } else {
+                RB.velocity = velocity;
+            }
         }
     }
 
-    public void SetIdleVelocity () {
-        isAccelerating = false;
-        RB.velocity = Vector2.zero;
+    public void StartUpdateToIdleVelocity () {
+        if (Model.Params.IsSpeedAccelerate) {
+            currentAccelerationMode = AccelerationMode.ToIdle;
+        } else {
+            currentAccelerationMode = AccelerationMode.None;
+            RB.velocity = Vector2.zero;
+        }
     }
 
     #endregion

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 191cfb9e87d8c4f939e975aaf5297685, type: 3}
+  m_Name: Params_GhostSenior
+  m_EditorClassIdentifier: 
+  _totalHP: 10
+  _invinciblePeriod: 2
+  _beatBackInitSpeed: 6
+  _maxMovementSpeed: 5
+  _isSpeedAccelerate: 1
+  _acceleration: 10
+  _decelerationFactor: 0.95
+  _isDetectChar: 1
+  _isChaseChar: 1
+  _changeChaseCharDirPeriod: 0.5
+  _jumpInitSpeed: 0
+  _isJumpRecursively: 0
+  _recursiveJumpPeriod: 0
+  _collisionDP: 20

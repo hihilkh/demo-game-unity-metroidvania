@@ -203,7 +203,8 @@ public class CharModel : LifeBase, IMapTarget {
     }
 
     private void Start () {
-        if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName) {
+        if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName ||
+            SceneManager.GetActiveScene ().name == GameVariable.SandboxSceneName) {
             Reset (BaseTransform.position, Params.InitDirection);
             SetAllowMove (true);
         }

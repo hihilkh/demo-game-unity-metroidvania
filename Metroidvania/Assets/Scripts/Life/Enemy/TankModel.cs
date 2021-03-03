@@ -28,4 +28,8 @@ public class TankModel : EnemyModelBase {
         ChangeFacingDirection ();
         SetAnimatorTrigger (EnemyAnimConstant.MoveTriggerName);
     }
+
+    protected override void CharLostHandler () {
+        // Once char is detected, keep moving
+    }
 }

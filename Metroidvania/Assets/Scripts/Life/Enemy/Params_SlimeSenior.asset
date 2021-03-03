@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 191cfb9e87d8c4f939e975aaf5297685, type: 3}
+  m_Name: Params_SlimeSenior
+  m_EditorClassIdentifier: 
+  _totalHP: 12
+  _invinciblePeriod: 1.3
+  _beatBackInitSpeed: 9
+  _maxMovementSpeed: 3
+  _isSpeedAccelerate: 0
+  _acceleration: 0
+  _decelerationFactor: 0
+  _isDetectChar: 0
+  _isChaseChar: 0
+  _changeChaseCharDirPeriod: 0
+  _jumpInitSpeed: 7
+  _isJumpRecursively: 1
+  _recursiveJumpPeriod: 0.7
+  _collisionDP: 20
