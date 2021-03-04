@@ -63,12 +63,12 @@ public abstract class CharArrowBase : MonoBehaviour {
 
     #region Events
 
-    private void HitLifeHandler (LifeBase lifeBase, Transform colliderTransform, bool isInvincible) {
+    private void HitLifeHandler (LifeBase lifeBase, Transform colliderTransform, bool isHurt) {
         if (HasHitAnything) {
             return;
         }
 
-        if (!isInvincible) {
+        if (isHurt) {
             lifeBase.Hurt (DP, Direction);
         }
 

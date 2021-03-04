@@ -11,6 +11,7 @@ public static class EnemyMapping {
         { EnemyEnum.EnemyType.Tank, "Tank" },
         { EnemyEnum.EnemyType.SlimeSenior, "SlimeSenior" },
         { EnemyEnum.EnemyType.GhostSenior, "GhostSenior" },
+        { EnemyEnum.EnemyType.SlimeGuard, "SlimeGuard" },
     };
 
     public static string GetEnemyResourcesName (EnemyEnum.EnemyType enemyType) {

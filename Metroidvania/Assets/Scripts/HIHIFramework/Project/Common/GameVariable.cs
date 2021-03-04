@@ -25,6 +25,8 @@ public static partial class GameVariable {
     public const int PlayerInteractableLayer = 12;
     public const int PlayerAttackLayer = 13;
     public const int EnemyAttackLayer = 14;
+    public const int DetectionLayer = 15;
+    public const int EnemyDefendLayer = 16;
 
     #endregion
 

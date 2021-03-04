@@ -22,7 +22,6 @@ public class EnemyMoveSMB : EnemySMBBase {
             if (AnimUtils.Model.MovementType == EnemyEnum.MovementType.Flying) {
                 if (Time.time - startChasingCharTime >= AnimUtils.Model.Params.ChangeChaseCharDirPeriod) {
                     var direction = AnimUtils.Model.GetChaseCharNormalizedDir ();
-                    Log.PrintError (direction);
                     AnimUtils.UpdateVelocity (direction);
 
                     startChasingCharTime = Time.time;

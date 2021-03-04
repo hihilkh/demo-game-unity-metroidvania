@@ -7,7 +7,7 @@ public class CharAttackTrigger : MonoBehaviour {
     /// Input :<br />
     /// LifeBase : the LifeBase that the attack has hit<br />
     /// Transform : colliderTransform<br />
-    /// bool : isInvincible
+    /// bool : isHurt
     /// </summary>
     public event Action<LifeBase, Transform, bool> HitLife;
 
@@ -31,7 +31,14 @@ public class CharAttackTrigger : MonoBehaviour {
                     return;
                 }
 
-                HitLife?.Invoke (lifeBase, collision.transform, lifeBase.IsInvincible);
+                var isHurt = !lifeBase.IsInvincible;
+                if (isHurt) {
+                    if (collision.gameObject.layer == GameVariable.EnemyDefendLayer) {
+                        isHurt = false;
+                    }
+                }
+
+                HitLife?.Invoke (lifeBase, collision.transform, isHurt);
                 return;
             case GameVariable.ArrowSwitchTag:
             case GameVariable.DropHitSwitchTag:

@@ -23,6 +23,8 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     public static event Action<int> Died;
     public event Action<LifeEnum.HorizontalDirection> FacingDirectionChanged;
 
+    public abstract EnemyEnum.EnemyType EnemyType { get; }
+    public abstract EnemyEnum.MovementType MovementType { get; }
 
     protected override int PosZ => GameVariable.EnemyPosZ;
     protected override int InvincibleLayer => GameVariable.EnemyInvincibleLayer;
@@ -44,8 +46,6 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
             }
         }
     }
-
-    public abstract EnemyEnum.MovementType MovementType { get; }
 
     private LifeEnum.Location _currentLocation = LifeEnum.Location.Unknown;
     public override LifeEnum.Location CurrentLocation {

@@ -3,6 +3,7 @@ using HihiFramework.Core;
 using UnityEngine;
 
 public class TankModel : EnemyModelBase {
+    public override EnemyEnum.EnemyType EnemyType => EnemyEnum.EnemyType.Tank;
     public override EnemyEnum.MovementType MovementType => EnemyEnum.MovementType.Walking;
 
     private TankParams GetParams () {

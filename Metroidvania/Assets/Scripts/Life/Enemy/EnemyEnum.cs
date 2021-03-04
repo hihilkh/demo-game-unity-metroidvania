@@ -9,6 +9,7 @@ public class EnemyEnum {
         Tank = 2,
         SlimeSenior = 3,
         GhostSenior = 4,
+        SlimeGuard = 5,
     }
 
     public enum MovementType {
