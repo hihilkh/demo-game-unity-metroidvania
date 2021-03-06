@@ -1,5 +1,4 @@
-﻿using HihiFramework.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemyAnimUtils : MonoBehaviour {
     private enum AccelerationMode {
@@ -17,35 +16,35 @@ public class EnemyAnimUtils : MonoBehaviour {
     [SerializeField] private Transform _animBaseTransform;
     public Transform AnimBaseTransform => _animBaseTransform;
 
-    private float maxMovementSpeedSqr;
+    // Acceleration
     private AccelerationMode currentAccelerationMode = AccelerationMode.None;
-
+    private Vector2 acceleratingVector;
+    private float acceleratingMaxSpeed;
+    private float acceleratingMaxSpeedSqr;
     private const float NearZeroSpeedSqr = 0.2F;
-
-    /// <summary>
-    /// It is assumed to be nomalized
-    /// </summary>
-    private Vector2 acceleratingDirection;
 
     private void Awake () {
         // event handler
         Model.FacingDirectionChanged += FacingDirectionChangedHandler;
-
-        maxMovementSpeedSqr = Model.Params.MaxMovementSpeed * Model.Params.MaxMovementSpeed;
+        if (Model.MovementType == EnemyEnum.MovementType.Flying) {
+            Model.FlyingInfoUpdated += FlyingInfoUpdatedHandler;
+        }
     }
 
     private void OnDestroy () {
         Model.FacingDirectionChanged -= FacingDirectionChangedHandler;
+        if (Model.MovementType == EnemyEnum.MovementType.Flying) {
+            Model.FlyingInfoUpdated -= FlyingInfoUpdatedHandler;
+        }
     }
 
     private void FixedUpdate () {
         switch (currentAccelerationMode) {
             case AccelerationMode.Direction:
-                var acceleration = Model.Params.Acceleration * acceleratingDirection;
-                RB.AddForce (acceleration, ForceMode2D.Force);
+                RB.AddForce (acceleratingVector, ForceMode2D.Force);
 
-                if (RB.velocity.sqrMagnitude > maxMovementSpeedSqr) {
-                    RB.velocity = Vector2.ClampMagnitude (RB.velocity, Model.Params.MaxMovementSpeed);
+                if (RB.velocity.sqrMagnitude > acceleratingMaxSpeedSqr) {
+                    RB.velocity = Vector2.ClampMagnitude (RB.velocity, acceleratingMaxSpeed);
                 }
                 break;
             case AccelerationMode.ToIdle:
@@ -72,12 +71,9 @@ public class EnemyAnimUtils : MonoBehaviour {
                 }
                 break;
             case EnemyEnum.MovementType.Flying:
-                // TODO
-                break;
             default:
-                Log.PrintError ("Not yet implement update velocity method of enemy MovementType : " + Model.MovementType, LogTypes.Animation);
+                // do nothing
                 break;
-
         }
     }
 
@@ -86,28 +82,33 @@ public class EnemyAnimUtils : MonoBehaviour {
         AnimBaseTransform.localScale = new Vector3 (scale, 1, 1);
     }
 
+    private void FlyingInfoUpdatedHandler (Vector2 normalizedChasingDirection, float maxSpeed, float? acceleration) {
+        UpdateVelocity (false, normalizedChasingDirection, maxSpeed, acceleration);
+    }
+
     public void UpdateHorizontalVelocity () {
         UpdateHorizontalVelocity (Model.FacingDirection);
     }
 
     private void UpdateHorizontalVelocity (LifeEnum.HorizontalDirection facingDirection) {
         var targetDir = (facingDirection == LifeEnum.HorizontalDirection.Right) ? Vector2.right : Vector2.left;
-        UpdateVelocity (targetDir, true);
-    }
 
-    /// <param name="targetDir">It is assumed to be nomalized</param>
-    public void UpdateVelocity (Vector2 targetDir) {
-        UpdateVelocity (targetDir, false);
-    }
-
-    /// <param name="targetDir">It is assumed to be nomalized</param>
-    private void UpdateVelocity (Vector2 targetDir, bool isUpdateHorizontalOnly) {
+        float? acceleration = null;
         if (Model.Params.IsSpeedAccelerate) {
+            acceleration = Model.Params.Acceleration;
+        }
+        UpdateVelocity (true, targetDir, Model.Params.MaxMovementSpeed, acceleration);
+    }
+
+    private void UpdateVelocity (bool isUpdateHorizontalOnly, Vector2 targetNormalizedDir, float maxSpeed, float? acceleration) {
+        if (acceleration != null) {
             currentAccelerationMode = AccelerationMode.Direction;
-            acceleratingDirection = targetDir;
+            acceleratingVector = (float)acceleration * targetNormalizedDir;
+            acceleratingMaxSpeed = maxSpeed;
+            acceleratingMaxSpeedSqr = maxSpeed * maxSpeed;
         } else {
             currentAccelerationMode = AccelerationMode.None;
-            var velocity = Model.Params.MaxMovementSpeed * targetDir;
+            var velocity = maxSpeed * targetNormalizedDir;
             if (isUpdateHorizontalOnly) {
                 RB.velocity = new Vector2 (velocity.x, RB.velocity.y);
             } else {

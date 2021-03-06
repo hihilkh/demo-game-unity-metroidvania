@@ -386,7 +386,7 @@ public class CharModel : LifeBase, IMapTarget {
     }
 
     /// <summary>
-    /// If <paramref name="statuses"/> is composite, it will return true only when currentStatus contains all those status
+    /// If <paramref name="statuses"/> is composite, it will return true only when CurrentStatuses contains all those status
     /// </summary>
     /// <param name="statuses"></param>
     /// <returns></returns>

@@ -9,12 +9,12 @@ public class SlimeGuardModel : EnemyModelBase {
     protected override void StartInvincible () {
         base.StartInvincible ();
 
-        arrowDefendCollider.gameObject.SetActive (false);
+        arrowDefendCollider.enabled = false;
     }
 
     protected override void StopInvincible () {
         base.StopInvincible ();
 
-        arrowDefendCollider.gameObject.SetActive (true);
+        arrowDefendCollider.enabled = true;
     }
 }

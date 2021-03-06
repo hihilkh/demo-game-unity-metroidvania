@@ -20,9 +20,10 @@ MonoBehaviour:
   _acceleration: 10
   _decelerationFactor: 0.95
   _isDetectChar: 1
+  _willLoseTrackOfChar: 1
   _isChaseChar: 1
   _changeChaseCharDirPeriod: 0.5
-  _jumpInitSpeed: 0
+  _jumpInitVelocity: {x: 0, y: 0}
   _isJumpRecursively: 0
   _recursiveJumpPeriod: 0
   _collisionDP: 20

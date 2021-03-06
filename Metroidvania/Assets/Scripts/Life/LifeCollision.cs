@@ -19,11 +19,13 @@ public class LifeCollision : MonoBehaviour {
     private readonly Dictionary<Collider2D, List<CollisionDetails>> collisionDict = new Dictionary<Collider2D, List<CollisionDetails>> ();
 
     private const string WallColliderType = "Wall";
+    private const string RoofColliderType = "Roof";
 
     private static readonly Dictionary<string, LifeEnum.CollisionType> CollisionTypeDict = new Dictionary<string, LifeEnum.CollisionType> () {
         { GameVariable.GroundTag, LifeEnum.CollisionType.Ground },
         { WallColliderType, LifeEnum.CollisionType.Wall },
         { GameVariable.SlippyWallTag, LifeEnum.CollisionType.Wall },
+        { RoofColliderType, LifeEnum.CollisionType.Roof },
         { GameVariable.DeathTag, LifeEnum.CollisionType.Death },
         { GameVariable.PlayerTag, LifeEnum.CollisionType.Char },
         { GameVariable.EnemyTag, LifeEnum.CollisionType.Enemy },
@@ -122,11 +124,8 @@ public class LifeCollision : MonoBehaviour {
             var absX = Mathf.Abs (collisionNormal.x);
             // Assume the collisions with environment are all with collisionNormal of up, down, left or right
             if ((collideType == GameVariable.GroundTag || collideType == GameVariable.SlippyWallTag) && (collisionNormal.y < 0 && -collisionNormal.y > absX)) {
-                // No handling for cases of roof
-                continue;
-            }
-
-            if (collideType == GameVariable.GroundTag) {
+                collideType = RoofColliderType;
+            } else if (collideType == GameVariable.GroundTag) {
                 if (collisionNormal.y >= 0 && collisionNormal.y < absX) {
                     collideType = WallColliderType;
                 } else if (collisionNormal.y < 0 && -collisionNormal.y < absX) {

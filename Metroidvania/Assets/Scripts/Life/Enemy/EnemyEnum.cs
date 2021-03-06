@@ -10,6 +10,9 @@ public class EnemyEnum {
         SlimeSenior = 3,
         GhostSenior = 4,
         SlimeGuard = 5,
+        SlimeKing = 6,
+        GhostKing = 7,
+        TreasureBox = 8,
     }
 
     public enum MovementType {
@@ -23,5 +26,7 @@ public class EnemyEnum {
         BeatingBack = 1 << 0,
         Invincible = 1 << 1,
         Dying = 1 << 2,
+        DetectedChar = 1 << 3,
+        CheckChasing = 1 << 4,
     }
 }

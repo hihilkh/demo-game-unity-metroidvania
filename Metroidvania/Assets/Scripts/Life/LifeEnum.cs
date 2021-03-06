@@ -14,6 +14,7 @@
     public enum CollisionType {
         Ground,
         Wall,
+        Roof,
         Death,
         Char,
         Enemy,

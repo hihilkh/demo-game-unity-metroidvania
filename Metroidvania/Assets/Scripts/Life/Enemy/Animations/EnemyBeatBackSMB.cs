@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using HihiFramework.Core;
+using UnityEngine;
 
 public class EnemyBeatBackSMB : EnemySMBBase {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {

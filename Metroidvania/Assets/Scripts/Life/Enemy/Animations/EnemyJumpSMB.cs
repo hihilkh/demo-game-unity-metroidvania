@@ -17,7 +17,11 @@ public class EnemyJumpSMB : EnemySMBBase {
                 isAnimFinished = true;
 
                 if (animator.GetNextAnimatorClipInfo (0).Length == 0) {
-                    AnimUtils.RB.velocity = new Vector2 (AnimUtils.RB.velocity.x, AnimUtils.Model.Params.JumpInitSpeed);
+                    var velocity = AnimUtils.Model.Params.JumpInitVelocity;
+                    if (AnimUtils.Model.FacingDirection == LifeEnum.HorizontalDirection.Left) {
+                        velocity = Vector2.Scale (velocity, new Vector2 (-1, 1));
+                    }
+                    AnimUtils.RB.velocity = velocity;
                 }
             }
         }

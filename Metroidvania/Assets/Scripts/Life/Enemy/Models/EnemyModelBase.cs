@@ -23,6 +23,14 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     public static event Action<int> Died;
     public event Action<LifeEnum.HorizontalDirection> FacingDirectionChanged;
 
+    /// <summary>
+    /// Input :<br />
+    /// Vector2 : normalized direction
+    /// float : max speed
+    /// float? : acceleration
+    /// </summary>
+    public event Action<Vector2, float, float?> FlyingInfoUpdated;
+
     public abstract EnemyEnum.EnemyType EnemyType { get; }
     public abstract EnemyEnum.MovementType MovementType { get; }
 
@@ -66,42 +74,18 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     protected EnemyEnum.Statuses CurrentStatuses { get; private set; }
 
     public override bool IsBeatingBack {
-        get {
-            return (CurrentStatuses & EnemyEnum.Statuses.BeatingBack) == EnemyEnum.Statuses.BeatingBack;
-        }
-        protected set {
-            if (value) {
-                CurrentStatuses = CurrentStatuses | EnemyEnum.Statuses.BeatingBack;
-            } else {
-                CurrentStatuses = CurrentStatuses & ~EnemyEnum.Statuses.BeatingBack;
-            }
-        }
+        get { return GetIsInStatuses (EnemyEnum.Statuses.BeatingBack); }
+        protected set { SetStatuses (EnemyEnum.Statuses.BeatingBack, value); }
     }
 
     public override bool IsInvincible {
-        get {
-            return (CurrentStatuses & EnemyEnum.Statuses.Invincible) == EnemyEnum.Statuses.Invincible;
-        }
-        protected set {
-            if (value) {
-                CurrentStatuses = CurrentStatuses | EnemyEnum.Statuses.Invincible;
-            } else {
-                CurrentStatuses = CurrentStatuses & ~EnemyEnum.Statuses.Invincible;
-            }
-        }
+        get { return GetIsInStatuses (EnemyEnum.Statuses.Invincible); }
+        protected set { SetStatuses (EnemyEnum.Statuses.Invincible, value); }
     }
 
     public override bool IsDying {
-        get {
-            return (CurrentStatuses & EnemyEnum.Statuses.Dying) == EnemyEnum.Statuses.Dying;
-        }
-        protected set {
-            if (value) {
-                CurrentStatuses = CurrentStatuses | EnemyEnum.Statuses.Dying;
-            } else {
-                CurrentStatuses = CurrentStatuses & ~EnemyEnum.Statuses.Dying;
-            }
-        }
+        get { return GetIsInStatuses (EnemyEnum.Statuses.Dying); }
+        protected set { SetStatuses (EnemyEnum.Statuses.Dying, value); }
     }
 
     protected override float InvinciblePeriod => Params.InvinciblePeriod;
@@ -110,7 +94,6 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     public int CollisionDP => Params.CollisionDP;
 
     private bool isIdling = false;
-    private bool isDetectedChar = false;
 
     // Beat Back
     /// <summary>
@@ -121,9 +104,12 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     private static Vector2 WalkingBeatBackDirection_Left = Vector2.Scale (WalkingBeatBackDirection_Right, new Vector2 (-1, 1));
 
     // Jump
-    private bool isJustJumpedUp = false;
+    protected bool isJustJumpedUp = false;
     private bool isPreparingToRecursiveJump = false;
     private float startPrepareRecursiveJumpTime = -1;
+
+    // Chase Char
+    private float startChasingCharTime = -100;
 
     #endregion
 
@@ -153,7 +139,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         // Currently Reset() may not work properly (and current approach would always dispose and re-create enemy if needed, but not reset)
         // If want to use reset, need to check all the cases (e.g. enemy died/beating back/invincible/jumping and reset)
 
-        var hasInitBefore = base.Reset (pos, direction);
+        var hasInitBefore = Reset (pos, direction);
 
         if (!hasInitBefore) {
             this.Id = id;
@@ -168,7 +154,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         }
 
         CurrentStatuses = EnemyEnum.Statuses.Normal;
-        CheckAndPrepareRecursiveJump ();
+        PrepareRecursiveJump ();
         StartIdleOrMove ();
 
         return hasInitBefore;
@@ -197,9 +183,30 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         DecideAction ();
     }
 
-    private void LateUpdate () {
-        ResetUntriggeredAnimatorTriggers ();
+    #region Statuses
+
+    private void SetStatuses (EnemyEnum.Statuses statuses, bool isOn) {
+        if (isOn) {
+            CurrentStatuses = CurrentStatuses | statuses;
+        } else {
+            CurrentStatuses = CurrentStatuses & ~statuses;
+        }
     }
+
+    /// <summary>
+    /// If <paramref name="statuses"/> is composite, it will return true only when CurrentStatuses contains all those status
+    /// </summary>
+    /// <param name="statuses"></param>
+    /// <returns></returns>
+    protected bool GetIsInStatuses (EnemyEnum.Statuses statuses) {
+        return (CurrentStatuses & statuses) == statuses;
+    }
+
+    public void SetCheckChasingStatus (bool isCheckChasing) {
+        SetStatuses (EnemyEnum.Statuses.CheckChasing, isCheckChasing);
+    }
+
+    #endregion
 
     #region DecideAction
 
@@ -213,14 +220,14 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         }
 
         if (isIdling) {
-            if (isDetectedChar) {
+            if (GetIsInStatuses (EnemyEnum.Statuses.DetectedChar)) {
                 StartIdleOrMove ();
             }
 
             return false;
         }
 
-        if (!isDetectedChar) {
+        if (!GetIsInStatuses (EnemyEnum.Statuses.DetectedChar)) {
             if (!isIdling) {
                 StartIdleOrMove ();
             }
@@ -228,16 +235,10 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
             return false;
         }
 
-        // Jump
-        if (isPreparingToRecursiveJump) {
-            if (Time.time - startPrepareRecursiveJumpTime >= Params.RecursiveJumpPeriod) {
-                if (Jump ()) {
-                    isPreparingToRecursiveJump = false;
-                } else {
-                    // Try to jump again at next period
-                    startPrepareRecursiveJumpTime = Time.time;
-                }
-            }
+        CheckAndUpdateChaseCharDetails ();
+        var isTriggeredJump = CheckAndDoRecursiveJump ();
+        if (isTriggeredJump) {
+            return false;
         }
 
         return true;
@@ -249,13 +250,13 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     protected void StartIdleOrMove () {
         if (Params.IsDetectChar) {
-            if (isDetectedChar) {
+            if (GetIsInStatuses (EnemyEnum.Statuses.DetectedChar)) {
                 StartMoving ();
             } else {
                 StartIdling ();
             }
         } else {
-            isDetectedChar = true;
+            SetStatuses (EnemyEnum.Statuses.DetectedChar, true);
             StartMoving ();
         }
         
@@ -282,10 +283,6 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     protected void SetAnimatorBool (string boolName, bool value) {
         Log.PrintDebug (gameObject.name + " : SetAnimatorBool : " + boolName + " ; Value : " + value, LogTypes.Enemy | LogTypes.Animation);
         animator.SetBool (boolName, value);
-    }
-
-    private void ResetUntriggeredAnimatorTriggers () {
-        animator.ResetTrigger (EnemyAnimConstant.LandingTriggerName);
     }
 
     #endregion
@@ -320,7 +317,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
                 break;
             case EnemyEnum.MovementType.Flying:
             default:
-                BeatBackDirection = hurtDirection == LifeEnum.HorizontalDirection.Left ? new Vector2 (-1, 0) : Vector2.one;
+                BeatBackDirection = hurtDirection == LifeEnum.HorizontalDirection.Left ? Vector2.left : Vector2.right;
                 break;
         }
 
@@ -381,7 +378,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     #region Facing Direction
 
-    public void ChangeFacingDirection () {
+    protected void ChangeFacingDirection () {
         if (FacingDirection == LifeEnum.HorizontalDirection.Left) {
             FacingDirection = LifeEnum.HorizontalDirection.Right;
         } else {
@@ -393,15 +390,34 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     #region Jump
 
-    private void CheckAndPrepareRecursiveJump () {
+    private void PrepareRecursiveJump () {
         if (MovementType == EnemyEnum.MovementType.Walking && Params.IsJumpRecursively) {
             isPreparingToRecursiveJump = true;
             startPrepareRecursiveJumpTime = Time.time;
         }
     }
 
+    /// <returns>Is triggered jump</returns>
+    protected virtual bool CheckAndDoRecursiveJump () {
+        var isTriggeredJump = false;
+
+        if (isPreparingToRecursiveJump) {
+            if (Time.time - startPrepareRecursiveJumpTime >= Params.RecursiveJumpPeriod) {
+                if (Jump ()) {
+                    isPreparingToRecursiveJump = false;
+                    isTriggeredJump = true;
+                } else {
+                    // Try to jump again at next period
+                    startPrepareRecursiveJumpTime = Time.time;
+                }
+            }
+        }
+
+        return isTriggeredJump;
+    }
+
     /// <returns>Is jump success</returns>
-    protected bool Jump () {
+    protected virtual bool Jump () {
         Log.PrintDebug (gameObject.name + " : Jump", LogTypes.Enemy);
 
         if (CurrentLocation != LifeEnum.Location.Ground) {
@@ -423,22 +439,81 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     #region Char detection
 
-    protected virtual void CharDetectedHandler () {
-        isDetectedChar = true;
+    private void CharDetectedHandler () {
+        SetStatuses (EnemyEnum.Statuses.DetectedChar, true);
     }
 
-    protected virtual void CharLostHandler () {
-        isDetectedChar = false;
+    private void CharLostHandler () {
+        if (Params.WillLoseTrackOfChar) {
+            SetStatuses (EnemyEnum.Statuses.DetectedChar, false);
+        }
     }
 
     #endregion
 
     #region Char chasing
 
-    public Vector2 GetChaseCharNormalizedDir () {
+    protected void OnFlyingInfoUpdated (Vector2 normalizedChasingDirection, float maxSpeed, float? acceleration) {
+        FlyingInfoUpdated?.Invoke (normalizedChasingDirection, maxSpeed, acceleration);
+    }
+
+    protected virtual void CheckAndUpdateChaseCharDetails () {
+        if (!Params.IsChaseChar) {
+            return;
+        }
+
+        if (!GetIsInStatuses (EnemyEnum.Statuses.CheckChasing)) {
+            return;
+        }
+
+        if (Time.time - startChasingCharTime < Params.ChangeChaseCharDirPeriod) {
+            return;
+        }
+
+        Vector2 normalizedChasingDirection;
+        switch (MovementType) {
+            case EnemyEnum.MovementType.Walking:
+                var horizontalDirection = GetChasingCharHorizontalDirection ();
+                normalizedChasingDirection = horizontalDirection == LifeEnum.HorizontalDirection.Left ? Vector2.left : Vector2.right;
+                break;
+            case EnemyEnum.MovementType.Flying:
+            default:
+                normalizedChasingDirection = GetChasingCharDirection (true);
+                float? acceleration = null;
+                if (Params.IsSpeedAccelerate) {
+                    acceleration = Params.Acceleration;
+                }
+                OnFlyingInfoUpdated (normalizedChasingDirection, Params.MaxMovementSpeed, acceleration);
+                break;
+        }
+
+        startChasingCharTime = Time.time;
+
+        if (FacingDirection == LifeEnum.HorizontalDirection.Left && normalizedChasingDirection.x > 0) {
+            ChangeFacingDirection ();
+        } else if (FacingDirection == LifeEnum.HorizontalDirection.Right && normalizedChasingDirection.x < 0) {
+            ChangeFacingDirection ();
+        }
+    }
+
+    protected Vector2 GetChasingCharDirection (bool isNormalized) {
         var charModel = GameUtils.FindOrSpawnChar ();
         var distVector = (Vector2)charModel.GetPos () - (Vector2)GetPos ();
-        return distVector.normalized;
+
+        if (isNormalized) {
+            return distVector.normalized;
+        } else {
+            return distVector;
+        }
+    }
+
+    protected LifeEnum.HorizontalDirection GetChasingCharHorizontalDirection () {
+        var charModel = GameUtils.FindOrSpawnChar ();
+        if (charModel.GetPos ().x >= GetPos ().x) {
+            return LifeEnum.HorizontalDirection.Right;
+        } else {
+            return LifeEnum.HorizontalDirection.Left;
+        }
     }
 
     #endregion
@@ -522,7 +597,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
                             SetAnimatorTrigger (EnemyAnimConstant.LandingTriggerName);
                         }
 
-                        CheckAndPrepareRecursiveJump ();
+                        PrepareRecursiveJump ();
                     }
                 }
                 break;
@@ -531,7 +606,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     protected virtual void TouchWallAction (LifeEnum.HorizontalDirection wallPosition) {
         Log.PrintDebug (gameObject.name + " : Touch wall", LogTypes.Enemy | LogTypes.Collision);
-        if (!Params.IsChaseChar) {
+        if (!Params.IsChaseChar && MovementType == EnemyEnum.MovementType.Walking) {
             if (wallPosition == FacingDirection) {
                 // Change facing direction only when the enemy originally face towards wall
                 ChangeFacingDirection ();

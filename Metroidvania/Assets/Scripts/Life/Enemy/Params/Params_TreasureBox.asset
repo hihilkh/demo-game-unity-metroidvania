@@ -9,20 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecd29e9c9364e4e2c913a0c05015ae00, type: 3}
-  m_Name: Params_Tank
+  m_Script: {fileID: 11500000, guid: 191cfb9e87d8c4f939e975aaf5297685, type: 3}
+  m_Name: Params_TreasureBox
   m_EditorClassIdentifier: 
-  _totalHP: 20
-  _invinciblePeriod: 0
-  _beatBackInitSpeed: 0
-  _maxMovementSpeed: 20
+  _totalHP: 8
+  _invinciblePeriod: 1
+  _beatBackInitSpeed: 18
+  _maxMovementSpeed: 0
   _isSpeedAccelerate: 1
-  _acceleration: 13
-  _isDetectChar: 1
+  _acceleration: 0
+  _decelerationFactor: 0.97
+  _isDetectChar: 0
   _isChaseChar: 0
   _changeChaseCharDirPeriod: 0
-  _jumpInitSpeed: 0
+  _jumpInitVelocity: {x: 0, y: 0}
   _isJumpRecursively: 0
   _recursiveJumpPeriod: 0
-  _collisionDP: 30
-  _touchWallWaitPeriod: 2
+  _collisionDP: 20

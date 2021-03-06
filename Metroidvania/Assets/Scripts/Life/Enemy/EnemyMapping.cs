@@ -12,6 +12,9 @@ public static class EnemyMapping {
         { EnemyEnum.EnemyType.SlimeSenior, "SlimeSenior" },
         { EnemyEnum.EnemyType.GhostSenior, "GhostSenior" },
         { EnemyEnum.EnemyType.SlimeGuard, "SlimeGuard" },
+        { EnemyEnum.EnemyType.SlimeKing, "SlimeKing" },
+        { EnemyEnum.EnemyType.GhostKing, "GhostKing" },
+        { EnemyEnum.EnemyType.TreasureBox, "TreasureBox" },
     };
 
     public static string GetEnemyResourcesName (EnemyEnum.EnemyType enemyType) {

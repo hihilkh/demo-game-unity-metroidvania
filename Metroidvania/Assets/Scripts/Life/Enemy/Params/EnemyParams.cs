@@ -53,25 +53,34 @@ public class EnemyParams : ScriptableObject {
     /// </summary>
     public bool IsDetectChar => _isDetectChar;
 
+    [SerializeField] private bool _willLoseTrackOfChar;
+    /// <summary>
+    /// If WillLoseTrackOfChar = false, once detected char, it will never lose track.<br />
+    /// Only work if IsDetectChar = true
+    /// </summary>
+    public bool WillLoseTrackOfChar => _willLoseTrackOfChar;
+
     [Header ("Chase Char")]
     [SerializeField] private bool _isChaseChar;
     /// <summary>
     /// If IsChaseChar = true, the enemy will chase the char if char comes near it
     /// </summary>
     public bool IsChaseChar => _isChaseChar;
+
     /// <summary>
-    /// The period to change the direction of chasing char. In second. <br />
+    /// The period to change the direction of chasing char. In second.<br />
     /// Only work if IsChaseChar = true
     /// </summary>
     [SerializeField] private float _changeChaseCharDirPeriod;
     public float ChangeChaseCharDirPeriod => _changeChaseCharDirPeriod;
 
     [Header ("Jump")]
-    [SerializeField] private float _jumpInitSpeed;
+    [SerializeField] private Vector2 _jumpInitVelocity;
     /// <summary>
+    /// The jumping initial velocity for facing <b>right</b>. If facing left, the velocityX will be multiplied by -1.<br />
     /// Only work in Walking MovementType.
     /// </summary>
-    public float JumpInitSpeed => _jumpInitSpeed;
+    public Vector2 JumpInitVelocity => _jumpInitVelocity;
 
     [SerializeField] private bool _isJumpRecursively;
     /// <summary>
