@@ -331,9 +331,19 @@ public class GameSceneManager : MonoBehaviour {
     }
 
     private void MissionEventTriggeredHandler (MissionEventEnum.EventType eventType) {
-        Log.Print ("Character triggered mission event : " + eventType.ToString (), LogTypes.GameFlow | LogTypes.Char);
+        Log.Print ("Character triggered mission event : " + eventType.ToString (), LogTypes.GameFlow | LogTypes.Char | LogTypes.MissionEvent);
 
-        missionEventManager.StartEvent (eventType);
+        Action onFinished = () => {
+            if (eventType == MissionEventEnum.EventType.Boss) {
+                if (mapManager.BossModel == null) {
+                    Log.PrintError ("Cannot get boss model in map manager.", LogTypes.GameFlow | LogTypes.MissionEvent);
+                    return;
+                }
+
+                mapManager.BossModel.SetAllowMove (true);
+            }
+        };
+        missionEventManager.StartEvent (eventType, onFinished);
     }
 
     private void CommandPanelHidHandler () {
@@ -344,9 +354,18 @@ public class GameSceneManager : MonoBehaviour {
         StartGame ();
     }
 
-    private void CharDiedHandler () {
-        Log.Print ("Character died.", LogTypes.GameFlow | LogTypes.Char);
-        ResetGame ();
+    private void CharDiedHandler (CharEnum.CharType charType) {
+        Log.Print ("Character died. charType : " + charType, LogTypes.GameFlow | LogTypes.Char);
+
+        switch (charType) {
+            case CharEnum.CharType.Player:
+                ResetGame ();
+                break;
+            case CharEnum.CharType.Boss:
+                // TODO
+                break;
+        }
+
     }
 
     private void PauseBtnClickedHandler (HIHIButton sender) {

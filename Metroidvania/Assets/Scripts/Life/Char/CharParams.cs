@@ -150,6 +150,28 @@ public class CharParams : ScriptableObject {
     [SerializeField] private float _repelFromWallDistByTurn;
     public float RepelFromWallDistByTurn => _repelFromWallDistByTurn;
 
+    [Header ("Boss")]
+    [SerializeField] private int _bossTotalHP;
+    public int BossTotalHP => _bossTotalHP;
+
+    [SerializeField] private int _collisionDP;
+    public int CollisionDP => _collisionDP;
+
+    [SerializeField] private float _bossDecideActionPeriod;
+    public float BossDecideActionPeriod => _bossDecideActionPeriod;
+
+    [SerializeField] private float _bossTurnProbability;
+    public float BossTurnProbability => _bossTurnProbability;
+
+    [SerializeField] private float _bossHitAttackHorizontalHalfRange;
+    public float BossHitAttackHorizontalHalfRange => _bossHitAttackHorizontalHalfRange;
+
+    [SerializeField] private float _bossDashAttackHorizontalHalfRange;
+    public float BossDashAttackHorizontalHalfRange => _bossDashAttackHorizontalHalfRange;
+
+    [SerializeField] private float _bossAllowAttackVerticalHalfRange;
+    public float BossAllowAttackVerticalHalfRange => _bossAllowAttackVerticalHalfRange;
+
     [Header ("Dev Only")]
     [SerializeField] private LifeEnum.HorizontalDirection _initDirection;
     public LifeEnum.HorizontalDirection InitDirection => _initDirection;

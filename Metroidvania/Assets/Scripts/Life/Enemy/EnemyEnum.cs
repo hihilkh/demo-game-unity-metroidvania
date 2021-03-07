@@ -13,6 +13,7 @@ public class EnemyEnum {
         SlimeKing = 6,
         GhostKing = 7,
         TreasureBox = 8,
+        Boss = 9,
     }
 
     public enum MovementType {

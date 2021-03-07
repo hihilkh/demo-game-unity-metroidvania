@@ -18,7 +18,13 @@ public abstract class CharArrowBase : MonoBehaviour {
     protected LifeEnum.HorizontalDirection Direction { get; private set; }
     protected abstract int DP { get; }
 
-    protected void Init (LifeEnum.HorizontalDirection direction) {
+    protected void Init (LifeEnum.HorizontalDirection direction, bool isPlayerAttack) {
+        if (isPlayerAttack) {
+            gameObject.layer = GameVariable.PlayerAttackLayer;
+        } else {
+            gameObject.layer = GameVariable.EnemyAttackLayer;
+        }
+
         Direction = direction;
         AttackTrigger.HitLife += HitLifeHandler;
         AttackTrigger.HitEnvironment += HitEnvironmentHandler;

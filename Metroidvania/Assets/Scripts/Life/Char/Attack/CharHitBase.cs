@@ -16,7 +16,13 @@ public abstract class CharHitBase : MonoBehaviour {
     protected LifeEnum.HorizontalDirection Direction { get; private set; }
     protected abstract int DP { get; }
 
-    public virtual void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed) {
+    public virtual void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed, bool isPlayerAttack) {
+        if (isPlayerAttack) {
+            gameObject.layer = GameVariable.PlayerAttackLayer;
+        } else {
+            gameObject.layer = GameVariable.EnemyAttackLayer;
+        }
+
         Direction = direction;
         AttackTrigger.HitLife += HitLifeHandler;
     }

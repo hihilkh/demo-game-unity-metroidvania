@@ -30,6 +30,8 @@ public class CharModel : LifeBase, IMapTarget {
 
     #region Fields / Properties
 
+    [SerializeField] private CharEnum.CharType _charType;
+    public CharEnum.CharType CharType => _charType;
     [SerializeField] private CharParams _params;
     public CharParams Params => _params;
     [SerializeField] private CharController controller;
@@ -45,7 +47,7 @@ public class CharModel : LifeBase, IMapTarget {
     public event Action FacingDirectionChanged;
     public event Action MovingDirectionChanged;
     public event Action HorizontalSpeedChanged;
-    public event Action Died;
+    public event Action<CharEnum.CharType> Died;
 
     private readonly Dictionary<CharEnum.InputSituation, CharEnum.Command> commandSettings = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
 
@@ -54,9 +56,26 @@ public class CharModel : LifeBase, IMapTarget {
     // Body Parts
     public CharEnum.BodyParts ObtainedBodyParts { get; private set; }
 
-    protected override int PosZ => GameVariable.CharPosZ;
+    protected override int PosZ {
+        get {
+            if (CharType == CharEnum.CharType.Player) {
+                return GameVariable.CharPosZ;
+            } else {
+                return GameVariable.EnemyPosZ;
+            }
+        }
+    }
+
     protected override int InvincibleLayer => GameVariable.PlayerInvincibleLayer;
-    protected override int TotalHP => Params.TotalHP;
+    protected override int TotalHP {
+        get {
+            if (CharType == CharEnum.CharType.Player) {
+                return Params.TotalHP;
+            } else {
+                return Params.BossTotalHP;
+            }
+        }
+    }
 
     // Statuses
     private CharEnum.Statuses _currentStatuses = CharEnum.Statuses.Normal;
@@ -193,13 +212,21 @@ public class CharModel : LifeBase, IMapTarget {
     protected override void Awake () {
         base.Awake ();
 
-        ObtainedBodyParts = UserManager.GetObtainedBodyParts ();
+        if (CharType == CharEnum.CharType.Player) {
+            ObtainedBodyParts = UserManager.GetObtainedBodyParts ();
+        } else {
+            ObtainedBodyParts = CharEnum.BodyParts.All;
+        }
 
-        controller.Tapped += TappedHandler;
-        controller.StartedHold += StartedHoldHandler;
-        controller.StoppedHold += StoppedHoldHandler;
+        if (CharType == CharEnum.CharType.Player) {
+            controller.Tapped += TappedHandler;
+            controller.StartedHold += StartedHoldHandler;
+            controller.StoppedHold += StoppedHoldHandler;
+        }
 
-        DontDestroyOnLoad (this);
+        if (CharType == CharEnum.CharType.Player) {
+            DontDestroyOnLoad (this);
+        }
     }
 
     private void Start () {
@@ -213,22 +240,24 @@ public class CharModel : LifeBase, IMapTarget {
     protected override void OnDestroy () {
         base.OnDestroy ();
 
-        controller.Tapped -= TappedHandler;
-        controller.StartedHold -= StartedHoldHandler;
-        controller.StoppedHold -= StoppedHoldHandler;
+        if (CharType == CharEnum.CharType.Player) {
+            controller.Tapped -= TappedHandler;
+            controller.StartedHold -= StartedHoldHandler;
+            controller.StoppedHold -= StoppedHoldHandler;
+        }
     }
 
     public void EnterGameScene (MapManager mapManager, MapData.Boundary boundary) {
         gameObject.SetActive (true);
         this.mapManager = mapManager;
-        cameraModel.SetMissionBoundaries (boundary.lowerBound, boundary.upperBound);
-        cameraModel.SetAudioListener (true);
+        cameraModel?.SetMissionBoundaries (boundary.lowerBound, boundary.upperBound);
+        cameraModel?.SetAudioListener (true);
     }
 
     public void LeaveGameScene () {
         this.mapManager = null;
-        cameraModel.UnsetMissionBoundaries ();
-        cameraModel.SetAudioListener (false);
+        cameraModel?.UnsetMissionBoundaries ();
+        cameraModel?.SetAudioListener (false);
         gameObject.SetActive (false);
 
         missionEventInputFinishedAction = null;
@@ -239,7 +268,7 @@ public class CharModel : LifeBase, IMapTarget {
     /// </summary>
     /// <returns>has initialized before</returns>
     public bool Reset (MapData.EntryData entryData) {
-        cameraModel.ResetPos ();
+        cameraModel?.ResetPos ();
         return Reset (entryData.pos, entryData.direction);
     }
 
@@ -338,6 +367,10 @@ public class CharModel : LifeBase, IMapTarget {
                 }
                 break;
         }
+
+        if (CharType == CharEnum.CharType.Boss) {
+            bossLastDecideActionTime = Time.time;
+        }
     }
 
     #endregion
@@ -349,8 +382,8 @@ public class CharModel : LifeBase, IMapTarget {
         // Ordering:
         // 1. base.Update () (HandleCollision)
         // 2. check isAllowMove (After HandleCollision because sometimes it would set isAllowMove = false but have changes due to collision)
-        // 3. Handle command
-        // 4. Reset flags
+        // 3. (Player) Handle command / (Boss) DecideAction
+        // 4. (Player) Reset flags
 
         base.Update ();
 
@@ -358,16 +391,23 @@ public class CharModel : LifeBase, IMapTarget {
             return;
         }
 
-        var situation = GetCurrentInputSituation ();
-        HandleCommand (situation, currentHandleCollisionResult);
+        switch (CharType) {
+            case CharEnum.CharType.Player:
+                var situation = GetCurrentInputSituation ();
+                HandleCommand (situation, currentHandleCollisionResult);
 
-        // Reset control flags
-        isJustTapped = false;
-        isJustReleaseHold = false;
+                // Reset control flags
+                isJustTapped = false;
+                isJustReleaseHold = false;
 
-        if (situation == CharEnum.InputSituation.GroundRelease || situation == CharEnum.InputSituation.AirRelease) {
-            isIgnoreHold = false;
-            isIgnoreRelease = false;
+                if (situation == CharEnum.InputSituation.GroundRelease || situation == CharEnum.InputSituation.AirRelease) {
+                    isIgnoreHold = false;
+                    isIgnoreRelease = false;
+                }
+                break;
+            case CharEnum.CharType.Boss:
+                DecideAction (currentHandleCollisionResult);
+                break;
         }
     }
 
@@ -844,6 +884,10 @@ public class CharModel : LifeBase, IMapTarget {
     #region HP recovery
 
     private void SetHPRecovery (bool isActive) {
+        if (CharType != CharEnum.CharType.Player) {
+            return;
+        }
+
         if (isActive) {
             if (hpRecoveryCoroutine == null) {
                 hpRecoveryCoroutine = StartCoroutine (HPRecoveryCoroutine ());
@@ -1388,7 +1432,7 @@ public class CharModel : LifeBase, IMapTarget {
     private IEnumerator WaitAndFinishDying () {
         yield return new WaitForSeconds (Params.DyingPeriod);
 
-        Died?.Invoke ();
+        Died?.Invoke (CharType);
     }
     #endregion
 
@@ -1463,10 +1507,21 @@ public class CharModel : LifeBase, IMapTarget {
             if (collisionDetailsDict.ContainsKey (LifeEnum.CollisionType.Enemy)) {
                 // Only get the first collision details
                 var details = collisionDetailsDict[LifeEnum.CollisionType.Enemy][0];
+
+                int collisionDP = -1;
                 if (details.AdditionalDetails is EnemyModelBase) {
                     var enemy = (EnemyModelBase)details.AdditionalDetails;
                     Log.Print ("CollideToEnemy : " + enemy.gameObject.name + " , collisionNormal : " + details.CollisionNormal, LogTypes.Char | LogTypes.Collision);
+                    collisionDP = enemy.Params.CollisionDP;
+                } else if (details.AdditionalDetails is CharModel) {
+                    var boss = (CharModel)details.AdditionalDetails;
+                    Log.Print ("CollideToBoss : collisionNormal : " + details.CollisionNormal, LogTypes.Char | LogTypes.Collision);
+                    collisionDP = boss.Params.CollisionDP;
+                } else {
+                    Log.PrintError ("The AdditionalDetails for enemy collision type has wrong object type : " + details.AdditionalDetails.GetType () + ". Please check.", LogTypes.Char | LogTypes.Collision);
+                }
 
+                if (collisionDP >= 0) {
                     var hurtDirection = details.CollisionNormal.x < 0 ? LifeEnum.HorizontalDirection.Left : LifeEnum.HorizontalDirection.Right;
                     if (collisionAnalysis.WallCollisionChangedType == LifeEnum.CollisionChangedType.Enter) {
                         if (wallPosition == hurtDirection) {
@@ -1475,11 +1530,9 @@ public class CharModel : LifeBase, IMapTarget {
                         }
                     }
 
-                    Hurt (enemy.CollisionDP, hurtDirection);
+                    Hurt (collisionDP, hurtDirection);
                     CurrentLocation = isNowTouchingGround ? LifeEnum.Location.Ground : LifeEnum.Location.Air;
                     return;
-                } else {
-                    Log.PrintError ("The AdditionalDetails for enemy collision type has wrong object type : " + details.AdditionalDetails.GetType () + ". Please check.", LogTypes.Char | LogTypes.Collision);
                 }
             }
         }
@@ -1664,6 +1717,10 @@ public class CharModel : LifeBase, IMapTarget {
     #region Controller
 
     public void SetAllowUserControl (bool isAllow, bool isOnlyActionInput = false, bool isForceAllow = false) {
+        if (CharType != CharEnum.CharType.Player) {
+            return;
+        }
+
         var isReallyAllow = isAllow;
         if (!isForceAllow) {
             if (isAllow) {
@@ -1676,9 +1733,9 @@ public class CharModel : LifeBase, IMapTarget {
         }
 
         if (isOnlyActionInput) {
-            controller.SetCharActionInputActive (isReallyAllow);
+            controller?.SetCharActionInputActive (isReallyAllow);
         } else {
-            controller.SetAllInputActive (isReallyAllow);
+            controller?.SetAllInputActive (isReallyAllow);
         }
 
     }
@@ -1767,22 +1824,22 @@ public class CharModel : LifeBase, IMapTarget {
 
     public void SetCommandInputMissionEvent (CommandInputSubEvent subEvent, Action onInputFinished) {
         Action onCommandInputFinished = () => {
-            controller.SetCameraMovementInputActive (true);
+            controller?.SetCameraMovementInputActive (true);
             onInputFinished.Invoke ();
         };
 
-        controller.SetCameraMovementInputActive (false);
+        controller?.SetCameraMovementInputActive (false);
         missionEventInputFinishedAction = onCommandInputFinished;
     }
 
     public void SetCameraInputMissionEvent (CameraInputSubEvent subEvent, Action onInputFinished) {
         Action onCameraInputFinished = () => {
-            controller.SetCharActionInputActive (true);
+            controller?.SetCharActionInputActive (true);
             onInputFinished.Invoke ();
         };
 
-        controller.SetCharActionInputActive (false);
-        cameraModel.SetCameraInputMissionEvent (subEvent, onCameraInputFinished);
+        controller?.SetCharActionInputActive (false);
+        cameraModel?.SetCameraInputMissionEvent (subEvent, onCameraInputFinished);
     }
 
     #endregion
@@ -1797,17 +1854,99 @@ public class CharModel : LifeBase, IMapTarget {
 
     #region MapDisposableBase
 
-    private bool _isDisposeWhenMapReset = false;
-    protected override bool IsDisposeWhenMapReset => _isDisposeWhenMapReset;
-
-    protected override void Dispose () {
-        // TODO
+    protected override bool IsDisposeWhenMapReset {
+        get {
+            if (CharType == CharEnum.CharType.Player) {
+                return false;
+            }else {
+                return true;
+            }
+        }
     }
 
-    public void SetIsDisposeWhenMapReset (bool isDispose) {
-        _isDisposeWhenMapReset = isDispose;
+    protected override void Dispose () {
+        if (gameObject != null) {
+            Destroy (gameObject);
+        }
     }
 
     #endregion
 
+    #region Boss
+
+    private float bossLastDecideActionTime = 0;
+
+    private void DecideAction (HandleCollisionResult handleCollisionResult) {
+        if (IsBeatingBack || IsDying) {
+            return;
+        }
+
+        if (Time.time - bossLastDecideActionTime < Params.BossDecideActionPeriod) {
+            return;
+        }
+
+        var playerPos = GameUtils.FindOrSpawnChar ().GetPos ();
+        var distVector = (Vector2)playerPos - (Vector2)GetPos ();
+
+        // Check facing direction
+        var isFacingTowardsPlayer = false;
+        if (FacingDirection == LifeEnum.HorizontalDirection.Left && distVector.x < 0) {
+            isFacingTowardsPlayer = true;
+        } else if (FacingDirection == LifeEnum.HorizontalDirection.Right && distVector.x > 0) {
+            isFacingTowardsPlayer = true;
+        }
+
+        if (!isFacingTowardsPlayer) {
+            bossLastDecideActionTime = Time.time;
+
+            if (handleCollisionResult.IsJustChangedDirection) {
+                return;
+            } else if (GetIsInStatuses (CharEnum.Statuses.Sliding)) {
+                return;
+            }
+
+            if (FrameworkUtils.RandomGuard (Params.BossTurnProbability)) {
+                if (CurrentLocation == LifeEnum.Location.Ground) {
+                    ChangeFacingDirection (true);
+                } else {
+                    ChangeFacingDirection (false);
+                }
+                Log.Print ("Boss DecideAction : ChangeFacingDirection", LogTypes.Char);
+            } else {
+                Log.Print ("Boss DecideAction : Do not change facing direction due to probability", LogTypes.Char);
+            }
+            return;
+        }
+
+        // Action if facing towards player
+        var verticalDistanceFromChar = Mathf.Abs (distVector.y);
+        var isInAttackVerticalRange = verticalDistanceFromChar < Params.BossAllowAttackVerticalHalfRange;
+        if (!isInAttackVerticalRange) {
+            if (CurrentLocation == LifeEnum.Location.Ground) {
+                //SetStatuses (CharEnum.Statuses.JumpCharging, true);
+                StartCoroutine (Jump ());
+                bossLastDecideActionTime = Time.time;
+                Log.Print ("Boss DecideAction : Jump", LogTypes.Char);
+            }
+
+            return;
+        }
+
+        bossLastDecideActionTime = Time.time;
+        var horizontalDistanceFromChar = Mathf.Abs (distVector.x);
+        if (horizontalDistanceFromChar < Params.BossHitAttackHorizontalHalfRange) {
+            Hit (CharEnum.HitType.Finishing);
+            Log.Print ("Boss DecideAction : Hit", LogTypes.Char);
+        } else if (horizontalDistanceFromChar < Params.BossDashAttackHorizontalHalfRange) {
+            if (!GetIsInStatuses (CharEnum.Statuses.Dashing)) {
+                StartDashing (true);
+                Log.Print ("Boss DecideAction : Dash", LogTypes.Char);
+            }
+        } else {
+            ShootArrow (CharEnum.ArrowType.Straight);
+            Log.Print ("Boss DecideAction : Shoot Arrow", LogTypes.Char);
+        }
+    }
+
+    #endregion
 }

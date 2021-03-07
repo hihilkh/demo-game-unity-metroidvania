@@ -19,9 +19,9 @@ public class SlimeKingModel : EnemyModelBase {
     /// <returns>Is jump success</returns>
     protected override bool Jump () {
         var distVector = GetChasingCharDirection (false);
-        var distanceSquareFromChar = distVector.sqrMagnitude;
+        var horizontalDistanceFromChar = Mathf.Abs (distVector.x);
 
-        if (distanceSquareFromChar < GetParams ().AttackRangeDistanceSquare) {
+        if (horizontalDistanceFromChar < GetParams ().AttackHorizontalHalfRange) {
             return AttackJump ();
         } else {
             return base.Jump ();

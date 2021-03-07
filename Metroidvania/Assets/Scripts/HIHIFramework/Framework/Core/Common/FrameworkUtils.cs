@@ -408,5 +408,28 @@ namespace HihiFramework.Core {
         }
 
         #endregion
+
+        #region Random Related
+
+        /// <param name="passProbability">0 ~ 1</param>
+        /// <returns><b>true</b> means it pass the guard and can do corresponding action</returns>
+        public static bool RandomGuard (float passProbability) {
+            if (passProbability <= 0) {
+                return false;
+            }
+
+            if (passProbability >= 1) {
+                return true;
+            }
+
+            var random = UnityEngine.Random.Range (0f, 1f);
+            if (passProbability > random) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        #endregion
     }
 }

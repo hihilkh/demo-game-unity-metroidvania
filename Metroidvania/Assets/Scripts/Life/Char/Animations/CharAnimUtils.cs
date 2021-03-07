@@ -13,7 +13,9 @@ public class CharAnimUtils : MonoBehaviour {
     public Transform AnimBaseTransform => _animBaseTransform;
 
     [Header ("Material")]
-    [SerializeField] private Material charMaterialToClone;
+    [SerializeField] private Material unlitMaterialToClone;
+    [SerializeField] private Material stencilBufferMaterial;    // No need to clone. Use it directly for shared material
+    
 
     [Header ("Particle System")]
     [SerializeField] private List<ParticleSystem> thrusterPSList;
@@ -75,7 +77,7 @@ public class CharAnimUtils : MonoBehaviour {
 
     private bool isNeedCommonUpdate = false;
 
-    private Material charMaterial;
+    private Material charUnlitMaterial;
     private const string CharMaterialAlphaFloatName = "_alpha";
 
     private void Awake () {
@@ -254,14 +256,17 @@ public class CharAnimUtils : MonoBehaviour {
             return;
         }
 
-        charMaterial = new Material (charMaterialToClone);
+        charUnlitMaterial = new Material (unlitMaterialToClone);
+        var materials = new Material[2];
+        materials[0] = charUnlitMaterial;
+        materials[1] = stencilBufferMaterial;
         foreach (var renderer in renderers) {
-            renderer.material = charMaterial;
+            renderer.materials = materials;
         }
     }
 
     public void SetCharAlpha (float alpha) {
-        charMaterial.SetFloat (CharMaterialAlphaFloatName, alpha);
+        charUnlitMaterial.SetFloat (CharMaterialAlphaFloatName, alpha);
     }
 
     #endregion

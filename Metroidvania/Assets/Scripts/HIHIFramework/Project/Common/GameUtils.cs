@@ -15,7 +15,14 @@ public partial class GameUtils : Singleton<GameUtils> {
         if (!IsCharModelInitialized) {
             IsCharModelInitialized = true;
 
-            Character = FindObjectOfType<CharModel> ();
+            var charModelList = FindObjectsOfType<CharModel> ();
+
+            foreach (var charModel in charModelList) {
+                if (charModel.CharType == CharEnum.CharType.Player) {
+                    Character = charModel;
+                    break;
+                }
+            }
 
             if (Character == null) {
                 Character = Instantiate (Resources.Load<CharModel> (GameVariable.CharPrefabResourcesName));

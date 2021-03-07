@@ -3,8 +3,8 @@
 public class CharNormalHit : CharHitBase {
     protected override int DP => Params.HitDP_Normal;
 
-    public override void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed) {
-        base.StartAttack (refPoint, direction, charHorizontalSpeed);
+    public override void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed, bool isPlayerAttack) {
+        base.StartAttack (refPoint, direction, charHorizontalSpeed, isPlayerAttack);
 
         SetInitPos (refPoint.position);
 

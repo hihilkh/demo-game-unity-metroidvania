@@ -358,6 +358,7 @@ MonoBehaviour:
   _baseTransform: {fileID: 351095058075983932}
   _collisionScript: {fileID: 5102995114009958925}
   hpView: {fileID: 4568770761878209458}
+  _charType: 0
   _params: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
   controller: {fileID: 3404561521971273195}
   animator: {fileID: 6176056532493872824}
@@ -496,7 +497,10 @@ MonoBehaviour:
   _model: {fileID: 351095058075983922}
   _rb: {fileID: 351095058075983928}
   _animBaseTransform: {fileID: 351095058322751770}
-  charMaterialToClone: {fileID: 2100000, guid: 2c1d1f2e0198a42d6ace0544e30bc16d, type: 2}
+  unlitMaterialToClone: {fileID: 2100000, guid: 2c1d1f2e0198a42d6ace0544e30bc16d,
+    type: 2}
+  stencilBufferMaterial: {fileID: 2100000, guid: b2323ecfc1eb5413baec296e4cf5d5d3,
+    type: 2}
   thrusterPSList:
   - {fileID: 2875250463494118856}
   - {fileID: 7121258066460498897}
@@ -20017,6 +20021,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: HPView
       objectReference: {fileID: 0}
+    - target: {fileID: 693627976711694173, guid: dbf0afb8314ca44db8bc43ac5af207c6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1839601824382458835, guid: dbf0afb8314ca44db8bc43ac5af207c6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 2267176045572157138, guid: dbf0afb8314ca44db8bc43ac5af207c6,
         type: 3}
       propertyPath: m_RootOrder
@@ -20072,10 +20086,40 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3917628068964635407, guid: dbf0afb8314ca44db8bc43ac5af207c6,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6933781039294327205, guid: dbf0afb8314ca44db8bc43ac5af207c6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 6966078305448632788, guid: dbf0afb8314ca44db8bc43ac5af207c6,
         type: 3}
       propertyPath: m_Controller
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7126416666871807298, guid: dbf0afb8314ca44db8bc43ac5af207c6,
+        type: 3}
+      propertyPath: m_BackSortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7126416666871807298, guid: dbf0afb8314ca44db8bc43ac5af207c6,
+        type: 3}
+      propertyPath: m_FrontSortingOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7421638836252133412, guid: dbf0afb8314ca44db8bc43ac5af207c6,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8971985291955222342, guid: dbf0afb8314ca44db8bc43ac5af207c6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dbf0afb8314ca44db8bc43ac5af207c6, type: 3}

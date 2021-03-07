@@ -91,7 +91,6 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     protected override float InvinciblePeriod => Params.InvinciblePeriod;
 
     public int Id { get; private set; }
-    public int CollisionDP => Params.CollisionDP;
 
     private bool isIdling = false;
 

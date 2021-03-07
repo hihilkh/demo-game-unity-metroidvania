@@ -17,7 +17,13 @@ public static class EnemyMapping {
         { EnemyEnum.EnemyType.TreasureBox, "TreasureBox" },
     };
 
+    private const string BossResourcesName = "Char/Boss";
+
     public static string GetEnemyResourcesName (EnemyEnum.EnemyType enemyType) {
+        if (enemyType == EnemyEnum.EnemyType.Boss) {
+            return BossResourcesName;
+        }
+
         if (EnemyResourcesNameDict.ContainsKey (enemyType)) {
             return ResourcesFolderName + EnemyResourcesNameDict[enemyType];
         } else {

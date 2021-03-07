@@ -53,11 +53,18 @@ MonoBehaviour:
   - 40
   - 50
   _repelFromWallDistByTurn: 0.05
+  _bossTotalHP: 30
+  _collisionDP: 30
+  _bossDecideActionPeriod: 1.5
+  _bossTurnProbability: 0.6
+  _bossHitAttackHorizontalHalfRange: 6
+  _bossDashAttackHorizontalHalfRange: 11
+  _bossAllowAttackVerticalHalfRange: 3
   _initDirection: 1
   _isUseDebugCommandSettings: 1
-  _groundTapCommand: 2
-  _groundHoldCommand: 0
-  _groundReleaseCommand: 0
-  _airTapCommand: 2
-  _airHoldCommand: 2
-  _airReleaseCommand: 2
+  _groundTapCommand: 0
+  _groundHoldCommand: 2
+  _groundReleaseCommand: 2
+  _airTapCommand: 0
+  _airHoldCommand: 1
+  _airReleaseCommand: 4

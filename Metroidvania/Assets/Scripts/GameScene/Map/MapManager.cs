@@ -34,6 +34,8 @@ public class MapManager : MonoBehaviour {
     private readonly List<Vector2Int> switchedOnOnOffSwitchBasePosList = new List<Vector2Int> ();
     private readonly List<MapSwitch> missionEventSwitchList = new List<MapSwitch> ();
 
+    public CharModel BossModel { get; private set; } = null;
+
     private bool isAddedEventHandlers = false;
     private const float OpenOneHiddenPathLayerPeriod = 0.1f;
 
@@ -61,6 +63,7 @@ public class MapManager : MonoBehaviour {
 
         changedTileDict.Clear ();
         switchedOnOnOffSwitchBasePosList.Clear ();
+        BossModel = null;
         InitializeTiles (mapData.tiles);
         GenerateExits (mapData.exits);
         GenerateMapDisposableObjects ();
@@ -193,15 +196,30 @@ public class MapManager : MonoBehaviour {
                 continue;
             }
 
-            var enemy = Resources.Load<EnemyModelBase> (resourcesName);
-            if (enemy == null) {
-                Log.PrintError ("Skipped enemy : Cannot load enemy resources for resourcesName : " + resourcesName, LogTypes.MapData);
-                continue;
+            if (enemyType != EnemyEnum.EnemyType.Boss) {
+                var enemy = Resources.Load<EnemyModelBase> (resourcesName);
+                if (enemy == null) {
+                    Log.PrintError ("Skipped enemy : Cannot load enemy resources for resourcesName : " + resourcesName, LogTypes.MapData);
+                    continue;
+                }
+
+                var instance = Instantiate (enemy, mapObjectsBaseTransform);
+                instance.Reset (data);
+                ArrowTargetList.Add (instance);
+            } else {
+                var boss = Resources.Load<CharModel> (resourcesName);
+                if (boss == null) {
+                    Log.PrintError ("Skipped enemy : Cannot load enemy resources for resourcesName : " + resourcesName, LogTypes.MapData);
+                    continue;
+                }
+
+                var instance = Instantiate (boss, mapObjectsBaseTransform);
+                instance.Reset (data.pos, data.direction);
+                ArrowTargetList.Add (instance);
+
+                BossModel = instance;
             }
 
-            var instance = Instantiate (enemy, mapObjectsBaseTransform);
-            instance.Reset (data);
-            ArrowTargetList.Add (instance);
         }
 
         Log.Print ("Finish GenerateEnemy", LogTypes.MapData);

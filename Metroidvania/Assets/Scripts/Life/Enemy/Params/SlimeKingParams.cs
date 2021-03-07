@@ -8,6 +8,6 @@ public class SlimeKingParams : EnemyParams {
     [SerializeField] private Vector2 _attackJumpInitVelocity;
     public Vector2 AttackJumpInitVelocity => _attackJumpInitVelocity;
 
-    [SerializeField] private float _attackRangeDistanceSquare;
-    public float AttackRangeDistanceSquare => _attackRangeDistanceSquare;
+    [SerializeField] private float _attackHorizontalHalfRange;
+    public float AttackHorizontalHalfRange => _attackHorizontalHalfRange;
 }

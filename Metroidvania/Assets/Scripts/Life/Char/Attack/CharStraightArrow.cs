@@ -3,8 +3,8 @@
 public class CharStraightArrow : CharArrowBase {
     protected override int DP => Params.ArrowDP_Straight;
 
-    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection) {
-        Init (facingDirection);
+    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, bool isPlayerAttack) {
+        Init (facingDirection, isPlayerAttack);
 
         SetInitPos (refPoint.position);
 

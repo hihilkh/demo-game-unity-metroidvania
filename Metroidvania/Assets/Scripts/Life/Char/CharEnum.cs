@@ -1,6 +1,11 @@
 ﻿using System;
 
 public class CharEnum {
+    public enum CharType {
+        Player,
+        Boss,
+    }
+
     /// <summary>
     /// The direction that the player control the camera to look to
     /// </summary>
@@ -66,6 +71,8 @@ public class CharEnum {
         Legs = 1 << 2,
         Thrusters = 1 << 3,
         Arrow = 1 << 4,
+
+        All = Head + Arms + Legs + Thrusters + Arrow,
     }
 
     [Flags]
