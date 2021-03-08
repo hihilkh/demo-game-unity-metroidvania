@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61951d564c1ca48b78ebc9ee2dc86b19, type: 3}
   m_Name: Params_GhostKing
   m_EditorClassIdentifier: 
-  _totalHP: 20
+  _totalHP: 300
   _invinciblePeriod: 2
   _beatBackInitSpeed: 0
   _maxMovementSpeed: 5
@@ -26,7 +26,7 @@ MonoBehaviour:
   _jumpInitVelocity: {x: 0, y: 0}
   _isJumpRecursively: 0
   _recursiveJumpPeriod: 0
-  _collisionDP: 30
+  _collisionDP: 40
   _attackMaxMovementSpeed: 30
   _attackAcceleration: 20
   _attackCoolDownPeriod: 1

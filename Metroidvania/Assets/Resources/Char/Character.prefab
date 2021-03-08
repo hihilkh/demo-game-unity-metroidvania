@@ -356,6 +356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _baseTransform: {fileID: 351095058075983932}
+  _displayBaseTransform: {fileID: 351095058322751770}
   _collisionScript: {fileID: 5102995114009958925}
   hpView: {fileID: 4568770761878209458}
   _charType: 0
@@ -514,11 +515,11 @@ MonoBehaviour:
     type: 3}
   _dropHitTemplate: {fileID: 1679123366757433512, guid: 66c1f6855104b4d6398aa5c8713c5940,
     type: 3}
-  _targetArrowTemplate: {fileID: 858284693220932100, guid: e9ab7e6cb5abb4b119fa6f803d34ffa5,
+  _targetArrowTemplate: {fileID: -1410427079361357514, guid: f7d6f1c39c829461fbfbf7319adac458,
     type: 3}
-  _straightArrowTemplate: {fileID: 3793835525634486067, guid: 55586ef83aa3f4aae8e2d5bb9844899b,
+  _straightArrowTemplate: {fileID: 6811591364016316484, guid: 80585adfc98e04ffcacc7d933c624a3a,
     type: 3}
-  _tripleArrowTemplate: {fileID: 1446912141832703017, guid: b1dc5a0341a6f4d37a98302788c4018f,
+  _tripleArrowTemplate: {fileID: -198704478383983071, guid: 08041c75d825c4d508565ac347894be0,
     type: 3}
   _refPoint_GeneralHit: {fileID: 351095058017300085}
   _refPoint_SlideHit: {fileID: 351095056838418904}

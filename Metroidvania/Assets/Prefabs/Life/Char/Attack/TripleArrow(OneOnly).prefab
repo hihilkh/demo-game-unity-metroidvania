@@ -1,24 +1,24 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-1410427079361357514
+--- !u!114 &-198704478383983071
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7106173287388099691}
+  m_GameObject: {fileID: 5990397094389616986}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4748d45f6d2743cbbeb45da640a008e, type: 3}
+  m_Script: {fileID: 11500000, guid: 01960f0b9ee0a4f98b10859f32931861, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _params: {fileID: 11400000, guid: 7182b368386104b9aa8b6a83ef52b419, type: 2}
-  _arrowSpriteRenderer: {fileID: 6115340241960044997}
-  _rb: {fileID: 7106173287388099689}
-  _attackTrigger: {fileID: 5282037207051739178}
+  _arrowSpriteRenderer: {fileID: 7305424720708316404}
+  _rb: {fileID: 5990397094389616984}
+  _attackTrigger: {fileID: 8714896587785241883}
   _normalArrowSprite: {fileID: 21300000, guid: d53680ee37966488aae1812f38147510, type: 3}
   _fireArrowSprite: {fileID: 21300000, guid: 5be9dc1222cbb4a22954fc4e1307ca66, type: 3}
---- !u!1001 &7599560032672648812
+--- !u!1001 &6398233030367292253
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -48,37 +48,37 @@ PrefabInstance:
     - target: {fileID: 858284693220932103, guid: 1f371194db9464054905e740e19df952,
         type: 3}
       propertyPath: m_Name
-      value: TargetArrow1
+      value: TripleArrow(OneOnly)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f371194db9464054905e740e19df952, type: 3}
---- !u!1 &7106173287388099691 stripped
+--- !u!1 &5990397094389616986 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 858284693220932103, guid: 1f371194db9464054905e740e19df952,
     type: 3}
-  m_PrefabInstance: {fileID: 7599560032672648812}
+  m_PrefabInstance: {fileID: 6398233030367292253}
   m_PrefabAsset: {fileID: 0}
---- !u!50 &7106173287388099689 stripped
+--- !u!50 &5990397094389616984 stripped
 Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 858284693220932101, guid: 1f371194db9464054905e740e19df952,
     type: 3}
-  m_PrefabInstance: {fileID: 7599560032672648812}
+  m_PrefabInstance: {fileID: 6398233030367292253}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5282037207051739178 stripped
+--- !u!114 &8714896587785241883 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2322343721057824326, guid: 1f371194db9464054905e740e19df952,
     type: 3}
-  m_PrefabInstance: {fileID: 7599560032672648812}
+  m_PrefabInstance: {fileID: 6398233030367292253}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7106173287388099691}
+  m_GameObject: {fileID: 5990397094389616986}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f0f53e92dd2347b180a556b369d5238, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!212 &6115340241960044997 stripped
+--- !u!212 &7305424720708316404 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 4443084815219787689, guid: 1f371194db9464054905e740e19df952,
     type: 3}
-  m_PrefabInstance: {fileID: 7599560032672648812}
+  m_PrefabInstance: {fileID: 6398233030367292253}
   m_PrefabAsset: {fileID: 0}

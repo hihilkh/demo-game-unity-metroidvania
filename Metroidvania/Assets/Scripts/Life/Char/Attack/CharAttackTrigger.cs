@@ -6,10 +6,9 @@ public class CharAttackTrigger : MonoBehaviour {
     /// <summary>
     /// Input :<br />
     /// LifeBase : the LifeBase that the attack has hit<br />
-    /// Transform : colliderTransform<br />
     /// bool : isHurt
     /// </summary>
-    public event Action<LifeBase, Transform, bool> HitLife;
+    public event Action<LifeBase, bool> HitLife;
 
     /// <summary>
     /// Input :<br />
@@ -37,7 +36,7 @@ public class CharAttackTrigger : MonoBehaviour {
                     }
                 }
 
-                HitLife?.Invoke (lifeBase, collision.transform, isHurt);
+                HitLife?.Invoke (lifeBase, isHurt);
                 return;
             case GameVariable.ArrowSwitchTag:
             case GameVariable.DropHitSwitchTag:

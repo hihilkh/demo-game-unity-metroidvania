@@ -32,10 +32,10 @@ MonoBehaviour:
   _hitCoolDownPeriod_Charged: 0.3
   _hitCoolDownPeriod_Finishing: 0.5
   _hitCoolDownPeriod_Drop: 0.5
-  _hitDP_Normal: 2
-  _hitDP_Charged: 4
-  _hitDP_Finishing: 4
-  _hitDP_Drop: 5
+  _hitDP_Normal: 20
+  _hitDP_Charged: 40
+  _hitDP_Finishing: 40
+  _hitDP_Drop: 50
   _dropHitVelocity: -15
   _arrowCoolDownPeriod_Target: 0.4
   _arrowCoolDownPeriod_Straight: 0.4
@@ -43,9 +43,9 @@ MonoBehaviour:
   _arrowInitialSpeed_Target: 15
   _arrowInitialSpeed_Straight: 20
   _arrowInitialSpeed_Triple: 15
-  _arrowDP_Target: 1
-  _arrowDP_Straight: 3
-  _arrowDP_Triple: 1
+  _arrowDP_Target: 10
+  _arrowDP_Straight: 30
+  _arrowDP_Triple: 10
   _targetArrowMaxInitShootGradient: 1.7
   _targetArrowMaxTargetDistanceSquare: 225
   _tripleArrowShootingAngleList:
@@ -53,8 +53,10 @@ MonoBehaviour:
   - 40
   - 50
   _repelFromWallDistByTurn: 0.05
-  _bossTotalHP: 30
-  _collisionDP: 30
+  _hpUpMagnitude: 20
+  _powerUpMagnitude: 1
+  _bossTotalHP: 300
+  _collisionDP: 40
   _bossDecideActionPeriod: 1.5
   _bossTurnProbability: 0.6
   _bossHitAttackHorizontalHalfRange: 6
@@ -62,9 +64,9 @@ MonoBehaviour:
   _bossAllowAttackVerticalHalfRange: 3
   _initDirection: 1
   _isUseDebugCommandSettings: 1
-  _groundTapCommand: 0
-  _groundHoldCommand: 2
-  _groundReleaseCommand: 2
+  _groundTapCommand: 3
+  _groundHoldCommand: 3
+  _groundReleaseCommand: 3
   _airTapCommand: 0
   _airHoldCommand: 1
   _airReleaseCommand: 4

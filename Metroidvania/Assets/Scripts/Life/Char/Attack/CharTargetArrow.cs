@@ -6,8 +6,8 @@ public class CharTargetArrow : CharArrowBase {
 
     private const float DefaultImpulseAngleInRadian = Mathf.PI / 6;
 
-    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, Vector2? targetPos, bool isPlayerAttack, int additionalDP) {
-        Init (facingDirection, isPlayerAttack, additionalDP);
+    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, Vector2? targetPos, bool isPlayerAttack, int additionalDP, bool isFireArrow) {
+        Init (facingDirection, isPlayerAttack, additionalDP, isFireArrow);
 
         SetInitPos (refPoint.position);
 

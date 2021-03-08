@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3501ccd7253142d1877537beb84231e, type: 3}
   m_Name: Params_SlimeKing
   m_EditorClassIdentifier: 
-  _totalHP: 25
+  _totalHP: 250
   _invinciblePeriod: 1.3
   _beatBackInitSpeed: 5
   _maxMovementSpeed: 0
@@ -26,6 +26,6 @@ MonoBehaviour:
   _jumpInitVelocity: {x: 3, y: 5}
   _isJumpRecursively: 1
   _recursiveJumpPeriod: 0.5
-  _collisionDP: 30
+  _collisionDP: 40
   _attackJumpInitVelocity: {x: 10, y: 5}
   _attackHorizontalHalfRange: 10

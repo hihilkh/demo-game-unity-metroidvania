@@ -6,6 +6,8 @@ using UnityEngine;
 public abstract class LifeBase : MapDisposableBase {
     [SerializeField] private Transform _baseTransform;
     protected Transform BaseTransform => _baseTransform;
+    [SerializeField] private Transform _displayBaseTransform;
+    public Transform DisplayBaseTransform => _displayBaseTransform;
     [SerializeField] private LifeCollision _collisionScript;
     protected LifeCollision CollisionScript => _collisionScript;
     [SerializeField] private LifeHPView hpView;
@@ -34,6 +36,10 @@ public abstract class LifeBase : MapDisposableBase {
 
     protected abstract float InvinciblePeriod { get; }
 
+    // FireDamage
+    private Coroutine fireDamageCoroutine = null;
+    private int CurrentFireDamageTriggerCount = 0;
+
     protected bool IsInitialized { get; private set; } = false;
 
     #region Initialization related
@@ -56,6 +62,7 @@ public abstract class LifeBase : MapDisposableBase {
 
         CurrentHP = TotalHP;
         SetPosAndDirection (pos, direction);
+        ForceStopFireDamage ();
 
         return hasInitializedBefore;
     }
@@ -93,7 +100,7 @@ public abstract class LifeBase : MapDisposableBase {
     /// Hurt the life by <paramref name="dp"/> (damage point) and if hp come to zero, it calls Die ()
     /// </summary>
     /// <returns>isAlive</returns>
-    public virtual bool Hurt (int dp, LifeEnum.HorizontalDirection hurtDirection) {
+    public virtual bool Hurt (int dp, LifeEnum.HorizontalDirection hurtDirection, bool isFireAttack = false) {
         CurrentHP = Mathf.Max (0, CurrentHP - dp);
 
         if (CurrentHP == 0) {
@@ -103,6 +110,10 @@ public abstract class LifeBase : MapDisposableBase {
             StartBeatingBack (hurtDirection);
             if (InvinciblePeriod > 0) {
                 StartCoroutine (SetInvincible (true));
+            }
+
+            if (isFireAttack) {
+                StartFireDamage ();
             }
 
             return true;
@@ -145,6 +156,40 @@ public abstract class LifeBase : MapDisposableBase {
     protected virtual void StopInvincible () {
         CollisionScript.SetLayer (false);
         IsInvincible = false;
+    }
+
+    private void StartFireDamage () {
+        CurrentFireDamageTriggerCount = 0;
+
+        if (fireDamageCoroutine == null) {
+            fireDamageCoroutine = StartCoroutine (FireDamageCoroutine ());
+        }
+    }
+
+    private IEnumerator FireDamageCoroutine () {
+        while (CurrentFireDamageTriggerCount < GameVariable.FireAttackNoOfTrigger) {
+            yield return new WaitForSeconds (GameVariable.FireAttackTriggerPeriod);
+
+            CurrentFireDamageTriggerCount++;
+
+            CurrentHP = Mathf.Max (0, CurrentHP - GameVariable.FireDamagePerTrigger);
+            if (CurrentHP == 0) {
+                ForceStopFireDamage ();
+                Die (LifeEnum.HorizontalDirection.Right);
+            }
+        }
+
+        fireDamageCoroutine = null;
+        CurrentFireDamageTriggerCount = 0;
+    }
+
+    private void ForceStopFireDamage () {
+        if (fireDamageCoroutine != null) {
+            StopCoroutine (fireDamageCoroutine);
+            fireDamageCoroutine = null;
+        }
+
+        CurrentFireDamageTriggerCount = 0;
     }
 
     #endregion

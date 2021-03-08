@@ -13,9 +13,6 @@ public class EnemyAnimUtils : MonoBehaviour {
     [SerializeField] private Rigidbody2D _rb;
     public Rigidbody2D RB => _rb;
 
-    [SerializeField] private Transform _animBaseTransform;
-    public Transform AnimBaseTransform => _animBaseTransform;
-
     // Acceleration
     private AccelerationMode currentAccelerationMode = AccelerationMode.None;
     private Vector2 acceleratingVector;
@@ -79,7 +76,7 @@ public class EnemyAnimUtils : MonoBehaviour {
 
     private void UpdateFacingDirection (LifeEnum.HorizontalDirection facingDirection) {
         var scale = (facingDirection == LifeEnum.HorizontalDirection.Right) ? 1 : -1;
-        AnimBaseTransform.localScale = new Vector3 (scale, 1, 1);
+        Model.DisplayBaseTransform.localScale = new Vector3 (scale, 1, 1);
     }
 
     private void FlyingInfoUpdatedHandler (Vector2 normalizedChasingDirection, float maxSpeed, float? acceleration) {

@@ -186,6 +186,15 @@ public class CharModel : LifeBase, IMapTarget {
 
     public CharEnum.HitType? CurrentHitType { get; private set; }
     public CharEnum.ArrowType? CurrentArrowType { get; private set; }
+    public bool IsArrowWithFire {
+        get {
+            if (CharType == CharEnum.CharType.Player) {
+                return UserManager.GetIsCollectedCollectable (Collectable.Type.FireArrow);
+            } else {
+                return CurrentHP <= TotalHP / 2f;
+            }
+        }
+    }
     private bool isAllowMove;
     private bool isAllowAirJump;
     private bool isWaitingLandingToStopChar;
@@ -1400,8 +1409,8 @@ public class CharModel : LifeBase, IMapTarget {
 
     #region HP
 
-    public override bool Hurt (int dp, LifeEnum.HorizontalDirection hurtDirection) {
-        var isAlive = base.Hurt (dp, hurtDirection);
+    public override bool Hurt (int dp, LifeEnum.HorizontalDirection hurtDirection, bool isFireAttack = false) {
+        var isAlive = base.Hurt (dp, hurtDirection, isFireAttack);
 
         Log.Print ("Char : Hurt! dp : " + dp + " , hurtDirection : " + hurtDirection + " , remain HP : " + CurrentHP, LogTypes.Char);
 

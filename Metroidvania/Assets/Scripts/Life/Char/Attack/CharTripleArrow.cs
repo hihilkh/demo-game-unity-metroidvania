@@ -4,8 +4,8 @@
 public class CharTripleArrow : CharArrowBase {
     protected override int BaseDP => Params.ArrowDP_Triple;
 
-    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, float shootingAngle, bool isPlayerAttack, int additionalDP) {
-        Init (facingDirection, isPlayerAttack, additionalDP);
+    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, float shootingAngle, bool isPlayerAttack, int additionalDP, bool isFireArrow) {
+        Init (facingDirection, isPlayerAttack, additionalDP, isFireArrow);
 
         SetInitPos (refPoint.position);
 

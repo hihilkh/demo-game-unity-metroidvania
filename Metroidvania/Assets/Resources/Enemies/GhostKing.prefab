@@ -1,28 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &2072994107851526236
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1910482810284381270}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08832c0428b384a0fb8230f76a29c0a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _baseTransform: {fileID: 1910482810284381268}
-  _collisionScript: {fileID: 1920720716333261965}
-  hpView: {fileID: 8565940960902693089}
-  _params: {fileID: 11400000, guid: c8b55dcf7c097481bb855544e604a050, type: 2}
-  animator: {fileID: 1910482810284381269}
-  targetRefPoint: {fileID: 2282884132638514452}
-  charDetection: {fileID: 278034969212160185}
-  ringObject: {fileID: 5073692601288357599}
-  attackRingObject: {fileID: 7635847083242905931}
-  spritesBaseTransform: {fileID: 1910482808546551539}
-  attackRingCollider: {fileID: 4196704020471707507}
 --- !u!1 &1979207610835602772
 GameObject:
   m_ObjectHideFlags: 0
@@ -447,6 +424,30 @@ PolygonCollider2D:
       - {x: -1.4256287, y: -0.36216715}
       - {x: 0.015258566, y: -0.51577175}
       - {x: 1.4397991, y: -0.37522188}
+--- !u!114 &2072994107851526236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1910482810284381270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08832c0428b384a0fb8230f76a29c0a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _baseTransform: {fileID: 1910482810284381268}
+  _displayBaseTransform: {fileID: 1910482808546551539}
+  _collisionScript: {fileID: 1920720716333261965}
+  hpView: {fileID: 8565940960902693089}
+  _params: {fileID: 11400000, guid: c8b55dcf7c097481bb855544e604a050, type: 2}
+  animator: {fileID: 1910482810284381269}
+  targetRefPoint: {fileID: 2282884132638514452}
+  charDetection: {fileID: 278034969212160185}
+  ringObject: {fileID: 5073692601288357599}
+  attackRingObject: {fileID: 7635847083242905931}
+  spritesBaseTransform: {fileID: 1910482808546551539}
+  attackRingCollider: {fileID: 4196704020471707507}
 --- !u!1001 &8174205529718355058
 PrefabInstance:
   m_ObjectHideFlags: 0

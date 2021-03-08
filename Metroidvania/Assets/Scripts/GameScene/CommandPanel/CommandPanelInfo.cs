@@ -20,6 +20,10 @@ public static class CommandPanelInfo {
     private const string SpriteName_Arrow_Straight = "Command_Arrow_Straight";
     private const string SpriteName_Arrow_Triple = "Command_Arrow_Triple";
 
+    private const string SpriteName_Arrow_Target_Fire = "Command_Arrow_Target_Fire";
+    private const string SpriteName_Arrow_Straight_Fire = "Command_Arrow_Straight_Fire";
+    private const string SpriteName_Arrow_Triple_Fire = "Command_Arrow_Triple_Fire";
+
     private const string SpriteName_Turn = "Command_Turn";
 
     #region Binded hold command
@@ -68,7 +72,11 @@ public static class CommandPanelInfo {
             case CharEnum.Command.Dash:
                 return ResourcesFolderName + SpriteName_Dash;
             case CharEnum.Command.Arrow:
-                return ResourcesFolderName + SpriteName_Arrow_Target;
+                if (UserManager.GetIsCollectedCollectable (Collectable.Type.FireArrow)) {
+                    return ResourcesFolderName + SpriteName_Arrow_Target_Fire;
+                } else {
+                    return ResourcesFolderName + SpriteName_Arrow_Target;
+                }
             case CharEnum.Command.Turn:
                 return ResourcesFolderName + SpriteName_Turn;
         }
@@ -90,7 +98,11 @@ public static class CommandPanelInfo {
             case CharEnum.Command.Dash:
                 return ResourcesFolderName + SpriteName_Dash;
             case CharEnum.Command.Arrow:
-                return ResourcesFolderName + SpriteName_Arrow_Straight;
+                if (UserManager.GetIsCollectedCollectable (Collectable.Type.FireArrow)) {
+                    return ResourcesFolderName + SpriteName_Arrow_Straight_Fire;
+                } else {
+                    return ResourcesFolderName + SpriteName_Arrow_Straight;
+                }
             case CharEnum.Command.Turn:
                 Log.PrintWarning ("Actually should not have Turn command for hold. Please check.", LogTypes.Char);
                 return ResourcesFolderName + SpriteName_Turn;
@@ -121,7 +133,11 @@ public static class CommandPanelInfo {
             case CharEnum.Command.Dash:
                 return ResourcesFolderName + SpriteName_Dash;
             case CharEnum.Command.Arrow:
-                return ResourcesFolderName + SpriteName_Arrow_Triple;
+                if (UserManager.GetIsCollectedCollectable (Collectable.Type.FireArrow)) {
+                    return ResourcesFolderName + SpriteName_Arrow_Triple_Fire;
+                } else {
+                    return ResourcesFolderName + SpriteName_Arrow_Triple;
+                }
             case CharEnum.Command.Turn:
                 return ResourcesFolderName + SpriteName_Turn;
         }

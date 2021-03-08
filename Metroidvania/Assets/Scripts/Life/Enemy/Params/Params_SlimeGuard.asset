@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 191cfb9e87d8c4f939e975aaf5297685, type: 3}
   m_Name: Params_SlimeGuard
   m_EditorClassIdentifier: 
-  _totalHP: 12
+  _totalHP: 120
   _invinciblePeriod: 1.3
   _beatBackInitSpeed: 0
   _maxMovementSpeed: 0
@@ -20,9 +20,10 @@ MonoBehaviour:
   _acceleration: 0
   _decelerationFactor: 0
   _isDetectChar: 0
+  _willLoseTrackOfChar: 0
   _isChaseChar: 0
   _changeChaseCharDirPeriod: 0
-  _jumpInitSpeed: 0
+  _jumpInitVelocity: {x: 0, y: 0}
   _isJumpRecursively: 0
   _recursiveJumpPeriod: 0
-  _collisionDP: 20
+  _collisionDP: 30

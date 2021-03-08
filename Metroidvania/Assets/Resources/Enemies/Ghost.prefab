@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _baseTransform: {fileID: 7489170776341902006}
+  _displayBaseTransform: {fileID: 7489170775678484497}
   _collisionScript: {fileID: 7478862194506121839}
   hpView: {fileID: 832551515858609667}
   _params: {fileID: 11400000, guid: 0a3a4bfc3538b43b8aae60b9d1a641f7, type: 2}
@@ -361,6 +362,12 @@ Transform:
 --- !u!95 &7489170776341902007 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7778835175325622311, guid: 9944760fd440b460793b212016a1de2c,
+    type: 3}
+  m_PrefabInstance: {fileID: 872880587235431056}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7489170775678484497 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7778835175719113345, guid: 9944760fd440b460793b212016a1de2c,
     type: 3}
   m_PrefabInstance: {fileID: 872880587235431056}
   m_PrefabAsset: {fileID: 0}

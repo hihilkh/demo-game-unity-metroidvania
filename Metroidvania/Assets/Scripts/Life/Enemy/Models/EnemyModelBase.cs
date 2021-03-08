@@ -288,8 +288,8 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     #region HP related
 
-    public override bool Hurt (int dp, LifeEnum.HorizontalDirection hurtDirection) {
-        var isAlive = base.Hurt (dp, hurtDirection);
+    public override bool Hurt (int dp, LifeEnum.HorizontalDirection hurtDirection, bool isFireAttack = false) {
+        var isAlive = base.Hurt (dp, hurtDirection, isFireAttack);
 
         Log.Print (gameObject.name + " : Hurt! dp : " + dp + " , hurtDirection : " + hurtDirection + " , remain HP : " + CurrentHP, LogTypes.Enemy);
 

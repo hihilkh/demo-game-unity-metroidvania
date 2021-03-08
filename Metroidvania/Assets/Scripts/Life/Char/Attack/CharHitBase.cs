@@ -56,7 +56,7 @@ public abstract class CharHitBase : MonoBehaviour {
 
     #region Events
 
-    protected virtual void HitLifeHandler (LifeBase lifeBase, Transform colliderTransform, bool isHurt) {
+    protected virtual void HitLifeHandler (LifeBase lifeBase, bool isHurt) {
         if (isHurt) {
             lifeBase.Hurt (totalDP, Direction);
         }

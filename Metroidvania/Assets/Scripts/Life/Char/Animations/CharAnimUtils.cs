@@ -9,9 +9,6 @@ public class CharAnimUtils : MonoBehaviour {
     [SerializeField] private Rigidbody2D _rb;
     public Rigidbody2D RB => _rb;
 
-    [SerializeField] private Transform _animBaseTransform;
-    public Transform AnimBaseTransform => _animBaseTransform;
-
     [Header ("Material")]
     [SerializeField] private Material unlitMaterialToClone;
     [SerializeField] private Material stencilBufferMaterial;    // No need to clone. Use it directly for shared material
@@ -345,7 +342,7 @@ public class CharAnimUtils : MonoBehaviour {
             scale = scale * -1;
         }
 
-        AnimBaseTransform.localScale = new Vector3 (scale, 1, 1);
+        Model.DisplayBaseTransform.localScale = new Vector3 (scale, 1, 1);
     }
 
     public void ResetGravity () {

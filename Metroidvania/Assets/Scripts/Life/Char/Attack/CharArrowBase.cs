@@ -5,22 +5,29 @@ using UnityEngine;
 public abstract class CharArrowBase : MonoBehaviour {
     [SerializeField] private CharParams _params;
     protected CharParams Params => _params;
-    [SerializeField] private SpriteRenderer _arrowSprite;
-    protected SpriteRenderer ArrowSprite => _arrowSprite;
+    [SerializeField] private SpriteRenderer _arrowSpriteRenderer;
+    protected SpriteRenderer ArrowSpriteRenderer => _arrowSpriteRenderer;
     [SerializeField] private Rigidbody2D _rb;
     protected Rigidbody2D RB => _rb;
     [SerializeField] private CharAttackTrigger _attackTrigger;
     protected CharAttackTrigger AttackTrigger => _attackTrigger;
 
+    [SerializeField] private Sprite _normalArrowSprite;
+    private Sprite normalArrowSprite => _normalArrowSprite;
+
+    [SerializeField] private Sprite _fireArrowSprite;
+    private Sprite fireArrowSprite => _fireArrowSprite;
+
     protected bool HasHitAnything { get; private set; } = false;
-    private const float VanishPeriod = 1f;
+    private const float NormalArrowVanishPeriod = 1f;
 
     protected LifeEnum.HorizontalDirection Direction { get; private set; }
     protected abstract int BaseDP { get; }
 
     private int totalDP = 0;
+    private bool isFireArrow = false;
 
-    protected void Init (LifeEnum.HorizontalDirection direction, bool isPlayerAttack, int additionalDP) {
+    protected void Init (LifeEnum.HorizontalDirection direction, bool isPlayerAttack, int additionalDP, bool isFireArrow) {
         if (isPlayerAttack) {
             gameObject.layer = GameVariable.PlayerAttackLayer;
         } else {
@@ -29,6 +36,13 @@ public abstract class CharArrowBase : MonoBehaviour {
 
         Direction = direction;
         totalDP = BaseDP + additionalDP;
+
+        this.isFireArrow = isFireArrow;
+        if (isFireArrow) {
+            ArrowSpriteRenderer.sprite = fireArrowSprite;
+        } else {
+            ArrowSpriteRenderer.sprite = normalArrowSprite;
+        }
 
         AttackTrigger.HitLife += HitLifeHandler;
         AttackTrigger.HitEnvironment += HitEnvironmentHandler;
@@ -42,6 +56,14 @@ public abstract class CharArrowBase : MonoBehaviour {
 
     protected void UpdateArrowPointingDirection () {
         transform.right = RB.velocity.normalized;
+
+        // Prevent inverted appearance
+        var rotationZ = FrameworkUtils.Clamp0360Angle (transform.rotation.eulerAngles.z);
+        if (rotationZ > 90 && rotationZ < 270) {
+            transform.localScale = new Vector3 (transform.localScale.x, -1, transform.localScale.z);
+        } else {
+            transform.localScale = new Vector3 (transform.localScale.x, 1, transform.localScale.z);
+        }
     }
 
     private void Hit (Transform target) {
@@ -56,9 +78,10 @@ public abstract class CharArrowBase : MonoBehaviour {
     private IEnumerator Vanish () {
         var startTime = Time.time;
 
-        while (Time.time - startTime < VanishPeriod) {
-            var progress = (Time.time - startTime) / VanishPeriod;
-            ArrowSprite.color = new Color (ArrowSprite.color.r, ArrowSprite.color.g, ArrowSprite.color.b, 1 - progress);
+        var vanishPeriod = isFireArrow ? GameVariable.FireAttackNoOfTrigger * GameVariable.FireAttackTriggerPeriod : NormalArrowVanishPeriod;
+        while (Time.time - startTime < vanishPeriod) {
+            var progress = (Time.time - startTime) / vanishPeriod;
+            ArrowSpriteRenderer.color = new Color (ArrowSpriteRenderer.color.r, ArrowSpriteRenderer.color.g, ArrowSpriteRenderer.color.b, 1 - progress);
             yield return null;
         }
 
@@ -73,16 +96,16 @@ public abstract class CharArrowBase : MonoBehaviour {
 
     #region Events
 
-    private void HitLifeHandler (LifeBase lifeBase, Transform colliderTransform, bool isHurt) {
+    private void HitLifeHandler (LifeBase lifeBase, bool isHurt) {
         if (HasHitAnything) {
             return;
         }
 
         if (isHurt) {
-            lifeBase.Hurt (totalDP, Direction);
+            lifeBase.Hurt (totalDP, Direction, isFireArrow);
         }
 
-        Hit (colliderTransform);
+        Hit (lifeBase.DisplayBaseTransform);
     }
 
     private void HitEnvironmentHandler (Transform colliderTransform) {

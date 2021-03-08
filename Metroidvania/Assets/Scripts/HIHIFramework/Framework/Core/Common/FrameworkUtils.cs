@@ -431,5 +431,18 @@ namespace HihiFramework.Core {
         }
 
         #endregion
+
+        #region Angle
+
+        /// <returns>Angle between 0 (inclusive) to 360 (exclusive)</returns>
+        public static float Clamp0360Angle (float angle) {
+            if (angle >= 0 && angle < 360) {
+                return angle;
+            }
+
+            return angle - Mathf.FloorToInt (angle / 360f) * 360f;
+        }
+
+        #endregion
     }
 }

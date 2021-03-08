@@ -9,16 +9,17 @@ public class CharShootSMBBase : CharSMBBase {
 
         var isPlayerAttack = AnimUtils.Model.CharType == CharEnum.CharType.Player;
         var additionalDP = AnimUtils.Model.AdditionalDP;
+        var isFireArrow = AnimUtils.Model.IsArrowWithFire;
 
         switch (AnimUtils.Model.CurrentArrowType) {
             case CharEnum.ArrowType.Target:
                 var targetArrowClone = Instantiate (AnimUtils.TargetArrowTemplate);
                 var targetPos = AnimUtils.Model.SearchShootTargetPos ();
-                targetArrowClone.StartAttack (ShootRefPoint, AnimUtils.Model.FacingDirection, targetPos, isPlayerAttack, additionalDP);
+                targetArrowClone.StartAttack (ShootRefPoint, AnimUtils.Model.FacingDirection, targetPos, isPlayerAttack, additionalDP, isFireArrow);
                 break;
             case CharEnum.ArrowType.Straight:
                 var straightArrowClone = Instantiate (AnimUtils.StraightArrowTemplate);
-                straightArrowClone.StartAttack (ShootRefPoint, AnimUtils.Model.FacingDirection, isPlayerAttack, additionalDP);
+                straightArrowClone.StartAttack (ShootRefPoint, AnimUtils.Model.FacingDirection, isPlayerAttack, additionalDP, isFireArrow);
                 break;
             case CharEnum.ArrowType.Triple:
                 if (AnimUtils.Model.Params.TripleArrowShootingAngleList == null || AnimUtils.Model.Params.TripleArrowShootingAngleList.Count <= 0) {
@@ -28,7 +29,7 @@ public class CharShootSMBBase : CharSMBBase {
 
                 foreach (var angle in AnimUtils.Model.Params.TripleArrowShootingAngleList) {
                     var tripleArrowClone = Instantiate (AnimUtils.TripleArrowTemplate);
-                    tripleArrowClone.StartAttack (ShootRefPoint, AnimUtils.Model.FacingDirection, angle, isPlayerAttack, additionalDP);
+                    tripleArrowClone.StartAttack (ShootRefPoint, AnimUtils.Model.FacingDirection, angle, isPlayerAttack, additionalDP, isFireArrow);
                 }
                 break;
             default:

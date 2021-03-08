@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 191cfb9e87d8c4f939e975aaf5297685, type: 3}
   m_Name: Params_Slime
   m_EditorClassIdentifier: 
-  _totalHP: 4
+  _totalHP: 40
   _invinciblePeriod: 1.3
   _beatBackInitSpeed: 9
   _maxMovementSpeed: 0

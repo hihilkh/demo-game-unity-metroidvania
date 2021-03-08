@@ -270,6 +270,8 @@ public class GameSceneManager : MonoBehaviour {
                 charModel.GotHPUp ();
             } else if (Collectable.PowerUpTypeList.Contains (collectableObject.GetCollectableType ())) {
                 charModel.GotPowerUp ();
+            } else if (collectableObject.GetCollectableType () == Collectable.Type.FireArrow) {
+                commandPanel.ClearCommandPickers ();    // To force the command panel to renew the command pickers display
             }
 
             uiManager.SetUIInteractable (true);

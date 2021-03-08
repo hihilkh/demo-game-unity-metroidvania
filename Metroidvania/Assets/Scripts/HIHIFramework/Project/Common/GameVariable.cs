@@ -79,4 +79,12 @@ public static partial class GameVariable {
     public static Color DisabledUIMaskColor_NoAlpha = new Color32 (128, 128, 128, 255);
 
     #endregion
+
+    #region FireAttack
+
+    public static float FireAttackTriggerPeriod = 0.5f;
+    public static int FireAttackNoOfTrigger = 10;
+    public static int FireDamagePerTrigger = 1;
+
+    #endregion
 }

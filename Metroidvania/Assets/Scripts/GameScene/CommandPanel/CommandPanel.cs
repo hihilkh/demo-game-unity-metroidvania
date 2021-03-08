@@ -133,6 +133,8 @@ public class CommandPanel : CommandMatrixPanel {
     }
 
     private void GenerateCommandPickers (List<CharEnum.Command> enabledCommandList, CharEnum.Command? onlyDragableCommand = null) {
+        // TODO : Generate command picker with a fixed order
+
         // Display
         foreach (var command in enabledCommandList) {
             if (!commandPickerDisplayDict.ContainsKey (command)) {
@@ -174,6 +176,21 @@ public class CommandPanel : CommandMatrixPanel {
             var follower = picker.GetComponent<CommandDragFollower> ();
             follower.Init (pair.Value.transform.localPosition, commandPickerBaseTransform, commandPickerDraggingBaseTransform);
         }
+    }
+
+    /// <summary>
+    /// Clear all the created command pickers cache. Mainly to renew the command pickers (e.g. from normal arrow to fire arrow)
+    /// </summary>
+    public void ClearCommandPickers () {
+        foreach (var pair in commandPickerDisplayDict) {
+            Destroy (pair.Value.gameObject);
+        }
+        foreach (var pair in commandPickerDict) {
+            Destroy (pair.Value.gameObject);
+        }
+
+        commandPickerDisplayDict.Clear ();
+        commandPickerDict.Clear ();
     }
 
     private CommandDisplay GetBindedCommandContainer (CommandDisplay baseDisplay, CharEnum.Command command, bool isAlsoGetBindingFromRelease) {
