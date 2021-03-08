@@ -239,43 +239,31 @@ public class GameSceneManager : MonoBehaviour {
         }
 
         // Command / BodyPart
-        CharEnum.Command? enabledCommand = null;
         var obtainedBodyPart = CharEnum.BodyParts.None;
         switch (collectableObject.GetCollectableType ()) {
             case Collectable.Type.Command_Hit:
-                enabledCommand = CharEnum.Command.Hit;
                 obtainedBodyPart = CharEnum.BodyParts.Arms;
                 break;
             case Collectable.Type.Command_Jump:
-                enabledCommand = CharEnum.Command.Jump;
                 obtainedBodyPart = CharEnum.BodyParts.Legs;
                 break;
             case Collectable.Type.Command_Dash:
-                enabledCommand = CharEnum.Command.Dash;
                 obtainedBodyPart = CharEnum.BodyParts.Thrusters;
                 break;
             case Collectable.Type.Command_Arrow:
-                enabledCommand = CharEnum.Command.Arrow;
                 obtainedBodyPart = CharEnum.BodyParts.Arrow;
-                break;
-            case Collectable.Type.Command_Turn:
-                enabledCommand = CharEnum.Command.Turn;
                 break;
         }
 
         // Include collect panel, note panel and coresponding event
         Action<bool> onAllActionFinished = (bool isUpdateCharCommandSettings) => {
-            UserManager.CollectCollectable (UserManager.SelectedMissionId, collectableObject.GetCollectableType ());
+            UserManager.CollectCollectable (collectableObject.GetCollectableType ());
             if (collectable.EventType != null) {
                 MissionEventManager.CheckAndSetMissionEventDone ((MissionEventEnum.EventType)collectable.EventType);
             }
 
             if (isUpdateCharCommandSettings) {
                 commandPanel.UpdateCharCommandSettings (true);
-            }
-
-            if (enabledCommand != null) {
-                UserManager.EnableCommand ((CharEnum.Command)enabledCommand);
             }
 
             uiManager.SetUIInteractable (true);
@@ -289,6 +277,11 @@ public class GameSceneManager : MonoBehaviour {
         // Include collect panel and note panel
         Action onAllCollectActionFinished = () => {
             if (obtainedBodyPart != CharEnum.BodyParts.None) {
+                // Remarks :
+                // Obtain body part for char model to ensure the display for the mission event is correct.
+                // But note that the body part has not yet been saved to UserManager,
+                // so if reset game now (or quit app and restart), it would still have not yet obtained the body part.
+                // The body part would be saved to UserManager with UserManager.CollectCollectable (), which is in onAllActionFinished.
                 charModel.ObtainBodyPart (obtainedBodyPart);
             }
 

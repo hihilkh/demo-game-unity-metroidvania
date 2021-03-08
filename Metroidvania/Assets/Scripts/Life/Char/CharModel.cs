@@ -42,7 +42,7 @@ public class CharModel : LifeBase, IMapTarget {
 
     // event
     public event Action Resetting;
-    public event Action<CharEnum.BodyParts> ObtainedBodyPartsChanged;
+    public event Action<CharEnum.BodyParts> ObtainedBodyPartsUpdated;
     public event Action StatusesChanged;
     public event Action FacingDirectionChanged;
     public event Action MovingDirectionChanged;
@@ -213,12 +213,6 @@ public class CharModel : LifeBase, IMapTarget {
         base.Awake ();
 
         if (CharType == CharEnum.CharType.Player) {
-            ObtainedBodyParts = UserManager.GetObtainedBodyParts ();
-        } else {
-            ObtainedBodyParts = CharEnum.BodyParts.All;
-        }
-
-        if (CharType == CharEnum.CharType.Player) {
             controller.Tapped += TappedHandler;
             controller.StartedHold += StartedHoldHandler;
             controller.StoppedHold += StoppedHoldHandler;
@@ -281,6 +275,7 @@ public class CharModel : LifeBase, IMapTarget {
 
         var hasInitBefore = base.Reset (pos, direction);
 
+        ReloadObtainedBodyPart ();
         ResetFlags ();
         SetAllowMove (false);
 
@@ -438,11 +433,21 @@ public class CharModel : LifeBase, IMapTarget {
 
     #region Body Parts
 
+    private void ReloadObtainedBodyPart () {
+        if (CharType == CharEnum.CharType.Player) {
+            ObtainedBodyParts = UserManager.GetObtainedBodyParts ();
+        } else {
+            ObtainedBodyParts = CharEnum.BodyParts.All;
+        }
+
+        ObtainedBodyPartsUpdated?.Invoke (ObtainedBodyParts);
+    }
+
     public void ObtainBodyPart (CharEnum.BodyParts part) {
         if (!ObtainedBodyParts.HasFlag (part)) {
             ObtainedBodyParts = ObtainedBodyParts | part;
 
-            ObtainedBodyPartsChanged?.Invoke (ObtainedBodyParts);
+            ObtainedBodyPartsUpdated?.Invoke (ObtainedBodyParts);
         }
     }
 

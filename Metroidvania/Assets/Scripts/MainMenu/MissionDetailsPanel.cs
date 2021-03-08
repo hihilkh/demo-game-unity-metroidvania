@@ -83,7 +83,7 @@ public class MissionDetailsPanel : GeneralPanelBase {
             var collectableDescription = collectableDescriptionList[i];
             if (i < collectableList.Count) {
                 var collectable = collectableList[i];
-                var isCollected = progress.collectedCollectables.Contains (collectable.CollectableType);
+                var isCollected = UserManager.GetIsCollectedCollectable (collectable.CollectableType);
                 collectableDescription.Show (collectable, isCollected);
             } else {
                 collectableDescription.Hide ();

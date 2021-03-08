@@ -59,7 +59,7 @@ public static partial class GameVariable {
 
     // User Manager
     public const string AllMissionProgressKey = "ALL_MISSION_PROGRESS";
-    public const string EnabledCommandListKey = "ENABLED_COMMAND_LIST";
+    public const string CollectedCollectableTypeListKey = "COLLECTED_COLLECTABLE_TYPE_LIST";
     public const string CommandSettingsCacheKey = "COMMAND_SETTINGS_CACHE";
     public const string DoneMissionEventTypeListKey = "DONE_MISSION_EVENT_TYPE_LIST";
     public const string SelectedMissionIdKey = "SELECTED_MISSION_ID";

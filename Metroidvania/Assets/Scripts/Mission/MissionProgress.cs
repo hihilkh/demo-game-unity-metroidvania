@@ -51,14 +51,12 @@ public class MissionProgressWithId {
 public class MissionProgress {
     public List<int> unlockedEntryIds;
     public bool isCleared;
-    public List<Collectable.Type> collectedCollectables;
 
     public bool IsUnlocked => unlockedEntryIds != null && unlockedEntryIds.Count > 0;
 
     public MissionProgress () {
         unlockedEntryIds = new List<int> ();
         isCleared = false;
-        collectedCollectables = new List<Collectable.Type> ();
     }
 
     /// <returns>Is the map entry just unlocked</returns>
@@ -75,16 +73,6 @@ public class MissionProgress {
         }
     }
 
-    public void AddCollectedCollectable (Collectable.Type collectable) {
-        if (collectedCollectables == null) {
-            collectedCollectables = new List<Collectable.Type> ();
-        }
-
-        if (!collectedCollectables.Contains (collectable)) {
-            collectedCollectables.Add (collectable);
-        }
-    }
-
     #region Development use only
 
     /// <summary>
@@ -93,18 +81,6 @@ public class MissionProgress {
     public void ClearAllProgress () {
         unlockedEntryIds = new List<int> ();
         isCleared = false;
-        collectedCollectables = new List<Collectable.Type> ();
-    }
-
-    /// <summary>
-    /// For development use only
-    /// </summary>
-    public void ClearAllCollectedCollectables () {
-        if (collectedCollectables == null) {
-            collectedCollectables = new List<Collectable.Type> ();
-        }
-
-        collectedCollectables.Clear ();
     }
 
     #endregion

@@ -95,7 +95,7 @@ public class MainMenuSceneManager : MonoBehaviour {
     }
 
     private void OpenNotesPanelBtnClickedHandler (HIHIButton sender) {
-        notesPanel.Show (UserManager.GetAllCollectedCollectable ());
+        notesPanel.Show (UserManager.CollectedCollectableTypeList);
     }
 
     #endregion

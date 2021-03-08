@@ -238,9 +238,8 @@ public class MapManager : MonoBehaviour {
             Log.Print ("Start GenerateCollectables", LogTypes.MapData);
         }
 
-        var collectedCollectableList = UserManager.GetMissionProgress (missionId).collectedCollectables;
         foreach (var data in dataList) {
-            if (collectedCollectableList.Contains (data.type)) {
+            if (UserManager.GetIsCollectedCollectable (data.type)) {
                 // Already collected
                 continue;
             }

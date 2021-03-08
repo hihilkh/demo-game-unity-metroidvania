@@ -89,7 +89,7 @@ public class CharAnimUtils : MonoBehaviour {
 
         // event handler
         Model.Resetting += ModelResettingHandler;
-        Model.ObtainedBodyPartsChanged += ObtainedBodyPartsChangedHandler;
+        Model.ObtainedBodyPartsUpdated += ObtainedBodyPartsUpdatedHandler;
         Model.StatusesChanged += CommonUpdateNeededHandler;
         Model.FacingDirectionChanged += CommonUpdateNeededHandler;
         Model.MovingDirectionChanged += CommonUpdateNeededHandler;
@@ -97,7 +97,8 @@ public class CharAnimUtils : MonoBehaviour {
     }
 
     private void Start () {
-        SetBodyParts (Model.ObtainedBodyParts);
+        // Control by Model.ObtainedBodyPartsUpdated event
+        //SetBodyParts (Model.ObtainedBodyParts);
     }
 
     private void Reset () {
@@ -127,7 +128,7 @@ public class CharAnimUtils : MonoBehaviour {
 
     private void OnDestroy () {
         Model.Resetting -= ModelResettingHandler;
-        Model.ObtainedBodyPartsChanged -= ObtainedBodyPartsChangedHandler;
+        Model.ObtainedBodyPartsUpdated -= ObtainedBodyPartsUpdatedHandler;
         Model.StatusesChanged -= CommonUpdateNeededHandler;
         Model.FacingDirectionChanged -= CommonUpdateNeededHandler;
         Model.MovingDirectionChanged -= CommonUpdateNeededHandler;
@@ -363,7 +364,7 @@ public class CharAnimUtils : MonoBehaviour {
         Reset ();
     }
 
-    private void ObtainedBodyPartsChangedHandler (CharEnum.BodyParts parts) {
+    private void ObtainedBodyPartsUpdatedHandler (CharEnum.BodyParts parts) {
         SetBodyParts (parts);
     }
 

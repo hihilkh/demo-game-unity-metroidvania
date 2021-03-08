@@ -259,7 +259,7 @@ public class MissionEventManager : MonoBehaviour {
                 }
                 break;
             case MissionEventEnum.EventType.Boss:
-                if (UserManager.GetAllCollectedCollectable ().Contains (Collectable.Type.Ending_1)) {
+                if (UserManager.GetIsCollectedCollectable (Collectable.Type.Ending_1)) {
                     runtimeEventType = MissionEventEnum.EventType.Boss_Beaten;
                 } else {
                     runtimeEventType = MissionEventEnum.EventType.Boss_NotYetBeaten;
