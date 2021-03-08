@@ -16,10 +16,10 @@ public static class CollectableManager {
         new NoteCollectable (Collectable.Type.Note_5, "Note_5", "Note_5_Content"),
         new NoteCollectable (Collectable.Type.Note_6, "Note_6", "Note_6_Content"),
 
-        new Collectable (Collectable.Type.HP_1, "HP_Up", "Collectable_HPUp", true),
-        new Collectable (Collectable.Type.HP_2, "HP_Up", "Collectable_HPUp", true),
-        new Collectable (Collectable.Type.Strength_1, "Strength_Up", "Collectable_StrengthUp", true),
-        new Collectable (Collectable.Type.Strength_2, "Strength_Up", "Collectable_StrengthUp", true),
+        new Collectable (Collectable.Type.HPUp_1, "HP_Up", "Collectable_HPUp", true),
+        new Collectable (Collectable.Type.HPUp_2, "HP_Up", "Collectable_HPUp", true),
+        new Collectable (Collectable.Type.PowerUp_1, "Power_Up", "Collectable_PowerUp", true),
+        new Collectable (Collectable.Type.PowerUp_2, "Power_Up", "Collectable_PowerUp", true),
         new Collectable (Collectable.Type.FireArrow, "FireArrow", "Collectable_FireArrow", true),
 
         new EndingCollectable (Collectable.Type.Ending_1, "Ending_1"),

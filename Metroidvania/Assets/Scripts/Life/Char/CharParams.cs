@@ -150,6 +150,19 @@ public class CharParams : ScriptableObject {
     [SerializeField] private float _repelFromWallDistByTurn;
     public float RepelFromWallDistByTurn => _repelFromWallDistByTurn;
 
+    [Header ("Collectable")]
+    [SerializeField] private int _hpUpMagnitude;
+    /// <summary>
+    /// The magnitude for each collected HP Up collectable
+    /// </summary>
+    public int HPUpMagnitude => _hpUpMagnitude;
+
+    [SerializeField] private int _powerUpMagnitude;
+    /// <summary>
+    /// The magnitude for each collected Power Up collectable
+    /// </summary>
+    public int PowerUpMagnitude => _powerUpMagnitude;
+
     [Header ("Boss")]
     [SerializeField] private int _bossTotalHP;
     public int BossTotalHP => _bossTotalHP;

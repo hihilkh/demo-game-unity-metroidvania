@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
 public class CharFinishingHit : CharHitBase {
-    protected override int DP => Params.HitDP_Finishing;
+    protected override int BaseDP => Params.HitDP_Finishing;
 
-    public override void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed, bool isPlayerAttack) {
-        base.StartAttack (refPoint, direction, charHorizontalSpeed, isPlayerAttack);
+    public override void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed, bool isPlayerAttack, int additionalDP) {
+        base.StartAttack (refPoint, direction, charHorizontalSpeed, isPlayerAttack, additionalDP);
 
         SetInitPos (refPoint.position);
 

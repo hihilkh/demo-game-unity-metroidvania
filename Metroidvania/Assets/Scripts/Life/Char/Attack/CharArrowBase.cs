@@ -16,9 +16,11 @@ public abstract class CharArrowBase : MonoBehaviour {
     private const float VanishPeriod = 1f;
 
     protected LifeEnum.HorizontalDirection Direction { get; private set; }
-    protected abstract int DP { get; }
+    protected abstract int BaseDP { get; }
 
-    protected void Init (LifeEnum.HorizontalDirection direction, bool isPlayerAttack) {
+    private int totalDP = 0;
+
+    protected void Init (LifeEnum.HorizontalDirection direction, bool isPlayerAttack, int additionalDP) {
         if (isPlayerAttack) {
             gameObject.layer = GameVariable.PlayerAttackLayer;
         } else {
@@ -26,6 +28,8 @@ public abstract class CharArrowBase : MonoBehaviour {
         }
 
         Direction = direction;
+        totalDP = BaseDP + additionalDP;
+
         AttackTrigger.HitLife += HitLifeHandler;
         AttackTrigger.HitEnvironment += HitEnvironmentHandler;
         AttackTrigger.HitArrowSwitch += HitArrowSwitchHandler;
@@ -75,7 +79,7 @@ public abstract class CharArrowBase : MonoBehaviour {
         }
 
         if (isHurt) {
-            lifeBase.Hurt (DP, Direction);
+            lifeBase.Hurt (totalDP, Direction);
         }
 
         Hit (colliderTransform);

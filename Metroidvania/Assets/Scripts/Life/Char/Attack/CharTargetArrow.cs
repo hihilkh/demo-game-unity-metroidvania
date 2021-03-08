@@ -2,12 +2,12 @@
 using UnityEngine;
 
 public class CharTargetArrow : CharArrowBase {
-    protected override int DP => Params.ArrowDP_Target;
+    protected override int BaseDP => Params.ArrowDP_Target;
 
     private const float DefaultImpulseAngleInRadian = Mathf.PI / 6;
 
-    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, Vector2? targetPos, bool isPlayerAttack) {
-        Init (facingDirection, isPlayerAttack);
+    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, Vector2? targetPos, bool isPlayerAttack, int additionalDP) {
+        Init (facingDirection, isPlayerAttack, additionalDP);
 
         SetInitPos (refPoint.position);
 

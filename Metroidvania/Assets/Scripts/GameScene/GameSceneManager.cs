@@ -266,6 +266,12 @@ public class GameSceneManager : MonoBehaviour {
                 commandPanel.UpdateCharCommandSettings (true);
             }
 
+            if (Collectable.HPUpTypeList.Contains (collectableObject.GetCollectableType ())) {
+                charModel.GotHPUp ();
+            } else if (Collectable.PowerUpTypeList.Contains (collectableObject.GetCollectableType ())) {
+                charModel.GotPowerUp ();
+            }
+
             uiManager.SetUIInteractable (true);
             Time.timeScale = 1;
         };

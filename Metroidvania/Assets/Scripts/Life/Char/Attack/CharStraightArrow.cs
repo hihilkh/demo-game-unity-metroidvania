@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
 public class CharStraightArrow : CharArrowBase {
-    protected override int DP => Params.ArrowDP_Straight;
+    protected override int BaseDP => Params.ArrowDP_Straight;
 
-    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, bool isPlayerAttack) {
-        Init (facingDirection, isPlayerAttack);
+    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, bool isPlayerAttack, int additionalDP) {
+        Init (facingDirection, isPlayerAttack, additionalDP);
 
         SetInitPos (refPoint.position);
 

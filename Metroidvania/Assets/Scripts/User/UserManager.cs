@@ -95,6 +95,30 @@ public static class UserManager {
         return CollectedCollectableTypeList.Contains (collectableType);
     }
 
+    public static int GetCollectedHPUpCount () {
+        var count = 0;
+
+        foreach (var type in Collectable.HPUpTypeList) {
+            if (CollectedCollectableTypeList.Contains (type)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public static int GetCollectedPowerUpCount () {
+        var count = 0;
+
+        foreach (var type in Collectable.PowerUpTypeList) {
+            if (CollectedCollectableTypeList.Contains (type)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
     public static bool CheckIsDoneMissionEvent (MissionEventEnum.EventType eventType) {
         return DoneMissionEventTypeList.Contains (eventType);
     }

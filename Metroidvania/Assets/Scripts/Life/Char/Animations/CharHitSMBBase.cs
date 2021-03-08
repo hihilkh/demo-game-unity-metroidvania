@@ -33,6 +33,7 @@ public class CharHitSMBBase : CharSMBBase {
         }
 
         var isPlayerAttack = AnimUtils.Model.CharType == CharEnum.CharType.Player;
-        HitClone.StartAttack (refPoint, AnimUtils.Model.FacingDirection, AnimUtils.GetVelocityXByCurrentHorizontalSpeed (true), isPlayerAttack);
+        var additionalDP = AnimUtils.Model.AdditionalDP;
+        HitClone.StartAttack (refPoint, AnimUtils.Model.FacingDirection, AnimUtils.GetVelocityXByCurrentHorizontalSpeed (true), isPlayerAttack, additionalDP);
     }
 }

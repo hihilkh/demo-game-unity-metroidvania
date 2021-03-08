@@ -2,10 +2,10 @@
 
 // Remarks: It is to control only one of the arrows of the Triple ArrowType
 public class CharTripleArrow : CharArrowBase {
-    protected override int DP => Params.ArrowDP_Triple;
+    protected override int BaseDP => Params.ArrowDP_Triple;
 
-    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, float shootingAngle, bool isPlayerAttack) {
-        Init (facingDirection, isPlayerAttack);
+    public void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection facingDirection, float shootingAngle, bool isPlayerAttack, int additionalDP) {
+        Init (facingDirection, isPlayerAttack, additionalDP);
 
         SetInitPos (refPoint.position);
 

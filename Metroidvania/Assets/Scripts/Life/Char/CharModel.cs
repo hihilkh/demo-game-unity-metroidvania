@@ -67,13 +67,15 @@ public class CharModel : LifeBase, IMapTarget {
     }
 
     protected override int InvincibleLayer => GameVariable.PlayerInvincibleLayer;
+
+    private int _totalHP = -1;
     protected override int TotalHP {
         get {
-            if (CharType == CharEnum.CharType.Player) {
-                return Params.TotalHP;
-            } else {
-                return Params.BossTotalHP;
+            if (_totalHP < 0) {
+                ReloadTotalHP ();
             }
+
+            return _totalHP;
         }
     }
 
@@ -116,8 +118,18 @@ public class CharModel : LifeBase, IMapTarget {
     private static Vector2 BeatBackDirection_Right = new Vector2 (1, 1).normalized;    // About 45 degree elevation
     private static Vector2 BeatBackDirection_Left = Vector2.Scale (BeatBackDirection_Right, new Vector2 (-1, 1));
 
-    // HP Recovery
+    // HP Related
     private Coroutine hpRecoveryCoroutine;
+    private int _additionalDP = -1;
+    public int AdditionalDP {
+        get {
+            if (_additionalDP < 0) {
+                ReloadAdditionalDP ();
+            }
+
+            return _additionalDP;
+        }
+    }
 
     // Character Situation
     private LifeEnum.HorizontalDirection? _facingDirection = null;
@@ -886,7 +898,34 @@ public class CharModel : LifeBase, IMapTarget {
 
     #endregion
 
-    #region HP recovery
+    #region HP related
+
+    private void ReloadTotalHP () {
+        if (CharType == CharEnum.CharType.Player) {
+            var hpUpCount = UserManager.GetCollectedHPUpCount ();
+            _totalHP = Params.TotalHP + hpUpCount * Params.HPUpMagnitude;
+        } else {
+            _totalHP = Params.BossTotalHP;
+        }
+    }
+
+    public void GotHPUp () {
+        ReloadTotalHP ();
+        CurrentHP = CurrentHP + Params.HPUpMagnitude;
+    }
+
+    private void ReloadAdditionalDP () {
+        if (CharType == CharEnum.CharType.Player) {
+            var powerUpCount = UserManager.GetCollectedPowerUpCount ();
+            _additionalDP = powerUpCount * Params.PowerUpMagnitude;
+        } else {
+            _additionalDP = 0;
+        }
+    }
+
+    public void GotPowerUp () {
+        ReloadAdditionalDP ();
+    }
 
     private void SetHPRecovery (bool isActive) {
         if (CharType != CharEnum.CharType.Player) {

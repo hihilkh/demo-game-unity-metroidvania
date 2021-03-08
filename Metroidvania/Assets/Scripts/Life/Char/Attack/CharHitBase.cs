@@ -14,9 +14,11 @@ public abstract class CharHitBase : MonoBehaviour {
     protected CharAttackTrigger AttackTrigger => _attackTrigger;
 
     protected LifeEnum.HorizontalDirection Direction { get; private set; }
-    protected abstract int DP { get; }
+    protected abstract int BaseDP { get; }
 
-    public virtual void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed, bool isPlayerAttack) {
+    private int totalDP = 0;
+
+    public virtual void StartAttack (Transform refPoint, LifeEnum.HorizontalDirection direction, float charHorizontalSpeed, bool isPlayerAttack, int additionalDP) {
         if (isPlayerAttack) {
             gameObject.layer = GameVariable.PlayerAttackLayer;
         } else {
@@ -24,6 +26,8 @@ public abstract class CharHitBase : MonoBehaviour {
         }
 
         Direction = direction;
+        totalDP = BaseDP + additionalDP;
+
         AttackTrigger.HitLife += HitLifeHandler;
     }
 
@@ -54,7 +58,7 @@ public abstract class CharHitBase : MonoBehaviour {
 
     protected virtual void HitLifeHandler (LifeBase lifeBase, Transform colliderTransform, bool isHurt) {
         if (isHurt) {
-            lifeBase.Hurt (DP, Direction);
+            lifeBase.Hurt (totalDP, Direction);
         }
     }
 

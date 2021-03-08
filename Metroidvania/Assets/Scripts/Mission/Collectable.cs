@@ -1,4 +1,6 @@
-﻿public class Collectable {
+﻿using System.Collections.Generic;
+
+public class Collectable {
     // Remarks: Never change the Type enum int value. It is used in PlayerPrefs and map json data.
     public enum Type {
         // Command
@@ -17,10 +19,10 @@
         Note_6 = 105,
 
         // Others
-        HP_1 = 200,
-        HP_2 = 201,
-        Strength_1 = 202,
-        Strength_2 = 203,
+        HPUp_1 = 200,
+        HPUp_2 = 201,
+        PowerUp_1 = 202,
+        PowerUp_2 = 203,
         FireArrow = 204,
 
         // Ending
@@ -28,6 +30,16 @@
         Ending_2 = 301,
         Ending_3 = 302,
     }
+
+    public static readonly List<Type> HPUpTypeList = new List<Type> () {
+        Type.HPUp_1,
+        Type.HPUp_2,
+    };
+
+    public static readonly List<Type> PowerUpTypeList = new List<Type> () {
+        Type.PowerUp_1,
+        Type.PowerUp_2,
+    };
 
     private const string ResourcesFolderName = "Collectables/";
 
