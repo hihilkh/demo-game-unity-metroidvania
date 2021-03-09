@@ -13,6 +13,7 @@ public class MapData {
     public List<SwitchData> switches;           // InvisibleTriggerData
     public List<ExitData> exits;                // InvisibleTriggerData
     public List<MissionEventData> events;        // InvisibleTriggerData
+    public List<ImageBGData> backgrounds;
 
     public MapData () { }
 
@@ -157,6 +158,23 @@ public class MapData {
 
         public MissionEventData (float x, float y, float sizeX, float sizeY, MissionEventEnum.EventType type) : base (x, y, sizeX, sizeY) {
             this.type = type;
+        }
+    }
+
+    [Serializable]
+    public class ImageBGData {
+        public MapEnum.ImageBGType type;
+        public Vector3 pos;
+        public Vector2 size;
+        public Color32 color;
+
+        public ImageBGData () { }
+
+        public ImageBGData (MapEnum.ImageBGType type, Vector3 pos, Vector2 size, Color32 color) {
+            this.type = type;
+            this.pos = pos;
+            this.size = size;
+            this.color = color;
         }
     }
 

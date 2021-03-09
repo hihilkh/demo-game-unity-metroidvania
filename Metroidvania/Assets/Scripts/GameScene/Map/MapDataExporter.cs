@@ -4,6 +4,7 @@ using System.IO;
 using HihiFramework.Core;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 [ExecuteInEditMode]
 public class MapDataExporter : MonoBehaviour {
@@ -16,6 +17,9 @@ public class MapDataExporter : MonoBehaviour {
     [SerializeField] private Tilemap slippyWallTileMap;
     [SerializeField] private Tilemap deathTileMap;
     [SerializeField] private Tilemap bgTileMap;
+
+    [Header ("Image Background")]
+    [SerializeField] private Transform imageBGBase;
 
     [Header ("Mission Related")]
     [SerializeField] private int missionId;
@@ -105,6 +109,7 @@ public class MapDataExporter : MonoBehaviour {
         mapData.switches = ExportSwitchDataList (ref mapData);  // Must be after exporting tiles and enemies
         mapData.exits = ExportExitDataList ();
         mapData.events = ExportMissionEventDataList ();
+        mapData.backgrounds = ExportImageBGDataList ();
 
         var json = JsonUtility.ToJson (mapData);
         var fileName = FrameworkUtils.StringReplace (ExportFileNameFormat, AssetDetails.GetMapDataJSONFileName (missionId), FrameworkUtils.ConvertDateTimeToTimestampMS (System.DateTime.Now).ToString ());
@@ -428,6 +433,46 @@ public class MapDataExporter : MonoBehaviour {
         }
 
         Log.PrintWarning ("Export MissionEventData success", LogTypes.MapData);
+        return result;
+    }
+
+    private List<MapData.ImageBGData> ExportImageBGDataList () {
+        Log.PrintWarning ("Start export ImageBGData", LogTypes.MapData);
+
+        var result = new List<MapData.ImageBGData> ();
+        if (imageBGBase == null) {
+            throw new Exception ("Export ImageBGData failed. Do not have base transform.");
+        }
+
+        foreach (Transform child in imageBGBase) {
+            var array = child.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
+            if (array.Length < 1) {
+                throw new Exception ("Export ImageBGData failed. Invalid transform name : " + child.name);
+            }
+
+            MapEnum.ImageBGType imageBGType;
+            if (!FrameworkUtils.TryParseToEnum (array[0], out imageBGType)) {
+                throw new Exception ("Export ImageBGData failed. Invalid imageBGType : " + array[0]);
+            }
+
+            var rectTransform = child.GetComponent<RectTransform> ();
+            if (rectTransform == null) {
+                throw new Exception ("Export ImageBGData failed. Cannot find RectTransform : " + child.name);
+            }
+
+            var image = child.GetComponent<Image> ();
+            if (image == null) {
+                throw new Exception ("Export ImageBGData failed. Cannot find Image : " + child.name);
+            }
+
+            var pos = child.position;
+            var size = rectTransform.sizeDelta;
+            var color = image.color;
+
+            result.Add (new MapData.ImageBGData (imageBGType, pos, size, color));
+        }
+
+        Log.PrintWarning ("Export ImageBGData success", LogTypes.MapData);
         return result;
     }
 

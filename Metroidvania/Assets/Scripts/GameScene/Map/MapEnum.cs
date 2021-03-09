@@ -118,4 +118,11 @@
         LeftToRight = 2,
         RightToLeft = 3,
     }
+
+    // Remarks: Never change the ImageBackgroundType enum int value. It is used in map json data.
+    public enum ImageBGType {
+        Plain = 0,   // The default value 0 is used for any fallback cases
+        RightToLeft = 1,
+        DownToUp = 2,
+    }
 }

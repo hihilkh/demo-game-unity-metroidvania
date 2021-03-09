@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using HihiFramework.Core;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class MapManager : MonoBehaviour {
     [Header ("Tilemap")]
@@ -12,12 +13,18 @@ public class MapManager : MonoBehaviour {
     [SerializeField] private Tilemap deathTileMap;
     [SerializeField] private Tilemap bgTileMap;
 
+    [Header ("Image Background")]
+    [SerializeField] private Transform imageBGBase;
+    [SerializeField] private Sprite rightToLeftImageBGSprite;
+    [SerializeField] private Sprite downToUpImageBGSprite;
+
     [Space(10)]
     [SerializeField] private Transform mapObjectsBaseTransform;
 
     [SerializeField] private GameObject collectableTemplate;
 
     private readonly Dictionary<MapEnum.TileMapType, Tilemap> tileMapDict = new Dictionary<MapEnum.TileMapType, Tilemap> ();
+    private readonly Dictionary<MapEnum.ImageBGType, Sprite> imageBGSpriteDict = new Dictionary<MapEnum.ImageBGType, Sprite> ();
 
     public static Action MapReseting;
 
@@ -44,6 +51,9 @@ public class MapManager : MonoBehaviour {
         tileMapDict.Add (MapEnum.TileMapType.SlippyWall, slippyWallTileMap);
         tileMapDict.Add (MapEnum.TileMapType.Death, deathTileMap);
         tileMapDict.Add (MapEnum.TileMapType.Background, bgTileMap);
+
+        imageBGSpriteDict.Add (MapEnum.ImageBGType.RightToLeft, rightToLeftImageBGSprite);
+        imageBGSpriteDict.Add (MapEnum.ImageBGType.DownToUp, downToUpImageBGSprite);
     }
 
     private void OnDestroy () {
@@ -67,6 +77,7 @@ public class MapManager : MonoBehaviour {
         InitializeTiles (mapData.tiles);
         GenerateExits (mapData.exits);
         GenerateMapDisposableObjects ();
+        GenerateImageBGs (mapData.backgrounds);
 
         AddEventHandlers ();
     }
@@ -303,6 +314,33 @@ public class MapManager : MonoBehaviour {
     }
 
     #endregion
+
+    private void GenerateImageBGs (List<MapData.ImageBGData> dataList) {
+        if (dataList == null || dataList.Count <= 0) {
+            Log.Print ("Skip GenerateImageBGs : No ImageBGData", LogTypes.MapData);
+            return;
+        } else {
+            Log.Print ("Start GenerateImageBGs", LogTypes.MapData);
+        }
+
+        foreach (var data in dataList) {
+            var go = new GameObject ("ImageBG");
+            FrameworkUtils.InsertChildrenToParent (imageBGBase, go, false);
+
+            var image = go.AddComponent<Image> ();
+            if (imageBGSpriteDict.ContainsKey (data.type)) {
+                image.sprite = imageBGSpriteDict[data.type];
+                image.type = Image.Type.Sliced;
+            }
+            image.color = data.color;
+
+            var rectTransform = go.GetComponent<RectTransform> ();
+            rectTransform.position = data.pos;
+            rectTransform.sizeDelta = data.size;
+        }
+
+        Log.Print ("Finish GenerateImageBGs", LogTypes.MapData);
+    }
 
     #endregion
 
