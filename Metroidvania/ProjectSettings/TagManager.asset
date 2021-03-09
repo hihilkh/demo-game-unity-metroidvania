@@ -53,3 +53,6 @@ TagManager:
   - name: Collectables
     uniqueID: 898126107
     locked: 0
+  - name: OnTopParticles
+    uniqueID: 3395084725
+    locked: 0
