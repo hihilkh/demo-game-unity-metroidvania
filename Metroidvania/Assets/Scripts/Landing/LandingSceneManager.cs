@@ -86,6 +86,7 @@ public class LandingSceneManager : MonoBehaviour {
     private void StartBtnClickedHandler (HIHIButton sender) {
         if (isWithGameScene) {
             uiManager.HideUI ();
+            UserManager.SetFromLandingMissionAndEntry ();
             isGoingToGameScene = true;
         } else {
             SceneManager.LoadScene (GameVariable.MainMenuSceneName);

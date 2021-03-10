@@ -20,6 +20,18 @@
    inkscape:export-ydpi="25.4">
   <defs
      id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient1452">
+      <stop
+         style="stop-color:#c48300;stop-opacity:1;"
+         offset="0"
+         id="stop1448" />
+      <stop
+         style="stop-color:#4f3500;stop-opacity:1"
+         offset="1"
+         id="stop1450" />
+    </linearGradient>
     <inkscape:path-effect
        effect="bspline"
        id="path-effect1365"
@@ -1120,6 +1132,15 @@
        x2="848"
        y2="992"
        gradientTransform="translate(-144,-160)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1452"
+       id="linearGradient1454"
+       x1="620"
+       y1="959.99994"
+       x2="640"
+       y2="1008"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -1774,7 +1795,7 @@
        sodipodi:t0="0.96632588"
        d="m 959.99993,1024.0002 c -19.68985,-11.9915 -35.77789,-29.44523 -46.6629,-49.72691" />
     <rect
-       style="opacity:1;fill:#c48300;fill-opacity:1;stroke:#ff0000;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:url(#linearGradient1454);fill-opacity:1;stroke:#ff0000;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect2477-2"
        width="40"
        height="128"

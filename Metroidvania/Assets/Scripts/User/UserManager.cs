@@ -303,6 +303,11 @@ public static class UserManager {
         }
     }
 
+    public static void SetFromLandingMissionAndEntry () {
+        SelectedMissionId = MissionManager.FirstMissionId;
+        SelectedEntryId = MissionManager.FromLandingEntryId;
+    }
+
     public static void ClearMission (int missionId, int? toEntryId = null) {
         var clearMissionProgress = GetMissionProgress (missionId);
         clearMissionProgress.isCleared = true;
