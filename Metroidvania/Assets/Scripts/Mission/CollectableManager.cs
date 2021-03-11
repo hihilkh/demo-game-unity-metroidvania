@@ -14,7 +14,7 @@ public static class CollectableManager {
         new NoteCollectable (Collectable.Type.Note_3, "Note_3", "Note_3_Content"),
         new NoteCollectable (Collectable.Type.Note_4, "Note_4", "Note_4_Content"),
         new NoteCollectable (Collectable.Type.Note_5, "Note_5", "Note_5_Content"),
-        new NoteCollectable (Collectable.Type.Note_6, "Note_6", "Note_6_Content"),
+        new NoteCollectable (Collectable.Type.Note_6, "Note_6", "Note_6_Content", MissionEventEnum.EventType.LastNote),
 
         new Collectable (Collectable.Type.HPUp_1, "HP_Up", "Collectable_HPUp", true),
         new Collectable (Collectable.Type.HPUp_2, "HP_Up", "Collectable_HPUp", true),

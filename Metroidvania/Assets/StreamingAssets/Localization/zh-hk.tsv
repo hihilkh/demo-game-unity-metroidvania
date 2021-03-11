@@ -1,9 +1,198 @@
 LangName	繁體中文
+
+//Common
+Confirm	確定
+
+// ReadyGo
+Ready	預備
+Go	開始
+
+// Landing
 PressToStart	按一下開始
 
+// MainMenu
+SelectArea	選擇地區
+ProgressDone	已完成 :
+SelectEntry	開始地點 :
+UnknownText	? ? ?
+NotePanelTitle	冒險者遊記
+
 // Mission Name
-Mission_Tutorial	教學
-Mission_2	任務2
-Mission_3	任務3
-Mission_4	任務4
-Mission_5	任務5
+Mission_1	洞穴入口
+Mission_2	走下去
+Mission_3	第二層
+Mission_4	大空洞
+Mission_5	洞穴深處
+
+// MapEntry
+Entry_1	入口
+Entry_2	入口
+Entry_3	入口
+Entry_4	入口
+Entry_5	入口
+Entry_6	隱藏入口
+Entry_7	隱藏入口
+
+// Command Matrix
+InAir	空中
+OnGround	地上
+Tap	輕按
+Hold	長按
+Release	放開
+
+// Command Panel
+CommandPanel_Title	設定技能
+
+//Game Pause Panel
+GamePausePanel_Title	暫停
+BackToMM	回到主選單
+Restart	重新開始
+
+// Collectable related
+YouGot	獲得了 <color #00ffff>{0}</color> 。
+
+Command_Hit	雙手
+Command_Jump	雙腳
+Command_Dash	推進器
+Command_Arrow	弓箭
+Command_Turn	轉身技能
+
+HP_Up	生命值上昇
+Power_Up	力量上昇
+FireArrow	火箭
+
+Note_1	冒險者遊記 1
+Note_1_Content	這個洞穴真的很神奇，明明有出入口，但我總是走不出去...從我打算離開這個洞穴到如今，已經過了多少年呢？<br />或者我應該找過第二個方法出去。
+
+Note_2	冒險者遊記 2
+Note_2_Content	你應該已經發現了那些指示牌了吧。是的，那是我的傑作<br />當我在尋求離開洞穴的方法時，突然想到也許還有其他和我一樣在找出路的人，所以我嘗試分享我一直以來的發現。<br />請多多留意那些指示牌吧！
+
+Note_3	冒險者遊記 3
+Note_3_Content	我能夠感覺到牆後有一個房間，但我怎樣也找不到入口，所以唯有放棄。<br />但是，我之後竟然在下一層找到房間的入口！雖然我在這裡出生成長，但我也從不知道有這麼一條通道。也許在其他角落還有更多的隱藏入口。
+
+Note_4	冒險者遊記 4
+Note_4_Content	這個洞穴有著各種開關和秘密通道，有些只要經過就能打開，但有些則需要一些技。<br />我還記得曾到過一間房間，那裡和這個洞穴的其他地方的外觀很不同，感覺十分奇怪。
+
+Note_5	冒險者遊記 5
+Note_5_Content	我知道在大空洞那裡有個寶物，但我花盡心機也拿不到...我一定是想漏了一些事情。<br />難道是隱藏入口？唔...還有哪裡是和這個地區相連著的呢？<br />我的直覺告訴我一定要得到這個寶物。
+
+Note_6	冒險者遊記 6
+Note_6_Content	一切都準備好了。打敗了守衞，也得到了火，只要把樹燒掉我就能走出去了。<br />!@#$*)*&!@#$%^$%^(*&^()*&^@$#%^&*)
+
+Ending_1	結局 1
+Ending_2	結局 2
+Ending_3	結局 3
+
+// Mission Events
+Event_Command_Hit_0	咦，這不是我的手嗎？為甚麼會在這裡？
+Event_Command_Hit_Panel_0	將<b>攻擊</b>指令拖曳到下方以啟動技能。
+
+Event_Command_Jump_0	這個敵人怎麼會拿著我的雙腳的？
+Event_Command_Jump_Panel_0	將<b>跳躍</b>指令拖曳到下方以啟動技能。
+Event_Command_Jump_Panel_Done_0	當你將指令放到<b>長按</b>技能時，<b>放開</b>技能也跟著改變。
+Event_Command_Jump_Panel_Done_1	有一些指令，例如<b>跳躍</b>，<b>長按</b>技能會和<b>放開</b>技能結合成為<b>集氣跳躍</b>。
+Event_Command_Jump_Panel_Done_2	也有一些指令分別有不同的<b>長按</b>技能和<b>放開</b>技能。多發掘一下不同的組合吧！
+Event_Command_Jump_Instruction_0	<color #00ffff>長按畫面的右邊然後放開</color>來發動你剛啟動的<b>集氣跳躍</b>。
+
+Event_Command_Dash_0	我的推動器！我可不記得有將它們扔在這裡啊。
+Event_Command_Dash_Panel_0	將<b>衝刺</b>指令拖曳到下方以啟動技能。
+
+Event_FirstHit_0	這裡有個敵人呢。我能打倒它的！
+Event_FirstHit_Instruction0_0	<color #00ffff>輕按畫面的右邊</color>來發動你剛啟動的<b>攻擊</b>。
+Event_FirstHit_Instruction1_0	敵人被攻擊後會進入無敵狀態，在它的無敵狀態完結後再攻擊它吧。
+
+Event_TouchWallAndTurn_0	當你碰到牆壁，你會轉身到相反方向繼續行移動。
+Event_TouchWallAndTurn_1	在適當的時候攻擊敵人，利用它的無敵狀態來避開和它碰撞吧。
+
+Event_AirJump_0	這面牆壁太高了，應該要配合<b>空中</b>技能來越過它。
+Event_AirJump_Panel_0	將<b>跳躍</b>指令拖曳到下方以啟動技能。
+Event_AirJump_Instruction0_0	首先，<color #00ffff>發動集氣跳躍</color>。
+Event_AirJump_Instruction1_0	<color #00ffff>當你在空中時，輕按畫面的右邊</color>來發動你剛啟動的<b>空中跳躍</b>。
+
+Event_WallAction_Instruction0_0	當你在空中碰到牆壁，你會從牆壁緩緩滑下來。
+Event_WallAction_Instruction0_1	你在牆壁滑行時可以發動<b>空中</b>技能。
+Event_WallAction_Instruction0_2	試試看吧。首先，<color #00ffff>發動集氣跳躍</color>。
+Event_WallAction_Instruction1_0	現在你正在牆壁滑行，可以發動<b>空中</b>技能。
+Event_WallAction_Instruction1_1	<color #00ffff>發動空中跳躍</color>。
+Event_WallAction_Instruction2_0	重覆<color #00ffff>發動空中跳躍</color>來越過這面高牆吧！
+
+Event_AirFinishingHit_0	這個敵人在飛，我需要在空中攻擊來打倒它。
+Event_AirFinishingHit_Panel_0	將<b>攻擊</b>指令拖曳到下方以啟動技能。
+Event_AirFinishingHit_Instruction0_0	首先，<color #00ffff>發動集氣跳躍</color>。
+Event_AirFinishingHit_Instruction1_0	然後，<color #00ffff>長按畫面的右邊然後放開</color>來發動你剛啟動的<b>終結攻擊</b>。
+
+Event_CameraMovement_0	這個山谷好像很深呢，讓我看一看吧。
+Event_CameraMovement_Instruction0_0	<color #00ffff>從上而下拖曳畫面的左邊</color>來望向下方。
+Event_CameraMovement_Instruction1_0	你也可以拖曳畫面的左邊來望向其他方向。
+Event_CameraMovement_Instruction1_1	透過望向不同的方向，你可以得到更多的環境的資訊，也有更多時間讓你反應過來，
+Event_CameraMovement_Instruction1_2	甚至有可能發現意想不到的事物呢！
+Event_CameraMovement_ValleyTip_0	就算望下去，也見不到谷底...一定要小心不要掉下去呢。
+
+Event_WarningIfNoDash_0	唔...前面的刺看來很危險。
+Event_WarningIfNoDash_Tip_0	或者我應該四處看看有沒有甚麼能幫助我渡過它們。
+
+Event_Boss_NotYetBeaten_Dialog0_0	你是誰？
+Event_Boss_NotYetBeaten_Dialog1_0	......
+Event_Boss_NotYetBeaten_Dialog2_0	為何你和我如此相像？
+Event_Boss_NotYetBeaten_Dialog3_0	......
+
+Event_Boss_Beaten_Dialog_0	你想和我練習？
+Event_Boss_Beaten_Dialog_1	來吧！
+
+Event_LastNote_0	後半部份太過模糊了，是被擦去了嗎？
+
+Event_Opening0_0	......
+Event_Opening0_1	我是誰？我在哪裡？
+Event_Opening1_0	前面有個洞穴，去看看吧。
+
+Event_FirstTimeCommandPanel_0	在冒險開始前，你可以設定你的技能。
+Event_FirstTimeCommandPanel_1	你可以<color #00ffff>拖曳指令到下方</color>來設定技能，
+Event_FirstTimeCommandPanel_2	你也可以<color #00ffff>按下已設定的技能</color>，然後<color #00ffff>按下取消鍵</color>來取下技能。
+Event_FirstTimeCommandPanel_3	在冒險當中，你可能會想重新設定技能。
+Event_FirstTimeCommandPanel_4	你可以按下暫停頁面的重新開始鍵來重新開始冒險和設定技能。
+Event_FirstTimeCommandPanel_5	但要注意一旦重新開始，所有進度(除了已收集的物品)也會重置。
+
+Event_BackToCaveEntry0_0	......
+Event_BackToCaveEntry0_1	我在這裡在甚麼？
+Event_BackToCaveEntry1_0	呀，對了，我要去探索一下這個洞穴。
+
+// Ending
+Ending1_Dialog0_0	好久不見了，你變得厲害了呢。
+Ending1_Dialog0_1	......
+Ending1_Dialog0_2	呀，對了，你不記得我了。
+Ending1_Dialog1_0	我和你是認識的嗎？
+Ending1_Dialog2_0	當然，我們都住在這裡，
+Ending1_Dialog2_1	只是有一日，你跟我說你想離開這裡看看這個世界，縱然你我都知道有關這個洞穴的傳說。
+Ending1_Dialog2_2	誰想離開這個洞穴，他就會失去一切，包括記憶，
+Ending1_Dialog2_3	而當失去了記憶，當然就會走回這個就在旁邊的洞穴...
+Ending1_Dialog3_0	我以後都要在這裡，像沒有過去一般的活著？
+Ending1_Dialog4_0	不用擔心，你的記憶會慢慢回來的。
+Ending1_Dialog4_1	而如果你想再次離開的話，我不知道原因，但這次你不會失去任何東西，除了想走出去的意志之外。
+Ending1_Dialog4_2	所以到頭來，是的，你以後都要活在這裡。
+Ending1_Dialog5_0	......
+
+Ending2_Dialog0_0	恭喜你了。
+Ending2_Dialog1_0	洞穴倒塌了...
+Ending2_Dialog2_1	我不會忘記你的。
+
+Ending2_NoBoss_Dialog0_0	噢，洞穴倒塌了。
+Ending2_NoBoss_Dialog0_1	到頭來我還是記不起任何事...
+Ending2_NoBoss_Dialog0_2	算了，船到橋頭自然直。
+
+Ending3_Dialog0_0	你為甚麼會在這裡！？你應該已經走出去了才對。
+Ending3_Dialog1_0	為何你會知道？
+Ending3_Dialog1_1	難道你就是那個寫冒險者遊記的人？
+Ending3_Dialog2_0	不是的，但我看過那些遊記。
+Ending3_Dialog2_1	事實上，很久以前我已經做過你現在做的事情了。
+Ending3_Dialog2_2	我用盡方法找這個洞穴的出口，而我也和你得出同樣的結論。
+Ending3_Dialog2_3	不同的是，我看了完整的冒險者遊記。
+Ending3_Dialog2_4	在最後的遊記提到冒險者仔細研究了那棵樹，然後發現它支撐著整個洞穴。
+Ending3_Dialog2_5	如果那棵樹倒下了，這個洞穴一定會倒塌。
+Ending3_Dialog2_6	所以最後那個冒險者放棄了。我也是。
+Ending3_Dialog2_7	但當你告訴我你要出去時，我知道那遊記會阻礙你，所以我擦去了那些內容。
+Ending3_Dialog3_0	......
+Ending3_Dialog3_1	你真的很愚蠢。
+Ending3_Dialog4_0	你也是呢。我沒有想到你會愚蠢到眼看著洞穴要倒塌了還回來找我。
+Ending3_Dialog5_0	我不能留下你，一起走出去吧。
+Ending3_Dialog6_0	太遲了，現在我們都來不及走了。
+Ending3_Dialog7_0	不管如何，謝謝你回來找我。

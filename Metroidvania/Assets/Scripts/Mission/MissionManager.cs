@@ -26,7 +26,8 @@ public static class MissionManager {
         Mission_1.SetCollectables (
             Collectable.Type.Command_Hit,
             Collectable.Type.Command_Jump,
-            Collectable.Type.Note_1
+            Collectable.Type.Note_1,
+            Collectable.Type.Note_2
         );
 
         // Mission_2
@@ -37,7 +38,7 @@ public static class MissionManager {
         Mission_2.SetCollectables (
             Collectable.Type.Command_Dash,
             Collectable.Type.Command_Arrow,
-            Collectable.Type.Note_2,
+            Collectable.Type.Note_3,
             Collectable.Type.HPUp_1,
             Collectable.Type.PowerUp_2
         );
@@ -46,7 +47,7 @@ public static class MissionManager {
         Mission_3.SetEntries (new Mission.Entry (3, "Entry_3"));
         Mission_3.SetCollectables (
             Collectable.Type.Command_Turn,
-            Collectable.Type.Note_3,
+            Collectable.Type.Note_6,
             Collectable.Type.Ending_2
         );
 
@@ -58,7 +59,6 @@ public static class MissionManager {
         Mission_4.SetCollectables (
             Collectable.Type.Note_4,
             Collectable.Type.Note_5,
-            Collectable.Type.Note_6,
             Collectable.Type.PowerUp_1,
             Collectable.Type.FireArrow
         );

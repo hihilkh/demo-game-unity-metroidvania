@@ -16,6 +16,7 @@
         Boss = 107,
         Boss_NotYetBeaten = 108,
         Boss_Beaten = 109,
+        LastNote = 110,
 
         Opening = 200,
         FirstTimeCommandPanel = 201,

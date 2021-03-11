@@ -139,6 +139,13 @@ public class MissionEventManager : MonoBehaviour {
         ),
 
         new MissionEvent (
+            MissionEventEnum.EventType.LastNote,
+            false,
+            true,
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Event_LastNote"))
+        ),
+
+        new MissionEvent (
             MissionEventEnum.EventType.Opening,
             false,
             true,

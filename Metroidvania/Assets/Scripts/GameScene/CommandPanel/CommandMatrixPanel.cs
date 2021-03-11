@@ -52,7 +52,7 @@ public class CommandMatrixPanel : GeneralPanelBase {
         var baseLocalizedTextDetailsList = new List<LocalizedTextDetails> ();
         baseLocalizedTextDetailsList.Add (new LocalizedTextDetails (airText, "InAir"));
         baseLocalizedTextDetailsList.Add (new LocalizedTextDetails (groundText, "OnGround"));
-        baseLocalizedTextDetailsList.Add (new LocalizedTextDetails (tapText, "Tag"));
+        baseLocalizedTextDetailsList.Add (new LocalizedTextDetails (tapText, "Tap"));
         baseLocalizedTextDetailsList.Add (new LocalizedTextDetails (holdText, "Hold"));
         baseLocalizedTextDetailsList.Add (new LocalizedTextDetails (releaseText, "Release"));
         LangManager.SetTexts (baseLocalizedTextDetailsList);

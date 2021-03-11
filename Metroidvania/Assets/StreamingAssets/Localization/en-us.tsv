@@ -13,30 +13,30 @@ PressToStart	Press to Start
 // MainMenu
 SelectArea	Select an Area
 ProgressDone	Progress Done :
-SelectEntry	Select an Entry :
+SelectEntry	Start at :
 UnknownText	? ? ?
-NotePanelTitle	Note Panel
+NotePanelTitle	Adventurer's Notes
 
 // Mission Name
-Mission_1	Mission1
-Mission_2	Mission2
-Mission_3	Mission3
-Mission_4	Mission4
-Mission_5	Mission5
+Mission_1	Cave Entry
+Mission_2	Go Down
+Mission_3	Level 2
+Mission_4	Large Cavity
+Mission_5	Deep in the Cave
 
 // MapEntry
-Entry_1	Entry_1
-Entry_2	Entry_2
-Entry_3	Entry_3
-Entry_4	Entry_4
-Entry_5	Entry_5
-Entry_6	Entry_6
-Entry_7	Entry_7
+Entry_1	Entry
+Entry_2	Entry
+Entry_3	Entry
+Entry_4	Entry
+Entry_5	Entry
+Entry_6	Hidden Entry
+Entry_7	Hidden Entry
 
 // Command Matrix
 InAir	In Air
 OnGround	On Ground
-Tag	Tag
+Tap	Tap
 Hold	Hold
 Release	Release
 
@@ -49,39 +49,39 @@ BackToMM	Back to Main Menu
 Restart	Restart
 
 // Collectable related
-YouGot	You Got <color #00ffff>{0}</color>.
+YouGot	You have got <color #00ffff>{0}</color>.
 
-Command_Hit	Command_Hit
-Command_Jump	Command_Jump
-Command_Dash	Command_Dash
-Command_Arrow	Command_Arrow
-Command_Turn	Command_Turn
+Command_Hit	Hands
+Command_Jump	Legs
+Command_Dash	Thrusters
+Command_Arrow	Bow and Arrow
+Command_Turn	Turn Command
 
-HP_Up	HP_Up
-Power_Up	Power_Up
-FireArrow	FireArrow
+HP_Up	Life Up
+Power_Up	Power Up
+FireArrow	Fire Arrow
 
-Note_1	Note_1
-Note_1_Content	Note_1_Content
+Note_1	Adventurer's Note 1
+Note_1_Content	This cave is really mystical. There's an entrance but I can never go out through it... How many years have I been trying to get out?<br />Maybe I should find another way out.
 
-Note_2	Note_2
-Note_2_Content	Note_2_Content
+Note_2	Adventurer's Note 2
+Note_2_Content	You have probably noticed that there're some sign boards in this cave. Yes, I made them.<br />While I was finding my way out, it occurred to me that somebody else may also finding their ways out. So I'm trying to share what I have discovered about this cave.<br />Please be aware of the sign boards during your adventure!
 
-Note_3	Note_3
-Note_3_Content	Note_3_Content
+Note_3	Adventurer's Note 3
+Note_3_Content	I could feel that there's a room behind this wall. However, I couldn't find any way to go inside and had to give up.<br />But then, I found that the entry of that room is in next level! Even I was born here, I didn't know there's such a way. Maybe there're more hidden entries somewhere else.
 
-Note_4	Note_4
-Note_4_Content	Note_4_Content
+Note_4	Adventurer's Note 4
+Note_4_Content	There're some switches and secret paths around this cave. Some of them can be triggered by just walk through it, and others need some tricks.<br />I remember that once I have gone into a room that look differently from anywhere else of this cave. That room is really weird.
 
-Note_5	Note_5
-Note_5_Content	Note_5_Content
+Note_5	Adventurer's Note 5
+Note_5_Content	I know there's a treasure in that large cavity, but it's too difficult for me to get it... I must have missed something.<br />Could it be a hidden entry? Um... Where else is connecting to this area?<br />My intuition tells me that I must get the treasure.
 
-Note_6	Note_6
-Note_6_Content	Note_6_Content
+Note_6	Adventurer's Note 6
+Note_6_Content	Everything is ready. I defeat the guard. I have the fire. I can go out if I burn the tree away.<br />!@#$*)*&!@#$%^$%^(*&^()*&^@$#%^&*)
 
-Ending_1	Ending_1
-Ending_2	Ending_2
-Ending_3	Ending_3
+Ending_1	Ending 1
+Ending_2	Ending 2
+Ending_3	Ending 3
 
 // Mission Events
 Event_Command_Hit_0	O, these are my hands... Why are they here?
@@ -89,16 +89,16 @@ Event_Command_Hit_Panel_0	Drag the <b>Hit</b> command to below to activate it.
 
 Event_Command_Jump_0	This enemy keeps my legs. How come?
 Event_Command_Jump_Panel_0	Drag the <b>Jump</b> command to below to activate it.
-Event_Command_Jump_Panel_Done_0	You may see that while you put the command to <b>Hold</b>, it also change the <b>Release</b> action.
+Event_Command_Jump_Panel_Done_0	While you put the command to <b>Hold</b> action, it also change the <b>Release</b> action.
 Event_Command_Jump_Panel_Done_1	For some commands like <b>Jump</b>, if you want to trigger it by <b>Hold</b>, it must link to <b>Release</b> and perform a <b>Charged Jump</b>.
 Event_Command_Jump_Panel_Done_2	Some commands have seperated <b>Hold</b> and <b>Release</b> action. Try it yourself to discover more combinations!
-Event_Command_Jump_Instruction_0	<color #00ffff>Hold the tap of the right side of the screen and then Release</color> to perform the <b>Charged Jump</b> action you just activated.
+Event_Command_Jump_Instruction_0	<color #00ffff>Hold the tap of the right side of the screen and then Release</color> to perform the <b>Charged Jump</b> you just activated.
 
 Event_Command_Dash_0	My thrusters! I don't remember I have thrown them here.
 Event_Command_Dash_Panel_0	Drag the <b>Dash</b> command to below to activate it.
 
 Event_FirstHit_0	There is an enemy. I can beat it!
-Event_FirstHit_Instruction0_0	<color #00ffff>Tap the right side of the screen</color> to perform the <b>Hit</b> action you just activated.
+Event_FirstHit_Instruction0_0	<color #00ffff>Tap the right side of the screen</color> to perform the <b>Hit</b> you just activated.
 Event_FirstHit_Instruction1_0	Enemies will become invincible after being attacked. Continue to attack the enemies after their invincible period finished.
 
 Event_TouchWallAndTurn_0	When you touch the wall, your will turn and move in the opposite direction.
@@ -106,14 +106,14 @@ Event_TouchWallAndTurn_1	Attack the enemy at the right time so that you can walk
 
 Event_AirJump_0	The wall is too high. I think I need to use the <b>In Air</b> action to overcome.
 Event_AirJump_Panel_0	Drag the <b>Jump</b> command to below to activate it.
-Event_AirJump_Instruction0_0	First, <color #00ffff>perform the Charged Jump</color> action.
-Event_AirJump_Instruction1_0	<color #00ffff>While you are in air, tap the right side of the screen</color> to perform the <b>Air Jump</b> action you just activated.
+Event_AirJump_Instruction0_0	First, <color #00ffff>perform the Charged Jump</color>.
+Event_AirJump_Instruction1_0	<color #00ffff>While you are in air, tap the right side of the screen</color> to perform the <b>Air Jump</b> you just activated.
 
-Event_WallAction_Instruction0_0	When you touch the wall while in air, you will slide on the wall.
+Event_WallAction_Instruction0_0	When you touch the wall while in air, you will slide down from the wall slowly.
 Event_WallAction_Instruction0_1	You can perform <b>In Air</b> action while you are sliding on the wall.
 Event_WallAction_Instruction0_2	Let's try it. First, <color #00ffff>perform the Charged Jump</color> action.
 Event_WallAction_Instruction1_0	Now you are sliding on the wall and you can perform <b>In Air</b> action.
-Event_WallAction_Instruction1_1	Try to <color #00ffff>perform the Air Jump</color> action.
+Event_WallAction_Instruction1_1	<color #00ffff>Perform the Air Jump</color> action.
 Event_WallAction_Instruction2_0	<color #00ffff>Perform the Air Jump</color> action repeatedly to overcome this huge wall!
 
 Event_AirFinishingHit_0	This enemy is flying. I would need to hit in air in order to beat it.
@@ -123,12 +123,12 @@ Event_AirFinishingHit_Instruction1_0	Then, <color #00ffff>Hold the tap of the ri
 
 Event_CameraMovement_0	This valley seems so deep. Let's have a look.
 Event_CameraMovement_Instruction0_0	<color #00ffff>Drag the left side of the screen from up to down</color> to look down.
-Event_CameraMovement_Instruction1_0	You can also drag to other directions to look at those directions.
+Event_CameraMovement_Instruction1_0	You can also drag the left side of the screen to look at other directions.
 Event_CameraMovement_Instruction1_1	By looking around, you may know more about the environment and may have more time to react to it.
 Event_CameraMovement_Instruction1_2	You may also discover some unexpected stuff!
-Event_CameraMovement_ValleyTip_0	I cannot see the bottom even looking down. I must be careful not to fall down the valley.
+Event_CameraMovement_ValleyTip_0	I cannot see the bottom even looking down... I must be careful not to fall down the valley.
 
-Event_WarningIfNoDash_0	Um...There are some stings in front. It seems very dangerous.
+Event_WarningIfNoDash_0	Um...The stings in front seems very dangerous.
 Event_WarningIfNoDash_Tip_0	Maybe I should search to see if I can get anything to go through it.
 
 Event_Boss_NotYetBeaten_Dialog0_0	Who are you?
@@ -139,6 +139,8 @@ Event_Boss_NotYetBeaten_Dialog3_0	......
 Event_Boss_Beaten_Dialog_0	You want to practise with me?
 Event_Boss_Beaten_Dialog_1	Let's go!
 
+Event_LastNote_0	The last part of this note is so blur. Has it been erased?
+
 Event_Opening0_0	......
 Event_Opening0_1	Who are I? Where are I?
 Event_Opening1_0	There is a cave ahead. Let's have a look.
@@ -147,9 +149,50 @@ Event_FirstTimeCommandPanel_0	Before starting your adventure, you can set your c
 Event_FirstTimeCommandPanel_1	You can <color #00ffff>drag a command to below</color> to assign it to an action.
 Event_FirstTimeCommandPanel_2	You can also <color #00ffff>click on an assigned action</color> and <color #00ffff>press the cross button</color> to remove the command.
 Event_FirstTimeCommandPanel_3	During your adventure, you may want to reassign your commands.
-Event_FirstTimeCommandPanel_4	You can do it by pressing the restart button in pause menu.
+Event_FirstTimeCommandPanel_4	You can press the restart button in pause menu to restart the adventure and reassign your commands.
 Event_FirstTimeCommandPanel_5	But note that if you restart the adventure, all the progress (except the collected items) would also be reset.
 
 Event_BackToCaveEntry0_0	......
 Event_BackToCaveEntry0_1	What am I doing here?
 Event_BackToCaveEntry1_0	Ar yes, I have to search for this cave.
+
+// Ending
+Ending1_Dialog0_0	It's been a while. You become stronger.
+Ending1_Dialog0_1	......
+Ending1_Dialog0_2	Ar yes. You don't remember me.
+Ending1_Dialog1_0	Do I know you?
+Ending1_Dialog2_0	Sure. We both live here.
+Ending1_Dialog2_1	But then one day, you tell me you want to go out and see the world, although we both know the legend about this cave.
+Ending1_Dialog2_2	Whoever try to go out of this cave will lose everything, including memory.
+Ending1_Dialog2_3	After losing the memory, of course you will go back to the cave that just aside you...
+Ending1_Dialog3_0	So I have to live here forever without my past?
+Ending1_Dialog4_0	Don't worry. Your memory will gradually come back.
+Ending1_Dialog4_1	And if you try to leave again, I don't know why but things become better. You don't lose anything again, except the mind of going out.
+Ending1_Dialog4_2	After all, yes you're right. You have to live here forever.
+Ending1_Dialog5_0	......
+
+Ending2_Dialog0_0	Congratulations.
+Ending2_Dialog1_0	The cave is collapsed...
+Ending2_Dialog2_1	I will not forget you.
+
+Ending2_NoBoss_Dialog0_0	Oh, the cave is collapsed.
+Ending2_NoBoss_Dialog0_1	Turn out I still do not remember anything...
+Ending2_NoBoss_Dialog0_2	Anyway, let's see how it goes.
+
+Ending3_Dialog0_0	Why are you here!? You should have gone out of here.
+Ending3_Dialog1_0	Why do you know that?
+Ending3_Dialog1_1	Are you the one who wrote the Adventurer's notes?
+Ending3_Dialog2_0	No, but I have seen those notes.
+Ending3_Dialog2_1	Actually, I have done what you have done a long time ago.
+Ending3_Dialog2_2	I tried so hard to find the way out and I got the same answer of yours.
+Ending3_Dialog2_3	The difference is that I have seen the complete Adventurer's notes.
+Ending3_Dialog2_4	The last note mentions that the adventurer has done some research about the tree and found that the tree gave support to the whole cave.
+Ending3_Dialog2_5	If the tree is gone, the cave will definitely collapse.
+Ending3_Dialog2_6	So the adventurer finially gave up. And so do I.
+Ending3_Dialog2_7	But after you told me you want to leave, I know that note will hinder you. So I erased those contents.
+Ending3_Dialog3_0	......
+Ending3_Dialog3_1	You are so stupid.
+Ending3_Dialog4_0	So do you. I don't expect that you are so stupid that coming to find me even you are watching the cave collapsing.
+Ending3_Dialog5_0	I can't leave you here. Let's go out together.
+Ending3_Dialog6_0	It's too late. We both can't leave now.
+Ending3_Dialog7_0	Anyway, thank you for finding me.
