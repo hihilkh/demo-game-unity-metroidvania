@@ -6,6 +6,7 @@ public class DialogPlayer : DialogCharacterBase {
     [SerializeField] private GameObject head_Normal;
     [SerializeField] private GameObject head_Confused;
     [SerializeField] private GameObject head_Shocked;
+    [SerializeField] private GameObject head_Smiling;
     [SerializeField] private List<GameObject> armList;
     [SerializeField] private GameObject weapon;
 
@@ -20,6 +21,7 @@ public class DialogPlayer : DialogCharacterBase {
                     { MissionEventEnum.Expression.Normal, head_Normal },
                     { MissionEventEnum.Expression.Confused, head_Confused },
                     { MissionEventEnum.Expression.Shocked, head_Shocked },
+                    { MissionEventEnum.Expression.Smiling, head_Smiling },
                 };
             }
 
@@ -31,7 +33,7 @@ public class DialogPlayer : DialogCharacterBase {
     private List<Image> AllImages {
         get {
             if (_allImages == null) {
-                var images = GetComponentsInChildren<Image> ();
+                var images = GetComponentsInChildren<Image> (true);
                 _allImages = new List<Image> (images);
             }
 

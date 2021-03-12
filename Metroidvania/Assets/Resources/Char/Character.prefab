@@ -100,6 +100,7 @@ MonoBehaviour:
   charModel: {fileID: 351095058075983922}
   camParams: {fileID: 11400000, guid: 7aa77233852a1412ab62007c990d75b0, type: 2}
   controller: {fileID: 3404561521971273195}
+  caveCollapsePSBase: {fileID: 7450107657540994188}
 --- !u!1 &282618076193310195
 GameObject:
   m_ObjectHideFlags: 0
@@ -221,7 +222,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 351095057210116263}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.25, y: 0, z: 0}
+  m_LocalPosition: {x: -0.25, y: -0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 351095056870630872}
@@ -10083,7 +10084,7 @@ ParticleSystem:
   looping: 1
   prewarm: 0
   playOnAwake: 1
-  useUnscaledTime: 0
+  useUnscaledTime: 1
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
   startDelay:
@@ -24349,7 +24350,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4148943038778168121}
   m_Layer: 8
-  m_Name: RockParticles
+  m_Name: CaveCollapseParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24420,7 +24421,7 @@ ParticleSystem:
   looping: 1
   prewarm: 0
   playOnAwake: 1
-  useUnscaledTime: 0
+  useUnscaledTime: 1
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
   startDelay:

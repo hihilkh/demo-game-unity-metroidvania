@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HihiFramework.Core;
 using UnityEngine;
 
 public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget {
@@ -20,6 +21,7 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget
 
         switch (data.switchType) {
             case MapEnum.SwitchType.Arrow:
+            case MapEnum.SwitchType.Tree:
                 gameObject.tag = GameVariable.ArrowSwitchTag;
                 gameObject.layer = GameVariable.DefaultLayer;
                 break;

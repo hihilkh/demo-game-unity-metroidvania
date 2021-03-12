@@ -56,7 +56,7 @@ MonoBehaviour:
   _hpUpMagnitude: 20
   _powerUpMagnitude: 1
   _bossTotalHP: 300
-  _collisionDP: 40
+  _collisionDP: 30
   _bossDecideActionPeriod: 1.5
   _bossTurnProbability: 0.6
   _bossHitAttackHorizontalHalfRange: 6
@@ -64,9 +64,9 @@ MonoBehaviour:
   _bossAllowAttackVerticalHalfRange: 3
   _initDirection: 1
   _isUseDebugCommandSettings: 1
-  _groundTapCommand: 3
+  _groundTapCommand: 0
   _groundHoldCommand: 3
-  _groundReleaseCommand: 3
+  _groundReleaseCommand: 4
   _airTapCommand: 0
   _airHoldCommand: 1
-  _airReleaseCommand: 4
+  _airReleaseCommand: 2

@@ -29,6 +29,7 @@ public class LandingSceneManager : MonoBehaviour {
     private void Start () {
         UIEventManager.AddEventHandler (BtnOnClickType.Landing_Start, StartBtnClickedHandler);
 
+        charModel.SetActive (true);
         charModel.Reset (startingRefPoint.position, LifeEnum.HorizontalDirection.Right);
         charModel.SetAllowMove (true);
         charModel.SetAllowUserControl (false);

@@ -12,6 +12,7 @@ public class MapManager : MonoBehaviour {
     [SerializeField] private Tilemap slippyWallTileMap;
     [SerializeField] private Tilemap deathTileMap;
     [SerializeField] private Tilemap bgTileMap;
+    [SerializeField] private Tilemap onTopEffectTileMap;
 
     [Header ("Image Background")]
     [SerializeField] private Transform imageBGBase;
@@ -39,7 +40,7 @@ public class MapManager : MonoBehaviour {
     /// </summary>
     private readonly Dictionary<MapData.TileData, bool> changedTileDict = new Dictionary<MapData.TileData, bool> ();
     private readonly List<Vector2Int> switchedOnOnOffSwitchBasePosList = new List<Vector2Int> ();
-    private readonly List<MapSwitch> missionEventSwitchList = new List<MapSwitch> ();
+    private readonly List<MapSwitch> mapSwitchList = new List<MapSwitch> ();
 
     public CharModel BossModel { get; private set; } = null;
 
@@ -51,6 +52,7 @@ public class MapManager : MonoBehaviour {
         tileMapDict.Add (MapEnum.TileMapType.SlippyWall, slippyWallTileMap);
         tileMapDict.Add (MapEnum.TileMapType.Death, deathTileMap);
         tileMapDict.Add (MapEnum.TileMapType.Background, bgTileMap);
+        tileMapDict.Add (MapEnum.TileMapType.OnTopEffect, onTopEffectTileMap);
 
         imageBGSpriteDict.Add (MapEnum.ImageBGType.RightToLeft, rightToLeftImageBGSprite);
         imageBGSpriteDict.Add (MapEnum.ImageBGType.DownToUp, downToUpImageBGSprite);
@@ -59,6 +61,14 @@ public class MapManager : MonoBehaviour {
     private void OnDestroy () {
         RemoveEventHandlers ();
     }
+
+    #region getter
+
+    public MapData.SubSpecialSceneData GetSubSpecialSceneData (MissionEventEnum.SpecialSceneType specialSceneType, int subSpecialSceneIndex) {
+        return mapData.GetSubSpecialSceneData (specialSceneType, subSpecialSceneIndex);
+    }
+
+    #endregion
 
     #region Map Generation
 
@@ -96,7 +106,7 @@ public class MapManager : MonoBehaviour {
         }
 
         ArrowTargetList.Clear ();
-        missionEventSwitchList.Clear ();
+        mapSwitchList.Clear ();
 
         GenerateEnemy (mapData.enemies);
         GenerateCollectables (missionId, mapData.collectables);
@@ -218,6 +228,12 @@ public class MapManager : MonoBehaviour {
                 instance.Reset (data);
                 ArrowTargetList.Add (instance);
             } else {
+                if (UserManager.SelectedMissionId == MissionManager.EndingMissionId) {
+                    if (!UserManager.GetIsCollectedCollectable(Collectable.Type.Ending_1)) {
+                        // Do not generate boss if not yet completed Ending_1
+                        continue;
+                    }
+                }
                 var boss = Resources.Load<CharModel> (resourcesName);
                 if (boss == null) {
                     Log.PrintError ("Skipped enemy : Cannot load enemy resources for resourcesName : " + resourcesName, LogTypes.MapData);
@@ -277,13 +293,11 @@ public class MapManager : MonoBehaviour {
             FrameworkUtils.InsertChildrenToParent (mapObjectsBaseTransform, go, false);
             var script = go.AddComponent<MapSwitch> ();
             script.Init (data);
+            mapSwitchList.Add (script);
 
             switch (data.switchType) {
                 case MapEnum.SwitchType.Arrow:
                     ArrowTargetList.Add (script);
-                    break;
-                case MapEnum.SwitchType.MissionEvent:
-                    missionEventSwitchList.Add (script);
                     break;
             }
         }
@@ -376,11 +390,14 @@ public class MapManager : MonoBehaviour {
     }
 
     private void MapSwitchSwitchedHandler (MapSwitch mapSwitch, bool isSwitchOn) {
-        TriggerMapSwitch (mapSwitch, isSwitchOn);
+        // Tree SwitchType is contrlled by GameSceneManager
+        if (mapSwitch.GetSwitchType () != MapEnum.SwitchType.Tree) {
+            TriggerMapSwitch (mapSwitch, isSwitchOn);
+        }
     }
 
     public void SwitchOnMapSwitch (MapSwitchSubEvent subEvent, Action onFinished = null) {
-        foreach (var mapSwitch in missionEventSwitchList) {
+        foreach (var mapSwitch in mapSwitchList) {
             if (mapSwitch.GetSwitchId () == subEvent.MapSwitchId) {
                 TriggerMapSwitch (mapSwitch, true, onFinished);
                 return;
@@ -407,7 +424,6 @@ public class MapManager : MonoBehaviour {
             case MapEnum.SwitchType.OnOff:
                 SetOnOffSwitch (mapSwitch.GetSwitchBasePos (), isSwitchOn, true);
                 break;
-
         }
 
         StartCoroutine (OpenHiddenPath (mapSwitch, isSwitchOn, onFinished));
@@ -424,7 +440,7 @@ public class MapManager : MonoBehaviour {
             }
 
             // Assume the switch is in background Tilemap
-            var tileData = new MapData.TileData (switchBasePos.x + pair.Key.x, switchBasePos.y + pair.Key.y, tileType, MapEnum.TileMapType.Background);
+            var tileData = new MapData.TileData (new Vector2Int (switchBasePos.x + pair.Key.x, switchBasePos.y + pair.Key.y), tileType, MapEnum.TileMapType.Background);
             GenerateTile (tileData, pair.Value != null, false);
         }
 

@@ -15,7 +15,7 @@
    version="1.1"
    id="svg48"
    inkscape:version="1.0.1 (c497b03c, 2020-09-10)"
-   sodipodi:docname="char_mirror.svg"
+   sodipodi:docname="Char_Boss.svg"
    inkscape:export-filename="/Users/hihilkh/Documents/Inkscape/char_mirror.png"
    inkscape:export-xdpi="50.799999"
    inkscape:export-ydpi="50.799999">
@@ -767,6 +767,47 @@
         </meshpatch>
       </meshrow>
     </meshgradient>
+    <meshgradient
+       inkscape:collect="always"
+       id="meshgradient2113"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(306.38408,-92.375628)"
+       x="70.741547"
+       y="109.50127">
+      <meshrow
+         id="meshrow2125">
+        <meshpatch
+           id="meshpatch2123">
+          <stop
+             path="c 21.5009,-21.5009  56.3606,-21.5009  77.8615,0"
+             style="stop-color:#ffffff;stop-opacity:1"
+             id="stop2115" />
+          <stop
+             path="c 21.5009,21.5009  21.5009,56.3606  0,77.8615"
+             style="stop-color:#8a8a8a;stop-opacity:1"
+             id="stop2117" />
+          <stop
+             path="c -21.5009,21.5009  -56.3606,21.5009  -77.8615,0"
+             style="stop-color:#ffffff;stop-opacity:1"
+             id="stop2119" />
+          <stop
+             path="c -21.5009,-21.5009  -21.5009,-56.3606  0,-77.8615"
+             style="stop-color:#8a8a8a;stop-opacity:1"
+             id="stop2121" />
+        </meshpatch>
+      </meshrow>
+    </meshgradient>
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect1219"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -775,17 +816,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.18378511"
-     inkscape:cx="1008.7357"
-     inkscape:cy="401.94435"
+     inkscape:zoom="0.23205173"
+     inkscape:cx="1145.2231"
+     inkscape:cy="368.04072"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
      showgrid="false"
      inkscape:window-width="1440"
-     inkscape:window-height="789"
+     inkscape:window-height="785"
      inkscape:window-x="0"
-     inkscape:window-y="23"
+     inkscape:window-y="25"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata45">
@@ -999,6 +1040,32 @@
          rx="5.4408331"
          ry="7.498436" />
     </g>
+    <circle
+       style="fill:url(#meshgradient2113);fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       id="path2863-3-5-3"
+       cx="416.05637"
+       cy="56.056381"
+       r="55.056377" />
+    <ellipse
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.6373;stroke-linejoin:round"
+       id="path1220-1-7"
+       cx="400.25113"
+       cy="52.443771"
+       rx="6.9550242"
+       ry="5.6002893" />
+    <ellipse
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.6373;stroke-linejoin:round"
+       id="path1220-0-3-8"
+       cx="447.66687"
+       cy="52.443756"
+       rx="6.9550247"
+       ry="5.6002893" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 401.10811,80.295106 c 2.82247,2.822477 5.6447,5.644709 11.28923,7.05569 5.64452,1.410981 14.11103,1.410981 19.75536,-1.57e-4 5.64434,-1.411138 8.4665,-4.233313 11.28871,-7.055533"
+       id="path1217"
+       inkscape:path-effect="#path-effect1219"
+       inkscape:original-d="m 401.10811,80.295106 c 2.82246,2.82249 5.6447,5.64471 8.46666,8.466671 8.46709,2.6e-4 16.9336,2.6e-4 25.4,0 2.82252,-2.822021 5.6447,-5.644181 8.46664,-8.466671" />
   </g>
   <script
      id="mesh_polyfill"

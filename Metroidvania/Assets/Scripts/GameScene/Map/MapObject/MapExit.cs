@@ -8,6 +8,8 @@ public class MapExit : MapInvisibleTriggerBase<MapData.ExitData> {
     /// </summary>
     public static event Action<int> ExitReached;
 
+    public static event Action<MissionEventEnum.SpecialSceneType> SpecialSceneExitReached;
+
     protected override bool IsDisposeWhenMapReset => false;
 
     public override void Init (MapData.ExitData data) {
@@ -25,6 +27,10 @@ public class MapExit : MapInvisibleTriggerBase<MapData.ExitData> {
     }
 
     protected override void OnTriggered () {
-        ExitReached?.Invoke (Data.toEntryId);
+        if (Data.isSpecialSceneExit) {
+            SpecialSceneExitReached?.Invoke (Data.specialSceneExitType);
+        } else {
+            ExitReached?.Invoke (Data.toEntryId);
+        }
     }
 }

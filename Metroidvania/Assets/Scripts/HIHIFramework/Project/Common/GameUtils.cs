@@ -1,6 +1,7 @@
 ﻿using System;
 using HihiFramework.Core;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public partial class GameUtils : Singleton<GameUtils> {
     private static CharModel Character;
@@ -63,6 +64,21 @@ public partial class GameUtils : Singleton<GameUtils> {
 
     public static void ScreenFadeOut (Action onFinished = null) {
         GetTransitionCanvas ().FadeOut (onFinished);
+    }
+
+    #endregion
+
+    #region GameScene
+
+    public static void LoadGameScene (int missionId, int entryId) {
+        UserManager.SelectedMissionId = missionId;
+        UserManager.SelectedEntryId = entryId;
+
+        Action onFadeInFinished = () => {
+            SceneManager.LoadScene (GameVariable.GameSceneName);
+        };
+
+        ScreenFadeIn (onFadeInFinished);
     }
 
     #endregion

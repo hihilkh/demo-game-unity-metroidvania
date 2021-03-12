@@ -13,13 +13,19 @@ public class MissionEventManager : MonoBehaviour {
 
     public static MissionEvent CurrentMissionEvent { get; private set; } = null;
     public static SubEventBase CurrentMissionSubEvent { get; private set; } = null;
+    private static SpecialSceneEvent CurrentSpecialSceneEvent = null;
+    private static int CurrentSubSpecialSceneIndex = -1;
 
     public static event Action MissionEventStarted;
     public static event Action MissionEventFinished;
 
-    #region All mission events
+    public static event Action SpecialSceneEventStarted;
+    public static event Action SpecialSceneEventFinished;
+
+    #region All Events
 
     private const int BossMapSwitchId = 11;
+    private const int BurnTreeSwitchId = 12;
 
     private static readonly List<MissionEvent> AllMissionEvents = new List<MissionEvent> () {
         new MissionEvent (
@@ -173,11 +179,83 @@ public class MissionEventManager : MonoBehaviour {
         ),
     };
 
+    private static readonly List<SpecialSceneEvent> AllSpecialSceneEvents = new List<SpecialSceneEvent> () {
+        new SpecialSceneEvent (
+            MissionEventEnum.SpecialSceneType.BurnTree,
+            new ChangeSubSpecialSceneSubEvent (),
+            new WaitSubEvent (1f),
+            new MapSwitchSubEvent (BurnTreeSwitchId)
+        ),
+
+        new SpecialSceneEvent (
+            MissionEventEnum.SpecialSceneType.Ending_1,
+            new ChangeSubSpecialSceneSubEvent (),
+            new WaitSubEvent (1f),
+            new DialogSubEvent (
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Smiling, false, "Ending1_Dialog0"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Smiling, true, "Ending1_Dialog1"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Smiling, false, "Ending1_Dialog2"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, false, "Ending1_Dialog3"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, true, "Ending1_Dialog4"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, false, "Ending1_Dialog5"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, true, "Ending1_Dialog6")
+            ),
+            new WaitSubEvent (1f)
+        ),
+
+        new SpecialSceneEvent (
+            MissionEventEnum.SpecialSceneType.Ending_2_Boss,
+            new ChangeSubSpecialSceneSubEvent (),
+            new WaitSubEvent (1f),
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.None, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Smiling, false, "Ending2_Dialog0")),
+            new ChangeSubSpecialSceneSubEvent (),
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Shocked, "Ending2_Dialog1")),
+            new WaitSubEvent (3f),
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, "Ending2_Dialog2")),
+            new WaitSubEvent (1f),
+            new ForceCharWalkSubEvent (LifeEnum.HorizontalDirection.Right),
+            new WaitSubEvent (4f)
+        ),
+
+        new SpecialSceneEvent (
+            MissionEventEnum.SpecialSceneType.Ending_2_NoBoss,
+            new ChangeSubSpecialSceneSubEvent (),
+            new WaitSubEvent (1f),
+            new DialogSubEvent (
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Confused, "Ending2_NoBoss_Dialog0"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, "Ending2_NoBoss_Dialog1")
+            ),
+            new WaitSubEvent (1f),
+            new ForceCharWalkSubEvent (LifeEnum.HorizontalDirection.Right),
+            new WaitSubEvent (4f)
+        ),
+
+        new SpecialSceneEvent (
+            MissionEventEnum.SpecialSceneType.Ending_3,
+            new ChangeSubSpecialSceneSubEvent (),
+            new WaitSubEvent (1f),
+            new DialogSubEvent (
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Shocked, false, "Ending3_Dialog0"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Shocked, true, "Ending3_Dialog1"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, false, "Ending3_Dialog2"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, true, "Ending3_Dialog3"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, false, "Ending3_Dialog4"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, true, "Ending3_Dialog5"),
+                new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Normal, false, "Ending3_Dialog6")
+            ),
+            new WaitSubEvent (3f),
+            new DialogSubEvent (new DialogSubEvent.DialogDetails (MissionEventEnum.Character.Player, MissionEventEnum.Expression.Normal, MissionEventEnum.Character.Boss, MissionEventEnum.Expression.Smiling, false, "Ending3_Dialog7")),
+            new WaitSubEvent (1f)
+        ),
+    };
+
     #endregion
 
     private void OnDestroy () {
         CurrentMissionEvent = null;
         CurrentMissionSubEvent = null;
+        CurrentSpecialSceneEvent = null;
+        CurrentSubSpecialSceneIndex = -1;
     }
 
     #region getter
@@ -193,12 +271,23 @@ public class MissionEventManager : MonoBehaviour {
         return null;
     }
 
+    private static SpecialSceneEvent GetSpecialSceneEvent (MissionEventEnum.SpecialSceneType specialSceneTypeeventType) {
+        foreach (var specialSceneEvent in AllSpecialSceneEvents) {
+            if (specialSceneEvent.SpecialSceneType == specialSceneTypeeventType) {
+                return specialSceneEvent;
+            }
+        }
+
+        Log.PrintWarning ("Cannot find special scene event with special scene type : " + specialSceneTypeeventType, LogTypes.MissionEvent);
+        return null;
+    }
+
     #endregion
 
-    #region Start event
+    #region Start Event
 
     public void StartEvent (MissionEventEnum.EventType eventType, Action onFinished = null, bool isFromCollectable = false) {
-        var missionEvent = GetMissionEventWithSpecialEventChecking (eventType);
+        var missionEvent = GetMissionEventWithSpecialChecking (eventType);
 
         if (missionEvent == null) {
             onFinished?.Invoke ();
@@ -207,19 +296,19 @@ public class MissionEventManager : MonoBehaviour {
 
         var subEventListClone = missionEvent.GetSubEventListClone ();
         if (subEventListClone == null || subEventListClone.Count <= 0) {
-            Log.PrintWarning ("Start event failed. The sub event list is empty. eventType : " + eventType, LogTypes.MissionEvent);
+            Log.PrintWarning ("Start event failed. The sub event list is empty. EventType : " + eventType, LogTypes.MissionEvent);
             onFinished?.Invoke ();
             return;
         }
 
-        Log.Print ("Start Mission Event : eventType = " + eventType, LogTypes.MissionEvent);
+        Log.Print ("Start Mission Event : EventType = " + eventType, LogTypes.MissionEvent);
 
         CurrentMissionEvent = missionEvent;
         MissionEventStarted?.Invoke ();
         var charModel = GameUtils.FindOrSpawnChar ();
 
         Action reallyStartEventAction = () => {
-            Log.Print ("Really start Mission Event : eventType = " + eventType, LogTypes.MissionEvent);
+            Log.Print ("Really start Mission Event : EventType = " + eventType, LogTypes.MissionEvent);
 
             Time.timeScale = 0;
 
@@ -229,7 +318,6 @@ public class MissionEventManager : MonoBehaviour {
 
             Action onEventFinished = () => {
                 CurrentMissionEvent = null;
-                CurrentMissionSubEvent = null;
 
                 Time.timeScale = 1;
 
@@ -246,7 +334,7 @@ public class MissionEventManager : MonoBehaviour {
                 onFinished?.Invoke ();
             };
 
-            StartSubEventRecursive (eventType, subEventListClone, onEventFinished);
+            StartSubEventRecursive (subEventListClone, onEventFinished);
         };
 
         if (missionEvent.IsNeedToStopChar) {
@@ -257,7 +345,7 @@ public class MissionEventManager : MonoBehaviour {
         }
     }
 
-    private MissionEvent GetMissionEventWithSpecialEventChecking (MissionEventEnum.EventType eventType) {
+    private MissionEvent GetMissionEventWithSpecialChecking (MissionEventEnum.EventType eventType) {
         var runtimeEventType = eventType;
         switch (eventType) {
             case MissionEventEnum.EventType.WarningIfNoDash:
@@ -277,13 +365,75 @@ public class MissionEventManager : MonoBehaviour {
         return GetMissionEvent (runtimeEventType);
     }
 
-    private void StartSubEventRecursive (MissionEventEnum.EventType eventType, List<SubEventBase> remainingSubEventList, Action onAllFinished = null) {
+
+    #endregion
+
+    #region Start Special Scene Event
+
+    public void StartSpecialSceneEvent (MissionEventEnum.SpecialSceneType specialSceneType, Action onFinished = null) {
+        var specialSceneEvent = GetSpecialSceneEventWithSpecialChecking (specialSceneType);
+
+        if (specialSceneEvent == null) {
+            onFinished?.Invoke ();
+            return;
+        }
+
+        var subEventListClone = specialSceneEvent.GetSubEventListClone ();
+        if (subEventListClone == null || subEventListClone.Count <= 0) {
+            Log.PrintWarning ("Start Special Scene Event failed. The sub event list is empty. SpecialSceneType : " + specialSceneType, LogTypes.MissionEvent);
+            onFinished?.Invoke ();
+            return;
+        }
+
+        Log.Print ("Start Special Scene Event : SpecialSceneType = " + specialSceneType, LogTypes.MissionEvent);
+
+        SpecialSceneEventStarted?.Invoke ();
+        CurrentSpecialSceneEvent = specialSceneEvent;
+        CurrentSubSpecialSceneIndex = -1;
+
+        Action onEventFinished = () => {
+            Action onFadeInFinished = () => {
+                CurrentSpecialSceneEvent = null;
+                CurrentSubSpecialSceneIndex = -1;
+
+                GameUtils.FindOrSpawnChar ().AttachBackCamera ();
+
+                SpecialSceneEventFinished?.Invoke ();
+                onFinished?.Invoke ();
+            };
+
+            GameUtils.ScreenFadeIn (onFadeInFinished);
+        };
+
+        StartSubEventRecursive (subEventListClone, onEventFinished);
+    }
+
+    private SpecialSceneEvent GetSpecialSceneEventWithSpecialChecking (MissionEventEnum.SpecialSceneType specialSceneType) {
+        var runtimeSpecialSceneType = specialSceneType;
+        switch (specialSceneType) {
+            case MissionEventEnum.SpecialSceneType.Ending_2:
+                if (UserManager.GetIsCollectedCollectable (Collectable.Type.Ending_1)) {
+                    runtimeSpecialSceneType = MissionEventEnum.SpecialSceneType.Ending_2_Boss;
+                } else {
+                    runtimeSpecialSceneType = MissionEventEnum.SpecialSceneType.Ending_2_NoBoss;
+                }
+                break;
+        }
+
+        return GetSpecialSceneEvent (runtimeSpecialSceneType);
+    }
+
+    #endregion
+
+    #region SubEvents
+
+    private void StartSubEventRecursive (List<SubEventBase> remainingSubEventList, Action onAllFinished = null) {
         if (remainingSubEventList != null && remainingSubEventList.Count > 0) {
             var currentSubEvent = remainingSubEventList[0];
             remainingSubEventList.RemoveAt (0);
 
             Action onSubEventFinished = () => {
-                StartSubEventRecursive (eventType, remainingSubEventList, onAllFinished);
+                StartSubEventRecursive (remainingSubEventList, onAllFinished);
             };
 
             Log.Print ("Start Mission SubEvent : subEventType = " + currentSubEvent.SubEventType, LogTypes.MissionEvent);
@@ -312,13 +462,18 @@ public class MissionEventManager : MonoBehaviour {
                 case MissionEventEnum.SubEventType.Wait:
                     StartCoroutine (StartWaitSubEvent ((WaitSubEvent)currentSubEvent, onSubEventFinished));
                     break;
+                case MissionEventEnum.SubEventType.ChangeSubSpecialScene:
+                    StartChangeSubSpecialSceneSubEvent ((ChangeSubSpecialSceneSubEvent)currentSubEvent, onSubEventFinished);
+                    break;
+                case MissionEventEnum.SubEventType.ForceCharWalk:
+                    StartForceCharWalkSubEvent ((ForceCharWalkSubEvent)currentSubEvent, onSubEventFinished);
+                    break;
             }
         } else {
+            CurrentMissionSubEvent = null;
             onAllFinished?.Invoke ();
         }
     }
-
-    #region SubEvents
 
     private void StartDialogSubEvent (DialogSubEvent subEvent, Action onFinished = null) {
         uiManager.ShowDialogPanel (subEvent, onFinished);
@@ -412,18 +567,70 @@ public class MissionEventManager : MonoBehaviour {
     }
 
     private IEnumerator StartWaitSubEvent (WaitSubEvent subEvent, Action onFinished = null) {
-        GameUtils.FindOrSpawnChar ().SetAllowUserControl (false);
+        var charModel = GameUtils.FindOrSpawnChar ();
+        charModel.SetAllowUserControl (false);
         Time.timeScale = 1;
 
         yield return new WaitForSeconds (subEvent.WaitTime);
 
-        GameUtils.FindOrSpawnChar ().SetAllowUserControl (true);
+        charModel.SetAllowUserControl (true);
         Time.timeScale = 0;
 
         onFinished?.Invoke ();
     }
 
-    #endregion
+    private void StartChangeSubSpecialSceneSubEvent (ChangeSubSpecialSceneSubEvent subEvent, Action onFinished = null) {
+        CurrentSubSpecialSceneIndex++;
+        
+        if (CurrentSpecialSceneEvent == null) {
+            Log.PrintWarning ("Fail to StartChangeSubSpecialSceneSubEvent : CurrentSpecialSceneEvent is null.", LogTypes.MissionEvent);
+            onFinished?.Invoke ();
+            return;
+        }
+
+        var sceneData = mapManager.GetSubSpecialSceneData (CurrentSpecialSceneEvent.SpecialSceneType, CurrentSubSpecialSceneIndex);
+        if (sceneData == null) {
+            Log.PrintWarning ("Fail to StartChangeSubSpecialSceneSubEvent : SceneData is null. SpecialSceneType = " + CurrentSpecialSceneEvent.SpecialSceneType + " ; SubSpecialSceneIndex = " + CurrentSubSpecialSceneIndex, LogTypes.MissionEvent);
+            onFinished?.Invoke ();
+            return;
+        }
+
+        var charModel = GameUtils.FindOrSpawnChar ();
+        var bossModel = mapManager.BossModel;
+
+        Action onFadeInFinished = () => {
+            charModel.DetachCameraAndSetCameraPos (sceneData.cameraPos);
+
+            if (sceneData.player == null) {
+                charModel.SetActive (false);
+            } else {
+                charModel.SetActive (true);
+                charModel.Reset (sceneData.player.pos, sceneData.player.direction);
+            }
+
+            if (bossModel != null) {
+                if (sceneData.boss == null) {
+                    bossModel.SetActive (false);
+                } else {
+                    bossModel.SetActive (true);
+                    bossModel.Reset (sceneData.boss.pos, sceneData.boss.direction);
+                }
+            }
+
+            GameUtils.ScreenFadeOut (onFinished);
+        };
+
+        GameUtils.ScreenFadeIn (onFadeInFinished);
+    }
+
+    private void StartForceCharWalkSubEvent (ForceCharWalkSubEvent subEvent, Action onFinished = null) {
+        var charModel = GameUtils.FindOrSpawnChar ();
+        charModel.Reset (charModel.GetPos (), subEvent.Direction);
+        charModel.SetAllowMove (true);
+        charModel.SetAllowUserControl (false);
+
+        onFinished?.Invoke ();
+    }
 
     #endregion
 

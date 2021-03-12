@@ -150,13 +150,15 @@ namespace HihiFramework.Core {
 
         #region Parent/Child GameObject
 
+        /// <param name="parentTransform"><b>null</b> means set the children into top-level objects</param>
         /// <param name="isKeepLocalScale">
         /// For UI, you would probably want to keep local scale because Canvas usually not with unit scale<br />
         /// For other case, you may want to keep lossy scale instead
         /// </param>
         public static void InsertChildrenToParent (Transform parentTransform, List<Transform> childrenList, bool isKeepLocalScale, bool isZPosZero = false, int startSiblingIndex = -1, bool isWorldPositionStay = true) {
+
             // startSiblingIndex < 0 means insert at last
-            var isInsertAtLast = startSiblingIndex < 0 || startSiblingIndex >= parentTransform.childCount;
+            var isInsertAtLast = startSiblingIndex < 0;
             var currentSiblingIndex = startSiblingIndex;
 
             for (var i = 0; i < childrenList.Count; i++) {
@@ -245,6 +247,11 @@ namespace HihiFramework.Core {
         }
 
         public static void DestroyChildren (Transform parentTransform) {
+            if (parentTransform == null) {
+                Log.PrintWarning ("parentTransform is null. Cannot destroy children. Please check.", LogTypes.General);
+                return;
+            }
+
             // Notes : Destroy method seems may have some delay, so first move the child out of the parent to ensure no error by the delay
             var childrenTransformToDestroy = new List<Transform> ();
             foreach (Transform childTransform in parentTransform.transform) {

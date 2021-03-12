@@ -19,7 +19,7 @@ public abstract class CharArrowBase : MonoBehaviour {
     private Sprite fireArrowSprite => _fireArrowSprite;
 
     protected bool HasHitAnything { get; private set; } = false;
-    private const float NormalArrowVanishPeriod = 1f;
+    private const float ArrowVanishPeriod = 1f;
 
     protected LifeEnum.HorizontalDirection Direction { get; private set; }
     protected abstract int BaseDP { get; }
@@ -66,21 +66,22 @@ public abstract class CharArrowBase : MonoBehaviour {
         }
     }
 
-    private void Hit (Transform target) {
+    private void Hit (Transform target, bool isVanish = true) {
         HasHitAnything = true;
         FrameworkUtils.InsertChildrenToParent (target, gameObject, false);
         RB.bodyType = RigidbodyType2D.Kinematic;
         RB.velocity = Vector2.zero;
 
-        StartCoroutine (Vanish ());
+        if (isVanish) {
+            StartCoroutine (Vanish ());
+        }
     }
 
     private IEnumerator Vanish () {
         var startTime = Time.time;
 
-        var vanishPeriod = isFireArrow ? GameVariable.FireAttackNoOfTrigger * GameVariable.FireAttackTriggerPeriod : NormalArrowVanishPeriod;
-        while (Time.time - startTime < vanishPeriod) {
-            var progress = (Time.time - startTime) / vanishPeriod;
+        while (Time.time - startTime < ArrowVanishPeriod) {
+            var progress = (Time.time - startTime) / ArrowVanishPeriod;
             ArrowSpriteRenderer.color = new Color (ArrowSpriteRenderer.color.r, ArrowSpriteRenderer.color.g, ArrowSpriteRenderer.color.b, 1 - progress);
             yield return null;
         }
@@ -121,8 +122,19 @@ public abstract class CharArrowBase : MonoBehaviour {
             return;
         }
 
-        Hit (mapSwitch.transform);
-        mapSwitch.Trigger ();
+        if (mapSwitch.GetSwitchType () == MapEnum.SwitchType.Tree) {
+            if (isFireArrow) {
+                Log.Print ("FireArrow hit tree. Trigger BurnTree.", LogTypes.MissionEvent | LogTypes.GameFlow);
+                Hit (mapSwitch.transform, false);
+                mapSwitch.Trigger ();
+            } else {
+                Hit (mapSwitch.transform, true);
+            }
+        } else {
+            Hit (mapSwitch.transform, true);
+            mapSwitch.Trigger ();
+        }
+        
     }
 
     #endregion

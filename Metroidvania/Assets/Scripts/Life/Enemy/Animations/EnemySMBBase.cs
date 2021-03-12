@@ -9,18 +9,25 @@ public class EnemySMBBase : StateMachineBehaviour {
 
         Log.PrintDebug ("Enemy OnStateEnter : " + this, LogTypes.Animation | LogTypes.Enemy);
 
-        if (AnimUtils == null) {
-            AnimUtils = animator.GetComponentInChildren<EnemyAnimUtils> ();
-
-            if (AnimUtils == null) {
-                Log.PrintError ("Cannot find corresponding EnemyAnimUtils script.", LogTypes.Animation | LogTypes.Enemy);
-            }
-        }
+        CheckAndSetAnimUtils (animator);
     }
 
     public override void OnStateExit (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateExit (animator, stateInfo, layerIndex);
 
         Log.PrintDebug ("Enemy OnStateExit : " + this, LogTypes.Animation | LogTypes.Enemy);
+
+        // Remarks : Also check and set AnimUtils at OnStateExit because sometimes it will only trigger OnStateExit but not OnStateEnter
+        CheckAndSetAnimUtils (animator);
+    }
+
+    private void CheckAndSetAnimUtils (Animator animator) {
+        if (AnimUtils == null) {
+            AnimUtils = animator.GetComponent<EnemyAnimUtils> ();
+
+            if (AnimUtils == null) {
+                Log.PrintError ("Cannot find corresponding EnemyAnimUtils script.", LogTypes.Animation | LogTypes.Enemy);
+            }
+        }
     }
 }

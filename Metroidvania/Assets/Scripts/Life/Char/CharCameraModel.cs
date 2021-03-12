@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using HihiFramework.Core;
 using UnityEngine;
 
@@ -7,11 +8,13 @@ public class CharCameraModel : MonoBehaviour
     [SerializeField] private CharModel charModel;
     [SerializeField] private CharCameraParams camParams;
     [SerializeField] private CharController controller;
+    [SerializeField] private GameObject caveCollapsePSBase;
 
     private Camera cam;
     private AudioListener audioListener;
     private Transform camTransform;
 
+    private Transform originalParentTransform;
     private Vector3 originalLocalPos;
 
     private Vector2 generalMaxLocalPos;
@@ -25,10 +28,13 @@ public class CharCameraModel : MonoBehaviour
     private CameraInputSubEvent currentSubEvent = null;
     private Action missionEventInputFinishedAction = null;
 
+    private bool isDetachedFromChar = false;
+
     private void Awake () {
         cam = GetComponent<Camera> ();
         audioListener = GetComponent<AudioListener> ();
         camTransform = cam.transform;
+        originalParentTransform = camTransform.parent;
         originalLocalPos = camTransform.localPosition;
 
         generalMaxLocalPos = new Vector2 (originalLocalPos.x + camParams.CamMaxLoopRightMagnitude, originalLocalPos.y + camParams.CamMaxLoopUpMagnitude);
@@ -45,6 +51,14 @@ public class CharCameraModel : MonoBehaviour
     }
 
     private void LateUpdate () {
+        if (isDetachedFromChar) {
+            return;
+        }
+
+        if (!GameSceneManager.IsGameStarted) {
+            return;
+        }
+
         if (currentLookDirections == CharEnum.LookDirections.None && camTransform.localPosition == originalLocalPos) {
             // Skip below update
         } else {
@@ -150,6 +164,38 @@ public class CharCameraModel : MonoBehaviour
         currentSubEvent = subEvent;
         missionEventInputFinishedAction = onInputFinished;
     }
+
+    #region Particle system
+
+    public void SetCaveCollapseEffect (bool isActive) {
+        caveCollapsePSBase.SetActive (isActive);
+    }
+
+    #endregion
+
+    #region attach / detach
+
+    public void DetachFromCharAndSetPos (Vector2 pos) {
+        FrameworkUtils.InsertChildrenToParent (null, camTransform, false);
+        camTransform.position = new Vector3 (pos.x, pos.y, camTransform.position.z);
+        isDetachedFromChar = true;
+    }
+
+    public void AttachBackToChar () {
+        FrameworkUtils.InsertChildrenToParent (originalParentTransform, camTransform, false);
+        camTransform.localPosition = originalLocalPos;
+
+        // Prevent the case that actually not yet set the position and thus change position by LateUpdate ()
+        StartCoroutine (DelaySetAttachedToChar ());
+    }
+
+    private IEnumerator DelaySetAttachedToChar () {
+        yield return null;
+
+        isDetachedFromChar = false;
+    }
+
+    #endregion
 
     #region Events
 

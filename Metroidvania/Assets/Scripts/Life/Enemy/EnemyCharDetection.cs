@@ -13,12 +13,20 @@ public class EnemyCharDetection : MonoBehaviour {
     }
     
     public void OnTriggerEnter2D (Collider2D collision) {
+        if (!GameSceneManager.IsGameStarted) {
+            return;
+        }
+
         if (collision.tag == GameVariable.PlayerTag) {
             CharDetected?.Invoke ();
         }
     }
 
     public void OnTriggerExit2D (Collider2D collision) {
+        if (!GameSceneManager.IsGameStarted) {
+            return;
+        }
+
         if (collision.tag == GameVariable.PlayerTag) {
             CharLost?.Invoke ();
         }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using HihiFramework.Core;
 using HihiFramework.UI;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MainMenuSceneManager : MonoBehaviour {
     [SerializeField] private MainMenuSceneUIManager uiManager;
@@ -84,14 +83,8 @@ public class MainMenuSceneManager : MonoBehaviour {
 
         var entry = (Mission.Entry)info;
         var mission = MissionManager.GetMissionByEntry (entry.Id);
-        UserManager.SelectedMissionId = mission.Id;
-        UserManager.SelectedEntryId = entry.Id;
 
-        Action onFadeInFinished = () => {
-            SceneManager.LoadScene (GameVariable.GameSceneName);
-        };
-
-        GameUtils.ScreenFadeIn (onFadeInFinished);
+        GameUtils.LoadGameScene (mission.Id, entry.Id);
     }
 
     private void OpenNotesPanelBtnClickedHandler (HIHIButton sender) {

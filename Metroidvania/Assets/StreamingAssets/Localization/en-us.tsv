@@ -162,14 +162,16 @@ Ending1_Dialog0_1	......
 Ending1_Dialog0_2	Ar yes. You don't remember me.
 Ending1_Dialog1_0	Do I know you?
 Ending1_Dialog2_0	Sure. We both live here.
-Ending1_Dialog2_1	But then one day, you tell me you want to go out and see the world, although we both know the legend about this cave.
-Ending1_Dialog2_2	Whoever try to go out of this cave will lose everything, including memory.
-Ending1_Dialog2_3	After losing the memory, of course you will go back to the cave that just aside you...
-Ending1_Dialog3_0	So I have to live here forever without my past?
-Ending1_Dialog4_0	Don't worry. Your memory will gradually come back.
-Ending1_Dialog4_1	And if you try to leave again, I don't know why but things become better. You don't lose anything again, except the mind of going out.
-Ending1_Dialog4_2	After all, yes you're right. You have to live here forever.
-Ending1_Dialog5_0	......
+Ending1_Dialog2_1	But then one day, you tell me you want to go out and see the world...
+Ending1_Dialog3_0	...although we all know the legend about this cave.
+Ending1_Dialog3_1	Whoever try to go out of this cave will lose everything, including memory.
+Ending1_Dialog3_2	After losing the memory, of course you will go back to the cave that just aside you...
+Ending1_Dialog4_0	So I have to live here forever without my past?
+Ending1_Dialog5_0	Don't worry. Your memory will gradually come back.
+Ending1_Dialog5_1	Also, if you try to leave again, you won't lose anything again...
+Ending1_Dialog5_2	...except the mind of going out.
+Ending1_Dialog5_3	After all, yes you're right. You have to live here forever.
+Ending1_Dialog6_0	......
 
 Ending2_Dialog0_0	Congratulations.
 Ending2_Dialog1_0	The cave is collapsed...
@@ -177,7 +179,7 @@ Ending2_Dialog2_1	I will not forget you.
 
 Ending2_NoBoss_Dialog0_0	Oh, the cave is collapsed.
 Ending2_NoBoss_Dialog0_1	Turn out I still do not remember anything...
-Ending2_NoBoss_Dialog0_2	Anyway, let's see how it goes.
+Ending2_NoBoss_Dialog1_0	Anyway, let's see how it goes.
 
 Ending3_Dialog0_0	Why are you here!? You should have gone out of here.
 Ending3_Dialog1_0	Why do you know that?
@@ -186,13 +188,15 @@ Ending3_Dialog2_0	No, but I have seen those notes.
 Ending3_Dialog2_1	Actually, I have done what you have done a long time ago.
 Ending3_Dialog2_2	I tried so hard to find the way out and I got the same answer of yours.
 Ending3_Dialog2_3	The difference is that I have seen the complete Adventurer's notes.
-Ending3_Dialog2_4	The last note mentions that the adventurer has done some research about the tree and found that the tree gave support to the whole cave.
-Ending3_Dialog2_5	If the tree is gone, the cave will definitely collapse.
-Ending3_Dialog2_6	So the adventurer finially gave up. And so do I.
-Ending3_Dialog2_7	But after you told me you want to leave, I know that note will hinder you. So I erased those contents.
+Ending3_Dialog2_4	The last note mentioned that the adventurer has done some research about the tree.
+Ending3_Dialog2_5	He found that the tree actually gave support to the whole cave.
+Ending3_Dialog2_6	If the tree is gone, the cave will definitely collapse.
+Ending3_Dialog2_7	So the adventurer finially gave up. And so do I.
+Ending3_Dialog2_8	But after you told me you want to leave, I know that note will hinder you. So I erased those contents.
 Ending3_Dialog3_0	......
 Ending3_Dialog3_1	You are so stupid.
-Ending3_Dialog4_0	So do you. I don't expect that you are so stupid that coming to find me even you are watching the cave collapsing.
+Ending3_Dialog4_0	So do you.
+Ending3_Dialog4_1	I don't expect that you are so stupid that coming to find me even you are watching the cave collapsing.
 Ending3_Dialog5_0	I can't leave you here. Let's go out together.
 Ending3_Dialog6_0	It's too late. We both can't leave now.
 Ending3_Dialog7_0	Anyway, thank you for finding me.

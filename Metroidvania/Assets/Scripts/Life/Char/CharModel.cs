@@ -40,14 +40,16 @@ public class CharModel : LifeBase, IMapTarget {
     [SerializeField] private Transform targetRefPoint;
     [SerializeField] private Transform collectCollectableRefPoint;
 
-    // event
+    // static event
+    public static event Action<CharEnum.CharType> Died;
+
+    // instance event
     public event Action Resetting;
     public event Action<CharEnum.BodyParts> ObtainedBodyPartsUpdated;
     public event Action StatusesChanged;
     public event Action FacingDirectionChanged;
     public event Action MovingDirectionChanged;
     public event Action HorizontalSpeedChanged;
-    public event Action<CharEnum.CharType> Died;
 
     private readonly Dictionary<CharEnum.InputSituation, CharEnum.Command> commandSettings = new Dictionary<CharEnum.InputSituation, CharEnum.Command> ();
 
@@ -66,7 +68,15 @@ public class CharModel : LifeBase, IMapTarget {
         }
     }
 
-    protected override int InvincibleLayer => GameVariable.PlayerInvincibleLayer;
+    protected override int InvincibleLayer {
+        get {
+            if (CharType == CharEnum.CharType.Player) {
+                return GameVariable.PlayerInvincibleLayer;
+            } else {
+                return GameVariable.EnemyInvincibleLayer;
+            }
+        }
+    }
 
     private int _totalHP = -1;
     protected override int TotalHP {
@@ -263,19 +273,33 @@ public class CharModel : LifeBase, IMapTarget {
     }
 
     public void EnterGameScene (MapManager mapManager, MapData.Boundary boundary) {
-        gameObject.SetActive (true);
+        SetActive (true);
         this.mapManager = mapManager;
         cameraModel?.SetMissionBoundaries (boundary.lowerBound, boundary.upperBound);
         cameraModel?.SetAudioListener (true);
+
+        if (CharType == CharEnum.CharType.Player && UserManager.SelectedMissionId == MissionManager.EndingMissionId) {
+            cameraModel?.SetCaveCollapseEffect (true);
+        } else {
+            cameraModel?.SetCaveCollapseEffect (false);
+        }
     }
 
     public void LeaveGameScene () {
         this.mapManager = null;
         cameraModel?.UnsetMissionBoundaries ();
         cameraModel?.SetAudioListener (false);
-        gameObject.SetActive (false);
+        SetActive (false);
+
+        if (CharType == CharEnum.CharType.Player) {
+            cameraModel?.SetCaveCollapseEffect (false);
+        }
 
         missionEventInputFinishedAction = null;
+    }
+
+    public void SetActive (bool isActive) {
+        gameObject.SetActive (isActive);
     }
 
     /// <summary>
@@ -299,6 +323,11 @@ public class CharModel : LifeBase, IMapTarget {
         ReloadObtainedBodyPart ();
         ResetFlags ();
         SetAllowMove (false);
+
+        if (CharType == CharEnum.CharType.Boss) {
+            // Workaround so that player attack (e.g. arrow) cannot touch Boss
+            CollisionScript.SetLayer (GameVariable.PlayerInvincibleLayer);
+        }
 
         return hasInitBefore;
     }
@@ -386,6 +415,7 @@ public class CharModel : LifeBase, IMapTarget {
 
         if (CharType == CharEnum.CharType.Boss) {
             bossLastDecideActionTime = Time.time;
+            CollisionScript.SetLayer (false);
         }
     }
 
@@ -1893,6 +1923,14 @@ public class CharModel : LifeBase, IMapTarget {
 
         controller?.SetCharActionInputActive (false);
         cameraModel?.SetCameraInputMissionEvent (subEvent, onCameraInputFinished);
+    }
+
+    public void DetachCameraAndSetCameraPos (Vector2 pos) {
+        cameraModel?.DetachFromCharAndSetPos (pos);
+    }
+
+    public void AttachBackCamera () {
+        cameraModel?.AttachBackToChar ();
     }
 
     #endregion

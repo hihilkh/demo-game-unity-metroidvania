@@ -42,12 +42,16 @@ public class GameSceneUIManager : MonoBehaviour {
         UIEventManager.AddEventHandler (BtnOnClickType.Game_ClickOnScreen, ClickOnScreenBtnClickedHandler);
         MissionEventManager.MissionEventStarted += MissionEventStartedHandler;
         MissionEventManager.MissionEventFinished += MissionEventFinishedHandler;
+        MissionEventManager.SpecialSceneEventStarted += SpecialSceneEventStartedHandler;
+        MissionEventManager.SpecialSceneEventFinished += SpecialSceneEventFinishedHandler;
     }
 
     private void OnDestroy () {
         UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ClickOnScreen, ClickOnScreenBtnClickedHandler);
         MissionEventManager.MissionEventStarted -= MissionEventStartedHandler;
         MissionEventManager.MissionEventFinished -= MissionEventFinishedHandler;
+        MissionEventManager.SpecialSceneEventStarted -= SpecialSceneEventStartedHandler;
+        MissionEventManager.SpecialSceneEventFinished -= SpecialSceneEventFinishedHandler;
     }
 
     public void ShowUI () {
@@ -282,6 +286,14 @@ public class GameSceneUIManager : MonoBehaviour {
 
     private void MissionEventFinishedHandler () {
         SetUIInteractable (isUIInteractableBeforeMissionEvent);
+    }
+
+    private void SpecialSceneEventStartedHandler () {
+        HideUI ();
+    }
+
+    private void SpecialSceneEventFinishedHandler () {
+        ShowUI ();
     }
 
     #endregion

@@ -78,7 +78,10 @@ public class GameSceneManager : MonoBehaviour {
 
     private void ResetGame (bool isControlledByLandingScene = false) {
         Action onFadeOutFinished = () => {
-            if (UserManager.CheckIsFirstMissionCleared ()) {
+            if (UserManager.IsJustEnteredEndingMission) {
+                UserManager.IsJustEnteredEndingMission = false;
+                StartGame (true);
+            } else if (UserManager.CheckIsFirstMissionCleared ()) {
                 commandPanel.Show ();
 
                 if (!UserManager.CheckIsDoneMissionEvent (MissionEventEnum.EventType.FirstTimeCommandPanel)) {
@@ -90,11 +93,16 @@ public class GameSceneManager : MonoBehaviour {
         };
 
         Action onFadeInFinished = () => {
+            IsGameStarted = false;
             Time.timeScale = 1;
 
             // Remarks : To ensure everything is ready so that CharModel has no strange behaviour
             if (!isControlledByLandingScene) {
-                StartCoroutine (DelayResetCharModel (IsGameInitialized));
+                Action onResetCharModelFinished = () => {
+                    GameUtils.ScreenFadeOut (onFadeOutFinished);
+                };
+
+                StartCoroutine (DelayResetCharModel (IsGameInitialized, onResetCharModelFinished));
             }
 
             if (IsGameInitialized) {
@@ -105,12 +113,6 @@ public class GameSceneManager : MonoBehaviour {
                 IsGameInitialized = true;
 
                 mapManager.GenerateMap (selectedMissionId, mapData);
-            }
-
-            IsGameStarted = false;
-
-            if (!isControlledByLandingScene) {
-                GameUtils.ScreenFadeOut (onFadeOutFinished);
             }
         };
 
@@ -124,7 +126,7 @@ public class GameSceneManager : MonoBehaviour {
         }
     }
 
-    private IEnumerator DelayResetCharModel (bool isGameInitialized) {
+    private IEnumerator DelayResetCharModel (bool isGameInitialized, Action onFinished = null) {
         yield return null;
 
         if (!isGameInitialized) {
@@ -132,6 +134,8 @@ public class GameSceneManager : MonoBehaviour {
         }
 
         charModel.Reset (selectedEntryData);
+
+        onFinished?.Invoke ();
     }
 
     public void StartGameFromLanding () {
@@ -180,11 +184,15 @@ public class GameSceneManager : MonoBehaviour {
         }
     }
 
-    private void LeaveGame () {
+    private void LeaveGame (bool isAfterEnding = false) {
         Log.Print ("Leave Game", LogTypes.GameFlow);
 
         Action onFadeInFinished = () => {
-            SceneManager.LoadScene (GameVariable.MainMenuSceneName);
+            if (isAfterEnding) {
+                SceneManager.LoadScene (GameVariable.LandingSceneName);
+            } else {
+                SceneManager.LoadScene (GameVariable.MainMenuSceneName);
+            }
         };
 
         GameUtils.ScreenFadeIn (onFadeInFinished);
@@ -200,10 +208,12 @@ public class GameSceneManager : MonoBehaviour {
 
             MapCollectableObject.Collected += CollectedCollectableHandler;
             MapExit.ExitReached += ExitReachedHandler;
+            MapExit.SpecialSceneExitReached += SpecialSceneExitReachedHandler;
             MissionEventTrigger.MissionEventTriggered += MissionEventTriggeredHandler;
+            MapSwitch.Switched += MapSwitchSwitchedHandler;
 
             commandPanel.PanelHid += CommandPanelHidHandler;
-            charModel.Died += CharDiedHandler;
+            CharModel.Died += CharDiedHandler;
 
             UIEventManager.AddEventHandler (BtnOnClickType.Game_Pause, PauseBtnClickedHandler);
             UIEventManager.AddEventHandler (BtnOnClickType.Game_Restart, RestartBtnClickedHandler);
@@ -215,10 +225,12 @@ public class GameSceneManager : MonoBehaviour {
         if (isAddedEventHandlers) {
             MapCollectableObject.Collected -= CollectedCollectableHandler;
             MapExit.ExitReached -= ExitReachedHandler;
+            MapExit.SpecialSceneExitReached -= SpecialSceneExitReachedHandler;
             MissionEventTrigger.MissionEventTriggered -= MissionEventTriggeredHandler;
+            MapSwitch.Switched -= MapSwitchSwitchedHandler;
 
             commandPanel.PanelHid -= CommandPanelHidHandler;
-            charModel.Died -= CharDiedHandler;
+            CharModel.Died -= CharDiedHandler;
 
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Pause, PauseBtnClickedHandler);
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Restart, RestartBtnClickedHandler);
@@ -331,6 +343,31 @@ public class GameSceneManager : MonoBehaviour {
         }
     }
 
+    private void SpecialSceneExitReachedHandler (MissionEventEnum.SpecialSceneType specialSceneType) {
+        Log.Print ("Character reached special scene exit : " + specialSceneType, LogTypes.GameFlow | LogTypes.Char);
+
+        if (specialSceneType == MissionEventEnum.SpecialSceneType.Ending_3) {
+            if (!UserManager.GetIsCollectedCollectable (Collectable.Type.Ending_1)) {
+                // Ending_3 must be after Ending_1
+                return;
+            }
+        }
+
+        Action onFinished = () => {
+            switch (specialSceneType) {
+                case MissionEventEnum.SpecialSceneType.Ending_2:
+                    UserManager.CollectCollectable (Collectable.Type.Ending_2);
+                    break;
+                case MissionEventEnum.SpecialSceneType.Ending_3:
+                    UserManager.CollectCollectable (Collectable.Type.Ending_3);
+                    break;
+            }
+            
+            LeaveGame (true);
+        };
+        missionEventManager.StartSpecialSceneEvent (specialSceneType, onFinished);
+    }
+
     private void MissionEventTriggeredHandler (MissionEventEnum.EventType eventType) {
         Log.Print ("Character triggered mission event : " + eventType.ToString (), LogTypes.GameFlow | LogTypes.Char | LogTypes.MissionEvent);
 
@@ -345,6 +382,17 @@ public class GameSceneManager : MonoBehaviour {
             }
         };
         missionEventManager.StartEvent (eventType, onFinished);
+    }
+
+    private void MapSwitchSwitchedHandler (MapSwitch mapSwitch, bool isSwitchOn) {
+        if (mapSwitch.GetSwitchType () == MapEnum.SwitchType.Tree) {
+            Action onFinished = () => {
+                UserManager.IsJustEnteredEndingMission = true;
+                GameUtils.LoadGameScene (MissionManager.EndingMissionId, MissionManager.EndingEntryId);
+            };
+
+            missionEventManager.StartSpecialSceneEvent (MissionEventEnum.SpecialSceneType.BurnTree, onFinished);
+        }
     }
 
     private void CommandPanelHidHandler () {
@@ -363,7 +411,16 @@ public class GameSceneManager : MonoBehaviour {
                 ResetGame ();
                 break;
             case CharEnum.CharType.Boss:
-                // TODO
+                if (UserManager.GetIsCollectedCollectable (Collectable.Type.Ending_1)) {
+                    UserManager.ClearMission (selectedMissionId);
+                    LeaveGame ();
+                } else {
+                    Action onFinished = () => {
+                        UserManager.CollectCollectable (Collectable.Type.Ending_1);
+                        LeaveGame (true);
+                    };
+                    missionEventManager.StartSpecialSceneEvent (MissionEventEnum.SpecialSceneType.Ending_1, onFinished);
+                }
                 break;
         }
 

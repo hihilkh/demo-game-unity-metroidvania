@@ -23,6 +23,16 @@
         BackToCaveEntry = 202,
     }
 
+    // Remarks: Never change the SpecialSceneType enum int value. It is used in PlayerPrefs and map json data.
+    public enum SpecialSceneType {
+        BurnTree = 0,   // The default value 0 is used for any fallback cases
+        Ending_1 = 1,
+        Ending_2 = 2,
+        Ending_2_Boss = 3,
+        Ending_2_NoBoss = 4,
+        Ending_3 = 5,
+    }
+
     public enum SubEventType {
         Dialog,
         Instructrion,
@@ -31,6 +41,8 @@
         CommandInput,
         MapSwitch,
         Wait,
+        ChangeSubSpecialScene,
+        ForceCharWalk,
     }
 
     public enum Character {
@@ -43,6 +55,7 @@
         Normal,
         Confused,
         Shocked,
+        Smiling,
     }
 
 

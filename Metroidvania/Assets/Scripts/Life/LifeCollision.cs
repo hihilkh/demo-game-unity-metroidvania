@@ -48,6 +48,13 @@ public class LifeCollision : MonoBehaviour {
         gameObject.layer = isInvincible ? invincibleLayer : originalLayer;
     }
 
+    /// <summary>
+    /// Use it with care. Normally you won't need to specifically assign the layer.
+    /// </summary>
+    public void SetLayer (int layer) {
+        gameObject.layer = layer;
+    }
+
     #endregion
 
     #region Getter / Checking
@@ -130,6 +137,10 @@ public class LifeCollision : MonoBehaviour {
                     collideType = WallColliderType;
                 } else if (collisionNormal.y < 0 && -collisionNormal.y < absX) {
                     collideType = WallColliderType;
+                }
+            } else if (collideType == GameVariable.SlippyWallTag) {
+                if (collisionNormal.y > 0 && collisionNormal.y > absX) {
+                    collideType = GameVariable.GroundTag;
                 }
             }
 

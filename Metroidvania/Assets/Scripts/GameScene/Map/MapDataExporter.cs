@@ -17,13 +17,15 @@ public class MapDataExporter : MonoBehaviour {
     [SerializeField] private Tilemap slippyWallTileMap;
     [SerializeField] private Tilemap deathTileMap;
     [SerializeField] private Tilemap bgTileMap;
+    [SerializeField] private Tilemap onTopEffectTileMap;
 
     [Header ("Image Background")]
     [SerializeField] private Transform imageBGBase;
 
-    [Header ("Mission Related")]
+    [Header ("Mission")]
     [SerializeField] private int missionId;
     [SerializeField] private RectTransform exportRange;
+    [SerializeField] private RectTransform missionBoundary;
     [SerializeField] private Transform mapObjectsBaseTransform;
 
     private Dictionary<MapEnum.TileMapType, Tilemap> TileMapDict => new Dictionary<MapEnum.TileMapType, Tilemap> {
@@ -31,6 +33,7 @@ public class MapDataExporter : MonoBehaviour {
         { MapEnum.TileMapType.SlippyWall, slippyWallTileMap},
         { MapEnum.TileMapType.Death, deathTileMap },
         { MapEnum.TileMapType.Background, bgTileMap },
+        { MapEnum.TileMapType.OnTopEffect, onTopEffectTileMap },
     };
 
     private const string ExportFileNameFormat = "{0}.{1}";  // fileName.timestamp
@@ -42,6 +45,9 @@ public class MapDataExporter : MonoBehaviour {
     private const string HiddenPathsBaseTransformName = "HiddenPaths";
     private const string ExitsBaseTransformName = "Exits";
     private const string MissionEventsBaseTransformName = "MissionEvents";
+    private const string SpecialScenesBaseTransformName = "SpecialScenes";
+    private const string IgnoreTilesBaseTransformName = "IgnoreTiles";
+    private const string EndingExitsBaseTransformName = "EndingExits";
 
     private void OnGUI () {
         if (GUI.Button (new Rect (10, 10, 150, 50), "Check Map Design")) {
@@ -49,7 +55,11 @@ public class MapDataExporter : MonoBehaviour {
         }
 
         if (GUI.Button (new Rect (180, 10, 150, 50), "Export MapData")) {
-            ExportMapData ();
+            ExportMapData (false);
+        }
+
+        if (GUI.Button (new Rect (350, 10, 150, 50), "Export Ending Mission")) {
+            ExportMapData (true);
         }
     }
 
@@ -60,8 +70,8 @@ public class MapDataExporter : MonoBehaviour {
     private void CheckMapDesign () {
         Log.PrintWarning ("Start Check Map Design", LogTypes.MapData);
 
-        var boundary = ExportBoundary ();
-        var iterator = GetMapDataTileExportIterator (boundary);
+        var exportRange = ExportBoundary (true);
+        var iterator = GetMapDataTileExportIterator (exportRange);
 
         foreach (var tileData in iterator) {
             if (tileData != null) {
@@ -96,23 +106,28 @@ public class MapDataExporter : MonoBehaviour {
         return false;
     }
 
-    private void ExportMapData () {
+    private void ExportMapData (bool isEndingMission) {
         Log.PrintWarning ("Start export MapData", LogTypes.MapData);
 
         var mapData = new MapData ();
-        var boundary = ExportBoundary ();
-        mapData.boundary = boundary;
-        mapData.tiles = ExportTileDataList (boundary);
+
+        mapData.boundary = ExportBoundary (false);
+        mapData.tiles = ExportTileDataList (ExportBoundary (true), isEndingMission);
         mapData.entries = ExportEntryDataList ();
         mapData.enemies = ExportEnemyDataList ();
-        mapData.collectables = ExportCollectableDataList (mapData.enemies);
-        mapData.switches = ExportSwitchDataList (ref mapData);  // Must be after exporting tiles and enemies
-        mapData.exits = ExportExitDataList ();
-        mapData.events = ExportMissionEventDataList ();
+        if (!isEndingMission) {
+            mapData.collectables = ExportCollectableDataList (mapData.enemies);
+            mapData.switches = ExportSwitchDataList (ref mapData);  // Must be after exporting tiles and enemies
+            mapData.events = ExportMissionEventDataList ();
+        }
+        
+        mapData.exits = ExportExitDataList (isEndingMission);
         mapData.backgrounds = ExportImageBGDataList ();
+        mapData.specialScenes = ExportSpecialSceneDataList ();
 
         var json = JsonUtility.ToJson (mapData);
-        var fileName = FrameworkUtils.StringReplace (ExportFileNameFormat, AssetDetails.GetMapDataJSONFileName (missionId), FrameworkUtils.ConvertDateTimeToTimestampMS (System.DateTime.Now).ToString ());
+        var exportMissionId = isEndingMission ? MissionManager.EndingMissionId : missionId;
+        var fileName = FrameworkUtils.StringReplace (ExportFileNameFormat, AssetDetails.GetMapDataJSONFileName (exportMissionId), FrameworkUtils.ConvertDateTimeToTimestampMS (System.DateTime.Now).ToString ());
         var filePath = Path.Combine (exportRootFolderPath, fileName);
 
         var isSuccess = FrameworkUtils.CreateFile (filePath, false, json);
@@ -123,31 +138,70 @@ public class MapDataExporter : MonoBehaviour {
         }
     }
 
-    private MapData.Boundary ExportBoundary () {
+    private MapData.Boundary ExportBoundary (bool isExportRange) {
         Log.PrintWarning ("Start export Boundary", LogTypes.MapData);
 
-        var lowerBound = new Vector2Int (Mathf.FloorToInt (exportRange.position.x), Mathf.FloorToInt (exportRange.position.y));
-        var upperBound = new Vector2Int (Mathf.CeilToInt (exportRange.position.x + exportRange.sizeDelta.x), Mathf.CeilToInt (exportRange.position.y + exportRange.sizeDelta.y));
+        var targetRange = isExportRange ? exportRange : missionBoundary;
+        var lowerBound = new Vector2Int (Mathf.FloorToInt (targetRange.position.x), Mathf.FloorToInt (targetRange.position.y));
+        var upperBound = new Vector2Int (Mathf.CeilToInt (targetRange.position.x + targetRange.sizeDelta.x), Mathf.CeilToInt (targetRange.position.y + targetRange.sizeDelta.y));
         var boundary = new MapData.Boundary (lowerBound, upperBound);
 
         Log.PrintWarning ("Export Boundary success", LogTypes.MapData);
         return boundary;
     }
 
-    private List<MapData.TileData> ExportTileDataList (MapData.Boundary boundary) {
+    private List<MapData.TileData> ExportTileDataList (MapData.Boundary boundary, bool isEndingMission) {
         Log.PrintWarning ("Start export TileData", LogTypes.MapData);
+
+        var ignoreTilePosList = new List<Vector2Int> ();
+        if (isEndingMission) {
+            ignoreTilePosList = ExportIgnoreTilePosList ();
+        }
 
         var iterator = GetMapDataTileExportIterator (boundary);
         var tileDataList = new List<MapData.TileData> ();
 
         foreach (var tileData in iterator) {
             if (tileData != null) {
-                tileDataList.Add (tileData);
+                if (!ignoreTilePosList.Contains (tileData.pos)) {
+                    tileDataList.Add (tileData);
+                }
             }
         }
 
         Log.PrintWarning ("Export TileData success", LogTypes.MapData);
         return tileDataList;
+    }
+
+    private List<Vector2Int> ExportIgnoreTilePosList () {
+        Log.PrintWarning ("Start export IgnoreTilePosList", LogTypes.MapData);
+
+        var result = new List<Vector2Int> ();
+        var baseTransform = mapObjectsBaseTransform.Find (IgnoreTilesBaseTransformName);
+        if (baseTransform == null) {
+            throw new Exception ("Export IgnoreTilePosList failed. Cannot find the base transform.");
+        }
+
+        foreach (Transform child in baseTransform) {
+            var spriteRenderer = child.GetComponent<SpriteRenderer> ();
+            if (spriteRenderer == null) {
+                throw new Exception ("Export IgnoreTilePosList failed. Cannot find spriteRenderer for : " + child.name);
+            }
+
+            // Remarks :
+            // - Assume the setting is correct and the calculated result is always an integer.
+            // - Must use local position in order to get the correct tile position instead of world position
+            var hiddenPathMinPosX = (int)(child.localPosition.x - ((spriteRenderer.size.x - 1) / 2));
+            var hiddenPathMinPosY = (int)(child.localPosition.y - ((spriteRenderer.size.y - 1) / 2));
+
+            for (int x = 0; x < spriteRenderer.size.x; x++) {
+                for (int y = 0; y < spriteRenderer.size.y; y++) {
+                    result.Add (new Vector2Int (hiddenPathMinPosX + x, hiddenPathMinPosY + y));
+                }
+            }
+        }
+
+        return result;
     }
 
     private List<MapData.EntryData> ExportEntryDataList () {
@@ -171,7 +225,7 @@ public class MapDataExporter : MonoBehaviour {
                 throw new Exception ("Export EntryData failed. Invalid HorizontalDirection : " + array[1]);
             }
 
-            result.Add (new MapData.EntryData (child.position.x, child.position.y, direction, entryId));
+            result.Add (new MapData.EntryData (child.position, direction, entryId));
         }
 
         Log.PrintWarning ("Export EntryData success", LogTypes.MapData);
@@ -203,7 +257,7 @@ public class MapDataExporter : MonoBehaviour {
                 throw new Exception ("Export EnemyData failed. Invalid HorizontalDirection : " + array[2]);
             }
 
-            result.Add (new MapData.EnemyData (child.position.x, child.position.y, direction, enemyId, enemyType));
+            result.Add (new MapData.EnemyData (child.position, direction, enemyId, enemyType));
         }
 
         Log.PrintWarning ("Export EnemyData success", LogTypes.MapData);
@@ -231,7 +285,7 @@ public class MapDataExporter : MonoBehaviour {
             }
 
             if (string.IsNullOrEmpty (array[1])) {
-                result.Add (new MapData.CollectableData (child.position.x, child.position.y, collectableType));
+                result.Add (new MapData.CollectableData (child.position, collectableType));
             } else {
                 var fromEnemyId = int.Parse (array[1]);
 
@@ -239,7 +293,7 @@ public class MapDataExporter : MonoBehaviour {
                     throw new Exception ("Export CollectableData failed. No matched enemy to fromEnemyId : " + fromEnemyId);
                 }
 
-                result.Add (new MapData.CollectableData (child.position.x, child.position.y, collectableType, fromEnemyId));
+                result.Add (new MapData.CollectableData (child.position, collectableType, fromEnemyId));
             }
         }
 
@@ -305,13 +359,13 @@ public class MapDataExporter : MonoBehaviour {
 
                     // Remarks : Must use local position in order to get the correct tile position instead of world position
                     var switchBasePos = new Vector2Int ((int)switchTransform.localPosition.x, (int)switchTransform.localPosition.y);
-                    switchData = new MapData.SwitchData (switchId, colliderPosX, colliderPosY, collider.size.x, collider.size.y, switchType, switchBasePos);
+                    switchData = new MapData.SwitchData (switchId, new Vector2 (colliderPosX, colliderPosY), collider.size, switchType, switchBasePos);
                     break;
             }
 
             foreach (Transform trans in hiddenPathsBaseTransform) {
                 var hiddenPathNameArray = trans.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
-                if (hiddenPathNameArray.Length < 3) {
+                if (hiddenPathNameArray.Length < 4) {
                     throw new Exception ("Export SwitchData failed. Invalid transform name : " + switchTransform.name);
                 }
 
@@ -345,7 +399,19 @@ public class MapDataExporter : MonoBehaviour {
                     for (int y = 0; y < spriteRenderer.size.y; y++) {
                         var pos = new Vector2Int (hiddenPathMinPosX + x, hiddenPathMinPosY + y);
 
-                        var tileData = mapData.GetTileData (pos);
+                        MapData.TileData tileData;
+                        if (string.IsNullOrEmpty (hiddenPathNameArray[3])) {
+                            tileData = mapData.GetTileData (pos);
+                        } else {
+                            MapEnum.TileMapType tileMapType;
+                            if (!FrameworkUtils.TryParseToEnum (hiddenPathNameArray[3], out tileMapType)) {
+                                throw new Exception ("Export SwitchData failed. Invalid target tileMapType for HiddenPath : " + hiddenPathNameArray[3]);
+                            }
+
+                            tileData = mapData.GetTileData (pos, tileMapType);
+                        }
+
+
                         if (tileData != null) {
                             hiddenPathTiles.Add (tileData);
 
@@ -375,11 +441,11 @@ public class MapDataExporter : MonoBehaviour {
         return result;
     }
 
-    private List<MapData.ExitData> ExportExitDataList () {
+    private List<MapData.ExitData> ExportExitDataList (bool isEndingMission) {
         Log.PrintWarning ("Start export ExitData", LogTypes.MapData);
 
         var result = new List<MapData.ExitData> ();
-        var baseTransform = mapObjectsBaseTransform.Find (ExitsBaseTransformName);
+        var baseTransform = mapObjectsBaseTransform.Find (isEndingMission ? EndingExitsBaseTransformName : ExitsBaseTransformName);
         if (baseTransform == null) {
             throw new Exception ("Export ExitData failed. Cannot find the base transform.");
         }
@@ -390,14 +456,21 @@ public class MapDataExporter : MonoBehaviour {
                 throw new Exception ("Export ExitData failed. Invalid transform name : " + child.name);
             }
 
-            var toEntryId = int.Parse (array[0]);
-
             var collider = child.GetComponent<BoxCollider2D> ();
             if (collider == null) {
                 throw new Exception ("Export ExitData failed. Cannot find BoxCollider2D : " + child.name);
             }
 
-            result.Add (new MapData.ExitData (child.position.x, child.position.y, collider.size.x, collider.size.y, toEntryId));
+            if (isEndingMission) {
+                MissionEventEnum.SpecialSceneType specialSceneExitType;
+                if (!FrameworkUtils.TryParseToEnum (array[0], out specialSceneExitType)) {
+                    throw new Exception ("Export ExitData failed. Invalid MissionEventEnum.SpecialSceneType : " + array[0]);
+                }
+                result.Add (new MapData.ExitData (child.position, collider.size, specialSceneExitType));
+            } else {
+                var toEntryId = int.Parse (array[0]);
+                result.Add (new MapData.ExitData (child.position, collider.size, toEntryId));
+            }
         }
 
         Log.PrintWarning ("Export ExitData success", LogTypes.MapData);
@@ -429,7 +502,7 @@ public class MapDataExporter : MonoBehaviour {
                 throw new Exception ("Export MissionEventData failed. Cannot find BoxCollider2D : " + child.name);
             }
 
-            result.Add (new MapData.MissionEventData (child.position.x, child.position.y, collider.size.x, collider.size.y, eventType));
+            result.Add (new MapData.MissionEventData (child.position, collider.size, eventType));
         }
 
         Log.PrintWarning ("Export MissionEventData success", LogTypes.MapData);
@@ -476,5 +549,67 @@ public class MapDataExporter : MonoBehaviour {
         return result;
     }
 
+    private List<MapData.SpecialSceneData> ExportSpecialSceneDataList () {
+        Log.PrintWarning ("Start export SpecialSceneData", LogTypes.MapData);
+
+        var result = new List<MapData.SpecialSceneData> ();
+        var baseTransform = mapObjectsBaseTransform.Find (SpecialScenesBaseTransformName);
+        if (baseTransform == null) {
+            throw new Exception ("Export SpecialSceneData failed. Cannot find the base transform.");
+        }
+
+        foreach (Transform child in baseTransform) {
+            if (child.childCount <= 0) {
+                throw new Exception ("Export SpecialSceneData failed. No sub special scene transform for special scene transform : " + child.name);
+            }
+
+            var array = child.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
+            if (array.Length < 1) {
+                throw new Exception ("Export SpecialSceneData failed. Invalid transform name : " + child.name);
+            }
+
+            MissionEventEnum.SpecialSceneType specialSceneType;
+            if (!FrameworkUtils.TryParseToEnum (array[0], out specialSceneType)) {
+                throw new Exception ("Export SpecialSceneData failed. Invalid MissionEventEnum.SpecialSceneType : " + array[0]);
+            }
+
+            var data = new MapData.SpecialSceneData (specialSceneType);
+
+            foreach (Transform subSpecialScene in child) {
+                var cameraPos = subSpecialScene.position;
+                Vector2? playerPos = null;
+                LifeEnum.HorizontalDirection? playerDirection = null;
+                Vector2? bossPos = null;
+                LifeEnum.HorizontalDirection? bossDirection = null;
+
+                foreach (Transform details in subSpecialScene) {
+                    var detailsNameArray = details.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
+                    if (detailsNameArray.Length < 2) {
+                        throw new Exception ("Export SpecialSceneData failed. Invalid sub special scene details name : " + details.name);
+                    }
+
+                    LifeEnum.HorizontalDirection direction;
+                    if (!FrameworkUtils.TryParseToEnum (detailsNameArray[1], out direction)) {
+                        throw new Exception ("Export SpecialSceneData failed. Invalid LifeEnum.HorizontalDirection : " + detailsNameArray[1]);
+                    }
+
+                    if (detailsNameArray[0] == "0") {   // Player
+                        playerPos = details.position;
+                        playerDirection = direction;
+                    } else {                            // Boss
+                        bossPos = details.position;
+                        bossDirection = direction;
+                    }
+                }
+
+                data.AddSubSpecialSceneData (cameraPos, playerPos, playerDirection, bossPos, bossDirection);
+            }
+
+            result.Add (data);
+        }
+
+        Log.PrintWarning ("Export SpecialSceneData success", LogTypes.MapData);
+        return result;
+    }
     #endregion
 }

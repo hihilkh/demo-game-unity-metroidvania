@@ -6,6 +6,9 @@ public static class MissionManager {
     public const int FromLandingEntryId = 0;
     public const int CaveEntryId = 1;
 
+    public const int EndingMissionId = 100;
+    public const int EndingEntryId = 100;
+
     private static readonly Mission Mission_1 = new Mission (1, "Mission_1");
     private static readonly Mission Mission_2 = new Mission (2, "Mission_2");
     private static readonly Mission Mission_3 = new Mission (3, "Mission_3");

@@ -162,14 +162,16 @@ Ending1_Dialog0_1	......
 Ending1_Dialog0_2	呀，對了，你不記得我了。
 Ending1_Dialog1_0	我和你是認識的嗎？
 Ending1_Dialog2_0	當然，我們都住在這裡，
-Ending1_Dialog2_1	只是有一日，你跟我說你想離開這裡看看這個世界，縱然你我都知道有關這個洞穴的傳說。
-Ending1_Dialog2_2	誰想離開這個洞穴，他就會失去一切，包括記憶，
-Ending1_Dialog2_3	而當失去了記憶，當然就會走回這個就在旁邊的洞穴...
-Ending1_Dialog3_0	我以後都要在這裡，像沒有過去一般的活著？
-Ending1_Dialog4_0	不用擔心，你的記憶會慢慢回來的。
-Ending1_Dialog4_1	而如果你想再次離開的話，我不知道原因，但這次你不會失去任何東西，除了想走出去的意志之外。
-Ending1_Dialog4_2	所以到頭來，是的，你以後都要活在這裡。
-Ending1_Dialog5_0	......
+Ending1_Dialog2_1	只是有一日，你跟我說你想離開這裡看看這個世界...
+Ending1_Dialog3_0	...縱然你我都知道有關這個洞穴的傳說。
+Ending1_Dialog3_1	誰想離開這個洞穴，他就會失去一切，包括記憶，
+Ending1_Dialog3_2	而當失去了記憶，當然就會走回這個就在旁邊的洞穴...
+Ending1_Dialog4_0	我以後都要在這裡，像沒有過去一般的活著？
+Ending1_Dialog5_0	不用擔心，你的記憶會慢慢回來的。
+Ending1_Dialog5_1	而且如果你想再次離開的話，這次你也不會再失去任何東西...
+Ending1_Dialog5_2	...除了想走出去的意志之外。
+Ending1_Dialog5_3	所以到頭來，是的，你以後都要活在這裡。
+Ending1_Dialog6_0	......
 
 Ending2_Dialog0_0	恭喜你了。
 Ending2_Dialog1_0	洞穴倒塌了...
@@ -177,7 +179,7 @@ Ending2_Dialog2_1	我不會忘記你的。
 
 Ending2_NoBoss_Dialog0_0	噢，洞穴倒塌了。
 Ending2_NoBoss_Dialog0_1	到頭來我還是記不起任何事...
-Ending2_NoBoss_Dialog0_2	算了，船到橋頭自然直。
+Ending2_NoBoss_Dialog1_0	算了，船到橋頭自然直。
 
 Ending3_Dialog0_0	你為甚麼會在這裡！？你應該已經走出去了才對。
 Ending3_Dialog1_0	為何你會知道？

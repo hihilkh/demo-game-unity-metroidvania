@@ -27,6 +27,7 @@ public static class UserManager {
     #region Temp saved
 
     public static int? EntryJustUnlockedMissionId { get; private set; } = null;
+    public static bool IsJustEnteredEndingMission { get; set; } = false;
 
     #endregion
 

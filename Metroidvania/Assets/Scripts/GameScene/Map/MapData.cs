@@ -14,6 +14,7 @@ public class MapData {
     public List<ExitData> exits;                // InvisibleTriggerData
     public List<MissionEventData> events;        // InvisibleTriggerData
     public List<ImageBGData> backgrounds;
+    public List<SpecialSceneData> specialScenes;
 
     public MapData () { }
 
@@ -27,6 +28,9 @@ public class MapData {
         return null;
     }
 
+    /// <summary>
+    /// Return the first TileData which meet the requirement
+    /// </summary>
     public TileData GetTileData (Vector2Int pos) {
         foreach (var tile in tiles) {
             if (tile.pos == pos) {
@@ -37,8 +41,35 @@ public class MapData {
         return null;
     }
 
+    /// <summary>
+    /// Return the first TileData which meet the requirement
+    /// </summary>
+    public TileData GetTileData (Vector2Int pos, MapEnum.TileMapType tileMapType) {
+        foreach (var tile in tiles) {
+            if (tile.pos == pos) {
+                if (tile.tileMapType == tileMapType) {
+                    return tile;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public bool RemoveTileData (TileData tileData) {
         return tiles.Remove (tileData);
+    }
+
+    public SubSpecialSceneData GetSubSpecialSceneData (MissionEventEnum.SpecialSceneType specialSceneType, int subSpecialSceneIndex) {
+        foreach (var specialScene in specialScenes) {
+            if (specialScene.type == specialSceneType) {
+                if (specialScene.subSpecialScenes != null && specialScene.subSpecialScenes.Count > subSpecialSceneIndex) {
+                    return specialScene.subSpecialScenes[subSpecialSceneIndex];
+                }
+            }
+        }
+
+        return null;
     }
 
     [Serializable]
@@ -61,7 +92,7 @@ public class MapData {
 
         public TileData () { }
 
-        public TileData (int x, int y, MapEnum.TileType tileType, MapEnum.TileMapType tileMapType) : base (x, y) {
+        public TileData (Vector2Int pos, MapEnum.TileType tileType, MapEnum.TileMapType tileMapType) : base (pos) {
             this.tileType = tileType;
             this.tileMapType = tileMapType;
         }
@@ -77,7 +108,7 @@ public class MapData {
 
         public SwitchData () { }
 
-        public SwitchData (int id, float x, float y, float sizeX, float sizeY, MapEnum.SwitchType switchType, Vector2Int switchBasePos) : base (x, y, sizeX, sizeY) {
+        public SwitchData (int id, Vector2 pos, Vector2 size, MapEnum.SwitchType switchType, Vector2Int switchBasePos) : base (pos, size) {
             this.id = id;
             this.switchType = switchType;
             this.switchBasePos = switchBasePos;
@@ -85,11 +116,11 @@ public class MapData {
         }
 
         // pos / collider sizes / switchBasePos of MissionEventSwitch are just dummy
-        public SwitchData (int id) : this (id, 0, 0, 1, 1, MapEnum.SwitchType.MissionEvent, Vector2Int.zero) {
+        public SwitchData (int id) : this (id, Vector2.zero, Vector2.one, MapEnum.SwitchType.MissionEvent, Vector2Int.zero) {
         }
 
         // pos / collider sizes / switchBasePos of EnemySwitch are just dummy
-        public SwitchData (int id, int fromEnemyId) : this (id, 0, 0, 1, 1, MapEnum.SwitchType.Enemy, Vector2Int.zero) {
+        public SwitchData (int id, int fromEnemyId) : this (id, Vector2.zero, Vector2.one, MapEnum.SwitchType.Enemy, Vector2Int.zero) {
             this.fromEnemyId = fromEnemyId;
         }
 
@@ -104,7 +135,7 @@ public class MapData {
 
         public EntryData () { }
 
-        public EntryData (float x, float y, LifeEnum.HorizontalDirection direction, int id) : base (x, y, direction) {
+        public EntryData (Vector2 pos, LifeEnum.HorizontalDirection direction, int id) : base (pos, direction) {
             this.id = id;
         }
     }
@@ -116,7 +147,7 @@ public class MapData {
 
         public EnemyData () { }
 
-        public EnemyData (float x, float y, LifeEnum.HorizontalDirection direction, int id, EnemyEnum.EnemyType type) : base (x, y, direction) {
+        public EnemyData (Vector2 pos, LifeEnum.HorizontalDirection direction, int id, EnemyEnum.EnemyType type) : base (pos, direction) {
             this.id = id;
             this.type = type;
         }
@@ -130,11 +161,11 @@ public class MapData {
 
         public CollectableData () { }
 
-        public CollectableData (float x, float y, Collectable.Type type) : base (x, y) {
+        public CollectableData (Vector2 pos, Collectable.Type type) : base (pos) {
             this.type = type;
         }
 
-        public CollectableData (float x, float y, Collectable.Type type, int fromEnemyId) : this (x, y, type) {
+        public CollectableData (Vector2 pos, Collectable.Type type, int fromEnemyId) : this (pos, type) {
             this.fromEnemyId = fromEnemyId;
         }
     }
@@ -142,11 +173,19 @@ public class MapData {
     [Serializable]
     public class ExitData : InvisibleTriggerData {
         public int toEntryId;
+        public bool isSpecialSceneExit;
+        public MissionEventEnum.SpecialSceneType specialSceneExitType;
 
         public ExitData () { }
 
-        public ExitData (float x, float y, float sizeX, float sizeY, int toEntryId) : base (x, y, sizeX, sizeY) {
+        public ExitData (Vector2 pos, Vector2 size, int toEntryId) : base (pos, size) {
             this.toEntryId = toEntryId;
+            this.isSpecialSceneExit = false;
+        }
+
+        public ExitData (Vector2 pos, Vector2 size, MissionEventEnum.SpecialSceneType specialSceneExitType) : base (pos, size) {
+            this.isSpecialSceneExit = true;
+            this.specialSceneExitType = specialSceneExitType;
         }
     }
 
@@ -156,7 +195,7 @@ public class MapData {
 
         public MissionEventData () { }
 
-        public MissionEventData (float x, float y, float sizeX, float sizeY, MissionEventEnum.EventType type) : base (x, y, sizeX, sizeY) {
+        public MissionEventData (Vector2 pos, Vector2 size, MissionEventEnum.EventType type) : base (pos, size) {
             this.type = type;
         }
     }
@@ -178,49 +217,90 @@ public class MapData {
         }
     }
 
+    [Serializable]
+    public class SpecialSceneData {
+        public MissionEventEnum.SpecialSceneType type;
+        public List<SubSpecialSceneData> subSpecialScenes;
+
+        public SpecialSceneData () { }
+
+        public SpecialSceneData (MissionEventEnum.SpecialSceneType type) {
+            this.type = type;
+            subSpecialScenes = new List<SubSpecialSceneData> ();
+        }
+
+        public void AddSubSpecialSceneData (Vector2 cameraPos, Vector2? playerPos, LifeEnum.HorizontalDirection? playerDirection, Vector2? bossPos, LifeEnum.HorizontalDirection? bossDirection) {
+            subSpecialScenes.Add (new SubSpecialSceneData (cameraPos, playerPos, playerDirection, bossPos, bossDirection));
+        }
+    }
+
+    [Serializable]
+    public class SubSpecialSceneData {
+        public Vector2 cameraPos;
+        public WorldPosDirectionData player;
+        public WorldPosDirectionData boss;
+
+        public SubSpecialSceneData () { }
+
+        public SubSpecialSceneData (Vector2 cameraPos, Vector2? playerPos, LifeEnum.HorizontalDirection? playerDirection, Vector2? bossPos, LifeEnum.HorizontalDirection? bossDirection) {
+            this.cameraPos = cameraPos;
+            if (playerPos == null || playerDirection == null) {
+                player = null;
+            } else {
+                player = new WorldPosDirectionData ((Vector2)playerPos, (LifeEnum.HorizontalDirection)playerDirection);
+            }
+
+            if (bossPos == null || bossDirection == null) {
+                boss = null;
+            } else {
+                boss = new WorldPosDirectionData ((Vector2)bossPos, (LifeEnum.HorizontalDirection)bossDirection);
+            }
+        }
+    }
+
     #region Base Class
 
     [Serializable]
-    public abstract class TilePosData {
+    public class TilePosData {
         public Vector2Int pos;
 
         public TilePosData () { }
 
-        public TilePosData (int x, int y) {
-            this.pos = new Vector2Int (x, y);
+        public TilePosData (Vector2Int pos) {
+            this.pos = pos;
         }
     }
 
     [Serializable]
-    public abstract class WorldPosData {
+    public class WorldPosData {
         public Vector2 pos;
 
         public WorldPosData () { }
 
-        public WorldPosData (float x, float y) {
-            this.pos = new Vector2 (x, y);
+        public WorldPosData (Vector2 pos) {
+            this.pos = pos;
         }
     }
 
     [Serializable]
-    public abstract class WorldPosDirectionData : WorldPosData {
+    public class WorldPosDirectionData : WorldPosData {
         public LifeEnum.HorizontalDirection direction;
 
         public WorldPosDirectionData () { }
 
-        public WorldPosDirectionData (float x, float y, LifeEnum.HorizontalDirection direction) : base (x, y) {
+        public WorldPosDirectionData (Vector2 pos, LifeEnum.HorizontalDirection direction) : base (pos) {
             this.direction = direction;
         }
     }
 
     [Serializable]
-    public abstract class InvisibleTriggerData {
+    public class InvisibleTriggerData {
         public ColliderData collider;
 
         public InvisibleTriggerData () { }
 
-        public InvisibleTriggerData (float x, float y, float sizeX, float sizeY) {
-            this.collider = new ColliderData (x, y, sizeX, sizeY);
+        public InvisibleTriggerData (Vector2 pos, Vector2 size) {
+            this.collider = new ColliderData (pos, size);
         }
     }
 
@@ -235,9 +315,9 @@ public class MapData {
 
         public ColliderData () { }
 
-        public ColliderData (float x, float y, float sizeX, float sizeY) {
-            this.pos = new Vector2 (x, y);
-            this.size = new Vector2 (sizeX, sizeY);
+        public ColliderData (Vector2 pos, Vector2 size) {
+            this.pos = pos;
+            this.size = size;
         }
     }
 

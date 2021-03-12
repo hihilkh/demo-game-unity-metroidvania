@@ -129,6 +129,8 @@
         Tree_Outer_7 = 109,
         Tree_Outer_8 = 110,
 
+        Fire = 111,
+
         // Below are for map design
         GroundTag = 1001,
         Ground2Tag = 1002,
@@ -142,6 +144,7 @@
         SlippyWall = 1,
         Death = 2,
         Background = 3,
+        OnTopEffect = 4,
     }
 
     // Remarks: Never change the SwitchType enum int value. It is used in map json data.
@@ -151,6 +154,7 @@
         DropHit = 2,
         Enemy = 3,
         MissionEvent = 4,
+        Tree = 5,
     }
 
     // Remarks: Never change the HiddenPathType enum int value. It is used in map json data.
