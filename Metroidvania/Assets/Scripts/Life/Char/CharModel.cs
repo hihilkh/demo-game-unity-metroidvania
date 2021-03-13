@@ -853,8 +853,7 @@ public class CharModel : LifeBase, IMapTarget {
                     case CharEnum.InputSituation.AirTap:
                     case CharEnum.InputSituation.AirRelease:
                         if (GetIsInStatuses (CharEnum.Statuses.Sliding)) {
-                            var wallDirection = FacingDirection == LifeEnum.HorizontalDirection.Left ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
-                            RepelFromWall (wallDirection, true, true);
+                            RepelFromWallWhenSliding (true, true);
                         } else {
                             ChangeFacingDirection (false);
                         }
@@ -1226,8 +1225,7 @@ public class CharModel : LifeBase, IMapTarget {
         Log.Print ("Start DropHit", LogTypes.Char);
 
         if (GetIsInStatuses (CharEnum.Statuses.Sliding)) {
-            var wallDirection = FacingDirection == LifeEnum.HorizontalDirection.Left ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
-            RepelFromWall (wallDirection, true, false);
+            RepelFromWallWhenSliding (true, false);
         }
 
         StopDropHitCharge ();
@@ -1422,9 +1420,10 @@ public class CharModel : LifeBase, IMapTarget {
         }
     }
 
+    /// <summary>
+    /// Changing moving direction must also align facing direction
+    /// </summary>
     private void ChangeMovingDirection () {
-        // Remarks : Changing moving direction must also align facing direction
-
         Log.PrintDebug ("ChangeMovingDirection", LogTypes.Char);
         if (MovingDirection == LifeEnum.HorizontalDirection.Left) {
             MovingDirection = LifeEnum.HorizontalDirection.Right;
@@ -1432,12 +1431,6 @@ public class CharModel : LifeBase, IMapTarget {
             MovingDirection = LifeEnum.HorizontalDirection.Left;
         }
 
-        FacingDirection = MovingDirection;
-    }
-
-    private void SetMovingDirection (LifeEnum.HorizontalDirection direction) {
-        // Remarks : Changing moving direction must also align facing direction
-        MovingDirection = direction;
         FacingDirection = MovingDirection;
     }
 
@@ -1481,8 +1474,7 @@ public class CharModel : LifeBase, IMapTarget {
         // If dying, dominated by die animation
         if (!IsDying) {
             if (GetIsInStatuses (CharEnum.Statuses.Sliding)) {
-                var wallDirection = FacingDirection == LifeEnum.HorizontalDirection.Left ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
-                RepelFromWall (wallDirection, true, true);
+                RepelFromWallWhenSliding (true, true);
             } else {
                 BeatBackDirection = hurtDirection == LifeEnum.HorizontalDirection.Left ? BeatBackDirection_Left : BeatBackDirection_Right;
                 MovingDirection = hurtDirection;
@@ -1539,21 +1531,24 @@ public class CharModel : LifeBase, IMapTarget {
         SetAnimatorTrigger (CharAnimConstant.SlideTriggerName);
     }
 
-    private void RepelFromWall (LifeEnum.HorizontalDirection wallDirection, bool isFinallyFacingWall, bool isTriggerFreeFallAnim) {
+    private void RepelFromWall (LifeEnum.HorizontalDirection wallDirection, bool isChangeFacingDirection, bool isTriggerFreeFallAnim) {
         SetStatuses (CharEnum.Statuses.Sliding, false);
 
         var directionMultiplier = wallDirection == LifeEnum.HorizontalDirection.Left ? 1 : -1;
         SetPosByOffset (new Vector2 (Params.RepelFromWallDistByTurn, 0) * directionMultiplier);
 
-        if (isFinallyFacingWall) {
-            SetMovingDirection (wallDirection);
-        } else {
-            SetMovingDirection (wallDirection == LifeEnum.HorizontalDirection.Left ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left);
+        if (isChangeFacingDirection) {
+            ChangeFacingDirection (true);
         }
 
         if (isTriggerFreeFallAnim) {
             StartFreeFall ();
         }
+    }
+
+    private void RepelFromWallWhenSliding (bool isChangeFacingDirection, bool isTriggerFreeFallAnim) {
+        var wallDirection = FacingDirection == LifeEnum.HorizontalDirection.Left ? LifeEnum.HorizontalDirection.Right : LifeEnum.HorizontalDirection.Left;
+        RepelFromWall (wallDirection, isChangeFacingDirection, isTriggerFreeFallAnim);
     }
 
     private void StartFreeFall () {
@@ -1664,7 +1659,7 @@ public class CharModel : LifeBase, IMapTarget {
                             // Ground -> Air + Slippy Wall
                             Log.PrintWarning ("Char : Ground -> Air + Slippy Wall . This case should be very rare. Please check if everything behave alright.", LogTypes.Char | LogTypes.Collision);
                             CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
-                            RepelFromWall (FacingDirection, true, false);
+                            RepelFromWall (wallPosition, false, false);
                             handleCollisionAnimation = HandleCollisionAnimation.IdleOrWalkOrFreeFall;
                         } else {
                             // Ground -> Air + Normal Wall
@@ -1758,7 +1753,7 @@ public class CharModel : LifeBase, IMapTarget {
                             // Touch slippy wall when in air
                             Log.PrintDebug ("Char : Touch slippy wall when in air", LogTypes.Char | LogTypes.Collision);
                             CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
-                            RepelFromWall (FacingDirection, true, false);
+                            RepelFromWall (wallPosition, false, false);
                             handleCollisionAnimation = HandleCollisionAnimation.IdleOrWalkOrFreeFall;
                         } else {
                             // Touch normal wall when in air
@@ -1772,6 +1767,14 @@ public class CharModel : LifeBase, IMapTarget {
                             Log.PrintDebug ("Char : Sliding to the end of the wall", LogTypes.Char | LogTypes.Collision);
                             SetStatuses (CharEnum.Statuses.Sliding, false);
                             ChangeMovingDirection ();
+                            currentHandleCollisionResult.IsJustChangedDirection = true;
+                            handleCollisionAnimation = HandleCollisionAnimation.IdleOrWalkOrFreeFall;
+                        }
+                    } else {
+                        if (GetIsInStatuses (CharEnum.Statuses.Sliding) && isNowTouchingWallSlippy) {
+                            // Sliding from non slippy wall to slippy wall
+                            Log.PrintDebug ("Char : Sliding from non slippy wall to slippy wall", LogTypes.Char | LogTypes.Collision);
+                            RepelFromWallWhenSliding (true, false);
                             currentHandleCollisionResult.IsJustChangedDirection = true;
                             handleCollisionAnimation = HandleCollisionAnimation.IdleOrWalkOrFreeFall;
                         }
