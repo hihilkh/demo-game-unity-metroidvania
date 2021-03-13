@@ -19,7 +19,9 @@ public abstract class CharArrowBase : MonoBehaviour {
     private Sprite fireArrowSprite => _fireArrowSprite;
 
     protected bool HasHitAnything { get; private set; } = false;
+    private bool isTriggeringBurnTree = false;
     private const float ArrowVanishPeriod = 1f;
+    private const float TriggerBurnTreeWaitingPeriod = 0.1f;
 
     protected LifeEnum.HorizontalDirection Direction { get; private set; }
     protected abstract int BaseDP { get; }
@@ -77,6 +79,16 @@ public abstract class CharArrowBase : MonoBehaviour {
         }
     }
 
+    // Special case
+    private IEnumerator TriggerBurnTree (MapSwitch mapSwitch) {
+        isTriggeringBurnTree = true;
+
+        yield return new WaitForSeconds (TriggerBurnTreeWaitingPeriod);
+
+        Hit (mapSwitch.transform, false);
+        mapSwitch.Trigger ();
+    }
+
     private IEnumerator Vanish () {
         var startTime = Time.time;
 
@@ -97,8 +109,12 @@ public abstract class CharArrowBase : MonoBehaviour {
 
     #region Events
 
+    private bool CheckIsBlockHit () {
+        return HasHitAnything || isTriggeringBurnTree;
+    }
+
     private void HitLifeHandler (LifeBase lifeBase, bool isHurt) {
-        if (HasHitAnything) {
+        if (CheckIsBlockHit ()) {
             return;
         }
 
@@ -110,7 +126,7 @@ public abstract class CharArrowBase : MonoBehaviour {
     }
 
     private void HitEnvironmentHandler (Transform colliderTransform) {
-        if (HasHitAnything) {
+        if (CheckIsBlockHit ()) {
             return;
         }
 
@@ -118,15 +134,14 @@ public abstract class CharArrowBase : MonoBehaviour {
     }
 
     private void HitArrowSwitchHandler (MapSwitch mapSwitch) {
-        if (HasHitAnything) {
+        if (CheckIsBlockHit ()) {
             return;
         }
 
         if (mapSwitch.GetSwitchType () == MapEnum.SwitchType.Tree) {
             if (isFireArrow) {
                 Log.Print ("FireArrow hit tree. Trigger BurnTree.", LogTypes.MissionEvent | LogTypes.GameFlow);
-                Hit (mapSwitch.transform, false);
-                mapSwitch.Trigger ();
+                StartCoroutine (TriggerBurnTree (mapSwitch));
             } else {
                 Hit (mapSwitch.transform, true);
             }
@@ -134,7 +149,6 @@ public abstract class CharArrowBase : MonoBehaviour {
             Hit (mapSwitch.transform, true);
             mapSwitch.Trigger ();
         }
-        
     }
 
     #endregion
