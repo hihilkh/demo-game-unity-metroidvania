@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
+using HihiFramework.GameConfiguration;
 
-public static partial class GameConfig {
+public partial class GameConfig : GameConfigBase {
 	/// <summary>
 	/// All the game config sets shown in GameConfig scene
 	/// </summary>
-	public static List<GameConfigSet> AllGameConfigSetList { get; } = new List<GameConfigSet> {
-		SampleGameConfigSet1,
-		SampleGameConfigSet2,
+	public static List<GameConfigSet> AllGameConfigSetList => new List<GameConfigSet> {
+		DummyConfigSet,
 	};
 
 	/// <summary>
 	/// The game config set used for release build
 	/// </summary>
-	public static GameConfigSet ReleaseBuildGameConfigSet { get; } = SampleGameConfigSet1;
+	public static GameConfigSet ReleaseBuildGameConfigSet => DummyConfigSet;
 
 	/// <summary>
 	/// Get empty game config set
@@ -25,7 +25,6 @@ public static partial class GameConfig {
 	/// Save selected game config set for runtime usage
 	/// </summary>
 	public static void SaveRuntimeGameConfig (GameConfigSet gameConfigSet) {
-		BaseURL = gameConfigSet.BaseURL;
-		AnalyticsType = gameConfigSet.AnalyticsType;
+		SaveFrameworkRuntimeGameConfig (gameConfigSet);
 	}
 }

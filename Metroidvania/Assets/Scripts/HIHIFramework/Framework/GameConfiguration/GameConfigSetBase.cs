@@ -5,6 +5,7 @@ namespace HihiFramework.GameConfiguration {
     public abstract class GameConfigSetBase {
         // Remarks : the variable name "gameConfigSetName" must not be changed
         protected string GameConfigSetName { get; set; }                        // Display name for the config set
+        public string BaseURL { get; protected set; }                                  // The base URL (mainly for API)
 
         public Dictionary<string, GameConfigFrameworkEnum.GameConfigType> GetGameConfigPropertyNameDict () {
             var gameConfigSearchKeys = new Dictionary<string, GameConfigFrameworkEnum.GameConfigType> ();

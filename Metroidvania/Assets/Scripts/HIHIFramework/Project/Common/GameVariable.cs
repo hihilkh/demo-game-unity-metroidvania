@@ -53,10 +53,6 @@ public static partial class GameVariable {
 
     #region Player Pref Key
 
-    // GameConfig
-    public const string BaseURLKey = "BASE_URL";
-    public const string AnalyticsTypeKey = "ANALYTICS_TYPE";
-
     // User Manager
     public const string AllMissionProgressKey = "ALL_MISSION_PROGRESS";
     public const string CollectedCollectableTypeListKey = "COLLECTED_COLLECTABLE_TYPE_LIST";

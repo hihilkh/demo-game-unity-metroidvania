@@ -1,43 +1,15 @@
 ﻿using UnityEngine;
+using HihiFramework.GameConfiguration;
 
-public static partial class GameConfig {
+public partial class GameConfig : GameConfigBase {
 
 	#region All Game Config Set
 
 	// sampleGameConfigSet1
-	private static readonly GameConfigSet SampleGameConfigSet1 = new GameConfigSet (
-		"SampleOnly",                               // gameConfigSetName
-		"www.google.com",                           // baseURL
-		GameConfigEnum.AnalyticsType.None          // analyticsType
+	private static readonly GameConfigSet DummyConfigSet = new GameConfigSet (
+		"Dummy",                               // gameConfigSetName
+		"No Base URL"                           // baseURL
 	);
-
-	// sampleGameConfigSet2
-	private static readonly GameConfigSet SampleGameConfigSet2 = new GameConfigSet (
-		"PleaseDeleteMe",                                   // gameConfigSetName
-		"www.yahoo.com",                                    // baseURL
-		GameConfigEnum.AnalyticsType.Firebase              // analyticsType
-	);
-
-	#endregion
-
-	#region static Game Config
-
-	public static string BaseURL {
-		get { return PlayerPrefs.GetString (GameVariable.BaseURLKey, ""); }
-		private set { PlayerPrefs.SetString (GameVariable.BaseURLKey, value); }
-	}
-
-	public static GameConfigEnum.AnalyticsType AnalyticsType {
-		get {
-			int analyticsTypeInt = PlayerPrefs.GetInt (GameVariable.AnalyticsTypeKey, 0);
-			return (GameConfigEnum.AnalyticsType)analyticsTypeInt;
-		}
-
-		private set {
-			int analyticsTypeInt = (int)value;
-			PlayerPrefs.SetInt (GameVariable.AnalyticsTypeKey, analyticsTypeInt);
-		}
-	}
 
 	#endregion
 }

@@ -42,6 +42,7 @@
 
         // GameConfig
         public const string GameConfigLastTimeKey = "HIHI_GAME_CONFIG_LAST_TIME";
+        public const string BaseURLKey = "BASE_URL";
 
         // Lang
         public const string CurrentLangTypeKey = "HIHI_CURRENT_LANG_TYPE";
