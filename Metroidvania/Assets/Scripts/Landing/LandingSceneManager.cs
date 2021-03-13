@@ -36,6 +36,7 @@ public class LandingSceneManager : MonoBehaviour {
 
         isWithGameScene = !UserManager.CheckIsFirstMissionCleared ();
         if (isWithGameScene) {
+            UserManager.SetFromLandingMissionAndEntry ();
             var ao = SceneManager.LoadSceneAsync (GameVariable.GameSceneName, LoadSceneMode.Additive);
 
             ao.completed += (AsyncOperation obj) => {
@@ -87,7 +88,6 @@ public class LandingSceneManager : MonoBehaviour {
     private void StartBtnClickedHandler (HIHIButton sender) {
         if (isWithGameScene) {
             uiManager.HideUI ();
-            UserManager.SetFromLandingMissionAndEntry ();
             isGoingToGameScene = true;
         } else {
             SceneManager.LoadScene (GameVariable.MainMenuSceneName);

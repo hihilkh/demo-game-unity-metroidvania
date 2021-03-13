@@ -34,7 +34,7 @@ public class LifeHPView : MonoBehaviour {
             return;
         }
 
-        SetVisible (true);
+        SetVisible (currentHP > 0);
         var percent = Mathf.Max ((float)currentHP / (float)totalHP, 0);
 
         foreach (var pair in HPColorThresholdDict) {

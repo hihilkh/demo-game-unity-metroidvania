@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using HihiFramework.UI;
 using TMPro;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ public class GamePausePanel : CommandMatrixPanel {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI backToMMBtnText;
     [SerializeField] private TextMeshProUGUI restartBtnText;
+
+    [SerializeField] private HIHIButton backToMMBtn;
 
     private bool isHideResetTimeScale = true;
 
@@ -33,6 +36,8 @@ public class GamePausePanel : CommandMatrixPanel {
         localizedTextDetailsList.Add (new LocalizedTextDetails (backToMMBtnText, "BackToMM"));
         localizedTextDetailsList.Add (new LocalizedTextDetails (restartBtnText, "Restart"));
         LangManager.SetTexts (localizedTextDetailsList);
+
+        backToMMBtn.SetInteractable (UserManager.CheckIsFirstMissionCleared ());
 
         return true;
     }
