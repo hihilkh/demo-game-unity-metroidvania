@@ -600,7 +600,7 @@ public class MissionEventManager : MonoBehaviour {
 
         Action onFadeInFinished = () => {
             charModel.DetachCameraAndSetCameraPos (sceneData.cameraPos);
-
+            charModel.SetCaveCollapseEffect (sceneData.isNeedCaveCollapseEffect);
             if (sceneData.player == null) {
                 charModel.SetActive (false);
             } else {

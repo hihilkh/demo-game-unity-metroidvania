@@ -576,6 +576,12 @@ public class MapDataExporter : MonoBehaviour {
             var data = new MapData.SpecialSceneData (specialSceneType);
 
             foreach (Transform subSpecialScene in child) {
+                var subSpecialSceneArray = subSpecialScene.name.Split (new string[] { FrameworkVariable.DefaultDelimiter }, StringSplitOptions.None);
+                if (subSpecialSceneArray.Length < 1) {
+                    throw new Exception ("Export SpecialSceneData failed. Invalid subSpecialScene name : " + subSpecialScene.name);
+                }
+                var isNeedCaveCollapseEffect = subSpecialSceneArray[0] == "1" ? true : false;
+
                 var cameraPos = subSpecialScene.position;
                 Vector2? playerPos = null;
                 LifeEnum.HorizontalDirection? playerDirection = null;
@@ -602,7 +608,7 @@ public class MapDataExporter : MonoBehaviour {
                     }
                 }
 
-                data.AddSubSpecialSceneData (cameraPos, playerPos, playerDirection, bossPos, bossDirection);
+                data.AddSubSpecialSceneData (cameraPos, isNeedCaveCollapseEffect, playerPos, playerDirection, bossPos, bossDirection);
             }
 
             result.Add (data);

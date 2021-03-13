@@ -229,21 +229,23 @@ public class MapData {
             subSpecialScenes = new List<SubSpecialSceneData> ();
         }
 
-        public void AddSubSpecialSceneData (Vector2 cameraPos, Vector2? playerPos, LifeEnum.HorizontalDirection? playerDirection, Vector2? bossPos, LifeEnum.HorizontalDirection? bossDirection) {
-            subSpecialScenes.Add (new SubSpecialSceneData (cameraPos, playerPos, playerDirection, bossPos, bossDirection));
+        public void AddSubSpecialSceneData (Vector2 cameraPos, bool isNeedCaveCollapseEffect, Vector2? playerPos, LifeEnum.HorizontalDirection? playerDirection, Vector2? bossPos, LifeEnum.HorizontalDirection? bossDirection) {
+            subSpecialScenes.Add (new SubSpecialSceneData (cameraPos, isNeedCaveCollapseEffect, playerPos, playerDirection, bossPos, bossDirection));
         }
     }
 
     [Serializable]
     public class SubSpecialSceneData {
         public Vector2 cameraPos;
+        public bool isNeedCaveCollapseEffect;
         public WorldPosDirectionData player;
         public WorldPosDirectionData boss;
 
         public SubSpecialSceneData () { }
 
-        public SubSpecialSceneData (Vector2 cameraPos, Vector2? playerPos, LifeEnum.HorizontalDirection? playerDirection, Vector2? bossPos, LifeEnum.HorizontalDirection? bossDirection) {
+        public SubSpecialSceneData (Vector2 cameraPos, bool isNeedCaveCollapseEffect, Vector2? playerPos, LifeEnum.HorizontalDirection? playerDirection, Vector2? bossPos, LifeEnum.HorizontalDirection? bossDirection) {
             this.cameraPos = cameraPos;
+            this.isNeedCaveCollapseEffect = isNeedCaveCollapseEffect;
             if (playerPos == null || playerDirection == null) {
                 player = null;
             } else {

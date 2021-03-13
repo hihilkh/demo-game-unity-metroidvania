@@ -277,12 +277,6 @@ public class CharModel : LifeBase, IMapTarget {
         this.mapManager = mapManager;
         cameraModel?.SetMissionBoundaries (boundary.lowerBound, boundary.upperBound);
         cameraModel?.SetAudioListener (true);
-
-        if (CharType == CharEnum.CharType.Player && UserManager.SelectedMissionId == MissionManager.EndingMissionId) {
-            cameraModel?.SetCaveCollapseEffect (true);
-        } else {
-            cameraModel?.SetCaveCollapseEffect (false);
-        }
     }
 
     public void LeaveGameScene () {
@@ -292,7 +286,7 @@ public class CharModel : LifeBase, IMapTarget {
         SetActive (false);
 
         if (CharType == CharEnum.CharType.Player) {
-            cameraModel?.SetCaveCollapseEffect (false);
+            SetCaveCollapseEffect (false);
         }
 
         missionEventInputFinishedAction = null;
@@ -1931,6 +1925,10 @@ public class CharModel : LifeBase, IMapTarget {
 
     public void AttachBackCamera () {
         cameraModel?.AttachBackToChar ();
+    }
+
+    public void SetCaveCollapseEffect (bool isActive) {
+        cameraModel?.SetCaveCollapseEffect (isActive);
     }
 
     #endregion

@@ -131,6 +131,9 @@ public class GameSceneManager : MonoBehaviour {
 
         if (!isGameInitialized) {
             charModel.EnterGameScene (mapManager, mapData.boundary);
+            if (selectedMissionId == MissionManager.EndingMissionId) {
+                charModel.SetCaveCollapseEffect (true);
+            }
         }
 
         charModel.Reset (selectedEntryData);
