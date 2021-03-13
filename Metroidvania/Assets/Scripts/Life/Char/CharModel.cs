@@ -222,6 +222,7 @@ public class CharModel : LifeBase, IMapTarget {
 
     // Jump Command Control
     private bool isJustJumpedUp;
+    private bool isJustFinishedLanding;
 
     // Dash Command Control
     private Coroutine dashCoroutine;
@@ -334,8 +335,6 @@ public class CharModel : LifeBase, IMapTarget {
         isAllowAirJump = true;
         isWaitingLandingToStopChar = false;
 
-        isJustJumpedUp = false;
-
         if (dashCoroutine != null) {
             StopCoroutine (dashCoroutine);
             dashCoroutine = null;
@@ -353,6 +352,8 @@ public class CharModel : LifeBase, IMapTarget {
         StopInvincible ();
 
         ResetAllUpdateControlFlags ();
+
+        ResetAnimatorBools ();
     }
 
     private void ResetAllUpdateControlFlags () {
@@ -364,6 +365,9 @@ public class CharModel : LifeBase, IMapTarget {
         currentCommand = null;
         isIgnoreHold = false;
         isIgnoreRelease = false;
+
+        isJustJumpedUp = false;
+        isJustFinishedLanding = false;
     }
 
     protected override IEnumerator ResetCurrentLocation () {
@@ -371,8 +375,6 @@ public class CharModel : LifeBase, IMapTarget {
 
         // To prevent error if the character is initialized in air. Mainly for development convenience.
         if (CurrentLocation == LifeEnum.Location.Air) {
-            ResetAnimatorTrigger (CharAnimConstant.IdleTriggerName);
-            ResetAnimatorTrigger (CharAnimConstant.WalkTriggerName);
             CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
             StartFreeFall ();
         }
@@ -431,6 +433,8 @@ public class CharModel : LifeBase, IMapTarget {
             return;
         }
 
+        isJustFinishedLanding = false;
+
         switch (CharType) {
             case CharEnum.CharType.Player:
                 var situation = GetCurrentInputSituation ();
@@ -480,7 +484,11 @@ public class CharModel : LifeBase, IMapTarget {
 
     private void ReloadObtainedBodyPart () {
         if (CharType == CharEnum.CharType.Player) {
-            ObtainedBodyParts = UserManager.GetObtainedBodyParts ();
+            if (SceneManager.GetActiveScene ().name == GameVariable.SandboxSceneName) {
+                ObtainedBodyParts = CharEnum.BodyParts.All;
+            } else {
+                ObtainedBodyParts = UserManager.GetObtainedBodyParts ();
+            }
         } else {
             ObtainedBodyParts = CharEnum.BodyParts.All;
         }
@@ -915,18 +923,22 @@ public class CharModel : LifeBase, IMapTarget {
         animator.SetTrigger (trigger);
     }
 
-    private void ResetAnimatorTrigger (string trigger) {
-        Log.PrintDebug ("Char ResetAnimatorTrigger : " + trigger, LogTypes.Char | LogTypes.Animation);
-        animator.ResetTrigger (trigger);
-    }
-
     private void ResetUntriggeredAnimatorTriggers () {
+        animator.ResetTrigger (CharAnimConstant.IdleTriggerName);
+        animator.ResetTrigger (CharAnimConstant.WalkTriggerName);
+        animator.ResetTrigger (CharAnimConstant.DashTriggerName);
         animator.ResetTrigger (CharAnimConstant.LandingTriggerName);
+        animator.ResetTrigger (CharAnimConstant.DropHitTriggerName);
     }
 
     protected void SetAnimatorBool (string boolName, bool value) {
         Log.PrintDebug ("Char SetAnimatorBool : " + boolName + " ; Value : " + value, LogTypes.Char | LogTypes.Animation);
         animator.SetBool (boolName, value);
+    }
+
+    private void ResetAnimatorBools () {
+        animator.SetBool (CharAnimConstant.SlidingBoolName, false);
+        animator.SetBool (CharAnimConstant.InvincibleBoolName, false);
     }
 
     #endregion
@@ -990,9 +1002,13 @@ public class CharModel : LifeBase, IMapTarget {
     #endregion
 
     #region Idle / Walk
+
     public void LandingFinishedAction () {
+        // Remarks :
+        // Do not directly call StartIdleOrWalk () but set isJustFinishedLanding = true and wait for Update () to control
+        // in order to prevent trigger animation in wrong execution order and remove by ResetUntriggeredAnimatorTriggers () in LateUpdate ()
+        isJustFinishedLanding = true;
         isWaitingLandingToStopChar = false;
-        StartIdleOrWalk ();
     }
 
     private void StartIdleOrWalk () {
@@ -1762,6 +1778,10 @@ public class CharModel : LifeBase, IMapTarget {
                     }
                 }
                 break;
+        }
+
+        if (handleCollisionAnimation == HandleCollisionAnimation.None && isJustFinishedLanding) {
+            handleCollisionAnimation = HandleCollisionAnimation.IdleOrWalkOrFreeFall;
         }
 
         switch (handleCollisionAnimation) {
