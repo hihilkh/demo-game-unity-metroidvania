@@ -42,11 +42,19 @@ namespace HihiFramework.Core {
 
         #endregion
 
-        #region Common
+        #region System
 
         public static bool GetIsReleaseBuild () {
             return !(Debug.isDebugBuild || GameVariable.IsBuildForDevelopment);
         }
+
+        public static string GetVersionNoStr () {
+            return "v." + Application.version;
+        }
+
+        #endregion
+
+        #region DateTime
 
         /// <returns>Timestamp in second</returns>
         public static long ConvertDateTimeToTimestamp (DateTime dateTime) {
@@ -57,6 +65,10 @@ namespace HihiFramework.Core {
         public static long ConvertDateTimeToTimestampMS (DateTime dateTime) {
             return (dateTime.ToUniversalTime ().Ticks - 621355968000000000) / 10000;
         }
+
+        #endregion
+
+        #region String
 
         public static string StringReplace (string stringBase, params string[] replaceStrings) {
             try {
@@ -84,6 +96,10 @@ namespace HihiFramework.Core {
 
             return StringReplace (FrameworkVariable.ProgressPercentFormat, progressPercentInt.ToString ());
         }
+
+        #endregion
+
+        #region Coroutine
 
         /// <summary>
         /// Call coroutine to wait until <paramref name="predicate"/> return <b>true</b> and trigger <paramref name="action"/>.<br />
