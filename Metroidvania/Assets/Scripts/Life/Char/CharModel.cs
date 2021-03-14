@@ -1733,6 +1733,8 @@ public class CharModel : LifeBase, IMapTarget {
                     if (GetIsInStatuses (CharEnum.Statuses.Sliding)) {
                         SetStatuses (CharEnum.Statuses.Sliding, false);
                         handleCollisionAnimation = HandleCollisionAnimation.IdleOrWalkOrFreeFall;
+                    } else if (currentHandleCollisionResult.IsJustStoppedDashing) {
+                        handleCollisionAnimation = HandleCollisionAnimation.IdleOrWalkOrFreeFall;
                     } else {
                         handleCollisionAnimation = HandleCollisionAnimation.Landing;
                     }
