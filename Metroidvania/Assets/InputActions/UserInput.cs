@@ -32,7 +32,7 @@ public class @UserInput : IInputActionCollection, IDisposable
                     ""id"": ""b372810b-5ee8-46a5-8545-109327f921ed"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Hold""
+                    ""interactions"": ""CustomHold""
                 }
             ],
             ""bindings"": [
