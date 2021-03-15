@@ -33,7 +33,7 @@ public partial class GameUtils : Singleton<GameUtils> {
                 // Remarks :
                 // Do Reset() explicitly instead of doing inside Awake() to ensure after getting the model from this method,
                 // the model is already initialized
-                Character.Reset (Vector3.zero, LifeEnum.HorizontalDirection.Right);
+                Character.Reset (Vector3.zero, LifeEnum.HorizontalDirection.Right, true);
             }
         }
 

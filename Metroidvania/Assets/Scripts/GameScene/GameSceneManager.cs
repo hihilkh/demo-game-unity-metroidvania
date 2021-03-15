@@ -192,7 +192,10 @@ public class GameSceneManager : MonoBehaviour {
 
         Action onFadeInFinished = () => {
             if (isAfterEnding) {
-                SceneManager.LoadScene (GameVariable.LandingSceneName);
+                Action onThankYouFinished = () => {
+                    SceneManager.LoadScene (GameVariable.LandingSceneName);
+                };
+                uiManager.ShowThankYou (onThankYouFinished);
             } else {
                 SceneManager.LoadScene (GameVariable.MainMenuSceneName);
             }
@@ -218,6 +221,8 @@ public class GameSceneManager : MonoBehaviour {
             commandPanel.PanelHid += CommandPanelHidHandler;
             CharModel.Died += CharDiedHandler;
 
+            MissionEventManager.SpecialSceneEventSubSceneChanging += SpecialSceneEventSubSceneChangingHandler;
+
             UIEventManager.AddEventHandler (BtnOnClickType.Game_Pause, PauseBtnClickedHandler);
             UIEventManager.AddEventHandler (BtnOnClickType.Game_Restart, RestartBtnClickedHandler);
             UIEventManager.AddEventHandler (BtnOnClickType.Game_BackToMM, BackToMMBtnClickedHandler);
@@ -234,6 +239,8 @@ public class GameSceneManager : MonoBehaviour {
 
             commandPanel.PanelHid -= CommandPanelHidHandler;
             CharModel.Died -= CharDiedHandler;
+
+            MissionEventManager.SpecialSceneEventSubSceneChanging -= SpecialSceneEventSubSceneChangingHandler;
 
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Pause, PauseBtnClickedHandler);
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Restart, RestartBtnClickedHandler);
@@ -368,6 +375,7 @@ public class GameSceneManager : MonoBehaviour {
             
             LeaveGame (true);
         };
+
         missionEventManager.StartSpecialSceneEvent (specialSceneType, onFinished);
     }
 
@@ -427,6 +435,11 @@ public class GameSceneManager : MonoBehaviour {
                 break;
         }
 
+    }
+
+    private void SpecialSceneEventSubSceneChangingHandler () {
+        // To ensure the camera is free to control in special scene (and after leaving special scene)
+        IsGameStarted = false;
     }
 
     private void PauseBtnClickedHandler (HIHIButton sender) {

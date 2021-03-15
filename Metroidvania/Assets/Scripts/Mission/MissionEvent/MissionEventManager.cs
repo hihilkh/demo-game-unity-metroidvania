@@ -20,6 +20,7 @@ public class MissionEventManager : MonoBehaviour {
     public static event Action MissionEventFinished;
 
     public static event Action SpecialSceneEventStarted;
+    public static event Action SpecialSceneEventSubSceneChanging;
     public static event Action SpecialSceneEventFinished;
 
     #region All Events
@@ -391,12 +392,16 @@ public class MissionEventManager : MonoBehaviour {
         CurrentSpecialSceneEvent = specialSceneEvent;
         CurrentSubSpecialSceneIndex = -1;
 
+        var charModel = GameUtils.FindOrSpawnChar ();
+        charModel.SetAllowUserControl (false);
+
         Action onEventFinished = () => {
             Action onFadeInFinished = () => {
                 CurrentSpecialSceneEvent = null;
                 CurrentSubSpecialSceneIndex = -1;
 
-                GameUtils.FindOrSpawnChar ().AttachBackCamera ();
+                charModel.AttachBackCamera ();
+                charModel.SetAllowUserControl (true);
 
                 SpecialSceneEventFinished?.Invoke ();
                 onFinished?.Invoke ();
@@ -573,7 +578,11 @@ public class MissionEventManager : MonoBehaviour {
 
         yield return new WaitForSeconds (subEvent.WaitTime);
 
-        charModel.SetAllowUserControl (true);
+        if (CurrentMissionEvent != null) {
+            // Only allow user control for MissionEvent (but not SpecialSceneEvent)
+            charModel.SetAllowUserControl (true);
+        }
+
         Time.timeScale = 0;
 
         onFinished?.Invoke ();
@@ -599,6 +608,8 @@ public class MissionEventManager : MonoBehaviour {
         var bossModel = mapManager.BossModel;
 
         Action onFadeInFinished = () => {
+            SpecialSceneEventSubSceneChanging?.Invoke ();
+
             charModel.DetachCameraAndSetCameraPos (sceneData.cameraPos);
             charModel.SetCaveCollapseEffect (sceneData.isNeedCaveCollapseEffect);
             if (sceneData.player == null) {

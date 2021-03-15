@@ -4,32 +4,40 @@ public abstract class MapDisposableBase : MonoBehaviour {
 
     protected virtual bool IsDisposeWhenMapReset => true;
 
-    private bool isAddedEventHandlers = false;
+    private bool isAddedDisposableEventHandlers = false;
 
     protected abstract void Dispose ();
 
     protected virtual void Awake () {
-        AddEventHandlers ();
+        AddDisposableEventHandlers ();
     }
 
     protected virtual void OnDestroy () {
-        RemoveEventHandlers ();
+        RemoveDisposableEventHandlers ();
     }
 
-    private void AddEventHandlers () {
-        if (!isAddedEventHandlers) {
-            isAddedEventHandlers = true;
+    private void AddDisposableEventHandlers () {
+        if (!isAddedDisposableEventHandlers) {
+            isAddedDisposableEventHandlers = true;
 
-            MapManager.MapReseting += MapResetingHandler;
+            RegisterDisposableEventHandlers ();
         }
     }
 
-    private void RemoveEventHandlers () {
-        if (isAddedEventHandlers) {
-            MapManager.MapReseting -= MapResetingHandler;
+    private void RemoveDisposableEventHandlers () {
+        if (isAddedDisposableEventHandlers) {
+            UnregisterDisposableEventHandlers ();
 
-            isAddedEventHandlers = false;
+            isAddedDisposableEventHandlers = false;
         }
+    }
+
+    protected virtual void RegisterDisposableEventHandlers () {
+        MapManager.MapReseting += MapResetingHandler;
+    }
+
+    protected virtual void UnregisterDisposableEventHandlers () {
+        MapManager.MapReseting -= MapResetingHandler;
     }
 
     private void MapResetingHandler () {

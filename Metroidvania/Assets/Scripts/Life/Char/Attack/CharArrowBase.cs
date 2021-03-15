@@ -2,7 +2,7 @@
 using HihiFramework.Core;
 using UnityEngine;
 
-public abstract class CharArrowBase : MapDisposableBase {
+public abstract class CharArrowBase : SpecialSceneEventDisposableBase {
     [SerializeField] private CharParams _params;
     protected CharParams Params => _params;
     [SerializeField] private SpriteRenderer _arrowSpriteRenderer;

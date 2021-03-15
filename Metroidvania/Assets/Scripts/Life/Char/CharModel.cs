@@ -205,6 +205,8 @@ public class CharModel : LifeBase, IMapTarget {
             }
         }
     }
+
+    private bool isIgnoreCollision;
     private bool isAllowMove;
     private bool isAllowAirJump;
     private bool isWaitingLandingToStopChar;
@@ -310,7 +312,8 @@ public class CharModel : LifeBase, IMapTarget {
     /// If not yet initialized, it will initialize. Otherwise, it will reset.
     /// </summary>
     /// <returns>has initialized before</returns>
-    new public bool Reset (Vector2 pos, LifeEnum.HorizontalDirection direction) {
+    new public bool Reset (Vector2 pos, LifeEnum.HorizontalDirection direction, bool isIgnoreCollision = false) {
+        this.isIgnoreCollision = isIgnoreCollision;
         Resetting?.Invoke ();
 
         var hasInitBefore = base.Reset (pos, direction);
@@ -371,6 +374,10 @@ public class CharModel : LifeBase, IMapTarget {
     }
 
     protected override IEnumerator ResetCurrentLocation () {
+        if (isIgnoreCollision) {
+            yield break;
+        }
+
         yield return StartCoroutine (base.ResetCurrentLocation ());
 
         // To prevent error if the character is initialized in air. Mainly for development convenience.
@@ -390,22 +397,18 @@ public class CharModel : LifeBase, IMapTarget {
 
         SetAllowUserControl (isAllowMove);
 
+        if (isAllowMove) {
+            CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
+        } else {
+            CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
+        }
+
         switch (CurrentLocation) {
             case LifeEnum.Location.Air:
-                if (isAllowMove) {
-                    CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Walk;
-                } else {
-                    CurrentHorizontalSpeed = CharEnum.HorizontalSpeed.Idle;
-                }
                 StartFreeFall ();
                 break;
             case LifeEnum.Location.Ground:
-            default:
-                if (isAllowMove) {
-                    StartWalking ();
-                } else {
-                    StartIdling ();
-                }
+                StartIdleOrWalk ();
                 break;
         }
 
@@ -429,11 +432,11 @@ public class CharModel : LifeBase, IMapTarget {
 
         base.Update ();
 
+        isJustFinishedLanding = false;
+
         if (!isAllowMove) {
             return;
         }
-
-        isJustFinishedLanding = false;
 
         switch (CharType) {
             case CharEnum.CharType.Player:
@@ -1564,6 +1567,10 @@ public class CharModel : LifeBase, IMapTarget {
     #region Collision Event
 
     protected override void HandleCollision (CollisionAnalysis collisionAnalysis) {
+        if (isIgnoreCollision) {
+            return;
+        }
+
         var collisionDetailsDict = collisionAnalysis.CollisionDetailsDict;
 
         var isNowTouchingGround = collisionDetailsDict.ContainsKey (LifeEnum.CollisionType.Ground);
@@ -1647,6 +1654,7 @@ public class CharModel : LifeBase, IMapTarget {
                 if (isNowTouchingGround) {
                     Log.PrintDebug ("Char : Touching ground while Location = Unknown", LogTypes.Char | LogTypes.Collision);
                     CurrentLocation = LifeEnum.Location.Ground;
+                    handleCollisionAnimation = HandleCollisionAnimation.IdleOrWalkOrFreeFall;
                 }
                 break;
             case LifeEnum.Location.Ground:

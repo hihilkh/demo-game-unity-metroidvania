@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class CharHitBase : MapDisposableBase {
+public abstract class CharHitBase : SpecialSceneEventDisposableBase {
 
     [SerializeField] private CharParams _params;
     protected CharParams Params => _params;

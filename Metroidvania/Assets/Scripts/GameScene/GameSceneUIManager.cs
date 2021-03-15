@@ -29,6 +29,13 @@ public class GameSceneUIManager : MonoBehaviour {
     [SerializeField] private Transform dialogRightSideBaseTransform;
     [SerializeField] private List<DialogCharacterBase> dialogCharacterTemplateList;
 
+    [Header ("Thank You Canvas")]
+    [SerializeField] private GameObject thankYouCanvas;
+    [SerializeField] private Animator thankYouAnimator;
+    [SerializeField] private TextMeshProUGUI thankYouText;
+
+    private const string ThankYouAnimStateName = "ThankYou";
+
     private const float WaitPeriodBeforeAllowPanelClick = 1f;
     private readonly List<DialogCharacterBase> dialogCharacterCacheList = new List<DialogCharacterBase> ();
 
@@ -257,6 +264,22 @@ public class GameSceneUIManager : MonoBehaviour {
         }
 
         return null;
+    }
+
+    #endregion
+
+    #region Thank You Canvas
+
+    public void ShowThankYou (Action onFinished = null) {
+        LangManager.SetText (new LocalizedTextDetails (thankYouText, "ThankYou"));
+        thankYouCanvas.SetActive (true);
+
+        Action onAnimFinished = () => {
+            thankYouCanvas.SetActive (false);
+            onFinished?.Invoke ();
+        };
+
+        FrameworkUtils.Instance.StartSingleAnim (thankYouAnimator, ThankYouAnimStateName, onAnimFinished);
     }
 
     #endregion
