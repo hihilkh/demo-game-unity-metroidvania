@@ -74,7 +74,7 @@ Note_4	Adventurer's Note 4
 Note_4_Content	There're some switches and secret paths around this cave. Some of them can be triggered by just walk through it, and others need some tricks.<br />I remember that once I have gone into a room that look differently from anywhere else of this cave. That room is really weird.
 
 Note_5	Adventurer's Note 5
-Note_5_Content	I know there's a treasure in that large cavity, but it's too difficult for me to get it... I must have missed something.<br />Could it be a hidden entry? Um... Where else is connecting to this area?<br />My intuition tells me that I must get the treasure.
+Note_5_Content	I know there's a treasure in that large cavity, but it is so hard to touch the switch of the hidden room... I must have missed something.<br />Could it be a hidden entry? Um... Where else is connecting to this area?<br />My intuition tells me that I must get the treasure.
 
 Note_6	Adventurer's Note 6
 Note_6_Content	Everything is ready. I defeat the guard. I have the fire. I can go out if I burn the tree away.<br />!@#$*)*&!@#$%^$%^(*&^()*&^@$#%^&*)
@@ -200,3 +200,5 @@ Ending3_Dialog4_1	I don't expect that you are so stupid that coming to find me e
 Ending3_Dialog5_0	I can't leave you here. Let's go out together.
 Ending3_Dialog6_0	It's too late. We both can't leave now.
 Ending3_Dialog7_0	Anyway, thank you for finding me.
+
+ThankYou	Thank you for playing!
