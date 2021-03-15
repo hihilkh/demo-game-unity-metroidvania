@@ -1,29 +1,27 @@
 ﻿using System;
+using System.Collections;
 using HihiFramework.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TransitionCanvas : MonoBehaviour {
-    [SerializeField] private Animator animator;
     [SerializeField] private Image mask;
-
-    private const string FadeInAnimStateName = "FadeIn";
-    private const string FadeOutAnimStateName = "FadeOut";
 
     private bool isFadedIn = true;
     private bool isFading = false;
 
     /// <returns><b>false</b> means already doing fading animation and failed to do again.</returns>
-    public bool FadeIn (Action onFinished = null) {
-        return Fade (true, onFinished);
+    public bool FadeIn (float totalFadingTime, Action onFinished = null) {
+        return Fade (true, totalFadingTime, onFinished);
     }
 
     /// <returns><b>false</b> means already doing fading animation and failed to do again.</returns>
-    public bool FadeOut (Action onFinished = null) {
-        return Fade (false, onFinished);
+    public bool FadeOut (float totalFadingTime, Action onFinished = null) {
+        return Fade (false, totalFadingTime, onFinished);
     }
 
-    private bool Fade (bool isFadeIn, Action onFinished = null) {
+    /// <returns><b>false</b> means already doing fading animation and failed to do again.</returns>
+    private bool Fade (bool isFadeIn, float totalFadingTime, Action onFinished = null) {
         if (isFading) {
             return false;
         }
@@ -33,25 +31,40 @@ public class TransitionCanvas : MonoBehaviour {
             return true;
         }
 
-        isFading = true;
-
-        Action onFadeFinished = () => {
-            isFading = false;
-            isFadedIn = isFadeIn;
-            onFinished?.Invoke ();
-        };
-
-        var state = isFadeIn ? FadeInAnimStateName : FadeOutAnimStateName;
-        FrameworkUtils.Instance.StartSingleAnim (animator, state, onFadeFinished);
+        StartCoroutine (StartFading (isFadeIn, totalFadingTime, onFinished));
 
         return true;
     }
 
-    public void SetFadedIn (bool isFadedIn) {
-        this.isFadedIn = isFadedIn;
+    public void FadeImmediately (bool isFadeIn) {
+        StartFading (isFadeIn, -1);
+    }
 
-        mask.gameObject.SetActive (isFadedIn);
-        var alpha = isFadedIn ? 1 : 0;
-        mask.color = new Color (mask.color.r, mask.color.g, mask.color.b, alpha);
+    /// <param name="isFadeIn"><b>false</b> means fade out</param>
+    /// <param name="totalFadingTime">If smaller or equal to 0, it means immediately finish the fading</param>
+    private IEnumerator StartFading (bool isFadeIn, float totalFadingTime, Action onFinished = null) {
+        var fromAlpha = isFadeIn ? 0 : 1;
+        var toAlpha = isFadeIn ? 1 : 0;
+
+        if (totalFadingTime > 0) {
+            mask.gameObject.SetActive (true);
+
+            var startTime = Time.unscaledTime;
+            isFading = true;
+
+            while (Time.unscaledTime - startTime < totalFadingTime) {
+                var alpha = Mathf.SmoothStep (fromAlpha, toAlpha, (Time.unscaledTime - startTime) / totalFadingTime);
+                mask.color = new Color (mask.color.r, mask.color.g, mask.color.b, alpha);
+                yield return null;
+            }
+        }
+
+        mask.color = new Color (mask.color.r, mask.color.g, mask.color.b, toAlpha);
+        mask.gameObject.SetActive (isFadeIn);
+
+        isFading = false;
+        isFadedIn = isFadeIn;
+
+        onFinished?.Invoke ();
     }
 }

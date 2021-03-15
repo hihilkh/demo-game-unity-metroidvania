@@ -42,10 +42,10 @@ public class LandingSceneManager : MonoBehaviour {
             ao.completed += (AsyncOperation obj) => {
                 gameSceneManager = FindObjectOfType<GameSceneManager> ();
                 landingToGameOffset = gameSceneManager.GetSelectedEntryPos () - (Vector2)endingRefPoint.position;
-                GameUtils.ScreenFadeOut ();
+                GameUtils.ScreenFadeOut (true);
             };
         } else {
-            GameUtils.ScreenFadeOut ();
+            GameUtils.ScreenFadeOut (true);
         }
     }
 

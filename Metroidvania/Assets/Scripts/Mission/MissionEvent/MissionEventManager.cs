@@ -402,7 +402,7 @@ public class MissionEventManager : MonoBehaviour {
                 onFinished?.Invoke ();
             };
 
-            GameUtils.ScreenFadeIn (onFadeInFinished);
+            GameUtils.ScreenFadeIn (false, onFadeInFinished);
         };
 
         StartSubEventRecursive (subEventListClone, onEventFinished);
@@ -617,10 +617,10 @@ public class MissionEventManager : MonoBehaviour {
                 }
             }
 
-            GameUtils.ScreenFadeOut (onFinished);
+            GameUtils.ScreenFadeOut (false, onFinished);
         };
 
-        GameUtils.ScreenFadeIn (onFadeInFinished);
+        GameUtils.ScreenFadeIn (false, onFadeInFinished);
     }
 
     private void StartForceCharWalkSubEvent (ForceCharWalkSubEvent subEvent, Action onFinished = null) {

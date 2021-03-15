@@ -353,7 +353,7 @@ public class CharModel : LifeBase, IMapTarget {
 
         ResetAllUpdateControlFlags ();
 
-        ResetAnimatorBools ();
+        ResetAnimation ();
     }
 
     private void ResetAllUpdateControlFlags () {
@@ -935,9 +935,13 @@ public class CharModel : LifeBase, IMapTarget {
         animator.SetBool (boolName, value);
     }
 
-    private void ResetAnimatorBools () {
-        animator.SetBool (CharAnimConstant.SlidingBoolName, false);
-        animator.SetBool (CharAnimConstant.InvincibleBoolName, false);
+    private void ResetAnimation () {
+        // Set StopUpperPartTriggerName as to quickly stop char upper part animation
+        // so that you would not see char animating while game reset and screen fading out 
+        SetAnimatorTrigger (CharAnimConstant.StopUpperPartTriggerName);
+
+        SetAnimatorBool (CharAnimConstant.SlidingBoolName, false);
+        SetAnimatorBool (CharAnimConstant.InvincibleBoolName, false);
     }
 
     #endregion

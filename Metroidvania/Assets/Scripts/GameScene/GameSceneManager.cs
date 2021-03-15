@@ -99,7 +99,7 @@ public class GameSceneManager : MonoBehaviour {
             // Remarks : To ensure everything is ready so that CharModel has no strange behaviour
             if (!isControlledByLandingScene) {
                 Action onResetCharModelFinished = () => {
-                    GameUtils.ScreenFadeOut (onFadeOutFinished);
+                    GameUtils.ScreenFadeOut (true, onFadeOutFinished);
                 };
 
                 StartCoroutine (DelayResetCharModel (IsGameInitialized, onResetCharModelFinished));
@@ -122,7 +122,7 @@ public class GameSceneManager : MonoBehaviour {
         } else {
             uiManager.ShowUI ();
             uiManager.SetUIInteractable (false);
-            GameUtils.ScreenFadeIn (onFadeInFinished);
+            GameUtils.ScreenFadeIn (true, onFadeInFinished);
         }
     }
 
@@ -159,10 +159,10 @@ public class GameSceneManager : MonoBehaviour {
 
         Action onFadeInFinished = () => {
             charModel.Reset (selectedEntryData);
-            GameUtils.ScreenFadeOut (onFadeOutFinished);
+            GameUtils.ScreenFadeOut (true, onFadeOutFinished);
         };
 
-        GameUtils.ScreenFadeIn (onFadeInFinished);
+        GameUtils.ScreenFadeIn (true, onFadeInFinished);
     }
 
     private void StartGame (bool isNeedToSetCachedCommandSettings = false, bool isNeedReadyGo = true) {
@@ -198,7 +198,7 @@ public class GameSceneManager : MonoBehaviour {
             }
         };
 
-        GameUtils.ScreenFadeIn (onFadeInFinished);
+        GameUtils.ScreenFadeIn (!isAfterEnding, onFadeInFinished);
     }
 
     #endregion

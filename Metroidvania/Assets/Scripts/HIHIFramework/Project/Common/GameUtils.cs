@@ -6,8 +6,11 @@ using UnityEngine.SceneManagement;
 public partial class GameUtils : Singleton<GameUtils> {
     private static CharModel Character;
     private static bool IsCharModelInitialized = false;
+    private const string CharResourcesName = "Char/Character";
 
     private static TransitionCanvas TransitionCanvasInstance;
+    private const float ScreenFadingTime_Fast = 1f;
+    private const float ScreenFadingTime_Slow = 2f;
 
     #region CharModel
 
@@ -26,7 +29,7 @@ public partial class GameUtils : Singleton<GameUtils> {
             }
 
             if (Character == null) {
-                Character = Instantiate (Resources.Load<CharModel> (GameVariable.CharPrefabResourcesName));
+                Character = Instantiate (Resources.Load<CharModel> (CharResourcesName));
                 // Remarks :
                 // Do Reset() explicitly instead of doing inside Awake() to ensure after getting the model from this method,
                 // the model is already initialized
@@ -55,15 +58,19 @@ public partial class GameUtils : Singleton<GameUtils> {
     }
 
     public static void SetScreen (bool isBlockedSight) {
-        GetTransitionCanvas ().SetFadedIn (isBlockedSight);
+        GetTransitionCanvas ().FadeImmediately (isBlockedSight);
     }
 
-    public static void ScreenFadeIn (Action onFinished = null) {
-        GetTransitionCanvas ().FadeIn (onFinished);
+    private static float GetFadingTime (bool isFast) {
+        return isFast ? ScreenFadingTime_Fast : ScreenFadingTime_Slow;
     }
 
-    public static void ScreenFadeOut (Action onFinished = null) {
-        GetTransitionCanvas ().FadeOut (onFinished);
+    public static void ScreenFadeIn (bool isFast, Action onFinished = null) {
+        GetTransitionCanvas ().FadeIn (GetFadingTime (isFast), onFinished);
+    }
+
+    public static void ScreenFadeOut (bool isFast, Action onFinished = null) {
+        GetTransitionCanvas ().FadeOut (GetFadingTime (isFast), onFinished);
     }
 
     #endregion
@@ -78,7 +85,7 @@ public partial class GameUtils : Singleton<GameUtils> {
             SceneManager.LoadScene (GameVariable.GameSceneName);
         };
 
-        ScreenFadeIn (onFadeInFinished);
+        ScreenFadeIn (true, onFadeInFinished);
     }
 
     #endregion

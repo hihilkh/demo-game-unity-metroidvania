@@ -25,7 +25,7 @@ public class MainMenuSceneManager : MonoBehaviour {
             CheckEntryJustUnlocked ();
         };
 
-        GameUtils.ScreenFadeOut (onFadeOutFinished);
+        GameUtils.ScreenFadeOut (true, onFadeOutFinished);
     }
 
     private void OnDestroy () {

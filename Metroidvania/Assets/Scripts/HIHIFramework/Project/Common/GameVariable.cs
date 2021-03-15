@@ -42,8 +42,6 @@ public static partial class GameVariable {
 
     #region Map Related
 
-    public const string CharPrefabResourcesName = "Char/Character";
-
     public const int CharPosZ = -2;
     public const int EnemyPosZ = -1;
     public const int TilePosZ = 0;
