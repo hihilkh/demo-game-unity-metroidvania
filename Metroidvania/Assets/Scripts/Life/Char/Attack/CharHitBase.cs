@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class CharHitBase : MonoBehaviour {
+public abstract class CharHitBase : MapDisposableBase {
 
     [SerializeField] private CharParams _params;
     protected CharParams Params => _params;
@@ -60,6 +60,14 @@ public abstract class CharHitBase : MonoBehaviour {
         if (isHurt) {
             lifeBase.Hurt (totalDP, Direction);
         }
+    }
+
+    #endregion
+
+    #region MapDisposableBase
+
+    protected override void Dispose () {
+        DestroySelf ();
     }
 
     #endregion

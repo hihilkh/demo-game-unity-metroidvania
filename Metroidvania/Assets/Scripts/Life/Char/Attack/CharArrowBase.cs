@@ -2,7 +2,7 @@
 using HihiFramework.Core;
 using UnityEngine;
 
-public abstract class CharArrowBase : MonoBehaviour {
+public abstract class CharArrowBase : MapDisposableBase {
     [SerializeField] private CharParams _params;
     protected CharParams Params => _params;
     [SerializeField] private SpriteRenderer _arrowSpriteRenderer;
@@ -149,6 +149,14 @@ public abstract class CharArrowBase : MonoBehaviour {
             Hit (mapSwitch.transform, true);
             mapSwitch.Trigger ();
         }
+    }
+
+    #endregion
+
+    #region MapDisposableBase
+
+    protected override void Dispose () {
+        DestroySelf ();
     }
 
     #endregion
