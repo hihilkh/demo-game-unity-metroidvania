@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class LandingSceneManager : MonoBehaviour {
     [SerializeField] private LandingSceneUIManager uiManager;
+    [SerializeField] private SettingsPanel settingsPanel;
     [SerializeField] private Transform startingRefPoint;
     [SerializeField] private Transform endingRefPoint;
 
@@ -28,6 +29,7 @@ public class LandingSceneManager : MonoBehaviour {
 
     private void Start () {
         UIEventManager.AddEventHandler (BtnOnClickType.Landing_Start, StartBtnClickedHandler);
+        UIEventManager.AddEventHandler (BtnOnClickType.Settings, OpenSettingsPanelBtnClickedHandler);
 
         charModel.SetActive (true);
         charModel.Reset (startingRefPoint.position, LifeEnum.HorizontalDirection.Right);
@@ -52,6 +54,7 @@ public class LandingSceneManager : MonoBehaviour {
 
     private void OnDestroy () {
         UIEventManager.RemoveEventHandler (BtnOnClickType.Landing_Start, StartBtnClickedHandler);
+        UIEventManager.RemoveEventHandler (BtnOnClickType.Settings, OpenSettingsPanelBtnClickedHandler);
     }
 
     private void Update () {
@@ -92,6 +95,10 @@ public class LandingSceneManager : MonoBehaviour {
         } else {
             SceneManager.LoadScene (GameVariable.MainMenuSceneName);
         }
+    }
+
+    private void OpenSettingsPanelBtnClickedHandler (HIHIButton sender) {
+        settingsPanel.Show ();
     }
 
     #endregion

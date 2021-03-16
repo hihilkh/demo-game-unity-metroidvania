@@ -43,6 +43,7 @@ namespace HihiFramework.Lang {
 
         protected static Dictionary<LangType, Dictionary<string, string>> LangKeyValueMappingDict { get; } = new Dictionary<LangType, Dictionary<string, string>> ();
         protected static Dictionary<LangType, TMP_FontAsset> FontDict { get; } = new Dictionary<LangType, TMP_FontAsset> ();
+        protected static Dictionary<LangType, string> LangNameDict { get; } = new Dictionary<LangType, string> ();
 
         #region Initialization
 
@@ -51,6 +52,9 @@ namespace HihiFramework.Lang {
             Action<bool> onInitStreamingAssetsFinished = (isSuccess) => {
                 if (isSuccess) {
                     var isLoadSuccess = LoadLocalizationFileIfMissing (CurrentLang);
+                    if (isLoadSuccess) {
+                        isLoadSuccess = ReloadAllLangNames ();
+                    }
 
                     if (isLoadSuccess) {
                         Log.Print ("Successfully init LangManager", LogTypes.Lang);
@@ -86,6 +90,73 @@ namespace HihiFramework.Lang {
 
         #region Localization File
 
+        /// <summary>
+        /// If the contents is null or empty, view as failed. If failed, <paramref name="lines"/> will be assigned to null.<br />
+        /// So if success, <paramref name="lines"/> must not be null and lines.Length must be more than 0
+        /// </summary>
+        /// <returns>Is success</returns>
+        private static bool TryReadLocalizationFileContents (LangType langType, out string[] lines) {
+            lines = null;
+
+            var fileName = LangConfig.GetLocalizationFileName (langType);
+            if (string.IsNullOrEmpty (fileName)) {
+                Log.PrintError ("Read localization file content Failed. langType : " + langType + " , Error : Localization file do not exist.", LogTypes.Lang | LogTypes.Asset);
+                return false;
+            }
+
+            var isSuccess = AssetHandler.Instance.TryReadPersistentDataFileByLines (AssetEnum.AssetType.Localization, fileName, out lines);
+            if (!isSuccess) {
+                Log.PrintError ("Read localization file content Failed. langType : " + langType, LogTypes.Lang | LogTypes.Asset);
+                return false;
+            }
+
+            if (lines == null || lines.Length <= 0) {
+                Log.PrintError ("Read localization file content Failed. langType : " + langType + " , Error : Localization file is empty", LogTypes.Lang | LogTypes.Asset);
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool ReloadAllLangNames () {
+            Log.Print ("Start reloading all lang name.", LogTypes.Lang | LogTypes.Asset);
+
+            LangNameDict.Clear ();
+
+            var langTypeList = LangConfig.GetSelectableLangTypeList ();
+
+            if (langTypeList == null || langTypeList.Count <= 0) {
+                Log.PrintWarning ("SelectableLangTypeList is null or empty.", LogTypes.Lang | LogTypes.Asset);
+                // Do not return false because maybe some games really do not have language
+            } else {
+                foreach (var langType in langTypeList) {
+                    string[] lines;
+                    var isSuccess = TryReadLocalizationFileContents (langType, out lines);
+
+                    if (!isSuccess) {
+                        Log.PrintError ("Reload lang name Failed. langType : " + langType + " , Error : Cannot read localization file content", LogTypes.Lang | LogTypes.Asset);
+                        return false;
+                    }
+
+                    for (var i = 0; i < lines.Length; i++) {
+                        var pair = lines[i].Split (new string[] { FrameworkVariable.LocalizationFileDelimiter }, StringSplitOptions.None);
+                        if (pair == null || pair.Length != 2) {
+                            // Line with wrong format. Ignore it.
+                            continue;
+                        }
+
+                        if (pair[0] == FrameworkVariable.LangNameLocalizationKey) {
+                            LangNameDict.Add (langType, pair[1]);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            Log.Print ("Successfully reloading all lang name.", LogTypes.Lang | LogTypes.Asset);
+            return true;
+        }
+
         private static bool LoadLocalizationFileIfMissing (LangType langType) {
             if (LangKeyValueMappingDict.ContainsKey (langType)) {
                 return true;
@@ -93,21 +164,11 @@ namespace HihiFramework.Lang {
 
             Log.Print ("Start loading localization file. LangType : " + langType, LogTypes.Lang | LogTypes.Asset);
 
-            var fileName = LangConfig.GetLocalizationFileName (langType);
-            if (string.IsNullOrEmpty (fileName)) {
-                Log.PrintError ("Load localization file Failed. langType : " + langType + " , Error : Localization file do not exist.", LogTypes.Lang | LogTypes.Asset);
-                return false;
-            }
+            string[] lines;
+            var isSuccess = TryReadLocalizationFileContents (langType, out lines);
 
-            string[] lines = null;
-            var isSuccess = AssetHandler.Instance.TryReadPersistentDataFileByLines (AssetEnum.AssetType.Localization, fileName, out lines);
             if (!isSuccess) {
-                Log.PrintError ("Load localization file Failed. langType : " + langType, LogTypes.Lang | LogTypes.Asset);
-                return false;
-            }
-
-            if (lines == null || lines.Length <= 0) {
-                Log.PrintError ("Load localization file Failed. langType : " + langType + " , Error : Localization file is empty", LogTypes.Lang | LogTypes.Asset);
+                Log.PrintError ("Load localization file Failed. langType : " + langType + " , Error : Cannot read localization file content", LogTypes.Lang | LogTypes.Asset);
                 return false;
             }
 
@@ -134,12 +195,16 @@ namespace HihiFramework.Lang {
             return true;
         }
 
-        public static void ReloadLocalizationFile () {
+        public static void ReloadLocalizationFiles () {
             // Clear the cache of all LangType, but not only CurrentLang
             LangKeyValueMappingDict.Clear ();
 
             // Reload only CurrentLang. Other lang's file would be loaded on demand
             var isSuccess = LoadLocalizationFileIfMissing (CurrentLang);
+
+            if (isSuccess) {
+                isSuccess = ReloadAllLangNames ();
+            }
 
             // Force trigger LangChangedEvent
             if (isSuccess) {
@@ -230,9 +295,12 @@ namespace HihiFramework.Lang {
             return mapping[key];
         }
 
-        private static void SetText (TMP_FontAsset font, BasicLocalizedTextDetails details, bool isFallbackToRootLang = true) {
-            details.Text.font = font;
+        private static void SetText (TextMeshProUGUI text, TMP_FontAsset font, string str) {
+            text.font = font;
+            text.text = str;
+        }
 
+        private static void SetText (BasicLocalizedTextDetails details, TMP_FontAsset font, bool isFallbackToRootLang = true) {
             var str = details.IsNeedLocalization ? GetLocalizedStr (details.LocalizationKey, isFallbackToRootLang) : details.LocalizationKey;
             if (details.ReplaceStringDict != null && details.ReplaceStringDict.Count > 0) {
                 List<string> replaceStringList = new List<string> ();
@@ -247,7 +315,7 @@ namespace HihiFramework.Lang {
                 str = FrameworkUtils.StringReplace (str, replaceStringList.ToArray ());
             }
 
-            details.Text.text = str;
+            SetText (details.Text, font, str);
         }
 
         /// <summary>
@@ -256,7 +324,7 @@ namespace HihiFramework.Lang {
         public static void SetText (BasicLocalizedTextDetails details, bool isFallbackToRootLang = true) {
             var font = GetCurrentFont ();
 
-            SetText (font, details, isFallbackToRootLang);
+            SetText (details, font, isFallbackToRootLang);
         }
 
         /// <summary>
@@ -271,8 +339,20 @@ namespace HihiFramework.Lang {
 
             var font = GetCurrentFont ();
             foreach (var details in detailsList) {
-                SetText (font, details, isFallbackToRootLang);
+                SetText (details, font, isFallbackToRootLang);
             }
+        }
+
+        public static void SetLangNameText (TextMeshProUGUI text, LangType langType) {
+            if (!LangNameDict.ContainsKey (langType)) {
+                Log.PrintError ("LangNameDict do not contain lang name of langType : " + langType + ". Please check. (Maybe the langType is not a selectable lang type?)", LogTypes.Lang);
+                return;
+            }
+
+            var langName = LangNameDict[langType];
+            var font = GetFont (langType);
+
+            SetText (text, font, langName);
         }
 
         #endregion

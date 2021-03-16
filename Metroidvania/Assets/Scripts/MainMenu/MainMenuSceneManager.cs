@@ -9,6 +9,7 @@ public class MainMenuSceneManager : MonoBehaviour {
     [SerializeField] private List<SelectMissionItem> selectMissionItemsInOrder;
     [SerializeField] private MissionDetailsPanel missionDetailsPanel;
     [SerializeField] private NotesPanel notesPanel;
+    [SerializeField] private SettingsPanel settingsPanel;
 
     /// <summary>
     /// int : missionId
@@ -19,6 +20,7 @@ public class MainMenuSceneManager : MonoBehaviour {
         UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_SelectMission, SelectMissionBtnClickedHandler);
         UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_SelectEntry, SelectEntryBtnClickedHandler);
         UIEventManager.AddEventHandler (BtnOnClickType.MainMenu_OpenNotesPanel, OpenNotesPanelBtnClickedHandler);
+        UIEventManager.AddEventHandler (BtnOnClickType.Settings, OpenSettingsPanelBtnClickedHandler);
         InitSelectMissionItems ();
 
         Action onFadeOutFinished = () => {
@@ -32,6 +34,7 @@ public class MainMenuSceneManager : MonoBehaviour {
         UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_SelectMission, SelectMissionBtnClickedHandler);
         UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_SelectEntry, SelectEntryBtnClickedHandler);
         UIEventManager.RemoveEventHandler (BtnOnClickType.MainMenu_OpenNotesPanel, OpenNotesPanelBtnClickedHandler);
+        UIEventManager.RemoveEventHandler (BtnOnClickType.Settings, OpenSettingsPanelBtnClickedHandler);
     }
 
     private void InitSelectMissionItems () {
@@ -89,6 +92,10 @@ public class MainMenuSceneManager : MonoBehaviour {
 
     private void OpenNotesPanelBtnClickedHandler (HIHIButton sender) {
         notesPanel.Show (UserManager.CollectedCollectableTypeList);
+    }
+
+    private void OpenSettingsPanelBtnClickedHandler (HIHIButton sender) {
+        settingsPanel.Show ();
     }
 
     #endregion

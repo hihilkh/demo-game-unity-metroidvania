@@ -8,7 +8,6 @@ public static partial class LangConfig {
     /// Device default language is the language to use after app installed
     /// </summary>
     public static LangType GetDeviceDefaultLang () {
-        // Just sample. Please rewrite it to fit your project
         switch (Application.systemLanguage) {
             case SystemLanguage.ChineseTraditional:
                 return LangType.TraditionalChinese;

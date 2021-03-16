@@ -10,6 +10,11 @@ Go	開始
 // Landing
 PressToStart	按一下開始
 
+// Settings Panel
+SettingsPanel_Title	設定
+SettingsPanel_LangTitle	語言
+SettingsPanel_Apply	套用設定
+
 // MainMenu
 SelectArea	選擇地區
 ProgressDone	已完成 :

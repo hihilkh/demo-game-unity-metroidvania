@@ -10,6 +10,11 @@ Go	Go
 // Landing
 PressToStart	Press to Start
 
+// Settings Panel
+SettingsPanel_Title	Settings
+SettingsPanel_LangTitle	Language
+SettingsPanel_Apply	Apply Settings
+
 // MainMenu
 SelectArea	Select an Area
 ProgressDone	Progress Done :

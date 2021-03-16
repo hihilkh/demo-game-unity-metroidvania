@@ -21,6 +21,7 @@
         public const string LocalizationFileExtension = "tsv";
         public const string LocalizationFileDelimiter = "\t";
         public const string FontResourcesFolder = "Fonts";
+        public const string LangNameLocalizationKey = "LangName";
 
         #endregion
 

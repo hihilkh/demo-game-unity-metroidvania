@@ -17,6 +17,11 @@ public enum BtnOnClickType {
     Game_Restart = 204,
     Game_BackToMM = 205,
 
+    Settings = 300,
+    Settings_LangLeft = 301,
+    Settings_LangRight = 302,
+    Settings_Apply = 303,
+
     // Framework usage
     GameConfig_Confirm = 10000,
     GameConfig_ClearPlayerPrefs = 10001,
