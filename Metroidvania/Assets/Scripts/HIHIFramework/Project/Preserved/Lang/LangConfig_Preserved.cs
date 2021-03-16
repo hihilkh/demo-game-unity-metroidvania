@@ -11,6 +11,8 @@ public static partial class LangConfig {
         switch (Application.systemLanguage) {
             case SystemLanguage.ChineseTraditional:
                 return LangType.TraditionalChinese;
+            case SystemLanguage.ChineseSimplified:
+                return LangType.SimplifiedChinese;
             default:
                 return LangType.English;
         }
@@ -28,8 +30,9 @@ public static partial class LangConfig {
     /// </summary>
     public static List<LangType> GetSelectableLangTypeList () {
         return new List<LangType> {
-                LangType.TraditionalChinese,
                 LangType.English,
+                LangType.TraditionalChinese,
+                LangType.SimplifiedChinese,
             };
     }
 
@@ -40,6 +43,7 @@ public static partial class LangConfig {
         switch (langType) {
             case LangType.TraditionalChinese: return "zh-hk";
             case LangType.English: return "en-us";
+            case LangType.SimplifiedChinese: return "zh-cn";
         }
 
         Log.PrintError ("LangType : " + langType + " has not been assigned lang code. Return null.", LogTypes.Lang);
