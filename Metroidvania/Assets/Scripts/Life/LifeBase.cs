@@ -67,7 +67,6 @@ public abstract class LifeBase : MapDisposableBase {
         return hasInitializedBefore;
     }
 
-    // TODO : Handle the cases that change pos after init
     protected virtual void SetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         SetPos (pos);
         FacingDirection = direction;

@@ -446,8 +446,6 @@ public class MapManager : MonoBehaviour {
 
         if (isChangedInGame) {
             if (switchedOnOnOffSwitchBasePosList.Contains (switchBasePos)) {
-                // TODO : Check if Vector2Int can check equal by this way
-                Log.PrintError ("switchedOnOnOffSwitchBasePosList contain");
                 if (!isOn) {
                     switchedOnOnOffSwitchBasePosList.Remove (switchBasePos);
                 }

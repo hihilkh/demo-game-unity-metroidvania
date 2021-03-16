@@ -7,7 +7,6 @@ public static class TileMapping {
 
     // Remarks : Only File name
     private static readonly Dictionary<MapEnum.TileType, string> TileResourcesCustomNameDict = new Dictionary<MapEnum.TileType, string> () {
-        // TODO : Change TileTag to upper tile
         { MapEnum.TileType.GroundTag, "TileTag/GroundTag" },
         { MapEnum.TileType.SlippyWallTag, "TileTag/SlippyWallTag" },
         { MapEnum.TileType.DeathTag, "TileTag/DeathTag" },

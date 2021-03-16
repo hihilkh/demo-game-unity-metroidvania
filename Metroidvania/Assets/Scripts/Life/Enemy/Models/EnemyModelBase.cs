@@ -3,9 +3,6 @@ using HihiFramework.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// TODO : Use Update to control enemy actions
-// TODO : Ensure during beat back and die, no other action
-// TODO : Ensure no action go after die
 public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     #region Fields / Properties
