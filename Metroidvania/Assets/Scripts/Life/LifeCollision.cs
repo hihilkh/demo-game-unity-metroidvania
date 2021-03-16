@@ -38,6 +38,10 @@ public class LifeCollision : MonoBehaviour {
         originalLayer = gameObject.layer;
     }
 
+    private void OnEnable () {
+        collisionDict.Clear ();
+    }
+
     public void Init (int invincibleLayer) {
         this.invincibleLayer = invincibleLayer;
     }

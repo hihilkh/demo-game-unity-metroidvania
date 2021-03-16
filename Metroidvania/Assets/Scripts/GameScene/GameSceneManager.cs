@@ -190,18 +190,18 @@ public class GameSceneManager : MonoBehaviour {
     private void LeaveGame (bool isAfterEnding = false) {
         Log.Print ("Leave Game", LogTypes.GameFlow);
 
-        Action onFadeInFinished = () => {
-            if (isAfterEnding) {
+        if (isAfterEnding) {
+            Action onFadeInFinished = () => {
                 Action onThankYouFinished = () => {
-                    SceneManager.LoadScene (GameVariable.LandingSceneName);
+                    GameUtils.LoadSingleScene (GameVariable.LandingSceneName, false);
                 };
                 uiManager.ShowThankYou (onThankYouFinished);
-            } else {
-                SceneManager.LoadScene (GameVariable.MainMenuSceneName);
-            }
-        };
+            };
 
-        GameUtils.ScreenFadeIn (!isAfterEnding, onFadeInFinished);
+            GameUtils.ScreenFadeIn (false, onFadeInFinished);
+        } else {
+            GameUtils.LoadSingleScene (GameVariable.MainMenuSceneName);
+        }
     }
 
     #endregion

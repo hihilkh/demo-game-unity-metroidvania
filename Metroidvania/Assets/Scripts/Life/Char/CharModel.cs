@@ -250,9 +250,9 @@ public class CharModel : LifeBase, IMapTarget {
             controller.Tapped += TappedHandler;
             controller.StartedHold += StartedHoldHandler;
             controller.StoppedHold += StoppedHoldHandler;
-        }
+            GameUtils.SingleSceneChanging += SingleSceneChangingHandler;
+            GameUtils.SingleSceneChanged += SingleSceneChangedHandler;
 
-        if (CharType == CharEnum.CharType.Player) {
             DontDestroyOnLoad (this);
         }
     }
@@ -272,21 +272,19 @@ public class CharModel : LifeBase, IMapTarget {
             controller.Tapped -= TappedHandler;
             controller.StartedHold -= StartedHoldHandler;
             controller.StoppedHold -= StoppedHoldHandler;
+            GameUtils.SingleSceneChanging -= SingleSceneChangingHandler;
+            GameUtils.SingleSceneChanged -= SingleSceneChangedHandler;
         }
     }
 
     public void EnterGameScene (MapManager mapManager, MapData.Boundary boundary) {
-        SetActive (true);
         this.mapManager = mapManager;
         cameraModel?.SetMissionBoundaries (boundary.lowerBound, boundary.upperBound);
-        cameraModel?.SetAudioListener (true);
     }
 
     public void LeaveGameScene () {
         this.mapManager = null;
         cameraModel?.UnsetMissionBoundaries ();
-        cameraModel?.SetAudioListener (false);
-        SetActive (false);
 
         if (CharType == CharEnum.CharType.Player) {
             SetCaveCollapseEffect (false);
@@ -1885,6 +1883,26 @@ public class CharModel : LifeBase, IMapTarget {
 
     #endregion
 
+    #region Changing Scene
+
+    private void SingleSceneChangingHandler (string fromSceneName, string toSceneName) {
+        // Do not show char if not specifically set active
+        // Also, to ensure the collision stuff keep correct
+        SetActive (false);
+
+        // Prevent multi audio listener issue
+        cameraModel?.SetAudioListener (false);
+    }
+
+    private void SingleSceneChangedHandler (string currentSceneName) {
+        if (currentSceneName == GameVariable.GameSceneName || currentSceneName == GameVariable.LandingSceneName) {
+            SetActive (true);
+            cameraModel?.SetAudioListener (true);
+        }
+    }
+
+
+    #endregion
     #region Mission Event
 
     /// <summary>

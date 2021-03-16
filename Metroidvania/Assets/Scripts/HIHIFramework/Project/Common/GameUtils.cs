@@ -12,6 +12,20 @@ public partial class GameUtils : Singleton<GameUtils> {
     private const float ScreenFadingTime_Fast = 1f;
     private const float ScreenFadingTime_Slow = 2f;
 
+    /// <summary>
+    /// Only trigger for LoadSceneMode.Single<br />
+    /// Input:<br />
+    /// first string : fromSceneName<br />
+    /// second string : toSceneName
+    /// </summary>
+    public static event Action<string, string> SingleSceneChanging;
+    /// <summary>
+    /// Only trigger for LoadSceneMode.Single<br />
+    /// Input:<br />
+    /// first string : currentSceneName
+    /// </summary>
+    public static event Action<string> SingleSceneChanged;
+
     #region CharModel
 
     public static CharModel FindOrSpawnChar () {
@@ -75,17 +89,27 @@ public partial class GameUtils : Singleton<GameUtils> {
 
     #endregion
 
-    #region GameScene
+    #region Scene Management
+
+    public static void LoadSingleScene (string sceneName, bool isWithFadeIn = true, bool isFastFadeIn = true) {
+        Action onFadeInFinished = () => {
+            SingleSceneChanging?.Invoke (SceneManager.GetActiveScene ().name, sceneName);
+            SceneManager.LoadScene (sceneName);
+            SingleSceneChanged?.Invoke (sceneName);
+        };
+
+        if (isWithFadeIn) {
+            ScreenFadeIn (isFastFadeIn, onFadeInFinished);
+        } else {
+            onFadeInFinished ();
+        }
+    }
 
     public static void LoadGameScene (int missionId, int entryId) {
         UserManager.SelectedMissionId = missionId;
         UserManager.SelectedEntryId = entryId;
 
-        Action onFadeInFinished = () => {
-            SceneManager.LoadScene (GameVariable.GameSceneName);
-        };
-
-        ScreenFadeIn (true, onFadeInFinished);
+        LoadSingleScene (GameVariable.GameSceneName);
     }
 
     #endregion

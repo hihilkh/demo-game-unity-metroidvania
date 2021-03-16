@@ -93,7 +93,7 @@ public class LandingSceneManager : MonoBehaviour {
             uiManager.HideUI ();
             isGoingToGameScene = true;
         } else {
-            SceneManager.LoadScene (GameVariable.MainMenuSceneName);
+            GameUtils.LoadSingleScene (GameVariable.MainMenuSceneName);
         }
     }
 
