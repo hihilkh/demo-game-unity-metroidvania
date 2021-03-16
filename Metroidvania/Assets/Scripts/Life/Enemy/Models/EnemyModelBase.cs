@@ -10,6 +10,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     [SerializeField] private EnemyParams _params;
     public EnemyParams Params => _params;
     [SerializeField] private Animator animator;
+    [SerializeField] private EnemyAnimSMBUtils animUtils;
     [SerializeField] private Transform targetRefPoint;
     [SerializeField] private EnemyCharDetection charDetection;
 
@@ -98,9 +99,10 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     public Vector2 BeatBackDirection { get; private set; } = Vector2.one;
     private static Vector2 WalkingBeatBackDirection_Right = new Vector2 (1, 0.577f).normalized;    // About 30 degree elevation
     private static Vector2 WalkingBeatBackDirection_Left = Vector2.Scale (WalkingBeatBackDirection_Right, new Vector2 (-1, 1));
+    private bool isJustBeatingBack = false;
 
     // Jump
-    protected bool isJustJumpedUp = false;
+    protected bool IsJustJumpedUp { get; set; } = false;
     private bool isPreparingToRecursiveJump = false;
     private float startPrepareRecursiveJumpTime = -1;
 
@@ -177,6 +179,8 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         base.Update ();
 
         DecideAction ();
+
+        isJustBeatingBack = false;
     }
 
     #region Statuses
@@ -225,7 +229,18 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
         if (!GetIsInStatuses (EnemyEnum.Statuses.DetectedChar)) {
             if (!isIdling) {
-                StartIdleOrMove ();
+                switch (MovementType) {
+                    case EnemyEnum.MovementType.Walking:
+                        // Do not set idle if the walking enemy is not on ground (e.g. jumping)
+                        if (CurrentLocation == LifeEnum.Location.Ground) {
+                            StartIdling ();
+                        }
+                        break;
+                    case EnemyEnum.MovementType.Flying:
+                    default:
+                        StartIdling ();
+                        break;
+                }
             }
 
             return false;
@@ -304,6 +319,8 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
         if (Params.BeatBackInitSpeed <= 0) {
             return;
         }
+
+        isJustBeatingBack = true;
 
         base.StartBeatingBack (hurtDirection);
 
@@ -421,7 +438,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
             return false;
         }
 
-        isJustJumpedUp = true;
+        IsJustJumpedUp = true;
         SetAnimatorTrigger (EnemyAnimConstant.JumpTriggerName);
 
         return true;
@@ -541,6 +558,12 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
             return;
         }
 
+        if (isJustBeatingBack) {
+            Log.PrintDebug (gameObject.name + " : It is just triggered beating back. Wait a frame for beat back to take effect.", LogTypes.Enemy | LogTypes.Collision);
+            CurrentLocation = isNowTouchingGround ? LifeEnum.Location.Ground : LifeEnum.Location.Air;
+            return;
+        }
+
         // Check for touching wall
         if (collisionAnalysis.WallCollisionChangedType == LifeEnum.CollisionChangedType.Enter) {
             TouchWallAction (wallPosition);
@@ -566,9 +589,9 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
                             break;
                         }
 
-                        if (isJustJumpedUp) {
+                        if (IsJustJumpedUp) {
                             // Dominated by jump handling
-                            isJustJumpedUp = false;
+                            IsJustJumpedUp = false;
                         } else {
                             StartFreeFall ();
                         }
@@ -588,7 +611,11 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
                         }
 
                         if (IsBeatingBack) {
-                            StopBeatingBack ();
+                            if (animUtils.RB.velocity.y > GameVariable.EpsilonForPhysicsChecking) {
+                                Log.PrintWarning (gameObject.name + " : The walking movement type enemy is trying to move away from the ground due to beating back, so do not do any touch ground action.", LogTypes.Enemy | LogTypes.Collision);
+                            } else {
+                                StopBeatingBack ();
+                            }
                         } else {
                             SetAnimatorTrigger (EnemyAnimConstant.LandingTriggerName);
                         }

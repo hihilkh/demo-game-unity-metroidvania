@@ -2,7 +2,7 @@
 using HihiFramework.Core;
 using UnityEngine;
 
-public class CharAnimUtils : MonoBehaviour {
+public class CharAnimSMBUtils : MonoBehaviour {
     [SerializeField] private CharModel _model;
     public CharModel Model => _model;
 

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class EnemyAnimUtils : MonoBehaviour {
+public class EnemyAnimSMBUtils : MonoBehaviour {
     private enum AccelerationMode {
         None,
         Direction,

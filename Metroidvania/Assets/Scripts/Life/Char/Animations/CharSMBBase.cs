@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public class CharSMBBase : StateMachineBehaviour {
-    protected CharAnimUtils AnimUtils { get; private set; }
+    protected CharAnimSMBUtils AnimUtils { get; private set; }
 
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
@@ -23,7 +23,7 @@ public class CharSMBBase : StateMachineBehaviour {
 
     private void CheckAndSetAnimUtils (Animator animator) {
         if (AnimUtils == null) {
-            AnimUtils = animator.GetComponent<CharAnimUtils> ();
+            AnimUtils = animator.GetComponent<CharAnimSMBUtils> ();
 
             if (AnimUtils == null) {
                 Log.PrintError ("Cannot find corresponding CharAnimUtils script.", LogTypes.Animation | LogTypes.Char);

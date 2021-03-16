@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public class EnemySMBBase : StateMachineBehaviour {
-    protected EnemyAnimUtils AnimUtils { get; private set; }
+    protected EnemyAnimSMBUtils AnimUtils { get; private set; }
 
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
@@ -23,7 +23,7 @@ public class EnemySMBBase : StateMachineBehaviour {
 
     private void CheckAndSetAnimUtils (Animator animator) {
         if (AnimUtils == null) {
-            AnimUtils = animator.GetComponent<EnemyAnimUtils> ();
+            AnimUtils = animator.GetComponent<EnemyAnimSMBUtils> ();
 
             if (AnimUtils == null) {
                 Log.PrintError ("Cannot find corresponding EnemyAnimUtils script.", LogTypes.Animation | LogTypes.Enemy);

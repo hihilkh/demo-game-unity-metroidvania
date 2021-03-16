@@ -18,6 +18,7 @@ MonoBehaviour:
   hpView: {fileID: 2071929783764064053}
   _params: {fileID: 11400000, guid: 30869a91411c9485b87994e475ba261e, type: 2}
   animator: {fileID: 8116552213744075649}
+  animUtils: {fileID: 5910902710520750460}
   targetRefPoint: {fileID: 8470923211684874944}
   charDetection: {fileID: 7636815887581503341}
 --- !u!1001 &1968126211317605286
@@ -289,6 +290,18 @@ Animator:
     type: 3}
   m_PrefabInstance: {fileID: 1968126211317605286}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5910902710520750460 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5284849841548231386, guid: 9944760fd440b460793b212016a1de2c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1968126211317605286}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8116552213744075650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae5431f1357e43c099e7bba3fa7ebee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &8116552214156521767 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7778835175719113345, guid: 9944760fd440b460793b212016a1de2c,

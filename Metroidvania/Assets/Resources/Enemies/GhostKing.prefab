@@ -442,6 +442,7 @@ MonoBehaviour:
   hpView: {fileID: 8565940960902693089}
   _params: {fileID: 11400000, guid: c8b55dcf7c097481bb855544e604a050, type: 2}
   animator: {fileID: 1910482810284381269}
+  animUtils: {fileID: 4046223066473592488}
   targetRefPoint: {fileID: 2282884132638514452}
   charDetection: {fileID: 278034969212160185}
   ringObject: {fileID: 5073692601288357599}
@@ -707,6 +708,18 @@ Animator:
     type: 3}
   m_PrefabInstance: {fileID: 8174205529718355058}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4046223066473592488 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5284849841548231386, guid: 9944760fd440b460793b212016a1de2c,
+    type: 3}
+  m_PrefabInstance: {fileID: 8174205529718355058}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1910482810284381270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae5431f1357e43c099e7bba3fa7ebee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1910482808546551539 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7778835175719113345, guid: 9944760fd440b460793b212016a1de2c,

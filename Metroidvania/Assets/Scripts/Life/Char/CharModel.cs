@@ -36,6 +36,7 @@ public class CharModel : LifeBase, IMapTarget {
     public CharParams Params => _params;
     [SerializeField] private CharController controller;
     [SerializeField] private Animator animator;
+    [SerializeField] private CharAnimSMBUtils animUtils;
     [SerializeField] private CharCameraModel cameraModel;
     [SerializeField] private Transform targetRefPoint;
     [SerializeField] private Transform collectCollectableRefPoint;
@@ -127,6 +128,7 @@ public class CharModel : LifeBase, IMapTarget {
     public Vector2 BeatBackDirection { get; private set; } = Vector2.one;
     private static Vector2 BeatBackDirection_Right = new Vector2 (1, 1).normalized;    // About 45 degree elevation
     private static Vector2 BeatBackDirection_Left = Vector2.Scale (BeatBackDirection_Right, new Vector2 (-1, 1));
+    private bool isJustBeatingBack = false;
 
     // HP Related
     private Coroutine hpRecoveryCoroutine;
@@ -361,6 +363,7 @@ public class CharModel : LifeBase, IMapTarget {
         isJustTapped = false;
         isHolding = false;
         isJustReleaseHold = false;
+        isJustBeatingBack = false;
 
         currentInputSituation = null;
         currentCommand = null;
@@ -431,6 +434,7 @@ public class CharModel : LifeBase, IMapTarget {
         base.Update ();
 
         isJustFinishedLanding = false;
+        isJustBeatingBack = false;
 
         if (!isAllowMove) {
             return;
@@ -1473,6 +1477,8 @@ public class CharModel : LifeBase, IMapTarget {
     protected override void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection) {
         base.StartBeatingBack (hurtDirection);
 
+        isJustBeatingBack = true;
+
         BreakInProgressAction (false, false);
         SetAllowUserControl (false, true);
 
@@ -1599,6 +1605,12 @@ public class CharModel : LifeBase, IMapTarget {
             return;
         }
 
+        if (isJustBeatingBack) {
+            Log.PrintDebug ("It is just triggered beating back. Wait a frame for beat back to take effect.", LogTypes.Char | LogTypes.Collision);
+            CurrentLocation = isNowTouchingGround ? LifeEnum.Location.Ground : LifeEnum.Location.Air;
+            return;
+        }
+
         // Check for hurt
         if (!IsInvincible) {    // add IsInvincible checking to prevent some cases that somehow although has set invincible, the enemy collision has still not yet exited
             if (collisionDetailsDict.ContainsKey (LifeEnum.CollisionType.Enemy)) {
@@ -1716,6 +1728,13 @@ public class CharModel : LifeBase, IMapTarget {
                     Log.PrintDebug ("Char : Touch ground", LogTypes.Char | LogTypes.Collision);
                     CurrentLocation = LifeEnum.Location.Ground;
                     isAllowAirJump = true;
+
+                    if (IsBeatingBack) {
+                        if (animUtils.RB.velocity.y > GameVariable.EpsilonForPhysicsChecking) {
+                            Log.PrintWarning ("Char is trying to move away from the ground due to beating back, so do not do any touch ground action.", LogTypes.Char | LogTypes.Collision);
+                            break;
+                        }
+                    }
 
                     var isOnlyStopHoldingDash = collisionAnalysis.WallCollisionChangedType != LifeEnum.CollisionChangedType.Enter;
                     currentHandleCollisionResult.IsJustStoppedDashing = BreakInProgressAction (isOnlyStopHoldingDash, false);

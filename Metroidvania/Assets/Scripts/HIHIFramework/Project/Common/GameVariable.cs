@@ -76,9 +76,15 @@ public static partial class GameVariable {
 
     #region FireAttack
 
-    public static float FireAttackTriggerPeriod = 0.5f;
-    public static int FireAttackNoOfTrigger = 10;
-    public static int FireDamagePerTrigger = 1;
+    public const float FireAttackTriggerPeriod = 0.5f;
+    public const int FireAttackNoOfTrigger = 10;
+    public const int FireDamagePerTrigger = 1;
 
     #endregion
+
+    #region Physics
+
+    public const float EpsilonForPhysicsChecking = 0.001f;
+    #endregion
+
 }
