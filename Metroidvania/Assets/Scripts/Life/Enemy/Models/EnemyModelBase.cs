@@ -102,7 +102,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     private bool isJustBeatingBack = false;
 
     // Jump
-    protected bool IsJustJumpedUp { get; set; } = false;
+    protected bool IsJustBeforeJumpedUp { get; set; } = false;
     private bool isPreparingToRecursiveJump = false;
     private float startPrepareRecursiveJumpTime = -1;
 
@@ -231,8 +231,8 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
             if (!isIdling) {
                 switch (MovementType) {
                     case EnemyEnum.MovementType.Walking:
-                        // Do not set idle if the walking enemy is not on ground (e.g. jumping)
-                        if (CurrentLocation == LifeEnum.Location.Ground) {
+                        // Do not set idle if the walking enemy is jumping
+                        if (CurrentLocation == LifeEnum.Location.Ground && !IsJustBeforeJumpedUp) {
                             StartIdling ();
                         }
                         break;
@@ -438,7 +438,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
             return false;
         }
 
-        IsJustJumpedUp = true;
+        IsJustBeforeJumpedUp = true;
         SetAnimatorTrigger (EnemyAnimConstant.JumpTriggerName);
 
         return true;
@@ -589,9 +589,9 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
                             break;
                         }
 
-                        if (IsJustJumpedUp) {
+                        if (IsJustBeforeJumpedUp) {
                             // Dominated by jump handling
-                            IsJustJumpedUp = false;
+                            IsJustBeforeJumpedUp = false;
                         } else {
                             StartFreeFall ();
                         }

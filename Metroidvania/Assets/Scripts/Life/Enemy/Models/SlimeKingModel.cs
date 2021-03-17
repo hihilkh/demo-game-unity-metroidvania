@@ -36,7 +36,7 @@ public class SlimeKingModel : EnemyModelBase {
             return false;
         }
 
-        IsJustJumpedUp = true;
+        IsJustBeforeJumpedUp = true;
         SetAnimatorTrigger (EnemyAnimConstant.AttackTriggerName);
 
         return true;
