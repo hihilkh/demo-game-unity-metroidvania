@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using HihiFramework.Core;
+using UnityEngine;
 
 public class CharSlideShootSMB : CharGeneralShootSMB {
     protected override Transform ShootRefPoint => AnimUtils.RefPoint_SlideShoot;
@@ -9,7 +10,7 @@ public class CharSlideShootSMB : CharGeneralShootSMB {
         // Set Sliding Bool for animation
         if (animator.GetBool (CharAnimConstant.SlidingBoolName)) {
             if (!AnimUtils.Model.GetIsInStatuses (CharEnum.Statuses.Sliding)) {
-                Debug.LogError ("CharSlideShootSMB");
+                Log.PrintDebug ("Set sliding bool of animator to false while slide shooting.", LogTypes.Animation | LogTypes.Char);
                 animator.SetBool (CharAnimConstant.SlidingBoolName, false);
             }
         }

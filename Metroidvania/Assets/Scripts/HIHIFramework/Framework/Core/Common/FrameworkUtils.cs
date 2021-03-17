@@ -102,21 +102,18 @@ namespace HihiFramework.Core {
         #region Coroutine
 
         /// <summary>
-        /// Call coroutine to wait until <paramref name="predicate"/> return <b>true</b> and trigger <paramref name="action"/>.<br />
-        /// Can be used by non MonoBehaviour scripts.
+        /// Call coroutine to wait with <paramref name="yieldInstruction"/> and then trigger <paramref name="onWaitFinished"/>.<br />
+        /// Can be used by non MonoBehaviour scripts, or MonoBehaviour scripts that will be occasionally disabled
         /// </summary>
-        /// <param name="predicate"></param>
-        /// <param name="action"></param>
-        public void WaitUntil (Func<bool> predicate, Action action) {
-            StartCoroutine (WaitUntilCoroutine (predicate, action));
+        public void Wait (YieldInstruction yieldInstruction, Action onWaitFinished) {
+            StartCoroutine (WaitCoroutine (yieldInstruction, onWaitFinished));
         }
 
-        private IEnumerator WaitUntilCoroutine (Func<bool> predicate, Action action) {
-            yield return new WaitUntil (predicate);
+        private IEnumerator WaitCoroutine (YieldInstruction yieldInstruction, Action onWaitFinished) {
+            yield return yieldInstruction;
 
-            action?.Invoke ();
+            onWaitFinished?.Invoke ();
         }
-
         #endregion
 
         #region Enum

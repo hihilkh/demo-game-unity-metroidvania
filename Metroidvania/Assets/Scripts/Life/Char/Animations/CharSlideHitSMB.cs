@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using HihiFramework.Core;
+using UnityEngine;
 
 public class CharSlideHitSMB : CharHitSMBBase {
     protected override Transform GeneralHitRefPoint => AnimUtils.RefPoint_SlideHit;
@@ -9,7 +10,7 @@ public class CharSlideHitSMB : CharHitSMBBase {
         // Set Sliding Bool for animation
         if (animator.GetBool (CharAnimConstant.SlidingBoolName)) {
             if (!AnimUtils.Model.GetIsInStatuses (CharEnum.Statuses.Sliding)) {
-                Debug.LogError ("CharSlideHitSMB");
+                Log.PrintDebug ("Set sliding bool of animator to false while slide hitting.", LogTypes.Animation | LogTypes.Char);
                 animator.SetBool (CharAnimConstant.SlidingBoolName, false);
             }
         }

@@ -581,9 +581,10 @@ public class MissionEventManager : MonoBehaviour {
         if (CurrentMissionEvent != null) {
             // Only allow user control for MissionEvent (but not SpecialSceneEvent)
             charModel.SetAllowUserControl (true);
-        }
 
-        Time.timeScale = 0;
+            // Only set time scale to 0 for MissionEvent (but not SpecialSceneEvent)
+            Time.timeScale = 0;
+        }
 
         onFinished?.Invoke ();
     }

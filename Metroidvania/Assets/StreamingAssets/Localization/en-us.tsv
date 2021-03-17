@@ -67,22 +67,22 @@ Power_Up	Power Up
 FireArrow	Fire Arrow
 
 Note_1	Adventurer's Note 1
-Note_1_Content	This cave is really mystical. There's an entrance but I can never go out through it... How many years have I been trying to get out?<br />Maybe I should find another way out.
+Note_1_Content	This cave is really mystical. There's an entrance but I can never go out through it... How many years have I been trying to get out?<br>Maybe I should find another way out.
 
 Note_2	Adventurer's Note 2
-Note_2_Content	You have probably noticed that there're some sign boards in this cave. Yes, I made them.<br />While I was finding my way out, it occurred to me that somebody else may also finding their ways out. So I'm trying to share what I have discovered about this cave.<br />Please be aware of the sign boards during your adventure!
+Note_2_Content	You have probably noticed that there're some sign boards in this cave. Yes, I made them.<br>While I was finding my way out, it occurred to me that somebody else may also finding their ways out. So I'm trying to share what I have discovered about this cave.<br>Please be aware of the sign boards during your adventure!
 
 Note_3	Adventurer's Note 3
-Note_3_Content	I could feel that there's a room behind this wall. However, I couldn't find any way to go inside and had to give up.<br />But then, I found that the entry of that room is in next level! Even I was born here, I didn't know there's such a way. Maybe there're more hidden entries somewhere else.
+Note_3_Content	I could feel that there's a room behind this wall. However, I couldn't find any way to go inside and had to give up.<br>But then, I found that the entry of that room is in next level! Even I was born here, I didn't know there's such a way. Maybe there're more hidden entries somewhere else.
 
 Note_4	Adventurer's Note 4
-Note_4_Content	There're some switches and secret paths around this cave. Some of them can be triggered by just walk through it, and others need some tricks.<br />I remember that once I have gone into a room that look differently from anywhere else of this cave. That room is really weird.
+Note_4_Content	There're some switches and secret paths around this cave. Some of them can be triggered by just walk through it, and others need some tricks.<br>I remember that once I have gone into a room that look differently from anywhere else of this cave. That room is really weird.
 
 Note_5	Adventurer's Note 5
-Note_5_Content	I know there's a treasure in that large cavity, but it is so hard to touch the switch of the hidden room... I must have missed something.<br />Could it be a hidden entry? Um... Where else is connecting to this area?<br />My intuition tells me that I must get the treasure.
+Note_5_Content	I know there's a treasure in that large cavity, but it is so hard to touch the switch of the hidden room... I must have missed something.<br>Could it be a hidden entry? Um... Where else is connecting to this area?<br>My intuition tells me that I must get the treasure.
 
 Note_6	Adventurer's Note 6
-Note_6_Content	Everything is ready. I defeat the guard. I have the fire. I can go out if I burn the tree away.<br />!@#$*)*&!@#$%^$%^(*&^()*&^@$#%^&*)
+Note_6_Content	Everything is ready. I defeat the guard. I have the fire. I can go out if I burn the tree away.<br>!@#$*)*&!@#$%^$%^(*&^()*&^@$#%^&*)
 
 Ending_1	Ending 1
 Ending_2	Ending 2
@@ -155,7 +155,7 @@ Event_FirstTimeCommandPanel_1	You can <color #00ffff>drag a command to below</co
 Event_FirstTimeCommandPanel_2	You can also <color #00ffff>click on an assigned action</color> and <color #00ffff>press the cross button</color> to remove the command.
 Event_FirstTimeCommandPanel_3	During your adventure, you may want to reassign your commands.
 Event_FirstTimeCommandPanel_4	You can press the restart button in pause menu to restart the adventure and reassign your commands.
-Event_FirstTimeCommandPanel_5	But note that if you restart the adventure, all the progress (except the collected items) would also be reset.
+Event_FirstTimeCommandPanel_5	But note that if you restart the adventure, all the progress except the collected items would also be reset.
 
 Event_BackToCaveEntry0_0	......
 Event_BackToCaveEntry0_1	What am I doing here?
@@ -180,7 +180,7 @@ Ending1_Dialog6_0	......
 
 Ending2_Dialog0_0	Congratulations.
 Ending2_Dialog1_0	The cave is collapsed...
-Ending2_Dialog2_1	I will not forget you.
+Ending2_Dialog2_0	I will not forget you.
 
 Ending2_NoBoss_Dialog0_0	Oh, the cave is collapsed.
 Ending2_NoBoss_Dialog0_1	Turn out I still do not remember anything...

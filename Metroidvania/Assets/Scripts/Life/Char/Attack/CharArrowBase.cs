@@ -68,15 +68,13 @@ public abstract class CharArrowBase : SpecialSceneEventDisposableBase {
         }
     }
 
-    private void Hit (Transform target, bool isVanish = true) {
+    private void Hit (Transform target) {
         HasHitAnything = true;
         FrameworkUtils.InsertChildrenToParent (target, gameObject, false);
         RB.bodyType = RigidbodyType2D.Kinematic;
         RB.velocity = Vector2.zero;
 
-        if (isVanish) {
-            StartCoroutine (Vanish ());
-        }
+        StartCoroutine (Vanish ());
     }
 
     // Special case
@@ -85,7 +83,7 @@ public abstract class CharArrowBase : SpecialSceneEventDisposableBase {
 
         yield return new WaitForSeconds (TriggerBurnTreeWaitingPeriod);
 
-        Hit (mapSwitch.transform, false);
+        Hit (mapSwitch.transform);
         mapSwitch.Trigger ();
     }
 
@@ -143,10 +141,10 @@ public abstract class CharArrowBase : SpecialSceneEventDisposableBase {
                 Log.Print ("FireArrow hit tree. Trigger BurnTree.", LogTypes.MissionEvent | LogTypes.GameFlow);
                 StartCoroutine (TriggerBurnTree (mapSwitch));
             } else {
-                Hit (mapSwitch.transform, true);
+                Hit (mapSwitch.transform);
             }
         } else {
-            Hit (mapSwitch.transform, true);
+            Hit (mapSwitch.transform);
             mapSwitch.Trigger ();
         }
     }

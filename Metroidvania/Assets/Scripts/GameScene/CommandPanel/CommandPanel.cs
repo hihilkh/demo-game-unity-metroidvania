@@ -415,7 +415,7 @@ public class CommandPanel : CommandMatrixPanel {
                     } else {
                         if (IsAirHoldBinding) {
                             CommandMatrix_AirRelease.RemoveCommand (false);
-                            IsGroundHoldBinding = false;
+                            IsAirHoldBinding = false;
                         }
                     }
                     break;

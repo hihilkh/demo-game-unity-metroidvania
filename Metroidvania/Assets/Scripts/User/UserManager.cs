@@ -46,7 +46,7 @@ public static class UserManager {
 
         // For development testing
         //ClearMissionProgress (1);
-        //ClearAllCollectedCollectables ();
+        //ClearCollectedCollectables (Collectable.Type.Command_Dash);
         //ClearDoneMissionEvent (MissionEventEnum.EventType.FirstTimeCommandPanel);
     }
 
@@ -196,16 +196,16 @@ public static class UserManager {
     private static void ReloadEnabledCommandList () {
         EnabledCommandList = new List<CharEnum.Command> ();
 
+        if (CollectedCollectableTypeList.Contains (Collectable.Type.Command_Hit)) {
+            EnabledCommandList.Add (CharEnum.Command.Hit);
+        }
+
         if (CollectedCollectableTypeList.Contains (Collectable.Type.Command_Jump)) {
             EnabledCommandList.Add (CharEnum.Command.Jump);
         }
 
         if (CollectedCollectableTypeList.Contains (Collectable.Type.Command_Dash)) {
             EnabledCommandList.Add (CharEnum.Command.Dash);
-        }
-
-        if (CollectedCollectableTypeList.Contains (Collectable.Type.Command_Hit)) {
-            EnabledCommandList.Add (CharEnum.Command.Hit);
         }
 
         if (CollectedCollectableTypeList.Contains (Collectable.Type.Command_Arrow)) {
@@ -391,6 +391,16 @@ public static class UserManager {
     /// </summary>
     private static void ClearAllCollectedCollectables () {
         CollectedCollectableTypeList.Clear ();
+
+        SaveCollectedCollectableTypeList ();
+    }
+
+
+    /// <summary>
+    /// For development use only
+    /// </summary>
+    private static void ClearCollectedCollectables (Collectable.Type collecttableType) {
+        CollectedCollectableTypeList.Remove (collecttableType);
 
         SaveCollectedCollectableTypeList ();
     }

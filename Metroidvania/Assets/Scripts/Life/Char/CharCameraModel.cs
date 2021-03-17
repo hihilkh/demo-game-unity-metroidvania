@@ -185,14 +185,14 @@ public class CharCameraModel : MonoBehaviour
         FrameworkUtils.InsertChildrenToParent (originalParentTransform, camTransform, false);
         camTransform.localPosition = originalLocalPos;
 
-        // Prevent the case that actually not yet set the position and thus change position by LateUpdate ()
-        StartCoroutine (DelaySetAttachedToChar ());
-    }
+        // Remarks :
+        // - Delay update to prevent the case that actually not yet set the position and thus change position by LateUpdate ()
+        // - Do not use StartCoroutine by self because this script may sometimes become disabled
+        Action onWaitFinished = () => {
+            isDetachedFromChar = false;
+        };
 
-    private IEnumerator DelaySetAttachedToChar () {
-        yield return null;
-
-        isDetachedFromChar = false;
+        FrameworkUtils.Instance.Wait (null, onWaitFinished);
     }
 
     #endregion
