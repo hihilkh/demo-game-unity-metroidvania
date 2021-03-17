@@ -16,6 +16,8 @@ public partial class GameUtils : Singleton<GameUtils> {
     public static LogLevel GetMinLogLevel (LogTypes logTypes) {
         //if ((logTypes & LogTypes.Char) == LogTypes.Char) {
         //    return LogLevel.Debug;
+        //} else if ((logTypes & LogTypes.Collision) == LogTypes.Collision) {
+        //    return LogLevel.Debug;
         //} else {
         //    return LogLevel.Error;
         //}

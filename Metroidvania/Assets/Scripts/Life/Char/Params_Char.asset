@@ -54,7 +54,7 @@ MonoBehaviour:
   - 50
   _repelFromWallDistByTurn: 0.05
   _hpUpMagnitude: 20
-  _powerUpMagnitude: 1
+  _powerUpMagnitude: 10
   _bossTotalHP: 300
   _collisionDP: 30
   _bossDecideActionPeriod: 1.5

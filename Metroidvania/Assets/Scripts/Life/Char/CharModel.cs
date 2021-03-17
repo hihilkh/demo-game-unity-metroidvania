@@ -932,7 +932,6 @@ public class CharModel : LifeBase, IMapTarget {
         animator.ResetTrigger (CharAnimConstant.WalkTriggerName);
         animator.ResetTrigger (CharAnimConstant.DashTriggerName);
         animator.ResetTrigger (CharAnimConstant.LandingTriggerName);
-        animator.ResetTrigger (CharAnimConstant.DropHitTriggerName);
     }
 
     protected void SetAnimatorBool (string boolName, bool value) {
@@ -1236,7 +1235,7 @@ public class CharModel : LifeBase, IMapTarget {
         if (GetIsInStatuses (CharEnum.Statuses.Sliding)) {
             RepelFromWallWhenSliding (true, false);
         }
-
+        StopDashing (CharEnum.HorizontalSpeed.Walk, false, false);
         StopDropHitCharge ();
         SetStatuses (CharEnum.Statuses.DropHitting, true);
 
