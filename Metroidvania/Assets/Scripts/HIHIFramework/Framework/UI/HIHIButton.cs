@@ -2,12 +2,15 @@
 using HihiFramework.Core;
 using TMPro;
 using UnityEditor;
-using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor.UI;
+#endif
 
 namespace HihiFramework.UI {
 
+#if UNITY_EDITOR
     [CustomEditor (typeof (HIHIButton))]
     public class HIHIButtonEditor : ButtonEditor {
         public override void OnInspectorGUI () {
@@ -18,11 +21,13 @@ namespace HihiFramework.UI {
             serializedObject.ApplyModifiedProperties ();
         }
     }
+#endif
 
     public class HIHIButton : Button {
         [SerializeField] private BtnOnClickType onClickType;
         private object info = null;
 
+#if UNITY_EDITOR
         [MenuItem ("GameObject/UI/Button - HIHIFramework")]
         public static void CreateButtonWithTextObject () {
             // Btn
@@ -52,6 +57,7 @@ namespace HihiFramework.UI {
             // Selection
             Selection.activeObject = go;
         }
+#endif
 
         protected override void Awake () {
             base.Awake ();

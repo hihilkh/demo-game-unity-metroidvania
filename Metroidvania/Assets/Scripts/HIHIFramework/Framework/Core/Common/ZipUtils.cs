@@ -1,6 +1,7 @@
 ﻿using System.IO;
 #if UNITY_EDITOR || !UNITY_IPHONE
 using Ionic.Zip;
+using UnityEngine;
 #endif
 
 namespace HihiFramework.Core {
