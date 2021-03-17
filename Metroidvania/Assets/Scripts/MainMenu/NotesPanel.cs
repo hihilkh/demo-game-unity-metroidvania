@@ -14,6 +14,7 @@ public class NotesPanel : GeneralPanelBase {
     [SerializeField] private Transform selectNoteBtnBaseTransform;
     [SerializeField] private HIHIButton selectNoteBtnTemplate;
     [SerializeField] private ScrollRect selectNoteBtnScrollRect;
+    [SerializeField] private ScrollRect noteContentScrollRect;
 
     private bool isInitialized = false;
     private readonly List<HIHIButton> selectNoteBtnList = new List<HIHIButton> ();
@@ -74,10 +75,10 @@ public class NotesPanel : GeneralPanelBase {
 
         base.Show ();
 
-        StartCoroutine (WaitAndSetScrollRect ());
+        StartCoroutine (WaitAndSetSelectNoteBtnScrollRect ());
     }
 
-    private IEnumerator WaitAndSetScrollRect () {
+    private IEnumerator WaitAndSetSelectNoteBtnScrollRect () {
         yield return null;
 
         selectNoteBtnScrollRect.verticalNormalizedPosition = 1;
@@ -97,7 +98,10 @@ public class NotesPanel : GeneralPanelBase {
         if (collectedNoteTypeList.Contains (note.CollectableType)) {
             key = note.NoteContentKey;
         }
+
         LangManager.SetText (new LocalizedTextDetails (contentText, key));
+
+        noteContentScrollRect.verticalNormalizedPosition = 1;
     }
 
     #endregion
