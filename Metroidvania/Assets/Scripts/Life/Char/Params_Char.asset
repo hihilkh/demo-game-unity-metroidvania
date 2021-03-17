@@ -63,10 +63,10 @@ MonoBehaviour:
   _bossDashAttackHorizontalHalfRange: 11
   _bossAllowAttackVerticalHalfRange: 3
   _initDirection: 1
-  _isUseDebugCommandSettings: 1
+  _isUseDebugCommandSettings: 0
   _groundTapCommand: 0
-  _groundHoldCommand: 3
-  _groundReleaseCommand: 4
+  _groundHoldCommand: 0
+  _groundReleaseCommand: 0
   _airTapCommand: 0
-  _airHoldCommand: 1
-  _airReleaseCommand: 2
+  _airHoldCommand: 0
+  _airReleaseCommand: 0
