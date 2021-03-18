@@ -370,13 +370,14 @@ namespace HihiFramework.Lang {
 
             var counter = 0;
             var localizationKey = localizationKeyBase + "_" + counter.ToString ();
-            var localizedStr = GetLocalizedStr (localizationKey, true, false);
+            // Remarks : Do not fallback to root language because different language may have different length of string list
+            var localizedStr = GetLocalizedStr (localizationKey, false, false);
 
             while (!string.IsNullOrEmpty (localizedStr)) {
                 result.Add (localizedStr);
                 counter++;
                 localizationKey = localizationKeyBase + "_" + counter.ToString ();
-                localizedStr = GetLocalizedStr (localizationKey, true, false);
+                localizedStr = GetLocalizedStr (localizationKey, false, false);
             }
 
             return result;
