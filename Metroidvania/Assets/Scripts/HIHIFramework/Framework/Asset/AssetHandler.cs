@@ -139,8 +139,7 @@ namespace HihiFramework.Asset {
 
                 yield return unityWebRequest.SendWebRequest ();
                 if (string.IsNullOrEmpty (unityWebRequest.error)) {
-                    var resultText = unityWebRequest.downloadHandler.text;
-                    File.WriteAllText (destPath, resultText);
+                    File.WriteAllBytes (destPath, unityWebRequest.downloadHandler.data);
                     isSuccess = true;
                 } else {
                     Log.PrintError ("Copy streaming assets failed. sourcePath : " + sourcePath + " , destPath : " + destPath + " , Error : " + unityWebRequest.error, LogTypes.Asset | LogTypes.IO);
