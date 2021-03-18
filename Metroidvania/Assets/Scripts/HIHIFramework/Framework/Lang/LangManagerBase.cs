@@ -253,14 +253,14 @@ namespace HihiFramework.Lang {
         /// <summary>
         /// Get localization of input localization key in <b>CurrentLang</b> 
         /// </summary>
-        public static string GetLocalizedStr (string key, bool isFallbackToRootLang = true) {
-            return GetLocalizedStr (CurrentLang, key, isFallbackToRootLang);
+        public static string GetLocalizedStr (string key, bool isFallbackToRootLang = true, bool isShowWarningIfNull = true) {
+            return GetLocalizedStr (CurrentLang, key, isFallbackToRootLang, isShowWarningIfNull);
         }
 
         /// <summary>
         /// Get localization of input localization key in input LangType
         /// </summary>
-        public static string GetLocalizedStr (LangType langType, string key, bool isFallbackToRootLang = true) {
+        public static string GetLocalizedStr (LangType langType, string key, bool isFallbackToRootLang = true, bool isShowWarningIfNull = true) {
             Func<string> failedAction = () => {
                 if (isFallbackToRootLang) {
                     var rootLang = LangConfig.GetRootLang ();
@@ -282,13 +282,19 @@ namespace HihiFramework.Lang {
 
             // TODO : Think of the bug that if inputting a langType that not yet loaded LocalizationFile, it will fail
             if (!LangKeyValueMappingDict.ContainsKey (langType)) {
-                Log.PrintWarning ("Cannot get word. LangKeyValueMapping of LangType : " + langType + " is missing.", LogTypes.Lang);
+                if (isShowWarningIfNull) {
+                    Log.PrintWarning ("Cannot get word. LangKeyValueMapping of LangType : " + langType + " is missing.", LogTypes.Lang);
+                }
+
                 return failedAction ();
             }
 
             var mapping = LangKeyValueMappingDict[langType];
             if (!mapping.ContainsKey (key)) {
-                Log.PrintWarning ("Cannot get word. The key value mapping is missing. key : " + key + " , LangType : " + langType, LogTypes.Lang);
+                if (isShowWarningIfNull) {
+                    Log.PrintWarning ("Cannot get word. The key value mapping is missing. key : " + key + " , LangType : " + langType, LogTypes.Lang);
+                }
+
                 return failedAction ();
             }
 
@@ -364,13 +370,13 @@ namespace HihiFramework.Lang {
 
             var counter = 0;
             var localizationKey = localizationKeyBase + "_" + counter.ToString ();
-            var localizedStr = GetLocalizedStr (localizationKey);
+            var localizedStr = GetLocalizedStr (localizationKey, true, false);
 
             while (!string.IsNullOrEmpty (localizedStr)) {
                 result.Add (localizedStr);
                 counter++;
                 localizationKey = localizationKeyBase + "_" + counter.ToString ();
-                localizedStr = GetLocalizedStr (localizationKey);
+                localizedStr = GetLocalizedStr (localizationKey, true, false);
             }
 
             return result;

@@ -187,7 +187,7 @@ public class CharCameraModel : MonoBehaviour
 
         // Remarks :
         // - Delay update to prevent the case that actually not yet set the position and thus change position by LateUpdate ()
-        // - Do not use StartCoroutine by self because this script may sometimes become disabled
+        // - Do not use StartCoroutine by self because the game object of this script may sometimes become inactive
         Action onWaitFinished = () => {
             isDetachedFromChar = false;
         };

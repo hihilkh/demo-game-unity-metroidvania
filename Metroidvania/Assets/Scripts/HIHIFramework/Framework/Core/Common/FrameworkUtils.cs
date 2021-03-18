@@ -103,7 +103,7 @@ namespace HihiFramework.Core {
 
         /// <summary>
         /// Call coroutine to wait with <paramref name="yieldInstruction"/> and then trigger <paramref name="onWaitFinished"/>.<br />
-        /// Can be used by non MonoBehaviour scripts, or MonoBehaviour scripts that will be occasionally disabled
+        /// Can be used by non MonoBehaviour scripts, or MonoBehaviour scripts which the game object it is attached will be occasionally inactive
         /// </summary>
         public void Wait (YieldInstruction yieldInstruction, Action onWaitFinished) {
             StartCoroutine (WaitCoroutine (yieldInstruction, onWaitFinished));

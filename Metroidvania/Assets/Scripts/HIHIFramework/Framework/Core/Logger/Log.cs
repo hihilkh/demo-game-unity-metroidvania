@@ -6,43 +6,50 @@ namespace HihiFramework.Core {
     public static class Log {
 
         public static void PrintDebug (object obj, LogTypes logTypes = LogTypes.General) {
-            Print (obj, logTypes, LogLevel.Debug);
+            Print (2, obj, logTypes, LogLevel.Debug);
         }
 
         public static void PrintDebug (string message, LogTypes logTypes = LogTypes.General) {
-            Print (message, logTypes, LogLevel.Debug);
-        }
-
-        public static void PrintWarning (object obj, LogTypes logTypes = LogTypes.General) {
-            Print (obj, logTypes, LogLevel.Warning);
-        }
-
-        public static void PrintWarning (string message, LogTypes logTypes = LogTypes.General) {
-            Print (message, logTypes, LogLevel.Warning);
-        }
-
-        public static void PrintError (object obj, LogTypes logTypes = LogTypes.General) {
-            Print (obj, logTypes, LogLevel.Error);
-        }
-
-        public static void PrintError (string message, LogTypes logTypes = LogTypes.General) {
-            Print (message, logTypes, LogLevel.Error);
+            Print (2, message, logTypes, LogLevel.Debug);
         }
 
         public static void Print (object obj, LogTypes logTypes = LogTypes.General, LogLevel logLevel = LogLevel.Info) {
+            Print (2, obj, logTypes, logLevel);
+        }
+        public static void Print (string message, LogTypes logTypes = LogTypes.General, LogLevel logLevel = LogLevel.Info) {
+            Print (2, message, logTypes, logLevel);
+        }
+
+        public static void PrintWarning (object obj, LogTypes logTypes = LogTypes.General) {
+            Print (2, obj, logTypes, LogLevel.Warning);
+        }
+
+        public static void PrintWarning (string message, LogTypes logTypes = LogTypes.General) {
+            Print (2, message, logTypes, LogLevel.Warning);
+        }
+
+        public static void PrintError (object obj, LogTypes logTypes = LogTypes.General) {
+            Print (2, obj, logTypes, LogLevel.Error);
+        }
+
+        public static void PrintError (string message, LogTypes logTypes = LogTypes.General) {
+            Print (2, message, logTypes, LogLevel.Error);
+        }
+
+        private static void Print (int stackTraceCount, object obj, LogTypes logTypes = LogTypes.General, LogLevel logLevel = LogLevel.Info) {
             if (obj == null) {
-                Print ("<null>", logTypes, logLevel);
+                Print (stackTraceCount + 1, "<null>", logTypes, logLevel);
             } else {
-                Print (obj.ToString (), logTypes, logLevel);
+                Print (stackTraceCount + 1, obj.ToString (), logTypes, logLevel);
             }
         }
 
-        public static void Print (string message, LogTypes logType = LogTypes.General, LogLevel logLevel = LogLevel.Info) {
-            if (!CheckIsPrintLog (logLevel, logType)) {
+        private static void Print (int stackTraceCount, string message, LogTypes logTypes = LogTypes.General, LogLevel logLevel = LogLevel.Info) {
+            if (!CheckIsPrintLog (logLevel, logTypes)) {
                 return;
             }
 
-            var log = ConstructLog (message);
+            var log = ConstructLog (message, stackTraceCount + 1);
 
             switch (logLevel) {
                 case LogLevel.Debug:
@@ -72,19 +79,19 @@ namespace HihiFramework.Core {
             return true;
         }
 
-        private static string ConstructLog (string rawMessage) {
+        private static string ConstructLog (string rawMessage, int stackTraceCount) {
             if (Application.platform == RuntimePlatform.LinuxEditor || Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.WindowsEditor) {
                 return rawMessage;
             } else {
                 var logTag = GameVariable.LogTag;
                 var logTime = DateTime.Now.ToString ("HH:mm:ss.fff");
-                var stackTraceDetails = GetStackTraceDetails ();
+                var stackTraceDetails = GetStackTraceDetails (stackTraceCount + 1);
                 return logTime + " " + logTag + " " + stackTraceDetails + "   " + rawMessage;
             }
         }
 
-        private static string GetStackTraceDetails () {
-            var stackTrace = new StackTrace (3, true);
+        private static string GetStackTraceDetails (int stackTraceCount) {
+            var stackTrace = new StackTrace (stackTraceCount, true);
             var frameMethod = stackTrace.GetFrame (0).GetMethod ();
             var className = frameMethod.DeclaringType.Name;
             var methodName = frameMethod.Name;
