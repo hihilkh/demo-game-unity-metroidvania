@@ -71,7 +71,7 @@ public class LandingSceneManager : MonoBehaviour {
                     isControlledByGameScene = true;
                     charModel.SetPosByOffset (landingToGameOffset);
                     gameSceneManager.StartGameFromLanding ();
-                    // Wait a frame to prevent any unfinished logic of starting game (e.g. OnCollisionExit2D)
+                    // Wait some time to prevent any unfinished logic of starting game (e.g. OnCollisionExit2D)
                     StartCoroutine (WaitAndUnloadScene ());
                 }
             } else {
@@ -81,7 +81,10 @@ public class LandingSceneManager : MonoBehaviour {
     }
 
     private IEnumerator WaitAndUnloadScene () {
-        yield return null;
+        // Use WaitForSeconds but not WaitForSecondsRealtime
+        // because for opening, it will immediately trigger a mission event, which will set time scale = 0.
+        // Same reason that do not use yield return null
+        yield return new WaitForSeconds (1f);
 
         FrameworkUtils.UnloadSceneAndResourcesAsync (GameVariable.LandingSceneName);
     }

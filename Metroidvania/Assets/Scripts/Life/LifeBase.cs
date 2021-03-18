@@ -61,13 +61,13 @@ public abstract class LifeBase : MapDisposableBase {
         }
 
         CurrentHP = TotalHP;
-        SetPosAndDirection (pos, direction);
+        ResetPosAndDirection (pos, direction);
         ForceStopFireDamage ();
 
         return hasInitializedBefore;
     }
 
-    protected virtual void SetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
+    protected virtual void ResetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
         SetPos (pos);
         FacingDirection = direction;
 

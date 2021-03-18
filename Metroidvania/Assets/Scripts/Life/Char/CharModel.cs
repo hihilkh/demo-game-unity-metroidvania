@@ -312,7 +312,7 @@ public class CharModel : LifeBase, IMapTarget {
     /// If not yet initialized, it will initialize. Otherwise, it will reset.
     /// </summary>
     /// <returns>has initialized before</returns>
-    new public bool Reset (Vector2 pos, LifeEnum.HorizontalDirection direction, bool isIgnoreCollision = false) {
+    public bool Reset (Vector2 pos, LifeEnum.HorizontalDirection direction, bool isIgnoreCollision = false) {
         this.isIgnoreCollision = isIgnoreCollision;
         Resetting?.Invoke ();
 
@@ -388,8 +388,8 @@ public class CharModel : LifeBase, IMapTarget {
         }
     }
 
-    protected override void SetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
-        base.SetPosAndDirection (pos, direction);
+    protected override void ResetPosAndDirection (Vector2 pos, LifeEnum.HorizontalDirection direction) {
+        base.ResetPosAndDirection (pos, direction);
         MovingDirection = FacingDirection;
     }
 
