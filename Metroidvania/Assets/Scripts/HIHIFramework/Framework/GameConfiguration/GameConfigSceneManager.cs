@@ -300,11 +300,11 @@ namespace HihiFramework.GameConfiguration {
             SetConfigSet (selectedValue);
         }
 
-        private void ConfirmBtnClickedHandler (HIHIButton sender) {
+        private void ConfirmBtnClickedHandler (HihiButton sender) {
             GoIntoGame (false);
         }
 
-        private void ClearPlayerPrefsBtnClickedHandler (HIHIButton sender) {
+        private void ClearPlayerPrefsBtnClickedHandler (HihiButton sender) {
             PlayerPrefs.DeleteAll ();
             Log.PrintWarning ("PlayerPrefs have been cleared", LogTypes.General);
         }

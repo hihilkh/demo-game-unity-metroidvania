@@ -17,7 +17,7 @@ public class CommandDisplay : Selectable {
 
     [SerializeField] private Image baseImage;
     [SerializeField] private Image commandImage;
-    [SerializeField] private HIHIButton crossBtn;
+    [SerializeField] private HihiButton crossBtn;
     [SerializeField] private GameObject targetEffect;
     [SerializeField] private List<Graphic> targetRaycastList;
 
@@ -169,7 +169,7 @@ public class CommandDisplay : Selectable {
         }
     }
 
-    private void RemoveCommandBtnClickedHandler (HIHIButton sender) {
+    private void RemoveCommandBtnClickedHandler (HihiButton sender) {
         if (sender == crossBtn) {
             RemoveCommand (true);
 

@@ -8,7 +8,7 @@ public class GamePausePanel : CommandMatrixPanel {
     [SerializeField] private TextMeshProUGUI backToMMBtnText;
     [SerializeField] private TextMeshProUGUI restartBtnText;
 
-    [SerializeField] private HIHIButton backToMMBtn;
+    [SerializeField] private HihiButton backToMMBtn;
 
     private bool isHideResetTimeScale = true;
 

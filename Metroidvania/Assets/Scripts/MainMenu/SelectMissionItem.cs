@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public class SelectMissionItem : MonoBehaviour {
-    [SerializeField] private HIHIButton button;
+    [SerializeField] private HihiButton button;
     [SerializeField] private Animator animator;
 
     private const string NewEntryUnlockedStateName = "NewEntryUnlocked";

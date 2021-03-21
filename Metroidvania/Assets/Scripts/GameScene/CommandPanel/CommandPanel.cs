@@ -12,7 +12,7 @@ public class CommandPanel : CommandMatrixPanel {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI confirmBtnText;
 
-    [SerializeField] private HIHIButton confirmBtn;
+    [SerializeField] private HihiButton confirmBtn;
 
     [SerializeField] private Transform commandPickerBaseTransform;
     [SerializeField] private Transform commandPickerDraggingBaseTransform;
@@ -487,7 +487,7 @@ public class CommandPanel : CommandMatrixPanel {
     }
 
 
-    private void ConfirmCommandBtnClickedHandler (HIHIButton sender) {
+    private void ConfirmCommandBtnClickedHandler (HihiButton sender) {
         if (currentSubEvent == null) {
             UpdateCharCommandSettings (true);
         } else {

@@ -442,16 +442,16 @@ public class GameSceneManager : MonoBehaviour {
         IsGameStarted = false;
     }
 
-    private void PauseBtnClickedHandler (HIHIButton sender) {
+    private void PauseBtnClickedHandler (HihiButton sender) {
         pausePanel.Show (UserManager.CommandSettingsCache);
     }
 
-    private void RestartBtnClickedHandler (HIHIButton sender) {
+    private void RestartBtnClickedHandler (HihiButton sender) {
         pausePanel.Hide (false);
         ResetGame ();
     }
 
-    private void BackToMMBtnClickedHandler (HIHIButton sender) {
+    private void BackToMMBtnClickedHandler (HihiButton sender) {
         LeaveGame ();
     }
 

@@ -4,12 +4,12 @@ using System.Collections.Generic;
 namespace HihiFramework.UI {
     public static class UIEventManager {
 
-        private static readonly Dictionary<BtnOnClickType, Action<HIHIButton>> BtnOnClickDict = new Dictionary<BtnOnClickType, Action<HIHIButton>> ();
-        private static readonly Dictionary<BtnOnClickType, Action<HIHIButton, object>> BtnOnClickWithInfoDict = new Dictionary<BtnOnClickType, Action<HIHIButton, object>> ();
+        private static readonly Dictionary<BtnOnClickType, Action<HihiButton>> BtnOnClickDict = new Dictionary<BtnOnClickType, Action<HihiButton>> ();
+        private static readonly Dictionary<BtnOnClickType, Action<HihiButton, object>> BtnOnClickWithInfoDict = new Dictionary<BtnOnClickType, Action<HihiButton, object>> ();
 
         #region handler - Action
 
-        public static void AddEventHandler (BtnOnClickType onClickType, Action<HIHIButton> handler) {
+        public static void AddEventHandler (BtnOnClickType onClickType, Action<HihiButton> handler) {
             if (!BtnOnClickDict.ContainsKey (onClickType)) {
                 BtnOnClickDict.Add (onClickType, null);
             }
@@ -17,7 +17,7 @@ namespace HihiFramework.UI {
             BtnOnClickDict[onClickType] += handler;
         }
 
-        public static void RemoveEventHandler (BtnOnClickType onClickType, Action<HIHIButton> handler) {
+        public static void RemoveEventHandler (BtnOnClickType onClickType, Action<HihiButton> handler) {
             if (BtnOnClickDict.ContainsKey (onClickType)) {
                 BtnOnClickDict[onClickType] -= handler;
 
@@ -27,7 +27,7 @@ namespace HihiFramework.UI {
             }
         }
 
-        public static void InvokeEvent (BtnOnClickType onClickType, HIHIButton sender) {
+        public static void InvokeEvent (BtnOnClickType onClickType, HihiButton sender) {
             if (BtnOnClickDict.ContainsKey (onClickType)) {
                 BtnOnClickDict[onClickType]?.Invoke (sender);
             }
@@ -37,7 +37,7 @@ namespace HihiFramework.UI {
 
         #region handler - Action<object>
 
-        public static void AddEventHandler (BtnOnClickType onClickType, Action<HIHIButton, object> handler) {
+        public static void AddEventHandler (BtnOnClickType onClickType, Action<HihiButton, object> handler) {
             if (!BtnOnClickWithInfoDict.ContainsKey (onClickType)) {
                 BtnOnClickWithInfoDict.Add (onClickType, null);
             }
@@ -45,7 +45,7 @@ namespace HihiFramework.UI {
             BtnOnClickWithInfoDict[onClickType] += handler;
         }
 
-        public static void RemoveEventHandler (BtnOnClickType onClickType, Action<HIHIButton, object> handler) {
+        public static void RemoveEventHandler (BtnOnClickType onClickType, Action<HihiButton, object> handler) {
             if (BtnOnClickWithInfoDict.ContainsKey (onClickType)) {
                 BtnOnClickWithInfoDict[onClickType] -= handler;
 
@@ -55,7 +55,7 @@ namespace HihiFramework.UI {
             }
         }
 
-        public static void InvokeEvent (BtnOnClickType onClickType, HIHIButton sender, object info) {
+        public static void InvokeEvent (BtnOnClickType onClickType, HihiButton sender, object info) {
             if (BtnOnClickWithInfoDict.ContainsKey (onClickType)) {
                 BtnOnClickWithInfoDict[onClickType]?.Invoke (sender, info);
             }

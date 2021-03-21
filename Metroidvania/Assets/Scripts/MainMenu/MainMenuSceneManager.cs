@@ -68,7 +68,7 @@ public class MainMenuSceneManager : MonoBehaviour {
 
     #region Events
 
-    private void SelectMissionBtnClickedHandler (HIHIButton sender, object info) {
+    private void SelectMissionBtnClickedHandler (HihiButton sender, object info) {
         if (!(info is Mission)) {
             Log.PrintError ("OnSelectMissionClick failed. Getting invalid info type : " + info.GetType (), LogTypes.UI | LogTypes.Input | LogTypes.GameFlow);
             return;
@@ -78,7 +78,7 @@ public class MainMenuSceneManager : MonoBehaviour {
         missionDetailsPanel.Show (mission, UserManager.GetMissionProgress (mission.Id));
     }
 
-    private void SelectEntryBtnClickedHandler (HIHIButton sender, object info) {
+    private void SelectEntryBtnClickedHandler (HihiButton sender, object info) {
         if (!(info is Mission.Entry)) {
             Log.PrintError ("OnSelectEntryClick failed. Getting invalid info type : " + info.GetType (), LogTypes.UI | LogTypes.Input | LogTypes.GameFlow);
             return;
@@ -90,11 +90,11 @@ public class MainMenuSceneManager : MonoBehaviour {
         GameUtils.LoadGameScene (mission.Id, entry.Id);
     }
 
-    private void OpenNotesPanelBtnClickedHandler (HIHIButton sender) {
+    private void OpenNotesPanelBtnClickedHandler (HihiButton sender) {
         notesPanel.Show (UserManager.CollectedCollectableTypeList);
     }
 
-    private void OpenSettingsPanelBtnClickedHandler (HIHIButton sender) {
+    private void OpenSettingsPanelBtnClickedHandler (HihiButton sender) {
         settingsPanel.Show ();
     }
 
