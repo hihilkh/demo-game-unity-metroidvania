@@ -1,7 +1,7 @@
 ﻿public static partial class GameVariable {
     #region Common
 
-    public const bool IsBuildForDevelopment = false;
+    public const bool IsBuildForDevelopment = true;
 
     #endregion
 
