@@ -49,7 +49,7 @@
         public const string CurrentLangTypeKey = "HIHI_CURRENT_LANG_TYPE";
 
         // Asset
-        public const string AssetVersionKey = "HIHI_Version_{0}_{1}";
+        public const string AssetVersionKey = "HIHI_VERSION_{0}_{1}";
 
         #endregion
     }

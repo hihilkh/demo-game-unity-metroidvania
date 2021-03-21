@@ -95,15 +95,15 @@ public class SettingsPanel : GeneralPanelBase {
 
     #region Events
 
-    private void LangLeftBtnClickedHandler (HIHIButton sender) {
+    private void LangLeftBtnClickedHandler (HihiButton sender) {
         ChangeSelectingLang (false);
     }
 
-    private void LangRightBtnClickedHandler (HIHIButton sender) {
+    private void LangRightBtnClickedHandler (HihiButton sender) {
         ChangeSelectingLang (true);
     }
 
-    private void ApplyBtnClickedHandler (HIHIButton sender) {
+    private void ApplyBtnClickedHandler (HihiButton sender) {
         LangManager.ChangeLang (currentSelectingLangType);
     }
 

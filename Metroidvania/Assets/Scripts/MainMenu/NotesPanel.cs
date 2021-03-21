@@ -12,12 +12,12 @@ public class NotesPanel : GeneralPanelBase {
     [SerializeField] private TextMeshProUGUI contentText;
 
     [SerializeField] private Transform selectNoteBtnBaseTransform;
-    [SerializeField] private HIHIButton selectNoteBtnTemplate;
+    [SerializeField] private HihiButton selectNoteBtnTemplate;
     [SerializeField] private ScrollRect selectNoteBtnScrollRect;
     [SerializeField] private ScrollRect noteContentScrollRect;
 
     private bool isInitialized = false;
-    private readonly List<HIHIButton> selectNoteBtnList = new List<HIHIButton> ();
+    private readonly List<HihiButton> selectNoteBtnList = new List<HihiButton> ();
     private readonly List<LocalizedTextDetails> fixedLocalizedTextDetailsList = new List<LocalizedTextDetails> ();
     private readonly List<Collectable.Type> collectedNoteTypeList = new List<Collectable.Type> ();
 
@@ -86,7 +86,7 @@ public class NotesPanel : GeneralPanelBase {
 
     #region Events
 
-    private void SelectNoteBtnClickedHandler (HIHIButton sender, object info) {
+    private void SelectNoteBtnClickedHandler (HihiButton sender, object info) {
         if (!(info is NoteCollectable)) {
             Log.PrintError ("OnSelectNoteClick failed. Getting invalid info type : " + info.GetType (), LogTypes.UI | LogTypes.Input | LogTypes.GameFlow);
             return;

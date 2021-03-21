@@ -5,7 +5,7 @@ using UnityEngine;
 
 public abstract class GeneralPanelBase : MonoBehaviour {
     [SerializeField] private Animator animator;
-    [SerializeField] private HIHIButton closeBtn;
+    [SerializeField] private HihiButton closeBtn;
 
     private bool isAddedEventHandlers = false;
     public event Action PanelHid;
@@ -48,7 +48,7 @@ public abstract class GeneralPanelBase : MonoBehaviour {
         }
     }
 
-    private void CloseBtnClickedHandler (HIHIButton sender) {
+    private void CloseBtnClickedHandler (HihiButton sender) {
         if (sender == closeBtn) {
             Hide ();
         }

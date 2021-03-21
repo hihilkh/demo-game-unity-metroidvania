@@ -11,8 +11,8 @@ using UnityEditor.UI;
 namespace HihiFramework.UI {
 
 #if UNITY_EDITOR
-    [CustomEditor (typeof (HIHIButton))]
-    public class HIHIButtonEditor : ButtonEditor {
+    [CustomEditor (typeof (HihiButton))]
+    public class HihiButtonEditor : ButtonEditor {
         public override void OnInspectorGUI () {
             base.OnInspectorGUI ();
 
@@ -23,18 +23,18 @@ namespace HihiFramework.UI {
     }
 #endif
 
-    public class HIHIButton : Button {
+    public class HihiButton : Button {
         [SerializeField] private BtnOnClickType onClickType;
         private object info = null;
 
 #if UNITY_EDITOR
-        [MenuItem ("GameObject/UI/Button - HIHIFramework")]
+        [MenuItem ("GameObject/UI/Button - HihiFramework")]
         public static void CreateButtonWithTextObject () {
             // Btn
             var go = new GameObject ("Btn", typeof (RectTransform));
             //go.AddComponent<CanvasRenderer> ();
             go.AddComponent<Image> ();
-            go.AddComponent<HIHIButton> ();
+            go.AddComponent<HihiButton> ();
 
             // Text
             var textObject = new GameObject ("Text", typeof (RectTransform));
@@ -77,7 +77,7 @@ namespace HihiFramework.UI {
 
         private void ClickedHandler () {
             if (!Enum.IsDefined (typeof (BtnOnClickType), onClickType)) {
-                Log.PrintError ("HIHIButton onClickType is not yet assigned", LogTypes.UI | LogTypes.Input);
+                Log.PrintError ("HihiButton onClickType is not yet assigned", LogTypes.UI | LogTypes.Input);
                 return;
             }
 

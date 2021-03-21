@@ -18,7 +18,7 @@ public class GameSceneUIManager : MonoBehaviour {
     }
 
     [SerializeField] private GameObject uiBase;
-    [SerializeField] private HIHIButton pauseBtn;
+    [SerializeField] private HihiButton pauseBtn;
     [SerializeField] private GameObject clickOnScreenBtnObject;
     [SerializeField] private PanelControl collectedPanelControl;
     [SerializeField] private PanelControl notePanelControl;
@@ -286,7 +286,7 @@ public class GameSceneUIManager : MonoBehaviour {
 
     #region Event Handler
 
-    private void ClickOnScreenBtnClickedHandler (HIHIButton sender) {
+    private void ClickOnScreenBtnClickedHandler (HihiButton sender) {
         if (!isAllowPanelClick) {
             return;
         }

@@ -91,7 +91,7 @@ public class LandingSceneManager : MonoBehaviour {
 
     #region Events
 
-    private void StartBtnClickedHandler (HIHIButton sender) {
+    private void StartBtnClickedHandler (HihiButton sender) {
         if (isWithGameScene) {
             uiManager.HideUI ();
             isGoingToGameScene = true;
@@ -100,7 +100,7 @@ public class LandingSceneManager : MonoBehaviour {
         }
     }
 
-    private void OpenSettingsPanelBtnClickedHandler (HIHIButton sender) {
+    private void OpenSettingsPanelBtnClickedHandler (HihiButton sender) {
         settingsPanel.Show ();
     }
 
