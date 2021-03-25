@@ -311,9 +311,9 @@ public class CommandPanel : CommandMatrixPanel {
             isListForAllow = true;
         }
 
-        if (list != null && list.Count > 0) {
-            foreach (var pair in CommandMatrixToSituationDict) {
-                pair.Key.SetClickable (false);
+        foreach (var pair in CommandMatrixToSituationDict) {
+            pair.Key.SetClickable (false);
+            if (list != null && list.Count > 0) {
                 pair.Key.SetTargetable (isListForAllow == list.Contains (pair.Value));
             }
         }
