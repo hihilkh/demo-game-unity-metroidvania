@@ -393,7 +393,7 @@ public class CharModel : LifeBase, IMapTarget {
         MovingDirection = FacingDirection;
     }
 
-    public void SetAllowMove (bool isAllowMove) {
+    public void SetAllowMove (bool isAllowMove, bool isSetFreeFallIfJustJumpedUp = false) {
         this.isAllowMove = isAllowMove;
 
         SetAllowUserControl (isAllowMove);
@@ -409,7 +409,12 @@ public class CharModel : LifeBase, IMapTarget {
                 StartFreeFall ();
                 break;
             case LifeEnum.Location.Ground:
-                StartIdleOrWalk ();
+                if (isJustJumpedUp && isSetFreeFallIfJustJumpedUp) {
+                    Log.Print ("SetAllowMove : Just jumped up. Trigger free fall instead of idle or walk", LogTypes.Char | LogTypes.Animation);
+                    StartFreeFall ();
+                } else {
+                    StartIdleOrWalk ();
+                }
                 break;
         }
 
@@ -1942,7 +1947,7 @@ public class CharModel : LifeBase, IMapTarget {
         Log.Print ("StopChar", LogTypes.Char);
 
         BreakInProgressAction (false, false);
-        SetAllowMove (false);
+        SetAllowMove (false, true);
 
         switch (CurrentLocation) {
             case LifeEnum.Location.Air:
@@ -1950,7 +1955,7 @@ public class CharModel : LifeBase, IMapTarget {
                 break;
             case LifeEnum.Location.Ground:
             default:
-                isWaitingLandingToStopChar = false;
+                isWaitingLandingToStopChar = isJustJumpedUp;
                 break;
         }
 
