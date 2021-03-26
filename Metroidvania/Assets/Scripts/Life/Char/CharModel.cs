@@ -1484,7 +1484,7 @@ public class CharModel : LifeBase, IMapTarget {
         isJustBeatingBack = true;
 
         BreakInProgressAction (false, false);
-        SetAllowUserControl (false, true);
+        SetAllowUserControl (false, CharEnum.UserControlTypes.Action);
 
         // If dying, dominated by die animation
         if (!IsDying) {
@@ -1505,7 +1505,7 @@ public class CharModel : LifeBase, IMapTarget {
     protected override void StopBeatingBack () {
         base.StopBeatingBack ();
 
-        SetAllowUserControl (true, true);
+        SetAllowUserControl (true, CharEnum.UserControlTypes.Action);
     }
 
     protected override void StartInvincible () {
@@ -1851,7 +1851,7 @@ public class CharModel : LifeBase, IMapTarget {
 
     #region Controller
 
-    public void SetAllowUserControl (bool isAllow, bool isOnlyActionInput = false, bool isForceAllow = false) {
+    public void SetAllowUserControl (bool isAllow, CharEnum.UserControlTypes userControlTypes = CharEnum.UserControlTypes.All, bool isForceAllow = false) {
         if (CharType != CharEnum.CharType.Player) {
             return;
         }
@@ -1867,12 +1867,13 @@ public class CharModel : LifeBase, IMapTarget {
             }
         }
 
-        if (isOnlyActionInput) {
+        if ((userControlTypes & CharEnum.UserControlTypes.Action) == CharEnum.UserControlTypes.Action) {
             controller?.SetCharActionInputActive (isReallyAllow);
-        } else {
-            controller?.SetAllInputActive (isReallyAllow);
         }
 
+        if ((userControlTypes & CharEnum.UserControlTypes.Camera) == CharEnum.UserControlTypes.Camera) {
+            controller?.SetCameraMovementInputActive (isReallyAllow);
+        }
     }
 
     private void TappedHandler () {

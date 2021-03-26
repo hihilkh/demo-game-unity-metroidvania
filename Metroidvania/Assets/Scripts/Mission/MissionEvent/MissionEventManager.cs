@@ -556,7 +556,7 @@ public class MissionEventManager : MonoBehaviour {
             }
 
             var charModel = GameUtils.FindOrSpawnChar ();
-            charModel.SetAllowUserControl (true, false, true);
+            charModel.SetAllowUserControl (true, CharEnum.UserControlTypes.All, true);
             charModel.SetCommandInputMissionEvent (subEvent, onInputFinished);
         };
 

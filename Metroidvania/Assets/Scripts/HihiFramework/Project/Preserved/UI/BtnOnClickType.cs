@@ -16,6 +16,8 @@ public enum BtnOnClickType {
     Game_Pause = 203,
     Game_Restart = 204,
     Game_BackToMM = 205,
+    Game_ViewEnv = 206,
+    Game_ViewEnvBack = 207,
 
     Settings = 300,
     Settings_LangLeft = 301,

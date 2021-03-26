@@ -52,6 +52,8 @@ CommandPanel_Title	Set Commands
 GamePausePanel_Title	Pause
 BackToMM	Back to Main Menu
 Restart	Restart
+ViewEnv	View Environment
+ViewEnvInstruction	Drag the left side of the screen to look around the environment
 
 // Collectable related
 YouGot	You have got <color #00ffff>{0}</color>.

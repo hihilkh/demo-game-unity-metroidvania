@@ -52,6 +52,8 @@ CommandPanel_Title	设定技能
 GamePausePanel_Title	暂停
 BackToMM	回到主选单
 Restart	重新开始
+ViewEnv	观察环境
+ViewEnvInstruction	拖曳画面的左边以观察环境
 
 // Collectable related
 YouGot	获得了 <color #00ffff>{0}</color> 。

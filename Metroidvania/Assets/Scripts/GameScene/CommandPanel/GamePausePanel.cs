@@ -7,6 +7,7 @@ public class GamePausePanel : CommandMatrixPanel {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI backToMMBtnText;
     [SerializeField] private TextMeshProUGUI restartBtnText;
+    [SerializeField] private TextMeshProUGUI viewEnvBtnText;
 
     [SerializeField] private HihiButton backToMMBtn;
 
@@ -35,8 +36,10 @@ public class GamePausePanel : CommandMatrixPanel {
         localizedTextDetailsList.Add (new LocalizedTextDetails (titleText, "GamePausePanel_Title"));
         localizedTextDetailsList.Add (new LocalizedTextDetails (backToMMBtnText, "BackToMM"));
         localizedTextDetailsList.Add (new LocalizedTextDetails (restartBtnText, "Restart"));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (viewEnvBtnText, "ViewEnv"));
         LangManager.SetTexts (localizedTextDetailsList);
 
+        // btn interactable
         backToMMBtn.SetInteractable (UserManager.CheckIsFirstMissionCleared ());
 
         return true;

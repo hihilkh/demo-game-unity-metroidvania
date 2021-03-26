@@ -226,6 +226,8 @@ public class GameSceneManager : MonoBehaviour {
             UIEventManager.AddEventHandler (BtnOnClickType.Game_Pause, PauseBtnClickedHandler);
             UIEventManager.AddEventHandler (BtnOnClickType.Game_Restart, RestartBtnClickedHandler);
             UIEventManager.AddEventHandler (BtnOnClickType.Game_BackToMM, BackToMMBtnClickedHandler);
+            UIEventManager.AddEventHandler (BtnOnClickType.Game_ViewEnv, ViewEnvBtnClickedHandler);
+            UIEventManager.AddEventHandler (BtnOnClickType.Game_ViewEnvBack, ViewEnvBackBtnClickedHandler);
         }
     }
 
@@ -245,6 +247,8 @@ public class GameSceneManager : MonoBehaviour {
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Pause, PauseBtnClickedHandler);
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Restart, RestartBtnClickedHandler);
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_BackToMM, BackToMMBtnClickedHandler);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ViewEnv, ViewEnvBtnClickedHandler);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ViewEnvBack, ViewEnvBackBtnClickedHandler);
 
             isAddedEventHandlers = false;
         }
@@ -453,6 +457,18 @@ public class GameSceneManager : MonoBehaviour {
 
     private void BackToMMBtnClickedHandler (HihiButton sender) {
         LeaveGame ();
+    }
+
+    private void ViewEnvBtnClickedHandler (HihiButton sender) {
+        charModel.SetAllowUserControl (false, CharEnum.UserControlTypes.Action);
+        pausePanel.Hide (false);
+        uiManager.ShowViewEnvPanel ();
+    }
+
+    private void ViewEnvBackBtnClickedHandler (HihiButton sender) {
+        uiManager.HideViewEnvPanel ();
+        pausePanel.Show (UserManager.CommandSettingsCache);
+        charModel.SetAllowUserControl (true, CharEnum.UserControlTypes.Action);
     }
 
     #endregion

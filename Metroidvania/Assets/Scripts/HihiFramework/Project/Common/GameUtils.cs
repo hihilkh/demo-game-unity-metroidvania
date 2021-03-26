@@ -1,5 +1,6 @@
 ﻿using System;
 using HihiFramework.Core;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -113,4 +114,15 @@ public partial class GameUtils : Singleton<GameUtils> {
     }
 
     #endregion
+
+    #region UI
+
+    public static void AddBlackOutline (TextMeshProUGUI text) {
+        // Remarks : Somehow set outline color to black will lead to next step (set outline width) getting error...
+        text.outlineColor = new Color32 (1, 1, 1, 255);
+        text.outlineWidth = 0.1f;
+    }
+
+    #endregion
+
 }
