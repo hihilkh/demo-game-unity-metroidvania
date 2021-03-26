@@ -90,7 +90,7 @@ public class MapSwitch : MapInvisibleTriggerBase<MapData.SwitchData>, IMapTarget
         OnTriggered ();
     }
 
-    public void FinishSwitched () {
+    public void SwitchingFinished () {
         if (Data.switchType == MapEnum.SwitchType.OnOff) {
             allowSwitch = true;
         }

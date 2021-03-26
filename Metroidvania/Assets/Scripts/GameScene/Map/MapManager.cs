@@ -464,7 +464,7 @@ public class MapManager : MonoBehaviour {
 
         var pathDataList = mapSwitch.GetHiddenPathDataList ();
         if (pathDataList == null || pathDataList.Count <= 0) {
-            mapSwitch.FinishSwitched ();
+            mapSwitch.SwitchingFinished ();
             yield break;
         }
 
@@ -503,7 +503,7 @@ public class MapManager : MonoBehaviour {
             yield return new WaitForSecondsRealtime (OpenOneHiddenPathLayerPeriod);
         }
 
-        mapSwitch.FinishSwitched ();
+        mapSwitch.SwitchingFinished ();
         onFinished?.Invoke ();
     }
 
