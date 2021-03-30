@@ -2,6 +2,8 @@ LangName	English
 
 //Common
 Confirm	Confirm
+On	On
+Off	Off
 
 // ReadyGo
 Ready	Ready
@@ -13,6 +15,7 @@ PressToStart	Press to Start
 // Settings Panel
 SettingsPanel_Title	Settings
 SettingsPanel_LangTitle	Language
+SettingsPanel_SFXTitle	Sound Effect
 SettingsPanel_Apply	Apply Settings
 
 // MainMenu

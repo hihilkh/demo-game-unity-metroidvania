@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using HihiFramework.Core;
 using HihiFramework.UI;
 using TMPro;
@@ -9,12 +8,17 @@ public class SettingsPanel : GeneralPanelBase {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI langTitleText;
     [SerializeField] private TextMeshProUGUI langContentText;
+    [SerializeField] private TextMeshProUGUI sfxTitleText;
+    [SerializeField] private TextMeshProUGUI sfxContentText;
     [SerializeField] private TextMeshProUGUI applyBtnText;
 
     private bool isInitialized = false;
 
     private List<LocalizedTextDetails> localizedTextDetailsList;
+    private LocalizedTextDetails sfxContentLocalizedTextDetails;
+
     private LangType currentSelectingLangType;
+    private bool currentSelectingSfxOnOffStatus;
 
     private void Init () {
         if (isInitialized) {
@@ -28,8 +32,14 @@ public class SettingsPanel : GeneralPanelBase {
         localizedTextDetailsList.Add (new LocalizedTextDetails (langTitleText, "SettingsPanel_LangTitle"));
         localizedTextDetailsList.Add (new LocalizedTextDetails (applyBtnText, "SettingsPanel_Apply"));
 
+        localizedTextDetailsList.Add (new LocalizedTextDetails (sfxTitleText, "SettingsPanel_SFXTitle"));
+        sfxContentLocalizedTextDetails = new LocalizedTextDetails (sfxContentText, ""); // Remarks : The details would be set by SetSelectingSfxOnOff ()
+        localizedTextDetailsList.Add (sfxContentLocalizedTextDetails);
+
         UIEventManager.AddEventHandler (BtnOnClickType.Settings_LangLeft, LangLeftBtnClickedHandler);
         UIEventManager.AddEventHandler (BtnOnClickType.Settings_LangRight, LangRightBtnClickedHandler);
+        UIEventManager.AddEventHandler (BtnOnClickType.Settings_SfxLeft, SfxBtnClickedHandler);
+        UIEventManager.AddEventHandler (BtnOnClickType.Settings_SfxRight, SfxBtnClickedHandler);
         UIEventManager.AddEventHandler (BtnOnClickType.Settings_Apply, ApplyBtnClickedHandler);
         LangManager.LangChanged += LangChangedHandler;
     }
@@ -38,6 +48,8 @@ public class SettingsPanel : GeneralPanelBase {
         if (isInitialized) {
             UIEventManager.RemoveEventHandler (BtnOnClickType.Settings_LangLeft, LangLeftBtnClickedHandler);
             UIEventManager.RemoveEventHandler (BtnOnClickType.Settings_LangRight, LangRightBtnClickedHandler);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Settings_SfxLeft, SfxBtnClickedHandler);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Settings_SfxRight, SfxBtnClickedHandler);
             UIEventManager.RemoveEventHandler (BtnOnClickType.Settings_Apply, ApplyBtnClickedHandler);
             LangManager.LangChanged -= LangChangedHandler;
         }
@@ -47,8 +59,11 @@ public class SettingsPanel : GeneralPanelBase {
 
     new public void Show () {
         Init ();
-        SetTexts ();
+
         SetSelectingLang (LangManager.GetCurrentLang ());
+        SetSelectingSfxOnOff (AudioManager.Instance.CurrentSfxOnOffFlag);
+
+        SetTexts ();
 
         base.Show ();
     }
@@ -56,6 +71,12 @@ public class SettingsPanel : GeneralPanelBase {
     private void SetTexts () {
         LangManager.SetTexts (localizedTextDetailsList);
     }
+
+    private string GetOnOffLocalizationKey (bool isOn) {
+        return isOn ? "On" : "Off";
+    }
+
+    #region select Lang
 
     private void SetSelectingLang (LangType langType) {
         LangManager.SetLangNameText (langContentText, langType);
@@ -93,6 +114,18 @@ public class SettingsPanel : GeneralPanelBase {
         SetSelectingLang (targetLangType);
     }
 
+    #endregion
+
+    #region select Sfx On Off
+
+    private void SetSelectingSfxOnOff (bool isOn) {
+        sfxContentLocalizedTextDetails.ChangeLocalizationKey (GetOnOffLocalizationKey (isOn));
+        LangManager.SetText (sfxContentLocalizedTextDetails);
+        currentSelectingSfxOnOffStatus = isOn;
+    }
+
+    #endregion
+
     #region Events
 
     private void LangLeftBtnClickedHandler (HihiButton sender) {
@@ -103,8 +136,13 @@ public class SettingsPanel : GeneralPanelBase {
         ChangeSelectingLang (true);
     }
 
+    private void SfxBtnClickedHandler (HihiButton sender) {
+        SetSelectingSfxOnOff (!currentSelectingSfxOnOffStatus);
+    }
+
     private void ApplyBtnClickedHandler (HihiButton sender) {
         LangManager.ChangeLang (currentSelectingLangType);
+        AudioManager.Instance.SetSfxOnOff (currentSelectingSfxOnOffStatus);
     }
 
     private void LangChangedHandler () {

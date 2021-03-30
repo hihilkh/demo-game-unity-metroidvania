@@ -15,7 +15,7 @@ namespace HihiFramework.Audio {
         private const float FallbackAttenuation = 0;    // In decibel
 
         private bool? _currentBgmOnOffFlag = null;
-        private bool currentBgmOnOffFlag {
+        public bool CurrentBgmOnOffFlag {
             get {
                 if (_currentBgmOnOffFlag == null) {
                     if (PlayerPrefs.HasKey (FrameworkVariable.CurrentBgmOnOffFlagKey)) {
@@ -32,14 +32,14 @@ namespace HihiFramework.Audio {
 
                 return (bool)_currentBgmOnOffFlag;
             }
-            set {
+            private set {
                 FrameworkUtils.SetPlayerPrefsBool (FrameworkVariable.CurrentBgmOnOffFlagKey, value);
                 _currentBgmOnOffFlag = value;
             }
         }
 
         private bool? _currentSfxOnOffFlag = null;
-        private bool currentSfxOnOffFlag {
+        public bool CurrentSfxOnOffFlag {
             get {
                 if (_currentSfxOnOffFlag == null) {
                     if (PlayerPrefs.HasKey (FrameworkVariable.CurrentSfxOnOffFlagKey)) {
@@ -56,14 +56,14 @@ namespace HihiFramework.Audio {
 
                 return (bool)_currentSfxOnOffFlag;
             }
-            set {
+            private set {
                 FrameworkUtils.SetPlayerPrefsBool (FrameworkVariable.CurrentSfxOnOffFlagKey, value);
                 _currentSfxOnOffFlag = value;
             }
         }
 
         private float _currentBgmAttenuation = MinAudioMixerAttenuation_Decibel - 1;    // In decibel
-        private float currentBgmAttenuation {
+        public float CurrentBgmAttenuation {
             get {
                 if (_currentBgmAttenuation < MinAudioMixerAttenuation_Decibel) {
                     if (PlayerPrefs.HasKey (FrameworkVariable.CurrentBgmAttenuationKey)) {
@@ -80,14 +80,14 @@ namespace HihiFramework.Audio {
 
                 return _currentBgmAttenuation;
             }
-            set {
+            private set {
                 PlayerPrefs.SetFloat (FrameworkVariable.CurrentBgmAttenuationKey, value);
                 _currentBgmAttenuation = value;
             }
         }
 
         private float _currentSfxAttenuation = MinAudioMixerAttenuation_Decibel - 1;    // In decibel
-        private float currentSfxAttenuation {
+        public float CurrentSfxAttenuation {
             get {
                 if (_currentSfxAttenuation < MinAudioMixerAttenuation_Decibel) {
                     if (PlayerPrefs.HasKey (FrameworkVariable.CurrentSfxAttenuationKey)) {
@@ -104,7 +104,7 @@ namespace HihiFramework.Audio {
 
                 return _currentSfxAttenuation;
             }
-            set {
+            private set {
                 PlayerPrefs.SetFloat (FrameworkVariable.CurrentSfxAttenuationKey, value);
                 _currentSfxAttenuation = value;
             }
@@ -233,10 +233,10 @@ namespace HihiFramework.Audio {
 
         #region Player Prefs Parameters
 
-        public bool GetSavedAudioOnOffFlag (AudioFrameworkEnum.Category category) {
+        protected bool GetSavedAudioOnOffFlag (AudioFrameworkEnum.Category category) {
             switch (category) {
-                case AudioFrameworkEnum.Category.Bgm: return currentBgmOnOffFlag;
-                case AudioFrameworkEnum.Category.Sfx: return currentSfxOnOffFlag;
+                case AudioFrameworkEnum.Category.Bgm: return CurrentBgmOnOffFlag;
+                case AudioFrameworkEnum.Category.Sfx: return CurrentSfxOnOffFlag;
             }
 
             Log.PrintError ("AudioFrameworkEnum.Category : " + category + " has not been assigned audio on off flag cache. Return false.", LogTypes.Audio);
@@ -246,10 +246,10 @@ namespace HihiFramework.Audio {
         private void SaveAudioOnOffFlag (AudioFrameworkEnum.Category category, bool isOn) {
             switch (category) {
                 case AudioFrameworkEnum.Category.Bgm:
-                    currentBgmOnOffFlag = isOn;
+                    CurrentBgmOnOffFlag = isOn;
                     return;
                 case AudioFrameworkEnum.Category.Sfx:
-                    currentSfxOnOffFlag = isOn;
+                    CurrentSfxOnOffFlag = isOn;
                     return;
             }
 
@@ -260,8 +260,8 @@ namespace HihiFramework.Audio {
         /// <returns>In decibel</returns>
         public float GetSavedAttenuation (AudioFrameworkEnum.Category category) {
             switch (category) {
-                case AudioFrameworkEnum.Category.Bgm: return currentBgmAttenuation;
-                case AudioFrameworkEnum.Category.Sfx: return currentSfxAttenuation;
+                case AudioFrameworkEnum.Category.Bgm: return CurrentBgmAttenuation;
+                case AudioFrameworkEnum.Category.Sfx: return CurrentSfxAttenuation;
             }
 
             Log.PrintError ("AudioFrameworkEnum.Category : " + category + " has not been assigned attenuation cache. Return FallbackAttenuation.", LogTypes.Audio);
@@ -272,10 +272,10 @@ namespace HihiFramework.Audio {
         private void SaveAttenuation (AudioFrameworkEnum.Category category, float attenuation) {
             switch (category) {
                 case AudioFrameworkEnum.Category.Bgm:
-                    currentBgmAttenuation = attenuation;
+                    CurrentBgmAttenuation = attenuation;
                     return;
                 case AudioFrameworkEnum.Category.Sfx:
-                    currentSfxAttenuation = attenuation;
+                    CurrentSfxAttenuation = attenuation;
                     return;
             }
 
@@ -415,11 +415,6 @@ namespace HihiFramework.Audio {
 
         #endregion
 
-        public void SwitchAudioOnOff (AudioFrameworkEnum.Category category) {
-            var isOn = !GetSavedAudioOnOffFlag (category);
-            SetAndSaveAudioOnOff (category, isOn, true);
-        }
-
         protected void SetAndSaveAudioOnOff (AudioFrameworkEnum.Category category, bool isOn, bool isSaveToPlayerPrefs = true) {
             Log.Print ("Set audio on off : AudioFrameworkEnum.Category : " + category + " ; isOn : " + isOn + " ; isSaveToPlayerPrefs : " + isSaveToPlayerPrefs, LogTypes.Audio);
             if (isSaveToPlayerPrefs) {
@@ -492,5 +487,20 @@ namespace HihiFramework.Audio {
         }
 
         #endregion
+
+        #region Exposed methods for settings panel
+
+        public void SetBgmOnOff (bool isOn) {
+            SetAndSaveAudioOnOff (AudioFrameworkEnum.Category.Bgm, isOn, true);
+        }
+
+        public void SetSfxOnOff (bool isOn) {
+            SetAndSaveAudioOnOff (AudioFrameworkEnum.Category.Sfx, isOn, true);
+        }
+
+        // TODO : Add attenuation control methods for settings panel
+
+        #endregion
+
     }
 }

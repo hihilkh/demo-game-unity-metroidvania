@@ -24,6 +24,8 @@ public enum BtnOnClickType {
     Settings_LangLeft = 301,
     Settings_LangRight = 302,
     Settings_Apply = 303,
+    Settings_SfxLeft = 304,
+    Settings_SfxRight = 305,
 
     // Framework usage
     GameConfig_Confirm = 10000,

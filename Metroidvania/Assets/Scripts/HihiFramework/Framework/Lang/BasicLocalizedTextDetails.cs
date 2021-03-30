@@ -17,9 +17,7 @@ namespace HihiFramework.Lang {
 
         public BasicLocalizedTextDetails (TextMeshProUGUI text, string localizationKey, bool isNeedLocalization = true) {
             Text = text;
-            LocalizationKey = localizationKey;
-            IsNeedLocalization = isNeedLocalization;
-            ReplaceStringDict = null;
+            ChangeLocalizationKey (localizationKey, isNeedLocalization, true);
         }
 
         public void AddReplaceString (string replaceString, bool isNeedLocalization) {
@@ -28,6 +26,14 @@ namespace HihiFramework.Lang {
             }
 
             ReplaceStringDict.Add (replaceString, isNeedLocalization);
+        }
+
+        public void ChangeLocalizationKey (string localizationKey, bool isNeedLocalization = true, bool isClearReplaceStringDict = true) {
+            LocalizationKey = localizationKey;
+            IsNeedLocalization = isNeedLocalization;
+            if (isClearReplaceStringDict) {
+                ReplaceStringDict = null;
+            }
         }
     }
 }

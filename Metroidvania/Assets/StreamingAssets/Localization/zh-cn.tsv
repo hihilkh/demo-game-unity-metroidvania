@@ -2,6 +2,8 @@ LangName	简体中文
 
 //Common
 Confirm	确定
+On	开
+Off	关
 
 // ReadyGo
 Ready	预备
@@ -13,6 +15,7 @@ PressToStart	按一下开始
 // Settings Panel
 SettingsPanel_Title	设定
 SettingsPanel_LangTitle	语言
+SettingsPanel_SFXTitle	音效
 SettingsPanel_Apply	套用设定
 
 // MainMenu
