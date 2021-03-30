@@ -26,6 +26,9 @@ namespace HihiFramework.Core {
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = GameVariable.TargetFrameRate;
 
+            // AudioManager
+            AudioManager.Instance.Init ();
+
             Action<bool> onLangManagerInitFinished = (isSuccess) => {
                 GameUtils.InitGameSettings (onFinished);
             };
@@ -50,6 +53,29 @@ namespace HihiFramework.Core {
 
         public static string GetVersionNoStr () {
             return "v." + Application.version;
+        }
+
+        #endregion
+
+        #region PlayerPrefs
+
+        private const int PlayerPrefsTrueIntValue = 1;
+        private const int PlayerPrefsFalueIntValue = 0;
+
+        public static bool GetPlayerPrefsBool (string key) {
+            return GetPlayerPrefsBool (key, false);
+        }
+
+        public static bool GetPlayerPrefsBool (string key, bool defaultValue) {
+            var defaultIntValue = defaultValue ? PlayerPrefsTrueIntValue : PlayerPrefsFalueIntValue;
+            var intValue = PlayerPrefs.GetInt (key, defaultIntValue);
+
+            return intValue == PlayerPrefsTrueIntValue;
+        }
+
+        public static void SetPlayerPrefsBool (string key, bool value) {
+            var intValueToSet = value ? PlayerPrefsTrueIntValue : PlayerPrefsFalueIntValue;
+            PlayerPrefs.SetInt (key, intValueToSet);
         }
 
         #endregion

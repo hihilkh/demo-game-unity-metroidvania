@@ -51,6 +51,25 @@
         // Asset
         public const string AssetVersionKey = "HIHI_VERSION_{0}_{1}";
 
+        // Audio
+        public const string CurrentBgmOnOffFlagKey = "HIHI_CURRENT_BGM_ON_OFF_FLAG";
+        public const string CurrentSfxOnOffFlagKey = "HIHI_CURRENT_SFX_ON_OFF_FLAG";
+        public const string CurrentBgmAttenuationKey = "HIHI_CURRENT_BGM_ATTENUATION";
+        public const string CurrentSfxAttenuationKey = "HIHI_CURRENT_SFX_ATTENUATION";
+
+        public const string AudioResourcesFolder = "Audios";
+        public const string BgmAudioResourcesSubFolder = "BGM";
+        public const string SfxAudioResourcesSubFolder = "SFX";
+
+        public const string AudioMixerResourcesFolder = "AudioMixers";
+        public const string BgmAudioMixerResourcesName = "BGM";
+        public const string SfxAudioMixerResourcesName = "SFX";
+
+        public const string AudioMixerMasterGroupName = "Master";
+        public const string AudioMixerCommonGroupName = "Common";
+
+        public const string MasterAttenuationExposedParam = "MasterAttenuation";
+
         #endregion
     }
 }
