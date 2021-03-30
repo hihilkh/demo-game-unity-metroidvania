@@ -20,24 +20,16 @@ namespace HihiFramework.Lang {
                         _CurrentLang = (LangType)PlayerPrefs.GetInt (FrameworkVariable.CurrentLangTypeKey);
                     } else {
                         _CurrentLang = LangConfig.GetDeviceDefaultLang ();
+                        // Set player prefs to save the device default lang
+                        PlayerPrefs.SetInt (FrameworkVariable.CurrentLangTypeKey, (int)_CurrentLang);
                     }
                 }
 
                 return (LangType)_CurrentLang;
             }
-            set {
-                if (_CurrentLang == value) {
-                    // No changes on language. Do not do anything
-                    return;
-                }
-
+            private set {
                 PlayerPrefs.SetInt (FrameworkVariable.CurrentLangTypeKey, (int)value);
                 _CurrentLang = value;
-
-                var isSuccess = LoadLocalizationFileIfMissing (value);
-                if (isSuccess) {
-                    LangChanged?.Invoke ();
-                }
             }
         }
 
@@ -221,7 +213,17 @@ namespace HihiFramework.Lang {
         }
 
         public static void ChangeLang (LangType langType) {
+            if (CurrentLang == langType) {
+                // No changes on language. Do not do anything
+                return;
+            }
+
             CurrentLang = langType;
+
+            var isSuccess = LoadLocalizationFileIfMissing (langType);
+            if (isSuccess) {
+                LangChanged?.Invoke ();
+            }
         }
 
         #endregion
@@ -260,7 +262,7 @@ namespace HihiFramework.Lang {
         /// <summary>
         /// Get localization of input localization key in input LangType
         /// </summary>
-        public static string GetLocalizedStr (LangType langType, string key, bool isFallbackToRootLang = true, bool isShowWarningIfNull = true) {
+        public static string GetLocalizedStr (LangType langType, string key, bool isFallbackToRootLang = true, bool isShowErrorIfNull = true) {
             Func<string> failedAction = () => {
                 if (isFallbackToRootLang) {
                     var rootLang = LangConfig.GetRootLang ();
@@ -282,8 +284,8 @@ namespace HihiFramework.Lang {
 
             // TODO : Think of the bug that if inputting a langType that not yet loaded LocalizationFile, it will fail
             if (!LangKeyValueMappingDict.ContainsKey (langType)) {
-                if (isShowWarningIfNull) {
-                    Log.PrintWarning ("Cannot get word. LangKeyValueMapping of LangType : " + langType + " is missing.", LogTypes.Lang);
+                if (isShowErrorIfNull) {
+                    Log.PrintError ("Cannot get word. LangKeyValueMapping of LangType : " + langType + " is missing.", LogTypes.Lang);
                 }
 
                 return failedAction ();
@@ -291,8 +293,8 @@ namespace HihiFramework.Lang {
 
             var mapping = LangKeyValueMappingDict[langType];
             if (!mapping.ContainsKey (key)) {
-                if (isShowWarningIfNull) {
-                    Log.PrintWarning ("Cannot get word. The key value mapping is missing. key : " + key + " , LangType : " + langType, LogTypes.Lang);
+                if (isShowErrorIfNull) {
+                    Log.PrintError ("Cannot get word. The key value mapping is missing. key : " + key + " , LangType : " + langType, LogTypes.Lang);
                 }
 
                 return failedAction ();
