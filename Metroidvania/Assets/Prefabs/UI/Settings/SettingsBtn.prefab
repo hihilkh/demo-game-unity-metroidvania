@@ -119,3 +119,4 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onClickType: 300
+  clickSoundType: 1

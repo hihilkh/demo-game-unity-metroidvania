@@ -3447,6 +3447,7 @@ MonoBehaviour:
   restartBtnText: {fileID: 741685915}
   viewEnvBtnText: {fileID: 1361071752}
   backToMMBtn: {fileID: 1552581170}
+  viewEnvBtn: {fileID: 1361071756}
 --- !u!1001 &777162485
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4257,6 +4258,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onClickType: 200
+  clickSoundType: 0
 --- !u!114 &1109728588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4656,6 +4658,18 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1361071756 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8130829996858171058, guid: f5da7ffa164fe4871b48adef1fa354b9,
+    type: 3}
+  m_PrefabInstance: {fileID: 1361071751}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361071753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e5db167de1994734bd675ae27225ced, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1404415251 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7094945059359377025, guid: 423ae1a30746347eb923d453c90d7cd0,

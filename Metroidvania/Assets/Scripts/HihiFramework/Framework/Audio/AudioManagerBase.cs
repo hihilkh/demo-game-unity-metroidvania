@@ -355,6 +355,11 @@ namespace HihiFramework.Audio {
         /// Load or get cached audio clip of corresponding DynamicSfxType from Resources folder. Once loaded, it will save to cache for reuse.
         /// </summary>
         protected AudioClip LoadDynamicSfxAudioClip (AudioEnum.DynamicSfxType dynamicSfxType) {
+            if (dynamicSfxType == AudioEnum.DynamicSfxType.None) {
+                Log.Print ("You are loading SFX audio clip of AudioEnum.DynamicSfxType.None, which is null.", LogTypes.Audio);
+                return null;
+            }
+
             if (!dynamicSfxAudioClipDict.ContainsKey (dynamicSfxType)) {
                 Log.Print ("Load SFX audio clip of AudioEnum.DynamicSfxType : " + dynamicSfxType, LogTypes.Audio);
 
@@ -375,6 +380,11 @@ namespace HihiFramework.Audio {
         }
 
         public void PlayDynamicSFX (AudioEnum.DynamicSfxType dynamicSfxType) {
+            if (dynamicSfxType == AudioEnum.DynamicSfxType.None) {
+                // Do not do anything
+                return;
+            }
+
             var audioClip = LoadDynamicSfxAudioClip (dynamicSfxType);
             if (audioClip != null) {
                 DynamicSfxAudioSource.PlayOneShot (audioClip);

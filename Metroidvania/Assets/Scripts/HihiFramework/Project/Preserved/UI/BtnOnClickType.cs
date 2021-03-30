@@ -1,7 +1,8 @@
-﻿// Remarks:
-// - Do not change the int value of the corresponding event because Unity Editor save the enum as int.
-// - Keep ascend the int value for new enum. Even there is a decreprated enum, do not reuse its int value.
-// - int value after 9999 is preserved by Framework usage.
+﻿/// <summary>
+/// Do not change the int value of the corresponding event because Unity Editor save the enum as int.<br />
+/// Keep ascend the int value for new enum. Even there is a decreprated enum, do not reuse its int value.<br />
+/// int value after 9999 is preserved by Framework usage.
+/// </summary>
 public enum BtnOnClickType {
     Landing_Start = 1,
 

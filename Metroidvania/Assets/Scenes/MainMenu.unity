@@ -3026,6 +3026,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onClickType: 102
+  clickSoundType: 1
 --- !u!114 &1625399317
 MonoBehaviour:
   m_ObjectHideFlags: 0

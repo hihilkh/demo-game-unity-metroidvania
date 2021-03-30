@@ -321,6 +321,9 @@ public class GameSceneUIManager : MonoBehaviour {
             return;
         }
 
+        // Trigger SFX here instead of inside HihiButton to prevent playing SFX while isAllowPanelClick = false
+        AudioManager.Instance.PlayDynamicSFX (AudioEnum.DynamicSfxType.ConfirmBtn);
+
         if (hasShownAllTexts) {
             HidePanel (currentShowingPanel);
         } else {

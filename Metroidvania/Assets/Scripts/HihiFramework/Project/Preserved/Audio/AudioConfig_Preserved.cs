@@ -54,9 +54,16 @@ public static partial class AudioConfig {
     /// Get the dynamic SFX resources name (without folders) of corresponding DynamicSfxType
     /// </summary>
     public static string GetSfxResourcesName (AudioEnum.DynamicSfxType dynamicSfxType) {
+        if (dynamicSfxType == AudioEnum.DynamicSfxType.None) {
+            // No SFX for DynamicSfxType.None
+            Log.PrintWarning ("You are trying to get SFX resources name of AudioEnum.DynamicSfxType.None, which should have no SFX. Return null.", LogTypes.Audio);
+            return null;
+        }
+
         switch (dynamicSfxType) {
             case AudioEnum.DynamicSfxType.ConfirmBtn: return "ConfirmBtn";
             case AudioEnum.DynamicSfxType.CancelBtn: return "CancelBtn";
+            case AudioEnum.DynamicSfxType.StartGame: return "StartGame";
         }
 
         Log.PrintError ("AudioEnum.DynamicSfxType : " + dynamicSfxType + " has not been assigned resources name. Return null.", LogTypes.Audio);

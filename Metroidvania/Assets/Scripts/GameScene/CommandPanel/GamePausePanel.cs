@@ -10,6 +10,7 @@ public class GamePausePanel : CommandMatrixPanel {
     [SerializeField] private TextMeshProUGUI viewEnvBtnText;
 
     [SerializeField] private HihiButton backToMMBtn;
+    [SerializeField] private HihiButton viewEnvBtn;
 
     private bool isHideResetTimeScale = true;
 
@@ -39,15 +40,16 @@ public class GamePausePanel : CommandMatrixPanel {
         localizedTextDetailsList.Add (new LocalizedTextDetails (viewEnvBtnText, "ViewEnv"));
         LangManager.SetTexts (localizedTextDetailsList);
 
-        // btn interactable
-        backToMMBtn.SetInteractable (UserManager.CheckIsFirstMissionCleared ());
-
         return true;
     }
 
     #endregion
 
     new public void Show (Dictionary<CharEnum.InputSituation, CharEnum.Command> defaultCommandSettings) {
+        // btn interactable
+        backToMMBtn.SetInteractable (UserManager.CheckIsFirstMissionCleared ());
+        viewEnvBtn.SetInteractable (UserManager.GetIsAllowUserInput ());
+
         base.Show (defaultCommandSettings);
     }
 

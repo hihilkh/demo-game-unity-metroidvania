@@ -18,6 +18,10 @@ namespace HihiFramework.UI {
 
             var property = serializedObject.FindProperty ("onClickType");
             EditorGUILayout.PropertyField (property);
+
+            var property2 = serializedObject.FindProperty ("clickSoundType");
+            EditorGUILayout.PropertyField (property2);
+
             serializedObject.ApplyModifiedProperties ();
         }
     }
@@ -25,6 +29,7 @@ namespace HihiFramework.UI {
 
     public class HihiButton : Button {
         [SerializeField] private BtnOnClickType onClickType;
+        [SerializeField] private AudioEnum.DynamicSfxType clickSoundType;
         private object info = null;
 
 #if UNITY_EDITOR
@@ -76,6 +81,14 @@ namespace HihiFramework.UI {
         }
 
         private void ClickedHandler () {
+            if (clickSoundType != AudioEnum.DynamicSfxType.None) {
+                if (Enum.IsDefined (typeof (AudioEnum.DynamicSfxType), clickSoundType)) {
+                    AudioManager.Instance.PlayDynamicSFX (clickSoundType);
+                } else {
+                    Log.PrintWarning ("HihiButton clickSoundType is not yet assigned", LogTypes.UI | LogTypes.Input);
+                }
+            }
+
             if (!Enum.IsDefined (typeof (BtnOnClickType), onClickType)) {
                 Log.PrintError ("HihiButton onClickType is not yet assigned", LogTypes.UI | LogTypes.Input);
                 return;
