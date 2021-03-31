@@ -311,7 +311,7 @@ public class MissionEventManager : MonoBehaviour {
         Action reallyStartEventAction = () => {
             Log.Print ("Really start Mission Event : EventType = " + eventType, LogTypes.MissionEvent);
 
-            Time.timeScale = 0;
+            GameUtils.StopTime ();
 
             if (missionEvent.IsNeedToStopChar) {
                 charModel.CancelStopChar ();
@@ -320,7 +320,7 @@ public class MissionEventManager : MonoBehaviour {
             Action onEventFinished = () => {
                 CurrentMissionEvent = null;
 
-                Time.timeScale = 1;
+                GameUtils.ResumeTime ();
 
                 // If it is from collectable, set mission event done together with UserManager.CollectCollectable ()
                 if (!isFromCollectable) {
@@ -574,7 +574,7 @@ public class MissionEventManager : MonoBehaviour {
     private IEnumerator StartWaitSubEvent (WaitSubEvent subEvent, Action onFinished = null) {
         var charModel = GameUtils.FindOrSpawnChar ();
         charModel.SetAllowUserControl (false);
-        Time.timeScale = 1;
+        GameUtils.ResumeTime ();
 
         yield return new WaitForSeconds (subEvent.WaitTime);
 
@@ -583,7 +583,7 @@ public class MissionEventManager : MonoBehaviour {
             charModel.SetAllowUserControl (true);
 
             // Only set time scale to 0 for MissionEvent (but not SpecialSceneEvent)
-            Time.timeScale = 0;
+            GameUtils.StopTime ();
         }
 
         onFinished?.Invoke ();

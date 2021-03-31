@@ -186,6 +186,12 @@ public class CharParams : ScriptableObject {
     public float BossAllowAttackVerticalHalfRange => _bossAllowAttackVerticalHalfRange;
 
     [Header ("Audio Clips")]
+    [SerializeField] private AudioClip _walkAudioClip;
+    public AudioClip WalkAudioClip => _walkAudioClip;
+
+    [SerializeField] private AudioClip _dashAudioClip;
+    public AudioClip DashAudioClip => _dashAudioClip;
+
     [SerializeField] private AudioClip _jumpAudioClip;
     public AudioClip JumpAudioClip => _jumpAudioClip;
 

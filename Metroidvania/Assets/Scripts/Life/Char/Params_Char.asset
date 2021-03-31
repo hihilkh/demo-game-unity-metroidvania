@@ -62,6 +62,8 @@ MonoBehaviour:
   _bossHitAttackHorizontalHalfRange: 6
   _bossDashAttackHorizontalHalfRange: 11
   _bossAllowAttackVerticalHalfRange: 3
+  _walkAudioClip: {fileID: 8300000, guid: 0f6859f9a78ff47d584f9e4b0711300e, type: 3}
+  _dashAudioClip: {fileID: 8300000, guid: e60c4074f161a4105becba329dc2bcd9, type: 3}
   _jumpAudioClip: {fileID: 8300000, guid: d6729bb66d0984a799e28767148c911a, type: 3}
   _jumpChargingAudioClip: {fileID: 8300000, guid: 14791b835bc544fb888ae04197148479,
     type: 3}

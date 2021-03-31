@@ -17,13 +17,13 @@ public class GamePausePanel : CommandMatrixPanel {
     #region CommandMatrixPanel
 
     private void OnEnable () {
-        Time.timeScale = 0;
+        GameUtils.StopTime ();
         isHideResetTimeScale = true;
     }
 
     private void OnDisable () {
         if (isHideResetTimeScale) {
-            Time.timeScale = 1;
+            GameUtils.ResumeTime ();
         }
     }
 

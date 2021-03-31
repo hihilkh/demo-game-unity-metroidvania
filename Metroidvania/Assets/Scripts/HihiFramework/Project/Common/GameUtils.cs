@@ -27,6 +27,9 @@ public partial class GameUtils : Singleton<GameUtils> {
     /// </summary>
     public static event Action<string> SingleSceneChanged;
 
+    public static event Action TimeStopped;
+    public static event Action TimeResumed;
+
     #region CharModel
 
     public static CharModel FindOrSpawnChar () {
@@ -121,6 +124,20 @@ public partial class GameUtils : Singleton<GameUtils> {
         // Remarks : Somehow set outline color to black will lead to next step (set outline width) getting error...
         text.outlineColor = new Color32 (1, 1, 1, 255);
         text.outlineWidth = 0.1f;
+    }
+
+    #endregion
+
+    #region Time Control
+
+    public static void StopTime () {
+        Time.timeScale = 0;
+        TimeStopped?.Invoke ();
+    }
+
+    public static void ResumeTime () {
+        Time.timeScale = 1;
+        TimeResumed?.Invoke ();
     }
 
     #endregion

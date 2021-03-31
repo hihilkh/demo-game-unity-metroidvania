@@ -94,7 +94,7 @@ public class GameSceneManager : MonoBehaviour {
 
         Action onFadeInFinished = () => {
             IsGameStarted = false;
-            Time.timeScale = 1;
+            GameUtils.ResumeTime ();
 
             // Remarks : To ensure everything is ready so that CharModel has no strange behaviour
             if (!isControlledByLandingScene) {
@@ -301,7 +301,7 @@ public class GameSceneManager : MonoBehaviour {
             }
 
             uiManager.SetUIInteractable (true);
-            Time.timeScale = 1;
+            GameUtils.ResumeTime ();
         };
 
         Action onMissionEventFinished = () => {
@@ -339,7 +339,7 @@ public class GameSceneManager : MonoBehaviour {
             charModel.SetAllowUserControl (true);
         };
 
-        Time.timeScale = 0;
+        GameUtils.StopTime ();
         charModel.SetAllowUserControl (false);
         uiManager.SetUIInteractable (false);
         collectableObject.StartCollectedAnim (charModel.GetCurrentCollectedCollectablePos (), onCollectedAnimFinished);

@@ -42,6 +42,7 @@ public class CharModel : LifeBase, IMapTarget {
     [SerializeField] private Transform collectCollectableRefPoint;
 
     [Header ("AudioSources")]
+    [SerializeField] private AudioSource movementAudioSource;
     [SerializeField] private AudioSource oneShotAudioSource;
     [SerializeField] private AudioSource effectAudioSource;
 
@@ -61,7 +62,18 @@ public class CharModel : LifeBase, IMapTarget {
     private MapManager mapManager;
 
     // Body Parts
-    public CharEnum.BodyParts ObtainedBodyParts { get; private set; }
+    private CharEnum.BodyParts _obtainedBodyParts;
+    public CharEnum.BodyParts ObtainedBodyParts {
+        get { return _obtainedBodyParts; }
+        private set {
+            _obtainedBodyParts = value;
+            if ((_obtainedBodyParts & CharEnum.BodyParts.Legs) == CharEnum.BodyParts.Legs) {
+                movementAudioSource.mute = false;
+            } else {
+                movementAudioSource.mute = true;
+            }
+        }
+    }
 
     protected override int PosZ {
         get {
@@ -252,6 +264,9 @@ public class CharModel : LifeBase, IMapTarget {
     protected override void Awake () {
         base.Awake ();
 
+        GameUtils.TimeStopped += TimeStoppedHandler;
+        GameUtils.TimeResumed += TimeResumedHandler;
+
         if (CharType == CharEnum.CharType.Player) {
             controller.Tapped += TappedHandler;
             controller.StartedHold += StartedHoldHandler;
@@ -273,6 +288,9 @@ public class CharModel : LifeBase, IMapTarget {
 
     protected override void OnDestroy () {
         base.OnDestroy ();
+
+        GameUtils.TimeStopped -= TimeStoppedHandler;
+        GameUtils.TimeResumed -= TimeResumedHandler;
 
         if (CharType == CharEnum.CharType.Player) {
             controller.Tapped -= TappedHandler;
@@ -961,31 +979,59 @@ public class CharModel : LifeBase, IMapTarget {
 
     #region SFX
 
-    private void PlayOneShotSFX (AudioClip audioClip) {
-        Log.PrintDebug ("Char PlayOneShotSFX : " + audioClip.name, LogTypes.Char | LogTypes.Audio);
+    public void PlayMovementSfx (AudioClip audioClip) {
+        Log.PrintDebug ("Char PlayMovementSfx : " + audioClip.name, LogTypes.Char | LogTypes.Audio);
+
+        movementAudioSource.clip = audioClip;
+        if (!movementAudioSource.isPlaying) {
+            movementAudioSource.Play ();
+        }
+    }
+
+    private void PauseMovementSfx () {
+        Log.PrintDebug ("Char PauseMovementSfx", LogTypes.Char | LogTypes.Audio);
+        movementAudioSource.Pause ();
+    }
+
+    private void UnPauseMovementSfx () {
+        Log.PrintDebug ("Char UnPauseMovementSfx", LogTypes.Char | LogTypes.Audio);
+        movementAudioSource.UnPause ();
+    }
+
+    public void StopMovementSfx (AudioClip audioClip) {
+        Log.PrintDebug ("Char StopMovementSfx : " + audioClip.name, LogTypes.Char | LogTypes.Audio);
+        if (movementAudioSource.clip == audioClip) {
+            movementAudioSource.Stop ();
+        }
+    }
+
+    private void PlayOneShotSfx (AudioClip audioClip) {
+        Log.PrintDebug ("Char PlayOneShotSfx : " + audioClip.name, LogTypes.Char | LogTypes.Audio);
         oneShotAudioSource.PlayOneShot (audioClip);
     }
 
-    private void PlayEffectSFX (AudioClip audioClip, bool isLoop) {
-        Log.PrintDebug ("Char PlayEffectSFX : " + audioClip.name + " isLoop : " + isLoop, LogTypes.Char | LogTypes.Audio);
+    private void PlayEffectSfx (AudioClip audioClip, bool isLoop) {
+        Log.PrintDebug ("Char PlayEffectSfx : " + audioClip.name + " isLoop : " + isLoop, LogTypes.Char | LogTypes.Audio);
         effectAudioSource.clip = audioClip;
         effectAudioSource.loop = isLoop;
         effectAudioSource.Play ();
     }
 
-    private void PauseEffectSFX () {
-        Log.PrintDebug ("Char PauseEffectSFX", LogTypes.Char | LogTypes.Audio);
+    private void PauseEffectSfx () {
+        Log.PrintDebug ("Char PauseEffectSfx", LogTypes.Char | LogTypes.Audio);
         effectAudioSource.Pause ();
     }
 
-    private void UnPauseEffectSFX () {
-        Log.PrintDebug ("Char UnpauseEffectSFX", LogTypes.Char | LogTypes.Audio);
+    private void UnPauseEffectSfx () {
+        Log.PrintDebug ("Char UnpauseEffectSfx", LogTypes.Char | LogTypes.Audio);
         effectAudioSource.UnPause ();
     }
 
-    private void StopEffectSFX () {
-        Log.PrintDebug ("Char StopEffectSFX", LogTypes.Char | LogTypes.Audio);
-        effectAudioSource.Stop ();
+    private void StopEffectSfx (AudioClip audioClip) {
+        Log.PrintDebug ("Char StopEffectSfx : " + audioClip.name, LogTypes.Char | LogTypes.Audio);
+        if (effectAudioSource.clip == audioClip) {
+            effectAudioSource.Stop ();
+        }
     }
 
     #endregion
@@ -1128,6 +1174,7 @@ public class CharModel : LifeBase, IMapTarget {
         }
 
         SetStatuses (CharEnum.Statuses.Dashing, false);
+        StopMovementSfx (Params.DashAudioClip);
         CurrentHorizontalSpeed = speedAfterStopDashing;
         if (isNeedToChangeMovementAnim) {
             if (CurrentLocation == LifeEnum.Location.Ground) {
@@ -1153,6 +1200,8 @@ public class CharModel : LifeBase, IMapTarget {
         AlignMovingWithFacingDirection ();
 
         SetAnimatorTrigger (CharAnimConstant.DashTriggerName);
+
+        PlayMovementSfx (Params.DashAudioClip);
     }
 
     private IEnumerator OneShotDashCoroutine () {
@@ -1215,7 +1264,7 @@ public class CharModel : LifeBase, IMapTarget {
 
         SetAnimatorTrigger (CharAnimConstant.JumpTriggerName);
 
-        PlayOneShotSFX (Params.JumpAudioClip);
+        PlayOneShotSfx (Params.JumpAudioClip);
 
         // Remarks : WaitForEndOfFrame in order to let CharJumpSMB know the jump is charged
         yield return new WaitForEndOfFrame ();
@@ -1230,7 +1279,7 @@ public class CharModel : LifeBase, IMapTarget {
         Log.PrintDebug ("JumpCharge", LogTypes.Char);
         SetStatuses (CharEnum.Statuses.JumpCharging, true);
 
-        PlayEffectSFX (Params.JumpChargingAudioClip, true);
+        PlayEffectSfx (Params.JumpChargingAudioClip, true);
     }
 
     private void StopJumpCharge () {
@@ -1241,7 +1290,7 @@ public class CharModel : LifeBase, IMapTarget {
         Log.PrintDebug ("StopJumpCharge", LogTypes.Char);
         SetStatuses (CharEnum.Statuses.JumpCharging, false);
 
-        StopEffectSFX ();
+        StopEffectSfx (Params.JumpChargingAudioClip);
     }
 
     #endregion
@@ -1309,7 +1358,7 @@ public class CharModel : LifeBase, IMapTarget {
 
         SetStatuses (CharEnum.Statuses.DropHitCharging, true);
 
-        PlayEffectSFX (Params.DropHitChargingAudioClip, true);
+        PlayEffectSfx (Params.DropHitChargingAudioClip, true);
     }
 
     private void StopDropHitCharge () {
@@ -1319,7 +1368,7 @@ public class CharModel : LifeBase, IMapTarget {
 
         SetStatuses (CharEnum.Statuses.DropHitCharging, false);
 
-        StopEffectSFX ();
+        StopEffectSfx (Params.DropHitChargingAudioClip);
     }
 
     private IEnumerator HitCoolDownCoroutine (CharEnum.HitType hitType) {
@@ -1972,6 +2021,19 @@ public class CharModel : LifeBase, IMapTarget {
 
 
     #endregion
+
+    #region Time Control
+
+    private void TimeStoppedHandler () {
+        PauseMovementSfx ();
+    }
+
+    private void TimeResumedHandler () {
+        UnPauseMovementSfx ();
+    }
+
+    #endregion
+
     #region Mission Event
 
     /// <summary>
