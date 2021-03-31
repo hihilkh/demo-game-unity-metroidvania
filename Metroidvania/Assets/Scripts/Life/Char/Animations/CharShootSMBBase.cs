@@ -1,8 +1,11 @@
-﻿using HihiFramework.Core;
+﻿using System.Collections;
+using HihiFramework.Core;
 using UnityEngine;
 
 public class CharShootSMBBase : CharSMBBase {
     protected virtual Transform ShootRefPoint => AnimUtils.RefPoint_GeneralShoot;
+
+    private const float TripleArrowDelayPeriod = 0.05f;
 
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
@@ -27,14 +30,20 @@ public class CharShootSMBBase : CharSMBBase {
                     return;
                 }
 
-                foreach (var angle in AnimUtils.Model.Params.TripleArrowShootingAngleList) {
-                    var tripleArrowClone = Instantiate (AnimUtils.TripleArrowTemplate);
-                    tripleArrowClone.StartAttack (ShootRefPoint, AnimUtils.Model.FacingDirection, angle, isPlayerAttack, additionalDP, isFireArrow);
-                }
+                // Ask FrameworUtils instance to help to run coroutine
+                FrameworkUtils.Instance.StartCoroutine (ShootTripleArrowWithDelay (isPlayerAttack, additionalDP, isFireArrow));
                 break;
             default:
                 Log.PrintError ("currentArrowType = " + AnimUtils.Model.CurrentHitType + " . No implementation in CharShootSMBBase. Please check.", LogTypes.Animation);
                 return;
+        }
+    }
+
+    private IEnumerator ShootTripleArrowWithDelay (bool isPlayerAttack, int additionalDP, bool isFireArrow) {
+        foreach (var angle in AnimUtils.Model.Params.TripleArrowShootingAngleList) {
+            var tripleArrowClone = Instantiate (AnimUtils.TripleArrowTemplate);
+            tripleArrowClone.StartAttack (ShootRefPoint, AnimUtils.Model.FacingDirection, angle, isPlayerAttack, additionalDP, isFireArrow);
+            yield return new WaitForSeconds (TripleArrowDelayPeriod);
         }
     }
 }

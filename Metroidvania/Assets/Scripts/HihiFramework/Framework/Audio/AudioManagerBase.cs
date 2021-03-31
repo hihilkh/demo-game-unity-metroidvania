@@ -405,6 +405,17 @@ namespace HihiFramework.Audio {
             }
         }
 
+        /// <summary>
+        /// Use dynamic SFX audio source to play SFX to prevent some problems (e.g. the game object of the audio source is destroyed)
+        /// </summary>
+        public void PlaySFX (AudioClip audioClip) {
+            if (audioClip != null) {
+                DynamicSfxAudioSource.PlayOneShot (audioClip);
+            } else {
+                Log.PrintWarning ("Audio clip is null. Do not play SFX.", LogTypes.Audio);
+            }
+        }
+
         #endregion
 
         #region Volume (Attenuation)

@@ -49,9 +49,9 @@ MonoBehaviour:
   _targetArrowMaxInitShootGradient: 1.7
   _targetArrowMaxTargetDistanceSquare: 225
   _tripleArrowShootingAngleList:
+  - 20
   - 30
   - 40
-  - 50
   _repelFromWallDistByTurn: 0.05
   _hpUpMagnitude: 20
   _powerUpMagnitude: 10
@@ -62,6 +62,11 @@ MonoBehaviour:
   _bossHitAttackHorizontalHalfRange: 6
   _bossDashAttackHorizontalHalfRange: 11
   _bossAllowAttackVerticalHalfRange: 3
+  _jumpAudioClip: {fileID: 8300000, guid: d6729bb66d0984a799e28767148c911a, type: 3}
+  _jumpChargingAudioClip: {fileID: 8300000, guid: 14791b835bc544fb888ae04197148479,
+    type: 3}
+  _dropHitChargingAudioClip: {fileID: 8300000, guid: d679d5c46b4e14820943db8409344ade,
+    type: 3}
   _initDirection: 1
   _isUseDebugCommandSettings: 0
   _groundTapCommand: 0

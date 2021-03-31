@@ -4839,6 +4839,7 @@ MonoBehaviour:
   _rb: {fileID: 9073589436541787055}
   _ps: {fileID: 9073589436541787042}
   _attackTrigger: {fileID: 3722533499333534379}
+  dropHitAudioClip: {fileID: 8300000, guid: 398f7e17af83046c8bff953bce193564, type: 3}
 --- !u!114 &3722533499333534379
 MonoBehaviour:
   m_ObjectHideFlags: 0
