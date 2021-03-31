@@ -1,6 +1,7 @@
 ﻿public static partial class AudioEnum {
     public enum BgmType {
         None,           // Used by framework. Do not delete. Means no BGM need to be played.
+        General,
     }
 
     /// <summary>

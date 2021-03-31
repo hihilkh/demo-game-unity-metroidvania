@@ -43,6 +43,8 @@ public static partial class AudioConfig {
         }
 
         switch (bgmType) {
+            case AudioEnum.BgmType.General: return "Wanderlust";
+
             // Currently no BGM
         }
 
@@ -75,6 +77,6 @@ public static partial class AudioConfig {
     /// Get the BgmType when going into the game
     /// </summary>
     public static AudioEnum.BgmType GetLandingBgm () {
-        return AudioEnum.BgmType.None;
+        return AudioEnum.BgmType.General;
     }
 }

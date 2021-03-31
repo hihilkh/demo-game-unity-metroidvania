@@ -15,6 +15,7 @@ PressToStart	按一下開始
 // Settings Panel
 SettingsPanel_Title	設定
 SettingsPanel_LangTitle	語言
+SettingsPanel_BGMTitle	背景音樂
 SettingsPanel_SFXTitle	音效
 SettingsPanel_Apply	套用設定
 
