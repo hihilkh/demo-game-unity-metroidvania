@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using HihiFramework.Core;
 using UnityEngine;
@@ -168,13 +170,23 @@ namespace HihiFramework.Audio {
 
         #region Initialization
 
-        public void Init () {
+        public void Init (Action<bool> onFinished = null) {
+            StartCoroutine (WaitAndInit (onFinished));
+        }
+
+        private IEnumerator WaitAndInit (Action<bool> onFinished = null) {
+            // Remarks : Delay a frame because AudioMixer.SetFloat somehow doesn't work on Awake ()
+
             Log.Print ("Start init AudioManager", LogTypes.Audio);
+
+            yield return null;
 
             InitBgm ();
             InitDynamicSfx ();
 
             Log.Print ("Successfully init AudioManager", LogTypes.Audio);
+
+            onFinished?.Invoke (true);
         }
 
         #endregion
@@ -438,6 +450,7 @@ namespace HihiFramework.Audio {
         /// </summary>
         /// <returns>The attenuation value before setting to off</returns>
         protected float Mute (AudioMixer audioMixer) {
+            Log.Print ("Mute AudioMixer : " + audioMixer.name, LogTypes.Audio);
             var attenuationBefore = GetAttenuation (audioMixer);
             SetAttenuation (audioMixer, MinAudioMixerAttenuation_Decibel);
 

@@ -26,11 +26,13 @@ namespace HihiFramework.Core {
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = GameVariable.TargetFrameRate;
 
-            // AudioManager
-            AudioManager.Instance.Init ();
+            Action<bool> onAudioManagerInitFinished = (isSuccess) => {
+                GameUtils.InitGameSettings (onFinished);
+            };
 
             Action<bool> onLangManagerInitFinished = (isSuccess) => {
-                GameUtils.InitGameSettings (onFinished);
+                // AudioManager
+                AudioManager.Instance.Init (onAudioManagerInitFinished);
             };
 
             // LangManager
