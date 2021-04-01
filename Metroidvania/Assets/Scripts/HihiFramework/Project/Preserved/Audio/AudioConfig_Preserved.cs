@@ -22,7 +22,7 @@ public static partial class AudioConfig {
     /// Default BGM attenuation in decibel
     /// </summary>
     public static float GetDefaultBgmAttenuation () {
-        return 0;
+        return -10;
     }
 
     /// <summary>

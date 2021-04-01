@@ -4812,6 +4812,8 @@ MonoBehaviour:
   _rb: {fileID: 3466689531986377007}
   _ps: {fileID: 3466689531986376994}
   _attackTrigger: {fileID: 8693601085556598654}
+  hitCollider: {fileID: 9199756321513939224}
+  audioSource: {fileID: 7494213505460037726}
 --- !u!114 &8693601085556598654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4845,7 +4847,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 4
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
@@ -4881,7 +4883,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
