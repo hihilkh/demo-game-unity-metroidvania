@@ -20,4 +20,8 @@ public class EnemyDieSMB : EnemyBeatBackSMB {
             }
         }
     }
+
+    protected override void PlaySfx () {
+        AnimUtils.Model.AudioUtils.PlayDieSfx ();
+    }
 }

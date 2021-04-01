@@ -10,5 +10,11 @@ public class EnemyBeatBackSMB : EnemySMBBase {
         if (AnimUtils.Model.MovementType == EnemyEnum.MovementType.Flying) {
             AnimUtils.StartUpdateToIdleVelocity ();
         }
+
+        PlaySfx ();
+    }
+
+    protected virtual void PlaySfx () {
+        AnimUtils.Model.AudioUtils.PlayBeatBackSfx ();
     }
 }

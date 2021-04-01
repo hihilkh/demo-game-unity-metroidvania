@@ -10,6 +10,8 @@ public class CharAudioUtils : MonoBehaviour {
     [SerializeField] private AudioSource jumpAudioSource;
     [SerializeField] private AudioSource jumpChargingAudioSource;
     [SerializeField] private AudioSource dropHitChargingAudioSource;
+    [SerializeField] private AudioSource beatBackAudioSource;
+    [SerializeField] private AudioSource dieAudioSource;
 
     private void Awake () {
         GameUtils.TimeStopped += TimeStoppedHandler;
@@ -94,6 +96,14 @@ public class CharAudioUtils : MonoBehaviour {
 
     public void StopDropHitChargingSfx () {
         StopSfx (dropHitChargingAudioSource);
+    }
+
+    public void PlayBeatBackSfx () {
+        PlayOneShotSfx (beatBackAudioSource);
+    }
+
+    public void PlayDieSfx () {
+        PlayOneShotSfx (dieAudioSource);
     }
 
     #endregion

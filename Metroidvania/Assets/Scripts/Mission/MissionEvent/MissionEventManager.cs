@@ -570,7 +570,7 @@ public class MissionEventManager : MonoBehaviour {
 
     private void StartMapSwitchSubEvent (MapSwitchSubEvent subEvent, Action onFinished = null) {
         if (subEvent.MapSwitchId == BurnTreeSwitchId) {
-            burnTreeAudioSurce.enabled = true;
+            burnTreeAudioSurce.Play ();
         }
 
         mapManager.SwitchOnMapSwitch (subEvent, onFinished);

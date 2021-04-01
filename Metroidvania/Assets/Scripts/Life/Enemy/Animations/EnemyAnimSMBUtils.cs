@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using HihiFramework.Core;
+using UnityEngine;
 
 public class EnemyAnimSMBUtils : MonoBehaviour {
     private enum AccelerationMode {
@@ -7,8 +8,7 @@ public class EnemyAnimSMBUtils : MonoBehaviour {
         ToIdle,
     }
 
-    [SerializeField] private EnemyModelBase _model;
-    public EnemyModelBase Model => _model;
+    public EnemyModelBase Model { get; private set; }
 
     [SerializeField] private Rigidbody2D _rb;
     public Rigidbody2D RB => _rb;
@@ -21,6 +21,12 @@ public class EnemyAnimSMBUtils : MonoBehaviour {
     private const float NearZeroSpeedSqr = 0.2F;
 
     private void Awake () {
+        // Get model
+        Model = GetComponent<EnemyModelBase> ();
+        if (Model == null) {
+            Log.PrintError (gameObject.name + " : Cannot get EnemyModelBase component. Please check.", LogTypes.Enemy | LogTypes.Animation);
+        }
+
         // event handler
         Model.FacingDirectionChanged += FacingDirectionChangedHandler;
         if (Model.MovementType == EnemyEnum.MovementType.Flying) {

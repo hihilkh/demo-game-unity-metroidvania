@@ -1499,6 +1499,8 @@ public class CharModel : LifeBase, IMapTarget {
 
                 SetAnimatorTrigger (CharAnimConstant.BeatBackTriggerName);
             }
+
+            AudioUtils.PlayBeatBackSfx ();
         }
 
 

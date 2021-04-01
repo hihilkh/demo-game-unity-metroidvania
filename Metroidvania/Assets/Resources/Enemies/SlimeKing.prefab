@@ -17,10 +17,6 @@ MonoBehaviour:
   _collisionScript: {fileID: 3868179633576443982}
   hpView: {fileID: 6478736314294101026}
   _params: {fileID: 11400000, guid: 88815805c09c14ca0b8af81889d1ad2c, type: 2}
-  animator: {fileID: 3857940351016972438}
-  animUtils: {fileID: 1670377796957426283}
-  targetRefPoint: {fileID: 3505808993806580183}
-  charDetection: {fileID: 3229796601689648250}
 --- !u!1001 &5833177995729090870
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -374,24 +370,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5833177995729090870}
   m_PrefabAsset: {fileID: 0}
---- !u!95 &3857940351016972438 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 7312073606787074464, guid: fb252c10e6aec43ed8c2b1951b766dbe,
-    type: 3}
-  m_PrefabInstance: {fileID: 5833177995729090870}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1670377796957426283 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5178510353790036829, guid: fb252c10e6aec43ed8c2b1951b766dbe,
-    type: 3}
-  m_PrefabInstance: {fileID: 5833177995729090870}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3857940351016972437}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ae5431f1357e43c099e7bba3fa7ebee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &3857940352503038512 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7312073606393527046, guid: fb252c10e6aec43ed8c2b1951b766dbe,
@@ -410,18 +388,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3496eae79ee4c4fd1a8965a966f583f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3229796601689648250 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8944455206812718412, guid: fb252c10e6aec43ed8c2b1951b766dbe,
-    type: 3}
-  m_PrefabInstance: {fileID: 5833177995729090870}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee0df6d778d1e46998aab22ea2c52e10, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6478736314294101026 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 655981974445546772, guid: fb252c10e6aec43ed8c2b1951b766dbe,
@@ -434,9 +400,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 559238d25f6b54183ad5018949d4ae69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &3505808993806580183 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6941382725261279457, guid: fb252c10e6aec43ed8c2b1951b766dbe,
-    type: 3}
-  m_PrefabInstance: {fileID: 5833177995729090870}
-  m_PrefabAsset: {fileID: 0}
