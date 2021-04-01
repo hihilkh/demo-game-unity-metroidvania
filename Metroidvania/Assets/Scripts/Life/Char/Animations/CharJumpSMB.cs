@@ -6,5 +6,7 @@ public class CharJumpSMB : CharSMBBase {
 
         AnimUtils.UpdateVelocity (null, AnimUtils.Model.GetCurrentJumpInitSpeed ());
         AnimUtils.ResetGravity ();
+
+        AnimUtils.Model.AudioUtils.PlayJumpSfx ();
     }
 }

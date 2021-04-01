@@ -185,22 +185,6 @@ public class CharParams : ScriptableObject {
     [SerializeField] private float _bossAllowAttackVerticalHalfRange;
     public float BossAllowAttackVerticalHalfRange => _bossAllowAttackVerticalHalfRange;
 
-    [Header ("Audio Clips")]
-    [SerializeField] private AudioClip _walkAudioClip;
-    public AudioClip WalkAudioClip => _walkAudioClip;
-
-    [SerializeField] private AudioClip _dashAudioClip;
-    public AudioClip DashAudioClip => _dashAudioClip;
-
-    [SerializeField] private AudioClip _jumpAudioClip;
-    public AudioClip JumpAudioClip => _jumpAudioClip;
-
-    [SerializeField] private AudioClip _jumpChargingAudioClip;
-    public AudioClip JumpChargingAudioClip => _jumpChargingAudioClip;
-
-    [SerializeField] private AudioClip _dropHitChargingAudioClip;
-    public AudioClip DropHitChargingAudioClip => _dropHitChargingAudioClip;
-
     [Header ("Dev Only")]
     [SerializeField] private LifeEnum.HorizontalDirection _initDirection;
     public LifeEnum.HorizontalDirection InitDirection => _initDirection;
