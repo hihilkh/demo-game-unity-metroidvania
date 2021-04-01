@@ -22,6 +22,11 @@ public class CharAudioUtils : MonoBehaviour {
     }
 
     private void PlaySfx (AudioSource audioSource) {
+        if (!audioSource.isActiveAndEnabled) {
+            Log.Print ("Char PlaySfx failed. audioSource : " + audioSource.name + " is not yet active and enabled.", LogTypes.Char | LogTypes.Audio);
+            return;
+        }
+
         Log.PrintDebug ("Char PlaySfx : " + audioSource.clip.name, LogTypes.Char | LogTypes.Audio);
         audioSource.Play ();
     }
@@ -32,6 +37,11 @@ public class CharAudioUtils : MonoBehaviour {
     }
 
     private void PlayOneShotSfx (AudioSource audioSource) {
+        if (!audioSource.isActiveAndEnabled) {
+            Log.Print ("Char PlayOneShotSfx failed. audioSource : " + audioSource.name + " is not yet active and enabled.", LogTypes.Char | LogTypes.Audio);
+            return;
+        }
+
         Log.PrintDebug ("Char PlayOneShotSfx : " + audioSource.clip.name, LogTypes.Char | LogTypes.Audio);
         audioSource.PlayOneShot (audioSource.clip);
     }

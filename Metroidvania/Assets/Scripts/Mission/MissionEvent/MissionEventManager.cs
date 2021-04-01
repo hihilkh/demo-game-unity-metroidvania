@@ -10,6 +10,7 @@ public class MissionEventManager : MonoBehaviour {
     [SerializeField] private MapManager mapManager;
     [SerializeField] private TutorialFinger tutorialFinger;
     [SerializeField] private CommandPanel commandPanel;
+    [SerializeField] private AudioSource burnTreeAudioSurce;
 
     public static MissionEvent CurrentMissionEvent { get; private set; } = null;
     public static SubEventBase CurrentMissionSubEvent { get; private set; } = null;
@@ -568,6 +569,10 @@ public class MissionEventManager : MonoBehaviour {
     }
 
     private void StartMapSwitchSubEvent (MapSwitchSubEvent subEvent, Action onFinished = null) {
+        if (subEvent.MapSwitchId == BurnTreeSwitchId) {
+            burnTreeAudioSurce.enabled = true;
+        }
+
         mapManager.SwitchOnMapSwitch (subEvent, onFinished);
     }
 
