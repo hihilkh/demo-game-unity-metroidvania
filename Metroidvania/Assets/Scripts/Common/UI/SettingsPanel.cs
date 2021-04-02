@@ -165,8 +165,12 @@ public class SettingsPanel : GeneralPanelBase {
 
     private void ApplyBtnClickedHandler (HihiButton sender) {
         LangManager.ChangeLang (currentSelectingLangType);
+
         AudioManager.Instance.SetBgmOnOff (currentSelectingBgmOnOffStatus);
+        AudioManager.Instance.SaveBgmOnOffSetting (currentSelectingBgmOnOffStatus);
+
         AudioManager.Instance.SetSfxOnOff (currentSelectingSfxOnOffStatus);
+        AudioManager.Instance.SaveSfxOnOffSetting (currentSelectingSfxOnOffStatus);
     }
 
     private void LangChangedHandler () {

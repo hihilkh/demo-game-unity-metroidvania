@@ -39,6 +39,30 @@
 
         #endregion
 
+        #region Audio
+
+        public const string AudioResourcesFolder = "Audios";
+        public const string BgmAudioResourcesSubFolder = "BGM";
+        public const string SfxAudioResourcesSubFolder = "SFX";
+
+        public const string AudioMixerResourcesFolder = "AudioMixers";
+        public const string BgmAudioMixerResourcesName = "BGM";
+        public const string SfxAudioMixerResourcesName = "SFX";
+
+        public const string AudioMixerMasterGroupName = "Master";
+        public const string AudioMixerCommonGroupName = "Common";
+
+        public const string MasterAttenuationExposedParam = "MasterAttenuation";
+
+        public const int MaxAudioVolumeFactor = 100;
+        public const int MinAudioVolumeFactor = 0;
+
+        // Remarks : Do not use "Min" / "Max" to describe attenuation to prevent misleading meaning
+        public const float AudioMixerAttenuation_LowerBound = -80F;     // In decibel
+        public const float AudioMixerAttenuation_UpperBound = 20F;      // In decibel
+
+        #endregion
+
         #region Player Pref Key
 
         // GameConfig
@@ -54,21 +78,8 @@
         // Audio
         public const string CurrentBgmOnOffFlagKey = "HIHI_CURRENT_BGM_ON_OFF_FLAG";
         public const string CurrentSfxOnOffFlagKey = "HIHI_CURRENT_SFX_ON_OFF_FLAG";
-        public const string CurrentBgmAttenuationKey = "HIHI_CURRENT_BGM_ATTENUATION";
-        public const string CurrentSfxAttenuationKey = "HIHI_CURRENT_SFX_ATTENUATION";
-
-        public const string AudioResourcesFolder = "Audios";
-        public const string BgmAudioResourcesSubFolder = "BGM";
-        public const string SfxAudioResourcesSubFolder = "SFX";
-
-        public const string AudioMixerResourcesFolder = "AudioMixers";
-        public const string BgmAudioMixerResourcesName = "BGM";
-        public const string SfxAudioMixerResourcesName = "SFX";
-
-        public const string AudioMixerMasterGroupName = "Master";
-        public const string AudioMixerCommonGroupName = "Common";
-
-        public const string MasterAttenuationExposedParam = "MasterAttenuation";
+        public const string CurrentBgmVolumeFactorKey = "HIHI_CURRENT_BGM_VOLUME_FACTOR";
+        public const string CurrentSfxVolumeFactorKey = "HIHI_CURRENT_SFX_VOLUME_FACTOR";
 
         #endregion
     }

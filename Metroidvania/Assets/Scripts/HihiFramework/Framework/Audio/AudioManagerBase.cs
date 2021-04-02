@@ -9,13 +9,6 @@ using UnityEngine.Audio;
 namespace HihiFramework.Audio {
     public abstract class AudioManagerBase<T> : Singleton<T> where T : MonoBehaviour, new() {
 
-        private const float MinAudioMixerAttenuation_Decibel = -80F;
-        private const float MaxAudioMixerAttenuation_Decibel = 20F;
-        private const float MinAudioMixerAttenuation_SoundIntensityScale = 0.0001F;  // -80 = 20 x log(0.0001)
-        private const float MaxAudioMixerAttenuation_SoundIntensityScale = 10F;      // 20 = 20 x log(10)
-
-        private const float FallbackAttenuation = 0;    // In decibel
-
         private bool? _currentBgmOnOffFlag = null;
         public bool CurrentBgmOnOffFlag {
             get {
@@ -23,7 +16,7 @@ namespace HihiFramework.Audio {
                     if (PlayerPrefs.HasKey (FrameworkVariable.CurrentBgmOnOffFlagKey)) {
                         _currentBgmOnOffFlag = FrameworkUtils.GetPlayerPrefsBool (FrameworkVariable.CurrentBgmOnOffFlagKey);
                     } else {
-                        var isDefaultOn = AudioConfig.GetIsDefaultBgmOn ();
+                        var isDefaultOn = AudioConfig.GetIsDefaultOn (AudioFrameworkEnum.Category.Bgm);
 
                         // Set player prefs to save the default BGM on off flag
                         FrameworkUtils.SetPlayerPrefsBool (FrameworkVariable.CurrentBgmOnOffFlagKey, isDefaultOn);
@@ -47,7 +40,7 @@ namespace HihiFramework.Audio {
                     if (PlayerPrefs.HasKey (FrameworkVariable.CurrentSfxOnOffFlagKey)) {
                         _currentSfxOnOffFlag = FrameworkUtils.GetPlayerPrefsBool (FrameworkVariable.CurrentSfxOnOffFlagKey);
                     } else {
-                        var isDefaultOn = AudioConfig.GetIsDefaultSfxOn ();
+                        var isDefaultOn = AudioConfig.GetIsDefaultOn (AudioFrameworkEnum.Category.Sfx);
 
                         // Set player prefs to save the default SFX on off flag
                         FrameworkUtils.SetPlayerPrefsBool (FrameworkVariable.CurrentSfxOnOffFlagKey, isDefaultOn);
@@ -64,51 +57,51 @@ namespace HihiFramework.Audio {
             }
         }
 
-        private float _currentBgmAttenuation = MinAudioMixerAttenuation_Decibel - 1;    // In decibel
-        public float CurrentBgmAttenuation {
+        private int _currentBgmVolumeFactor = FrameworkVariable.MinAudioVolumeFactor - 1;
+        public int CurrentBgmVolumeFactor {
             get {
-                if (_currentBgmAttenuation < MinAudioMixerAttenuation_Decibel) {
-                    if (PlayerPrefs.HasKey (FrameworkVariable.CurrentBgmAttenuationKey)) {
-                        _currentBgmAttenuation = PlayerPrefs.GetFloat (FrameworkVariable.CurrentBgmAttenuationKey);
+                if (_currentBgmVolumeFactor < FrameworkVariable.MinAudioVolumeFactor) {
+                    if (PlayerPrefs.HasKey (FrameworkVariable.CurrentBgmVolumeFactorKey)) {
+                        _currentBgmVolumeFactor = PlayerPrefs.GetInt (FrameworkVariable.CurrentBgmVolumeFactorKey);
                     } else {
-                        var attenuation = AudioConfig.GetDefaultBgmAttenuation ();
+                        var volumeFactor = AudioConfig.GetDefaultVolumeFactor (AudioFrameworkEnum.Category.Bgm);
 
-                        // Set player prefs to save the default BGM on off flag
-                        PlayerPrefs.SetFloat (FrameworkVariable.CurrentBgmAttenuationKey, attenuation);
+                        // Set player prefs to save the default BGM volume factor
+                        PlayerPrefs.SetInt (FrameworkVariable.CurrentBgmVolumeFactorKey, volumeFactor);
 
-                        _currentBgmAttenuation = attenuation;
+                        _currentBgmVolumeFactor = volumeFactor;
                     }
                 }
 
-                return _currentBgmAttenuation;
+                return _currentBgmVolumeFactor;
             }
             private set {
-                PlayerPrefs.SetFloat (FrameworkVariable.CurrentBgmAttenuationKey, value);
-                _currentBgmAttenuation = value;
+                PlayerPrefs.SetInt (FrameworkVariable.CurrentBgmVolumeFactorKey, value);
+                _currentBgmVolumeFactor = value;
             }
         }
 
-        private float _currentSfxAttenuation = MinAudioMixerAttenuation_Decibel - 1;    // In decibel
-        public float CurrentSfxAttenuation {
+        private int _currentSfxVolumeFactor = FrameworkVariable.MinAudioVolumeFactor - 1;
+        public int CurrentSfxVolumeFactor {
             get {
-                if (_currentSfxAttenuation < MinAudioMixerAttenuation_Decibel) {
-                    if (PlayerPrefs.HasKey (FrameworkVariable.CurrentSfxAttenuationKey)) {
-                        _currentSfxAttenuation = PlayerPrefs.GetFloat (FrameworkVariable.CurrentSfxAttenuationKey);
+                if (_currentSfxVolumeFactor < FrameworkVariable.MinAudioVolumeFactor) {
+                    if (PlayerPrefs.HasKey (FrameworkVariable.CurrentSfxVolumeFactorKey)) {
+                        _currentSfxVolumeFactor = PlayerPrefs.GetInt (FrameworkVariable.CurrentSfxVolumeFactorKey);
                     } else {
-                        var attenuation = AudioConfig.GetDefaultSfxAttenuation ();
+                        var volumeFactor = AudioConfig.GetDefaultVolumeFactor (AudioFrameworkEnum.Category.Sfx);
 
-                        // Set player prefs to save the default BGM on off flag
-                        PlayerPrefs.SetFloat (FrameworkVariable.CurrentSfxAttenuationKey, attenuation);
+                        // Set player prefs to save the default SFX volume factor
+                        PlayerPrefs.SetInt (FrameworkVariable.CurrentSfxVolumeFactorKey, volumeFactor);
 
-                        _currentSfxAttenuation = attenuation;
+                        _currentSfxVolumeFactor = volumeFactor;
                     }
                 }
 
-                return _currentSfxAttenuation;
+                return _currentSfxVolumeFactor;
             }
             private set {
-                PlayerPrefs.SetFloat (FrameworkVariable.CurrentSfxAttenuationKey, value);
-                _currentSfxAttenuation = value;
+                PlayerPrefs.SetInt (FrameworkVariable.CurrentSfxVolumeFactorKey, value);
+                _currentSfxVolumeFactor = value;
             }
         }
 
@@ -245,7 +238,7 @@ namespace HihiFramework.Audio {
 
         #region Player Prefs Parameters
 
-        protected bool GetSavedAudioOnOffFlag (AudioFrameworkEnum.Category category) {
+        private bool GetSavedAudioOnOffFlag (AudioFrameworkEnum.Category category) {
             switch (category) {
                 case AudioFrameworkEnum.Category.Bgm: return CurrentBgmOnOffFlag;
                 case AudioFrameworkEnum.Category.Sfx: return CurrentSfxOnOffFlag;
@@ -269,29 +262,27 @@ namespace HihiFramework.Audio {
             return;
         }
 
-        /// <returns>In decibel</returns>
-        public float GetSavedAttenuation (AudioFrameworkEnum.Category category) {
+        private int GetSavedVolumeFactor (AudioFrameworkEnum.Category category) {
             switch (category) {
-                case AudioFrameworkEnum.Category.Bgm: return CurrentBgmAttenuation;
-                case AudioFrameworkEnum.Category.Sfx: return CurrentSfxAttenuation;
+                case AudioFrameworkEnum.Category.Bgm: return CurrentBgmVolumeFactor;
+                case AudioFrameworkEnum.Category.Sfx: return CurrentSfxVolumeFactor;
             }
 
-            Log.PrintError ("AudioFrameworkEnum.Category : " + category + " has not been assigned attenuation cache. Return FallbackAttenuation.", LogTypes.Audio);
-            return FallbackAttenuation;
+            Log.PrintError ("AudioFrameworkEnum.Category : " + category + " has not been assigned volume factor cache. Return FrameworkVariable.MinAudioVolumeFactor.", LogTypes.Audio);
+            return FrameworkVariable.MinAudioVolumeFactor;
         }
 
-        /// <param name="attenuation">In decibel</param>
-        private void SaveAttenuation (AudioFrameworkEnum.Category category, float attenuation) {
+        private void SaveVolumeFactor (AudioFrameworkEnum.Category category, int volumeFactor) {
             switch (category) {
                 case AudioFrameworkEnum.Category.Bgm:
-                    CurrentBgmAttenuation = attenuation;
+                    CurrentBgmVolumeFactor = volumeFactor;
                     return;
                 case AudioFrameworkEnum.Category.Sfx:
-                    CurrentSfxAttenuation = attenuation;
+                    CurrentSfxVolumeFactor = volumeFactor;
                     return;
             }
 
-            Log.PrintError ("AudioFrameworkEnum.Category : " + category + " has not been assigned attenuation cache. Do not do anything.", LogTypes.Audio);
+            Log.PrintError ("AudioFrameworkEnum.Category : " + category + " has not been assigned volume factor cache. Do not do anything.", LogTypes.Audio);
             return;
         }
 
@@ -328,7 +319,8 @@ namespace HihiFramework.Audio {
 
         private void InitBgm () {
             LoadBgm (AudioConfig.GetLandingBgm (), false);
-            SetAndSaveAudioOnOff (AudioFrameworkEnum.Category.Bgm, GetSavedAudioOnOffFlag (AudioFrameworkEnum.Category.Bgm), false);
+
+            SetBgmOnOff (GetSavedAudioOnOffFlag (AudioFrameworkEnum.Category.Bgm));
         }
 
         protected void LoadBgm (AudioEnum.BgmType bgmType, bool isChangingBgm) {
@@ -388,7 +380,7 @@ namespace HihiFramework.Audio {
         }
 
         private void InitDynamicSfx () {
-            SetAndSaveAudioOnOff (AudioFrameworkEnum.Category.Sfx, GetSavedAudioOnOffFlag (AudioFrameworkEnum.Category.Sfx), false);
+            SetSfxOnOff (GetSavedAudioOnOffFlag (AudioFrameworkEnum.Category.Sfx));
         }
 
         public void PlayDynamicSFX (AudioEnum.DynamicSfxType dynamicSfxType) {
@@ -422,48 +414,75 @@ namespace HihiFramework.Audio {
 
         #region Decibel Convertion
 
-        protected float ConvertLinearToDecibel (float linear) {
-            // Just allow from MinAudioMixerValue_SoundIntensityScale to MaxAudioMixerValue_SoundIntensityScale
-            linear = Mathf.Clamp (linear, MinAudioMixerAttenuation_SoundIntensityScale, MaxAudioMixerAttenuation_SoundIntensityScale);
+        /// <returns>If <paramref name="linear"/> is smaller or equal to 0, directly return <b>FrameworkVariable.AudioMixerAttenuation_LowerBound</b> in order to prevent calculation error.</returns>
+        protected static float ConvertLinearToDecibel (float linear) {
+            if (linear <= 0) {
+                return FrameworkVariable.AudioMixerAttenuation_LowerBound;
+            }
 
             return 20F * Mathf.Log10 (linear);
         }
 
-        protected float ConvertDecibelToLinear (float decibel) {
-            // Just allow from MinAudioMixerValue_Decibel to MaxAudioMixerValue_Decibel
-            decibel = Mathf.Clamp (decibel, MinAudioMixerAttenuation_Decibel, MaxAudioMixerAttenuation_Decibel);
-
+        protected static float ConvertDecibelToLinear (float decibel) {
             return Mathf.Pow (10F, decibel / 20F);
         }
 
         #endregion
 
-        protected void SetAndSaveAudioOnOff (AudioFrameworkEnum.Category category, bool isOn, bool isSaveToPlayerPrefs = true) {
-            Log.Print ("Set audio on off : AudioFrameworkEnum.Category : " + category + " ; isOn : " + isOn + " ; isSaveToPlayerPrefs : " + isSaveToPlayerPrefs, LogTypes.Audio);
-            if (isSaveToPlayerPrefs) {
-                SaveAudioOnOffFlag (category, isOn);
+        /// <summary>
+        /// Calculate attenuation from given volume factor by the scaling of AudioConfig.VolumeFactorScale.
+        /// </summary>
+        /// <returns>
+        /// Value in decibel if AudioConfig.VolumeFactorScale = Decibel<br />
+        /// Value in sound intensity if AudioConfig.VolumeFactorScale = Linear
+        /// </returns>
+        protected static float CalculateAttenuation (AudioFrameworkEnum.Category category, int volumeFactor) {
+            var attenuation_LowerBound = FrameworkVariable.AudioMixerAttenuation_LowerBound;
+            var attenuation_UpperBound = Mathf.Min (FrameworkVariable.AudioMixerAttenuation_UpperBound, AudioConfig.GetAttenuationUpperBound (category));
+
+            switch (AudioConfig.VolumeFactorScale) {
+                case AudioFrameworkEnum.VolumeScale.Decibel:
+                    // No need to convert anything
+                    break;
+                case AudioFrameworkEnum.VolumeScale.Linear:
+                    attenuation_LowerBound = ConvertDecibelToLinear (attenuation_LowerBound);
+                    attenuation_UpperBound = ConvertDecibelToLinear (attenuation_UpperBound);
+                    break;
+                default:
+                    Log.PrintError ("VolumeScale : " + AudioConfig.VolumeFactorScale + " has not yet been implemented CalculateAttenuation logic. Treat as Decibel.", LogTypes.Audio);
+                    break;
             }
+
+            volumeFactor = Mathf.Clamp (volumeFactor, FrameworkVariable.MinAudioVolumeFactor, FrameworkVariable.MaxAudioVolumeFactor);
+            var progress = volumeFactor / (FrameworkVariable.MaxAudioVolumeFactor - FrameworkVariable.MinAudioVolumeFactor);
+            return Mathf.Lerp (attenuation_LowerBound, attenuation_UpperBound, progress);
+        }
+
+        protected void Mute (AudioFrameworkEnum.Category category) {
+            Log.Print ("Mute audio : AudioFrameworkEnum.Category : " + category, LogTypes.Audio);
 
             var audioMixer = GetAudioMixer (category);
+            Mute (audioMixer);
+        }
 
-            if (isOn) {
-                SetAttenuation (audioMixer, GetSavedAttenuation (category));
-            } else {
-                Mute (audioMixer);
-            }
+        protected void UnMute (AudioFrameworkEnum.Category category) {
+            Log.Print ("UnMute audio : AudioFrameworkEnum.Category : " + category, LogTypes.Audio);
+
+            var audioMixer = GetAudioMixer (category);
+            var volumeFactor = GetSavedVolumeFactor (category);
+            SetAttenuation (audioMixer, AudioConfig.VolumeFactorScale, CalculateAttenuation (category, volumeFactor));
         }
 
         /// <summary>
         /// Mute an audio mixer.<br />
-        /// It does not save the setting to PlayerPrefs. If you want to set audio on/off of a AudioFrameworkEnum.Category and save the setting to PlayerPrefs,
-        /// use <b>SetAndSaveAudioOnOff</b> instead.<br />
-        /// it also does not remember the attenuation value before mute. If you want the framework to handle it, use <b>SetAndSaveAudioOnOff</b> instead.
+        /// With this method, you need to handle the attenuation value before mute manually.
+        /// For the audio mixer of AudioFrameworkEnum.Category, please use <b>Mute(AudioFrameworkEnum.Category)</b> and <b>UnMute(AudioFrameworkEnum.Category)</b> instead.
         /// </summary>
-        /// <returns>The attenuation value before setting to off</returns>
+        /// <returns>The attenuation value before mute</returns>
         protected float Mute (AudioMixer audioMixer) {
             Log.Print ("Mute AudioMixer : " + audioMixer.name, LogTypes.Audio);
             var attenuationBefore = GetAttenuation (audioMixer);
-            SetAttenuation (audioMixer, MinAudioMixerAttenuation_Decibel);
+            SetAttenuation (audioMixer, FrameworkVariable.AudioMixerAttenuation_LowerBound);
 
             return attenuationBefore;
         }
@@ -482,7 +501,7 @@ namespace HihiFramework.Audio {
             SetAttenuation (audioMixer, AudioFrameworkEnum.VolumeScale.Linear, linearValue);
         }
 
-        private void SetAttenuation (AudioMixer audioMixer, AudioFrameworkEnum.VolumeScale volumeScale, float attenuationValue) {
+        protected void SetAttenuation (AudioMixer audioMixer, AudioFrameworkEnum.VolumeScale volumeScale, float attenuationValue) {
             var decibelValue = attenuationValue;
 
             switch (volumeScale) {
@@ -492,7 +511,7 @@ namespace HihiFramework.Audio {
                     decibelValue = ConvertLinearToDecibel (attenuationValue);
                     break;
                 default:
-                    Log.PrintWarning ("VolumeScale : " + volumeScale + " has not yet been implemented SetAttenuation logic. Treat as Decibel.", LogTypes.Audio);
+                    Log.PrintError ("VolumeScale : " + volumeScale + " has not yet been implemented SetAttenuation logic. Treat as Decibel.", LogTypes.Audio);
                     break;
             }
 
@@ -506,8 +525,8 @@ namespace HihiFramework.Audio {
                 return result;
             }
 
-            Log.PrintError ("Get current attenuation of audioMixer : " + audioMixer.name + " failed. Return FallbackAttenuation.", LogTypes.Audio);
-            return FallbackAttenuation;
+            Log.PrintError ("Get current attenuation of audioMixer : " + audioMixer.name + " failed. Return FrameworkVariable.AudioMixerAttenuation_LowerBound.", LogTypes.Audio);
+            return FrameworkVariable.AudioMixerAttenuation_LowerBound;
         }
 
         #endregion
@@ -515,11 +534,27 @@ namespace HihiFramework.Audio {
         #region Exposed methods for settings panel
 
         public void SetBgmOnOff (bool isOn) {
-            SetAndSaveAudioOnOff (AudioFrameworkEnum.Category.Bgm, isOn, true);
+            if (isOn) {
+                UnMute (AudioFrameworkEnum.Category.Bgm);
+            } else {
+                Mute (AudioFrameworkEnum.Category.Bgm);
+            }
+        }
+
+        public void SaveBgmOnOffSetting (bool isOn) {
+            SaveAudioOnOffFlag (AudioFrameworkEnum.Category.Bgm, isOn);
         }
 
         public void SetSfxOnOff (bool isOn) {
-            SetAndSaveAudioOnOff (AudioFrameworkEnum.Category.Sfx, isOn, true);
+            if (isOn) {
+                UnMute (AudioFrameworkEnum.Category.Sfx);
+            } else {
+                Mute (AudioFrameworkEnum.Category.Sfx);
+            }
+        }
+
+        public void SaveSfxOnOffSetting (bool isOn) {
+            SaveAudioOnOffFlag (AudioFrameworkEnum.Category.Sfx, isOn);
         }
 
         // TODO : Add attenuation control methods for settings panel

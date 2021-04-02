@@ -1,35 +1,41 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using HihiFramework.Audio;
 using HihiFramework.Core;
 using UnityEngine;
 
 public static partial class AudioConfig {
     /// <summary>
-    /// Default BGM On Off flag after app installed
+    /// Default On Off flag of corresponding audio category after app installed
     /// </summary>
-    public static bool GetIsDefaultBgmOn () {
+    public static bool GetIsDefaultOn (AudioFrameworkEnum.Category category) {
         return true;
     }
 
     /// <summary>
-    /// Default SFX On Off flag after app installed
+    /// The scale for calculation between volume factor and attenuation.<br />
+    /// Refer to <b>AudioManagerBase.CalculateAttenuation()</b> for details.
     /// </summary>
-    public static bool GetIsDefaultSfxOn () {
-        return true;
+    public const AudioFrameworkEnum.VolumeScale VolumeFactorScale = AudioFrameworkEnum.VolumeScale.Linear;
+
+    /// <summary>
+    /// Default volume factor of corresponding audio category
+    /// </summary>
+    public static int GetDefaultVolumeFactor (AudioFrameworkEnum.Category category) {
+        return 100;
     }
 
     /// <summary>
-    /// Default BGM attenuation in decibel
+    /// The attenuation (in decibel) of corresponding audio category when it is with maximum volume factor.<br />
+    /// The range should be within <b>FrameworkVariable.AudioMixerAttenuation_LowerBound</b> and <b>FrameworkVariable.AudioMixerAttenuation_UpperBound</b>.
     /// </summary>
-    public static float GetDefaultBgmAttenuation () {
-        return -10;
-    }
-
-    /// <summary>
-    /// Default SFX attenuation in decibel
-    /// </summary>
-    public static float GetDefaultSfxAttenuation () {
-        return 0;
+    public static float GetAttenuationUpperBound (AudioFrameworkEnum.Category category) {
+        switch (category) {
+            case AudioFrameworkEnum.Category.Bgm:
+                return -10;
+            default:
+                return 0;
+        }
     }
 
     /// <summary>
