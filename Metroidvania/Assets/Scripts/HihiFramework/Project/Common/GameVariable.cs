@@ -65,6 +65,7 @@ public static partial class GameVariable {
 
     public const string TransitionCanvasPrefabResourcesName = "UI/TransitionCanvas";
 
+    public const string ShowPanelAnimStateName = "Show";
     public const string HidePanelAnimStateName = "Hide";
 
     public const string UnknownTextKey = "UnknownText";

@@ -18,11 +18,14 @@ SettingsPanel_LangTitle	語言
 SettingsPanel_BGMTitle	背景音樂
 SettingsPanel_SFXTitle	音效
 SettingsPanel_Apply	套用設定
+SettingsPanel_ViewCredits	鳴謝
+SettingsPanel_CreditsTitle	鳴謝
+SettingsPanel_CreditsContent	<b>背景音樂：</b><br><color #00ffff>Wanderlust</color> by Scott Buckley | www.scottbuckley.com.au<br>Music promoted by https://www.chosic.com<br>Attribution 4.0 International (CC BY 4.0)<br>https://creativecommons.org/licenses/by/4.0/<br><br><color #00ffff>The Epic 2</color> by Rafael Krux<br>Link: https://filmmusic.io/song/5384-the-epic-2-<br>License: http://creativecommons.org/licenses/by/4.0/<br>Music promoted on https://www.chosic.com<br><br><b>音效：</b><br>https://taira-komori.jpn.org/freesound.html<br>https://taira-komori.jpn.org/freesoundtw.html
 
 // MainMenu
 SelectArea	選擇地區
-ProgressDone	已完成 :
-SelectEntry	開始地點 :
+ProgressDone	已完成：
+SelectEntry	開始地點：
 UnknownText	? ? ?
 NotePanelTitle	冒險者遊記
 

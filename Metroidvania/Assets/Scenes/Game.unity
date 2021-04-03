@@ -3429,8 +3429,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daf70d63d5b4e4626ac35bc856c18915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 777065505}
-  closeBtn: {fileID: 110623044}
+  _animator: {fileID: 777065505}
+  _closeBtn: {fileID: 110623044}
   airText: {fileID: 1562329552}
   groundText: {fileID: 1562329548}
   tapText: {fileID: 1562329555}
@@ -5829,8 +5829,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 940d0df2adc8a46aeb294707e7de9ee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 619907204}
-  closeBtn: {fileID: 473407571}
+  _animator: {fileID: 619907204}
+  _closeBtn: {fileID: 473407571}
   airText: {fileID: 78413760}
   groundText: {fileID: 1340758733}
   tapText: {fileID: 2057218862}

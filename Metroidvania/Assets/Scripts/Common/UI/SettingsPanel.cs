@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using HihiFramework.Core;
 using HihiFramework.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SettingsPanel : GeneralPanelBase {
     [SerializeField] private TextMeshProUGUI titleText;
@@ -13,6 +16,14 @@ public class SettingsPanel : GeneralPanelBase {
     [SerializeField] private TextMeshProUGUI sfxTitleText;
     [SerializeField] private TextMeshProUGUI sfxContentText;
     [SerializeField] private TextMeshProUGUI applyBtnText;
+    [SerializeField] private TextMeshProUGUI viewCreditsBtnText;
+
+    [Header("Credits Panel")]
+    [SerializeField] private GameObject creditsPanel;
+    [SerializeField] private Animator creditsPanelAnimator;
+    [SerializeField] private TextMeshProUGUI creditsTitleText;
+    [SerializeField] private TextMeshProUGUI creditsContentText;
+    [SerializeField] private ScrollRect creditsContentScrollRect;
 
     private bool isInitialized = false;
 
@@ -35,6 +46,10 @@ public class SettingsPanel : GeneralPanelBase {
         localizedTextDetailsList.Add (new LocalizedTextDetails (titleText, "SettingsPanel_Title"));
         localizedTextDetailsList.Add (new LocalizedTextDetails (langTitleText, "SettingsPanel_LangTitle"));
         localizedTextDetailsList.Add (new LocalizedTextDetails (applyBtnText, "SettingsPanel_Apply"));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (viewCreditsBtnText, "SettingsPanel_ViewCredits"));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (creditsTitleText, "SettingsPanel_CreditsTitle"));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (creditsContentText, "SettingsPanel_CreditsContent"));
+
 
         localizedTextDetailsList.Add (new LocalizedTextDetails (bgmTitleText, "SettingsPanel_BGMTitle"));
         bgmContentLocalizedTextDetails = new LocalizedTextDetails (bgmContentText, ""); // Remarks : The details would be set by SetSelectingBgmOnOff ()
@@ -51,6 +66,8 @@ public class SettingsPanel : GeneralPanelBase {
         UIEventManager.AddEventHandler (BtnOnClickType.Settings_SfxLeft, SfxBtnClickedHandler);
         UIEventManager.AddEventHandler (BtnOnClickType.Settings_SfxRight, SfxBtnClickedHandler);
         UIEventManager.AddEventHandler (BtnOnClickType.Settings_Apply, ApplyBtnClickedHandler);
+        UIEventManager.AddEventHandler (BtnOnClickType.Settings_ViewCredits, ViewCreditsBtnClickedHandler);
+        UIEventManager.AddEventHandler (BtnOnClickType.Settings_CloseCredits, CloseCreditsBtnClickedHandler);
         LangManager.LangChanged += LangChangedHandler;
     }
 
@@ -63,6 +80,8 @@ public class SettingsPanel : GeneralPanelBase {
             UIEventManager.RemoveEventHandler (BtnOnClickType.Settings_SfxLeft, SfxBtnClickedHandler);
             UIEventManager.RemoveEventHandler (BtnOnClickType.Settings_SfxRight, SfxBtnClickedHandler);
             UIEventManager.RemoveEventHandler (BtnOnClickType.Settings_Apply, ApplyBtnClickedHandler);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Settings_ViewCredits, ViewCreditsBtnClickedHandler);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Settings_CloseCredits, CloseCreditsBtnClickedHandler);
             LangManager.LangChanged -= LangChangedHandler;
         }
 
@@ -77,6 +96,8 @@ public class SettingsPanel : GeneralPanelBase {
         SetSelectingSfxOnOff (AudioManager.Instance.CurrentSfxOnOffFlag);
 
         SetTexts ();
+
+        creditsPanel.SetActive (false);
 
         base.Show ();
     }
@@ -171,6 +192,28 @@ public class SettingsPanel : GeneralPanelBase {
 
         AudioManager.Instance.SetSfxOnOff (currentSelectingSfxOnOffStatus);
         AudioManager.Instance.SaveSfxOnOffSetting (currentSelectingSfxOnOffStatus);
+    }
+
+    private void ViewCreditsBtnClickedHandler (HihiButton sender) {
+        Action onClosePanelFinished = () => {
+            creditsPanel.SetActive (true);
+            StartCoroutine (DelaySetCreditsContentScrollRect ());
+        };
+        FrameworkUtils.Instance.StartSingleAnim (Animator, GameVariable.HidePanelAnimStateName, onClosePanelFinished);
+    }
+
+    private IEnumerator DelaySetCreditsContentScrollRect () {
+        yield return null;
+
+        creditsContentScrollRect.verticalNormalizedPosition = 1;
+    }
+
+    private void CloseCreditsBtnClickedHandler (HihiButton sender) {
+        Action onClosePanelFinished = () => {
+            creditsPanel.SetActive (false);
+            FrameworkUtils.Instance.StartSingleAnim (Animator, GameVariable.ShowPanelAnimStateName);
+        };
+        FrameworkUtils.Instance.StartSingleAnim (creditsPanelAnimator, GameVariable.HidePanelAnimStateName, onClosePanelFinished);
     }
 
     private void LangChangedHandler () {

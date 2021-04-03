@@ -988,8 +988,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9035c6d867c994501867006efbff4e57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 590916870}
-  closeBtn: {fileID: 590916866}
+  _animator: {fileID: 590916870}
+  _closeBtn: {fileID: 590916866}
   titleText: {fileID: 590916868}
   progressText: {fileID: 1310462906}
   selectEntryText: {fileID: 664870556}
@@ -2380,8 +2380,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c43c5f5c773d471cb0b22f7b1f14d08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 1262720623}
-  closeBtn: {fileID: 1262720619}
+  _animator: {fileID: 1262720623}
+  _closeBtn: {fileID: 1262720619}
   titleText: {fileID: 1262720621}
   contentText: {fileID: 1799465904}
   selectNoteBtnBaseTransform: {fileID: 409671272}
