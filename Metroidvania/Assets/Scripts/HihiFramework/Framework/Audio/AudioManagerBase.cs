@@ -157,7 +157,8 @@ namespace HihiFramework.Audio {
             }
         }
 
-        protected AudioEnum.BgmType CurrentBgmType { get; private set; }
+        protected AudioEnum.BgmType CurrentBgmType { get; private set; } = AudioEnum.BgmType.None;
+        private Coroutine bgmFadingCoroutine = null;
 
         private readonly Dictionary<AudioEnum.DynamicSfxType, AudioClip> dynamicSfxAudioClipDict = new Dictionary<AudioEnum.DynamicSfxType, AudioClip> ();
 
@@ -318,33 +319,122 @@ namespace HihiFramework.Audio {
         }
 
         private void InitBgm () {
-            LoadBgm (AudioConfig.GetLandingBgm (), false);
+            ChangeBgm (AudioConfig.GetLandingBgm ());
 
             SetBgmOnOff (GetSavedAudioOnOffFlag (AudioFrameworkEnum.Category.Bgm));
         }
 
-        protected void LoadBgm (AudioEnum.BgmType bgmType, bool isChangingBgm) {
-            if (isChangingBgm) {
-                // TODO : Fade in out effect
-                if (bgmType == CurrentBgmType) {
-                    Log.PrintDebug ("The bgmType to change (" + bgmType + ") equal to CurrentBgmType. No need to do any action.", LogTypes.Audio);
-                    return;
-                }
-
-                BgmAudioSource.clip = LoadBgmAudioClip (bgmType);
-                Resources.UnloadUnusedAssets ();    // Unload unused BGM audio clip
-            } else {
-                BgmAudioSource.clip = LoadBgmAudioClip (bgmType);
+        public void ChangeBgm (AudioEnum.BgmType bgmType) {
+            if (bgmType == CurrentBgmType) {
+                Log.PrintDebug ("The bgmType to change (" + bgmType + ") equal to CurrentBgmType. No need to do any action.", LogTypes.Audio);
+                return;
             }
 
-            if (bgmType != AudioEnum.BgmType.None) {
+            var isNeedToUnloadAssets = BgmAudioSource.clip != null;
+
+            BgmAudioSource.clip = LoadBgmAudioClip (bgmType);
+            if (BgmAudioSource.clip != null) {
                 BgmAudioSource.Play ();
             } else {
                 BgmAudioSource.Stop ();
             }
 
             CurrentBgmType = bgmType;
+
+            if (isNeedToUnloadAssets) {
+                Resources.UnloadUnusedAssets ();
+            }
         }
+
+        /// <summary>
+        /// If calling this method while already doing fade BGM action, it would totally override the current fade BGM action
+        /// </summary>
+        public void ChangeBgmWithFading (AudioEnum.BgmType bgmType, AudioFrameworkEnum.VolumeScale fadingVolumeScale = AudioConfig.DefaultBgmFadingScale, float fadingTime = AudioConfig.DefaultBgmFadingTime, Action onFadeOutFinished = null, Action onFadeInFinished = null) {
+            var isAlreadyFading = false;
+            if (bgmFadingCoroutine != null) {
+                isAlreadyFading = true;
+                StopCoroutine (bgmFadingCoroutine);
+                bgmFadingCoroutine = null;
+            }
+
+            if (bgmType == CurrentBgmType) {
+                if (isAlreadyFading) {
+                    Log.PrintDebug ("The bgmType to change (" + bgmType + ") equal to CurrentBgmType but the BGM is fading. Resume the volume by fading in.", LogTypes.Audio);
+                    FadeInBgm (fadingVolumeScale, fadingTime);
+                } else {
+                    Log.PrintDebug ("The bgmType to change (" + bgmType + ") equal to CurrentBgmType. No need to do any action.", LogTypes.Audio);
+                }
+                return;
+            }
+
+            Action onFadeOutBgmFinished = () => {
+                onFadeOutFinished?.Invoke ();
+                ChangeBgm (bgmType);
+                FadeInBgm (fadingVolumeScale, fadingTime, onFadeInFinished);
+            };
+
+            FadeOutBgm (fadingVolumeScale, fadingTime, onFadeOutBgmFinished);
+        }
+
+        #region FadeIn FadeOut methods
+
+        public void FadeOutBgm (AudioFrameworkEnum.VolumeScale fadingVolumeScale, float fadingTime, Action onFinished = null) {
+            if (!GetSavedAudioOnOffFlag (AudioFrameworkEnum.Category.Bgm)) {
+                Log.Print ("BGM is on mute. No need to do fade out BGM action.", LogTypes.Audio);
+                onFinished?.Invoke ();
+                return;
+            }
+
+            var initialAttenuation = GetAttenuation (AudioFrameworkEnum.Category.Bgm);
+            var destAttenuation = FrameworkVariable.AudioMixerAttenuation_LowerBound;
+
+            bgmFadingCoroutine = StartCoroutine (FadeBgmCoroutine (initialAttenuation, destAttenuation, fadingVolumeScale, fadingTime, onFinished));
+        }
+
+        public void FadeInBgm (AudioFrameworkEnum.VolumeScale fadingVolumeScale, float fadingTime, Action onFinished = null) {
+            if (!GetSavedAudioOnOffFlag (AudioFrameworkEnum.Category.Bgm)) {
+                Log.Print ("BGM is on mute. No need to do fade in BGM action.", LogTypes.Audio);
+                onFinished?.Invoke ();
+                return;
+            }
+
+            var initialAttenuation = GetAttenuation (AudioFrameworkEnum.Category.Bgm);
+            var destVolumeFactor = GetSavedVolumeFactor (AudioFrameworkEnum.Category.Bgm);
+            var destAttenuation = CalculateAttenuation (AudioFrameworkEnum.Category.Bgm, destVolumeFactor);
+
+            bgmFadingCoroutine = StartCoroutine (FadeBgmCoroutine (initialAttenuation, destAttenuation, fadingVolumeScale, fadingTime, onFinished));
+        }
+
+        private IEnumerator FadeBgmCoroutine (float initialAttenuation_Decibel, float destAttenuation_Decibel, AudioFrameworkEnum.VolumeScale fadingVolumeScale, float fadingTime, Action onFinished = null) {
+            Action onFadingFinished = () => {
+                bgmFadingCoroutine = null;
+                onFinished?.Invoke ();
+            };
+
+            if (fadingTime <= 0) {
+                SetAttenuation (AudioFrameworkEnum.Category.Bgm, AudioFrameworkEnum.VolumeScale.Decibel, destAttenuation_Decibel);
+                onFadingFinished.Invoke ();
+                yield break;
+            }
+
+            var initialAttenuation = ConvertVolumeScale (AudioFrameworkEnum.VolumeScale.Decibel, fadingVolumeScale, initialAttenuation_Decibel);
+            var destAttenuation = ConvertVolumeScale (AudioFrameworkEnum.VolumeScale.Decibel, fadingVolumeScale, destAttenuation_Decibel);
+
+            float startTime = Time.unscaledTime;
+            float progress = 0;
+            do {
+                var attenuation = Mathf.Lerp (initialAttenuation, destAttenuation, progress);
+                SetAttenuation (AudioFrameworkEnum.Category.Bgm, fadingVolumeScale, attenuation);
+                yield return null;
+                progress = (Time.unscaledTime - startTime) / fadingTime;
+            }
+            while (progress < 1);
+
+            SetAttenuation (AudioFrameworkEnum.Category.Bgm, AudioFrameworkEnum.VolumeScale.Decibel, destAttenuation_Decibel);
+            onFadingFinished.Invoke ();
+        }
+
+        #endregion
 
         #endregion
 
@@ -414,17 +504,33 @@ namespace HihiFramework.Audio {
 
         #region Decibel Convertion
 
-        /// <returns>If <paramref name="linear"/> is smaller or equal to 0, directly return <b>FrameworkVariable.AudioMixerAttenuation_LowerBound</b> in order to prevent calculation error.</returns>
-        protected static float ConvertLinearToDecibel (float linear) {
-            if (linear <= 0) {
-                return FrameworkVariable.AudioMixerAttenuation_LowerBound;
+        /// <returns>Notes : For <paramref name="from"/> = Linear, <paramref name="to"/> = Decibel and <paramref name="fromValue"/> is smaller or equal to 0, directly return <b>FrameworkVariable.AudioMixerAttenuation_LowerBound</b> in order to prevent calculation error.</returns>
+        protected static float ConvertVolumeScale (AudioFrameworkEnum.VolumeScale from, AudioFrameworkEnum.VolumeScale to, float fromValue) {
+            switch (from) {
+                case AudioFrameworkEnum.VolumeScale.Decibel:
+                    switch (to) {
+                        case AudioFrameworkEnum.VolumeScale.Decibel:
+                            return fromValue;
+                        case AudioFrameworkEnum.VolumeScale.Linear:
+                            return Mathf.Pow (10F, fromValue / 20F);
+                    }
+                    break;
+                case AudioFrameworkEnum.VolumeScale.Linear:
+                    switch (to) {
+                        case AudioFrameworkEnum.VolumeScale.Decibel:
+                            if (fromValue <= 0) {
+                                return FrameworkVariable.AudioMixerAttenuation_LowerBound;
+                            }
+
+                            return 20F * Mathf.Log10 (fromValue);
+                        case AudioFrameworkEnum.VolumeScale.Linear:
+                            return fromValue;
+                    }
+                    break;
             }
 
-            return 20F * Mathf.Log10 (linear);
-        }
-
-        protected static float ConvertDecibelToLinear (float decibel) {
-            return Mathf.Pow (10F, decibel / 20F);
+            Log.PrintError ("ConvertVolumeScale from " + from + " to " + to + " has not yet been implemented logic. return fromValue.", LogTypes.Audio);
+            return fromValue;
         }
 
         #endregion
@@ -433,29 +539,18 @@ namespace HihiFramework.Audio {
         /// Calculate attenuation from given volume factor by the scaling of AudioConfig.VolumeFactorScale.
         /// </summary>
         /// <returns>
-        /// Value in decibel if AudioConfig.VolumeFactorScale = Decibel<br />
-        /// Value in sound intensity if AudioConfig.VolumeFactorScale = Linear
+        /// In decibel
         /// </returns>
         protected static float CalculateAttenuation (AudioFrameworkEnum.Category category, int volumeFactor) {
-            var attenuation_LowerBound = FrameworkVariable.AudioMixerAttenuation_LowerBound;
+            var attenuation_LowerBound = ConvertVolumeScale (AudioFrameworkEnum.VolumeScale.Decibel, AudioConfig.VolumeFactorScale, FrameworkVariable.AudioMixerAttenuation_LowerBound);
             var attenuation_UpperBound = Mathf.Min (FrameworkVariable.AudioMixerAttenuation_UpperBound, AudioConfig.GetAttenuationUpperBound (category));
-
-            switch (AudioConfig.VolumeFactorScale) {
-                case AudioFrameworkEnum.VolumeScale.Decibel:
-                    // No need to convert anything
-                    break;
-                case AudioFrameworkEnum.VolumeScale.Linear:
-                    attenuation_LowerBound = ConvertDecibelToLinear (attenuation_LowerBound);
-                    attenuation_UpperBound = ConvertDecibelToLinear (attenuation_UpperBound);
-                    break;
-                default:
-                    Log.PrintError ("VolumeScale : " + AudioConfig.VolumeFactorScale + " has not yet been implemented CalculateAttenuation logic. Treat as Decibel.", LogTypes.Audio);
-                    break;
-            }
+            attenuation_UpperBound = ConvertVolumeScale (AudioFrameworkEnum.VolumeScale.Decibel, AudioConfig.VolumeFactorScale, attenuation_UpperBound);
 
             volumeFactor = Mathf.Clamp (volumeFactor, FrameworkVariable.MinAudioVolumeFactor, FrameworkVariable.MaxAudioVolumeFactor);
             var progress = volumeFactor / (FrameworkVariable.MaxAudioVolumeFactor - FrameworkVariable.MinAudioVolumeFactor);
-            return Mathf.Lerp (attenuation_LowerBound, attenuation_UpperBound, progress);
+
+            var attenuation = Mathf.Lerp (attenuation_LowerBound, attenuation_UpperBound, progress);
+            return ConvertVolumeScale (AudioConfig.VolumeFactorScale, AudioFrameworkEnum.VolumeScale.Decibel, attenuation);
         }
 
         protected void Mute (AudioFrameworkEnum.Category category) {
@@ -468,9 +563,8 @@ namespace HihiFramework.Audio {
         protected void UnMute (AudioFrameworkEnum.Category category) {
             Log.Print ("UnMute audio : AudioFrameworkEnum.Category : " + category, LogTypes.Audio);
 
-            var audioMixer = GetAudioMixer (category);
             var volumeFactor = GetSavedVolumeFactor (category);
-            SetAttenuation (audioMixer, AudioConfig.VolumeFactorScale, CalculateAttenuation (category, volumeFactor));
+            SetAttenuation (category, AudioFrameworkEnum.VolumeScale.Decibel, CalculateAttenuation (category, volumeFactor));
         }
 
         /// <summary>
@@ -482,40 +576,35 @@ namespace HihiFramework.Audio {
         protected float Mute (AudioMixer audioMixer) {
             Log.Print ("Mute AudioMixer : " + audioMixer.name, LogTypes.Audio);
             var attenuationBefore = GetAttenuation (audioMixer);
-            SetAttenuation (audioMixer, FrameworkVariable.AudioMixerAttenuation_LowerBound);
+            SetAttenuation (audioMixer, AudioFrameworkEnum.VolumeScale.Decibel, FrameworkVariable.AudioMixerAttenuation_LowerBound);
 
             return attenuationBefore;
         }
 
         /// <summary>
-        /// Set attenuation by decibel. If you want to set with linear scale, use <b>SetAttenuation_Linear</b> instead.
+        /// Set attenuation.<br />
+        /// <paramref name="attenuationValue"/> should be match with <paramref name="volumeScale"/>.<br />
+        /// Notes : If <paramref name="volumeScale"/> = Linear, it requires extra conversion step into decibel.
         /// </summary>
-        protected void SetAttenuation (AudioMixer audioMixer, float decibelValue) {
-            SetAttenuation (audioMixer, AudioFrameworkEnum.VolumeScale.Decibel, decibelValue);
+        protected void SetAttenuation (AudioFrameworkEnum.Category category, AudioFrameworkEnum.VolumeScale volumeScale, float attenuationValue) {
+            var audioMixer = GetAudioMixer (category);
+            SetAttenuation (audioMixer, volumeScale, attenuationValue);
         }
 
         /// <summary>
-        /// Set attenuation by linear. Compare to <b>SetAttenuation</b> (set by decibel), it requires conversion into decibel to set the value.
+        /// Set attenuation.<br />
+        /// <paramref name="attenuationValue"/> should be match with <paramref name="volumeScale"/>.<br />
+        /// Notes : If <paramref name="volumeScale"/> = Linear, it requires extra conversion step into decibel.
         /// </summary>
-        protected void SetAttenuation_Linear (AudioMixer audioMixer, float linearValue) {
-            SetAttenuation (audioMixer, AudioFrameworkEnum.VolumeScale.Linear, linearValue);
+        protected void SetAttenuation (AudioMixer audioMixer, AudioFrameworkEnum.VolumeScale volumeScale, float attenuationValue) {
+            var decibelValue = ConvertVolumeScale (volumeScale, AudioFrameworkEnum.VolumeScale.Decibel, attenuationValue);
+            audioMixer.SetFloat (FrameworkVariable.MasterAttenuationExposedParam, decibelValue);
         }
 
-        protected void SetAttenuation (AudioMixer audioMixer, AudioFrameworkEnum.VolumeScale volumeScale, float attenuationValue) {
-            var decibelValue = attenuationValue;
-
-            switch (volumeScale) {
-                case AudioFrameworkEnum.VolumeScale.Decibel:
-                    break;
-                case AudioFrameworkEnum.VolumeScale.Linear:
-                    decibelValue = ConvertLinearToDecibel (attenuationValue);
-                    break;
-                default:
-                    Log.PrintError ("VolumeScale : " + volumeScale + " has not yet been implemented SetAttenuation logic. Treat as Decibel.", LogTypes.Audio);
-                    break;
-            }
-
-            audioMixer.SetFloat (FrameworkVariable.MasterAttenuationExposedParam, decibelValue);
+        /// <returns>In decibel</returns>
+        protected float GetAttenuation (AudioFrameworkEnum.Category category) {
+            var audioMixer = GetAudioMixer (category);
+            return GetAttenuation (audioMixer);
         }
 
         /// <returns>In decibel</returns>

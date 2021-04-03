@@ -28,6 +28,11 @@ public class GameSceneManager : MonoBehaviour {
 
     private void Awake () {
         charModel = GameUtils.FindOrSpawnChar ();
+
+        // For testing
+        //UserManager.SelectedMissionId = 3;
+        //UserManager.SelectedEntryId = 3;
+
         selectedMissionId = UserManager.SelectedMissionId;
         selectedEntryId = UserManager.SelectedEntryId;
         mapData = GetMapData (selectedMissionId);
@@ -38,6 +43,11 @@ public class GameSceneManager : MonoBehaviour {
         AddEventHandlers ();
 
         var isControllerByLandingScene = SceneManager.GetActiveScene ().name == GameVariable.LandingSceneName;
+
+        if (selectedMissionId == MissionManager.EndingMissionId) {
+            AudioManager.Instance.ChangeBgmWithFading (AudioEnum.BgmType.CaveCollapsing);
+        }
+
         ResetGame (isControllerByLandingScene);
     }
 
@@ -190,9 +200,14 @@ public class GameSceneManager : MonoBehaviour {
     private void LeaveGame (bool isAfterEnding = false) {
         Log.Print ("Leave Game", LogTypes.GameFlow);
 
+        var isNeedToChangeBgm = selectedMissionId == MissionManager.EndingMissionId;
+
         if (isAfterEnding) {
             Action onFadeInFinished = () => {
                 Action onThankYouFinished = () => {
+                    if (isNeedToChangeBgm) {
+                        AudioManager.Instance.ChangeBgmWithFading (AudioEnum.BgmType.General);
+                    }
                     GameUtils.LoadSingleScene (GameVariable.LandingSceneName, false);
                 };
                 uiManager.ShowThankYou (onThankYouFinished);
@@ -200,6 +215,9 @@ public class GameSceneManager : MonoBehaviour {
 
             GameUtils.ScreenFadeIn (false, onFadeInFinished);
         } else {
+            if (isNeedToChangeBgm) {
+                AudioManager.Instance.ChangeBgmWithFading (AudioEnum.BgmType.General);
+            }
             GameUtils.LoadSingleScene (GameVariable.MainMenuSceneName);
         }
     }

@@ -13,12 +13,6 @@ public static partial class AudioConfig {
     }
 
     /// <summary>
-    /// The scale for calculation between volume factor and attenuation.<br />
-    /// Refer to <b>AudioManagerBase.CalculateAttenuation()</b> for details.
-    /// </summary>
-    public const AudioFrameworkEnum.VolumeScale VolumeFactorScale = AudioFrameworkEnum.VolumeScale.Linear;
-
-    /// <summary>
     /// Default volume factor of corresponding audio category
     /// </summary>
     public static int GetDefaultVolumeFactor (AudioFrameworkEnum.Category category) {
@@ -50,8 +44,7 @@ public static partial class AudioConfig {
 
         switch (bgmType) {
             case AudioEnum.BgmType.General: return "Wanderlust";
-
-            // Currently no BGM
+            case AudioEnum.BgmType.CaveCollapsing: return "TheEpic2";
         }
 
         Log.PrintError ("AudioEnum.BgmType : " + bgmType + " has not been assigned resources name. Return null.", LogTypes.Audio);
@@ -85,4 +78,20 @@ public static partial class AudioConfig {
     public static AudioEnum.BgmType GetLandingBgm () {
         return AudioEnum.BgmType.General;
     }
+
+    /// <summary>
+    /// The scale for calculation between volume factor and attenuation.<br />
+    /// Refer to <b>AudioManagerBase.CalculateAttenuation()</b> for details.
+    /// </summary>
+    public const AudioFrameworkEnum.VolumeScale VolumeFactorScale = AudioFrameworkEnum.VolumeScale.Linear;
+
+    /// <summary>
+    /// The time used by <b>AudioManagerBase.ChangeBgmWithFading()</b> as default fading time
+    /// </summary>
+    public const float DefaultBgmFadingTime = 1F;
+
+    /// <summary>
+    /// The scale used by <b>AudioManagerBase.ChangeBgmWithFading()</b> as default fading volume scale
+    /// </summary>
+    public const AudioFrameworkEnum.VolumeScale DefaultBgmFadingScale = AudioFrameworkEnum.VolumeScale.Decibel;
 }

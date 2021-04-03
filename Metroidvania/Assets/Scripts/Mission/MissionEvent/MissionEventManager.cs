@@ -27,7 +27,6 @@ public class MissionEventManager : MonoBehaviour {
     #region All Events
 
     private const int BossMapSwitchId = 11;
-    private const int BurnTreeSwitchId = 12;
 
     private static readonly List<MissionEvent> AllMissionEvents = new List<MissionEvent> () {
         new MissionEvent (
@@ -186,7 +185,7 @@ public class MissionEventManager : MonoBehaviour {
             MissionEventEnum.SpecialSceneType.BurnTree,
             new ChangeSubSpecialSceneSubEvent (),
             new WaitSubEvent (1f),
-            new MapSwitchSubEvent (BurnTreeSwitchId)
+            new BurnTreeSubEvent ()
         ),
 
         new SpecialSceneEvent (
@@ -569,7 +568,7 @@ public class MissionEventManager : MonoBehaviour {
     }
 
     private void StartMapSwitchSubEvent (MapSwitchSubEvent subEvent, Action onFinished = null) {
-        if (subEvent.MapSwitchId == BurnTreeSwitchId) {
+        if (subEvent is BurnTreeSubEvent) {
             burnTreeAudioSurce.Play ();
         }
 
