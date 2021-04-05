@@ -298,6 +298,7 @@ public class CommandPanel : CommandMatrixPanel {
             return;
         }
 
+        AudioManager.Instance.PlayDynamicSFX (AudioEnum.DynamicSfxType.ConfirmBtn);
         currentDraggingCommand = (CharEnum.Command)draggingCommandDisplay.Command;
 
         List<CharEnum.InputSituation> list;
@@ -450,6 +451,10 @@ public class CommandPanel : CommandMatrixPanel {
                     missionEventCommandSetAction = null;
                 }
             }
+        }
+
+        if (currentTargetContainerList.Count > 0) {
+            AudioManager.Instance.PlayDynamicSFX (AudioEnum.DynamicSfxType.ConfirmBtn);
         }
 
         currentTargetContainerList.Clear ();

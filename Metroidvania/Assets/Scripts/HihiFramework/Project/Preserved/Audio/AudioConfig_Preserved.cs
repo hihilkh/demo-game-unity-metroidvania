@@ -26,7 +26,7 @@ public static partial class AudioConfig {
     public static float GetAttenuationUpperBound (AudioFrameworkEnum.Category category) {
         switch (category) {
             case AudioFrameworkEnum.Category.Bgm:
-                return -10;
+                return -5;
             default:
                 return 0;
         }

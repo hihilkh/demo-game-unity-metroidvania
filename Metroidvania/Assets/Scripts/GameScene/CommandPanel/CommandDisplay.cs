@@ -186,6 +186,7 @@ public class CommandDisplay : Selectable {
             case DisplayType.Container:
                 if (Command != null) {
                     crossBtn.gameObject.SetActive (true);
+                    AudioManager.Instance.PlayDynamicSFX (AudioEnum.DynamicSfxType.ConfirmBtn);
                 }
                 return;
         }
