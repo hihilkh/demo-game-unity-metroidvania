@@ -59,7 +59,7 @@
 
         // Remarks : Do not use "Min" / "Max" to describe attenuation to prevent misleading meaning
         public const float AudioMixerAttenuation_LowerBound = -80F;     // In decibel
-        public const float AudioMixerAttenuation_UpperBound = 20F;      // In decibel
+        public const float AudioMixerAttenuation_UpperBound = 0F;      // In decibel (Seems there would be distortion if attenuation > 0)
 
         #endregion
 
