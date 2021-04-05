@@ -1915,21 +1915,23 @@ public class CharModel : LifeBase, IMapTarget {
     #region Changing Scene
 
     private void SingleSceneChangingHandler (string fromSceneName, string toSceneName) {
+        // Detach from char to prevent audio listener stopped while char set to inactive
+        cameraModel?.DetachFromCharAndSetPos (Vector2.zero);
+
         // Do not show char if not specifically set active
         // Also, to ensure the collision stuff keep correct
         SetActive (false);
-
-        // Prevent multi audio listener issue
-        cameraModel?.SetAudioListener (false);
     }
 
     private void SingleSceneChangedHandler (string currentSceneName) {
         if (currentSceneName == GameVariable.GameSceneName || currentSceneName == GameVariable.LandingSceneName) {
             SetActive (true);
-            cameraModel?.SetAudioListener (true);
+            cameraModel?.AttachBackToChar ();
+        } else {
+            // Delay 1 frame to attach back camera to prevent no audio listener issue
+            FrameworkUtils.Instance.Wait (null, AttachBackCamera);
         }
     }
-
 
     #endregion
 
