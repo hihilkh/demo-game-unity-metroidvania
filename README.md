@@ -14,11 +14,11 @@ During the development of the game, I find out some problems of the gameplay:
 * User may not be easily familier with the command input because the command mapping with tap, hold and release keep changing for different missions.
 * Some commands are quite elementary (e.g. jump, air jump, turn) and it is hard to exclude them from the command mapping. So the combination of command mapping is not as free as expected. For this reason, it is also hard to add new command or design new mission. But as this game is designed as a minigame and I have no plan to expand it, it would not be a big problem.
 
-Turn out the first version of this game is released after almost 4 months... and that version have not included any audio stuffs. Currently only android version is available (.apk). iOS version is not available because I haven't joined the Apple Developer Program, and I do not have Apple mobile device for testing...
+Turn out the first version of this game is released after almost 4 months... and that version have not included any audio stuffs (audio is supported from v1.0.1). Currently only android version is available (.apk). iOS version is not available because I haven't joined the Apple Developer Program, and I do not have Apple mobile device for testing...
+
+Hope you would enjoy this game!
 
 Tony Lam
-
-22/03/2021
 
 # Standards
 
@@ -27,7 +27,6 @@ Tony Lam
 
 # Insufficiency of this project
 
-* No audio yet.
 * The image assets are not managed very well (e.g. The pixels per unit of the sprites are different). (Drawing those images have already used up all my strength...)
 * No connection with any server/API (I do not have backend development skill...). For this reason, I do not use Asset Bundle and use Resources folder instead for the dynamic assets.
 * Not much optimization has been done. Since the game is not high demanding, it should not be a critical problem.
@@ -35,13 +34,7 @@ Tony Lam
 
 # Latest Version
 
-* Version : 1.0.0
-* Tag : release/1.0.0
-* Download apk file : https://drive.google.com/file/d/1e7gKtkXqXXJOpNVLz1SgsWQYrBzhd0bX
-
-# Target of Next Release
-
-* Add BGM and SFX
-* Adjust difficulty
-* Bug fix of known issues
-* Add Japanese localization (to practise Japanese)
+* Version : 1.0.1
+* Tag : v1.0.1
+* [Download APK](https://drive.google.com/file/d/1LZWuNwGWp4ZS66Y2K0BdFdZVpvHpiPb-)
+* [Release Notes](./ReleaseNotes.md)
