@@ -44,10 +44,6 @@ public class GameSceneManager : MonoBehaviour {
 
         var isControllerByLandingScene = SceneManager.GetActiveScene ().name == GameVariable.LandingSceneName;
 
-        if (selectedMissionId == MissionManager.EndingMissionId) {
-            AudioManager.Instance.ChangeBgmWithFading (AudioEnum.BgmType.CaveCollapsing);
-        }
-
         ResetGame (isControllerByLandingScene);
     }
 
@@ -106,12 +102,20 @@ public class GameSceneManager : MonoBehaviour {
             IsGameStarted = false;
             GameUtils.ResumeTime ();
 
-            // Remarks : To ensure everything is ready so that CharModel has no strange behaviour
             if (!isControlledByLandingScene) {
-                Action onResetCharModelFinished = () => {
+                Action onSetBgmFinished = () => {
                     GameUtils.ScreenFadeOut (true, onFadeOutFinished);
                 };
 
+                Action onResetCharModelFinished = () => {
+                    if (selectedMissionId == MissionManager.EndingMissionId) {
+                        AudioManager.Instance.ChangeBgmWithFading (AudioEnum.BgmType.CaveCollapsing, null, onSetBgmFinished);
+                    } else {
+                        onSetBgmFinished ();
+                    }
+                };
+
+                // Remarks : To ensure everything is ready so that CharModel has no strange behaviour
                 StartCoroutine (DelayResetCharModel (IsGameInitialized, onResetCharModelFinished));
             }
 
@@ -201,25 +205,29 @@ public class GameSceneManager : MonoBehaviour {
         Log.Print ("Leave Game", LogTypes.GameFlow);
 
         var isNeedToChangeBgm = selectedMissionId == MissionManager.EndingMissionId;
+        var targetSceneName = isAfterEnding ? GameVariable.LandingSceneName : GameVariable.MainMenuSceneName;
 
-        if (isAfterEnding) {
-            Action onFadeInFinished = () => {
-                Action onThankYouFinished = () => {
-                    if (isNeedToChangeBgm) {
-                        AudioManager.Instance.ChangeBgmWithFading (AudioEnum.BgmType.General);
-                    }
-                    GameUtils.LoadSingleScene (GameVariable.LandingSceneName, false);
-                };
-                uiManager.ShowThankYou (onThankYouFinished);
-            };
+        Action onSetBgmFinished = () => {
+            GameUtils.LoadSingleScene (targetSceneName, false);
+        };
 
-            GameUtils.ScreenFadeIn (false, onFadeInFinished);
-        } else {
+        Action setBgmAndChangeSceneAction = () => {
             if (isNeedToChangeBgm) {
-                AudioManager.Instance.ChangeBgmWithFading (AudioEnum.BgmType.General);
+                AudioManager.Instance.ChangeBgmWithFading (AudioEnum.BgmType.General, null, onSetBgmFinished);
+            } else {
+                onSetBgmFinished ();
             }
-            GameUtils.LoadSingleScene (GameVariable.MainMenuSceneName);
-        }
+        };
+
+        Action onFadeInFinished = () => {
+            if (isAfterEnding) {
+                uiManager.ShowThankYou (setBgmAndChangeSceneAction);
+            } else {
+                setBgmAndChangeSceneAction ();
+            }
+        };
+
+        GameUtils.ScreenFadeIn (!isAfterEnding, onFadeInFinished);
     }
 
     #endregion

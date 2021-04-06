@@ -6,6 +6,7 @@ public class EnemyDieSMB : EnemyBeatBackSMB {
     public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
+        PlaySfx ();
         isAnimFinished = false;
     }
 
@@ -21,7 +22,7 @@ public class EnemyDieSMB : EnemyBeatBackSMB {
         }
     }
 
-    protected override void PlaySfx () {
+    private void PlaySfx () {
         AnimUtils.Model.AudioUtils.PlayDieSfx ();
     }
 }

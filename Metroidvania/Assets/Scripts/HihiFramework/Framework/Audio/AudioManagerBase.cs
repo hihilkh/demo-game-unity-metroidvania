@@ -347,7 +347,16 @@ namespace HihiFramework.Audio {
         }
 
         /// <summary>
-        /// If calling this method while already doing fade BGM action, it would totally override the current fade BGM action
+        /// If calling this method while already doing fade BGM action, it would totally override the current fade BGM action<br />
+        /// i.e., some <paramref name="onFadeOutFinished"/> or <paramref name="onFadeInFinished"/> action of <b>previous</b> fade BGM call may not be triggered.
+        /// </summary>
+        public void ChangeBgmWithFading (AudioEnum.BgmType bgmType, Action onFadeOutFinished, Action onFadeInFinished) {
+            ChangeBgmWithFading (bgmType, AudioConfig.DefaultBgmFadingScale, AudioConfig.DefaultBgmFadingTime, onFadeOutFinished, onFadeInFinished);
+        }
+
+        /// <summary>
+        /// If calling this method while already doing fade BGM action, it would totally override the current fade BGM action<br />
+        /// i.e., some <paramref name="onFadeOutFinished"/> or <paramref name="onFadeInFinished"/> action of <b>previous</b> fade BGM call may not be triggered.
         /// </summary>
         public void ChangeBgmWithFading (AudioEnum.BgmType bgmType, AudioFrameworkEnum.VolumeScale fadingVolumeScale = AudioConfig.DefaultBgmFadingScale, float fadingTime = AudioConfig.DefaultBgmFadingTime, Action onFadeOutFinished = null, Action onFadeInFinished = null) {
             var isAlreadyFading = false;
@@ -358,11 +367,14 @@ namespace HihiFramework.Audio {
             }
 
             if (bgmType == CurrentBgmType) {
+                onFadeOutFinished?.Invoke ();
+
                 if (isAlreadyFading) {
                     Log.PrintDebug ("The bgmType to change (" + bgmType + ") equal to CurrentBgmType but the BGM is fading. Resume the volume by fading in.", LogTypes.Audio);
-                    FadeInBgm (fadingVolumeScale, fadingTime);
+                    FadeInBgm (fadingVolumeScale, fadingTime, onFadeInFinished);
                 } else {
                     Log.PrintDebug ("The bgmType to change (" + bgmType + ") equal to CurrentBgmType. No need to do any action.", LogTypes.Audio);
+                    onFadeInFinished?.Invoke ();
                 }
                 return;
             }

@@ -324,6 +324,11 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     }
 
     protected override void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection) {
+        // Play beak back SFX even the enemy do not have beatback action
+        if (!IsDying) {
+            AudioUtils.PlayBeatBackSfx ();
+        }
+
         if (Params.BeatBackInitSpeed <= 0) {
             return;
         }
