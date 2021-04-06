@@ -8,6 +8,7 @@ public class CharDieSMB : CharSMBBase {
         base.OnStateEnter (animator, stateInfo, layerIndex);
 
         AnimUtils.SetDieFeature (true);
+        AnimUtils.Model.AudioUtils.PlayDieSfx ();
 
         startDieTime = Time.time;
         hasFinishedDying = false;

@@ -12,7 +12,7 @@ public class MissionDetailsPanel : GeneralPanelBase {
     [SerializeField] private TextMeshProUGUI progressText;
     [SerializeField] private TextMeshProUGUI selectEntryText;
 
-    [SerializeField] private List<HIHIButton> entryBtnList;
+    [SerializeField] private List<HihiButton> entryBtnList;
     private readonly List<TextMeshProUGUI> entryBtnTextParallelList = new List<TextMeshProUGUI> ();
 
     [SerializeField] private Transform collectableDescriptionBaseTransform;

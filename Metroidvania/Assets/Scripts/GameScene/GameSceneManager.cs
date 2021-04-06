@@ -28,6 +28,11 @@ public class GameSceneManager : MonoBehaviour {
 
     private void Awake () {
         charModel = GameUtils.FindOrSpawnChar ();
+
+        // For testing
+        //UserManager.SelectedMissionId = 3;
+        //UserManager.SelectedEntryId = 3;
+
         selectedMissionId = UserManager.SelectedMissionId;
         selectedEntryId = UserManager.SelectedEntryId;
         mapData = GetMapData (selectedMissionId);
@@ -38,6 +43,7 @@ public class GameSceneManager : MonoBehaviour {
         AddEventHandlers ();
 
         var isControllerByLandingScene = SceneManager.GetActiveScene ().name == GameVariable.LandingSceneName;
+
         ResetGame (isControllerByLandingScene);
     }
 
@@ -94,14 +100,22 @@ public class GameSceneManager : MonoBehaviour {
 
         Action onFadeInFinished = () => {
             IsGameStarted = false;
-            Time.timeScale = 1;
+            GameUtils.ResumeTime ();
 
-            // Remarks : To ensure everything is ready so that CharModel has no strange behaviour
             if (!isControlledByLandingScene) {
-                Action onResetCharModelFinished = () => {
+                Action onSetBgmFinished = () => {
                     GameUtils.ScreenFadeOut (true, onFadeOutFinished);
                 };
 
+                Action onResetCharModelFinished = () => {
+                    if (selectedMissionId == MissionManager.EndingMissionId) {
+                        AudioManager.Instance.ChangeBgmWithFading (AudioEnum.BgmType.CaveCollapsing, null, onSetBgmFinished);
+                    } else {
+                        onSetBgmFinished ();
+                    }
+                };
+
+                // Remarks : To ensure everything is ready so that CharModel has no strange behaviour
                 StartCoroutine (DelayResetCharModel (IsGameInitialized, onResetCharModelFinished));
             }
 
@@ -190,18 +204,30 @@ public class GameSceneManager : MonoBehaviour {
     private void LeaveGame (bool isAfterEnding = false) {
         Log.Print ("Leave Game", LogTypes.GameFlow);
 
-        if (isAfterEnding) {
-            Action onFadeInFinished = () => {
-                Action onThankYouFinished = () => {
-                    GameUtils.LoadSingleScene (GameVariable.LandingSceneName, false);
-                };
-                uiManager.ShowThankYou (onThankYouFinished);
-            };
+        var isNeedToChangeBgm = selectedMissionId == MissionManager.EndingMissionId;
+        var targetSceneName = isAfterEnding ? GameVariable.LandingSceneName : GameVariable.MainMenuSceneName;
 
-            GameUtils.ScreenFadeIn (false, onFadeInFinished);
-        } else {
-            GameUtils.LoadSingleScene (GameVariable.MainMenuSceneName);
-        }
+        Action onSetBgmFinished = () => {
+            GameUtils.LoadSingleScene (targetSceneName, false);
+        };
+
+        Action setBgmAndChangeSceneAction = () => {
+            if (isNeedToChangeBgm) {
+                AudioManager.Instance.ChangeBgmWithFading (AudioEnum.BgmType.General, null, onSetBgmFinished);
+            } else {
+                onSetBgmFinished ();
+            }
+        };
+
+        Action onFadeInFinished = () => {
+            if (isAfterEnding) {
+                uiManager.ShowThankYou (setBgmAndChangeSceneAction);
+            } else {
+                setBgmAndChangeSceneAction ();
+            }
+        };
+
+        GameUtils.ScreenFadeIn (!isAfterEnding, onFadeInFinished);
     }
 
     #endregion
@@ -226,6 +252,8 @@ public class GameSceneManager : MonoBehaviour {
             UIEventManager.AddEventHandler (BtnOnClickType.Game_Pause, PauseBtnClickedHandler);
             UIEventManager.AddEventHandler (BtnOnClickType.Game_Restart, RestartBtnClickedHandler);
             UIEventManager.AddEventHandler (BtnOnClickType.Game_BackToMM, BackToMMBtnClickedHandler);
+            UIEventManager.AddEventHandler (BtnOnClickType.Game_ViewEnv, ViewEnvBtnClickedHandler);
+            UIEventManager.AddEventHandler (BtnOnClickType.Game_ViewEnvBack, ViewEnvBackBtnClickedHandler);
         }
     }
 
@@ -245,6 +273,8 @@ public class GameSceneManager : MonoBehaviour {
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Pause, PauseBtnClickedHandler);
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_Restart, RestartBtnClickedHandler);
             UIEventManager.RemoveEventHandler (BtnOnClickType.Game_BackToMM, BackToMMBtnClickedHandler);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ViewEnv, ViewEnvBtnClickedHandler);
+            UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ViewEnvBack, ViewEnvBackBtnClickedHandler);
 
             isAddedEventHandlers = false;
         }
@@ -297,7 +327,7 @@ public class GameSceneManager : MonoBehaviour {
             }
 
             uiManager.SetUIInteractable (true);
-            Time.timeScale = 1;
+            GameUtils.ResumeTime ();
         };
 
         Action onMissionEventFinished = () => {
@@ -335,7 +365,7 @@ public class GameSceneManager : MonoBehaviour {
             charModel.SetAllowUserControl (true);
         };
 
-        Time.timeScale = 0;
+        GameUtils.StopTime ();
         charModel.SetAllowUserControl (false);
         uiManager.SetUIInteractable (false);
         collectableObject.StartCollectedAnim (charModel.GetCurrentCollectedCollectablePos (), onCollectedAnimFinished);
@@ -442,17 +472,29 @@ public class GameSceneManager : MonoBehaviour {
         IsGameStarted = false;
     }
 
-    private void PauseBtnClickedHandler (HIHIButton sender) {
+    private void PauseBtnClickedHandler (HihiButton sender) {
         pausePanel.Show (UserManager.CommandSettingsCache);
     }
 
-    private void RestartBtnClickedHandler (HIHIButton sender) {
+    private void RestartBtnClickedHandler (HihiButton sender) {
         pausePanel.Hide (false);
         ResetGame ();
     }
 
-    private void BackToMMBtnClickedHandler (HIHIButton sender) {
+    private void BackToMMBtnClickedHandler (HihiButton sender) {
         LeaveGame ();
+    }
+
+    private void ViewEnvBtnClickedHandler (HihiButton sender) {
+        charModel.SetAllowUserControl (false, CharEnum.UserControlTypes.Action);
+        pausePanel.Hide (false);
+        uiManager.ShowViewEnvPanel ();
+    }
+
+    private void ViewEnvBackBtnClickedHandler (HihiButton sender) {
+        uiManager.HideViewEnvPanel ();
+        pausePanel.Show (UserManager.CommandSettingsCache);
+        charModel.SetAllowUserControl (true, CharEnum.UserControlTypes.Action);
     }
 
     #endregion

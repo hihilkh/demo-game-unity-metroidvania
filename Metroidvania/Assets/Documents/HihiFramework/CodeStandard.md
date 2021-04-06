@@ -1,3 +1,9 @@
+---
+
+**Note** : This markdown would look weird in BitBucket. Please read it by other markdown viewer.
+
+---
+
 # Code Standard
 
 ## Capitalization Styles
@@ -37,7 +43,7 @@
 
 * Use prefix `I` for interfaces (e.g., `IDisposable`)
 * Use suffix `Base` for abstract classes and classes that are created for inheritance (e.g., `AnimalBase`)
-* Use underscores(`_`) <b>only</b> for the cases:
+* Use underscores(`_`) **only** for the cases:
 	* prefix of a private field which is with corresponding property, e.g.,
 	``` CSharp
 	private string _text;
@@ -46,8 +52,8 @@
 		set { _text = value + " Hello"; }
 	}
 	```
-	* connect to the suffix that distinguish similar objects with different properties (e.g., `command_Hit`, `command_Jump`). In this case, the suffix after underscore should be in <b>Pascal case</b>.
-* Do <b>not</b> use Hungarian notation (type prefix) (e.g., `iCount`)
+	* connect to the suffix that distinguish similar objects with different properties (e.g., `command_Hit`, `command_Jump`). In this case, the suffix after underscore should be in **Pascal case**.
+* Do **not** use Hungarian notation (type prefix) (e.g., `iCount`)
 * Use singular word for Enum type name, except bit field enums, e.g.,
 	``` CSharp
 	public enum Command {
@@ -66,7 +72,7 @@
 
 ---
 
-<b>Note</b> : Below event standard does not align with Microsoft standard. I do not use the `EventHandler` and `EventArgs` structure in order to reduce the complexity of codes.
+**Note** : Below event standard does not align with Microsoft standard. I do not use the `EventHandler` and `EventArgs` structure in order to reduce the complexity of codes.
 
 ---
 
@@ -107,7 +113,7 @@
 	4. Constructors
 	5. Unity life cycle methods (e.g. `Awake`, `OnDestroy`) and Init/Reset methods
 	6. Others
-* Do <b>not</b> use non private field. Use property instead.
+* Do **not** use non private field. Use property instead.
 	* Exception :
 		* Classes that are constructed to use with `JsonUtility`. In this case, the field name follow JSON naming convension
 		* private classes inside a class
@@ -150,9 +156,9 @@
 
 ---
 
-<b>Note</b> : I basically follow the standard of below references, but not strictly.
+**Note** : I basically follow the standard of below references, but not strictly.
 
 ---
 
-* https://docs.microsoft.com/en-us/previous-versions/dotnet/netframework-1.1/xzf533w0(v=vs.71)?redirectedfrom=MSDN
+* https://docs.microsoft.com/en-us/previous-versions/dotnet/netframework-1.1/xzf533w0(v=vs.71)
 * https://www.dofactory.com/reference/csharp-coding-standards

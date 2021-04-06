@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/HIHIFramework/GameConfig.unity
+    path: Assets/Scenes/HihiFramework/GameConfig.unity
     guid: 7977f51626c9a403a81ff7366e185429
   - enabled: 1
     path: Assets/Scenes/Landing.unity

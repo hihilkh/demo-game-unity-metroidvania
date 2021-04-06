@@ -12,7 +12,7 @@ public class CommandPanel : CommandMatrixPanel {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI confirmBtnText;
 
-    [SerializeField] private HIHIButton confirmBtn;
+    [SerializeField] private HihiButton confirmBtn;
 
     [SerializeField] private Transform commandPickerBaseTransform;
     [SerializeField] private Transform commandPickerDraggingBaseTransform;
@@ -298,6 +298,7 @@ public class CommandPanel : CommandMatrixPanel {
             return;
         }
 
+        AudioManager.Instance.PlayDynamicSFX (AudioEnum.DynamicSfxType.ConfirmBtn);
         currentDraggingCommand = (CharEnum.Command)draggingCommandDisplay.Command;
 
         List<CharEnum.InputSituation> list;
@@ -311,9 +312,9 @@ public class CommandPanel : CommandMatrixPanel {
             isListForAllow = true;
         }
 
-        if (list != null && list.Count > 0) {
-            foreach (var pair in CommandMatrixToSituationDict) {
-                pair.Key.SetClickable (false);
+        foreach (var pair in CommandMatrixToSituationDict) {
+            pair.Key.SetClickable (false);
+            if (list != null && list.Count > 0) {
                 pair.Key.SetTargetable (isListForAllow == list.Contains (pair.Value));
             }
         }
@@ -452,6 +453,10 @@ public class CommandPanel : CommandMatrixPanel {
             }
         }
 
+        if (currentTargetContainerList.Count > 0) {
+            AudioManager.Instance.PlayDynamicSFX (AudioEnum.DynamicSfxType.ConfirmBtn);
+        }
+
         currentTargetContainerList.Clear ();
 
         foreach (var pair in CommandMatrixToSituationDict) {
@@ -487,7 +492,7 @@ public class CommandPanel : CommandMatrixPanel {
     }
 
 
-    private void ConfirmCommandBtnClickedHandler (HIHIButton sender) {
+    private void ConfirmCommandBtnClickedHandler (HihiButton sender) {
         if (currentSubEvent == null) {
             UpdateCharCommandSettings (true);
         } else {

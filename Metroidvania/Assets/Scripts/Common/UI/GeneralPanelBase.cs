@@ -4,8 +4,11 @@ using HihiFramework.UI;
 using UnityEngine;
 
 public abstract class GeneralPanelBase : MonoBehaviour {
-    [SerializeField] private Animator animator;
-    [SerializeField] private HIHIButton closeBtn;
+    [SerializeField] private Animator _animator;
+    protected Animator Animator => _animator;
+    [SerializeField] private HihiButton _closeBtn;
+    protected HihiButton CloseBtn => _closeBtn;
+
 
     private bool isAddedEventHandlers = false;
     public event Action PanelHid;
@@ -27,7 +30,7 @@ public abstract class GeneralPanelBase : MonoBehaviour {
         };
 
         RemoveEventHandlers ();
-        FrameworkUtils.Instance.StartSingleAnim (animator, GameVariable.HidePanelAnimStateName, onFinished);
+        FrameworkUtils.Instance.StartSingleAnim (Animator, GameVariable.HidePanelAnimStateName, onFinished);
     }
 
     #region Events
@@ -48,8 +51,8 @@ public abstract class GeneralPanelBase : MonoBehaviour {
         }
     }
 
-    private void CloseBtnClickedHandler (HIHIButton sender) {
-        if (sender == closeBtn) {
+    private void CloseBtnClickedHandler (HihiButton sender) {
+        if (sender == CloseBtn) {
             Hide ();
         }
     }

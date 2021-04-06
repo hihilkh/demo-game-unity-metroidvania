@@ -18,15 +18,8 @@ public class ReadyGo : MonoBehaviour {
 
         LangManager.SetTexts (localizedTextDetailsList);
 
-        // Remarks : Somehow set outline color to black will lead to next step (set outline width) getting error...
-        var color = new Color32 (1, 1, 1, 255);
-        var width = 0.1f;
-
-        readyText.outlineColor = color;
-        readyText.outlineWidth = width;
-
-        goText.outlineColor = color;
-        goText.outlineWidth = width;
+        GameUtils.AddBlackOutline (readyText);
+        GameUtils.AddBlackOutline (goText);
     }
 
     public void Play (Action onFinished = null) {

@@ -7,21 +7,23 @@ public class GamePausePanel : CommandMatrixPanel {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI backToMMBtnText;
     [SerializeField] private TextMeshProUGUI restartBtnText;
+    [SerializeField] private TextMeshProUGUI viewEnvBtnText;
 
-    [SerializeField] private HIHIButton backToMMBtn;
+    [SerializeField] private HihiButton backToMMBtn;
+    [SerializeField] private HihiButton viewEnvBtn;
 
     private bool isHideResetTimeScale = true;
 
     #region CommandMatrixPanel
 
     private void OnEnable () {
-        Time.timeScale = 0;
+        GameUtils.StopTime ();
         isHideResetTimeScale = true;
     }
 
     private void OnDisable () {
         if (isHideResetTimeScale) {
-            Time.timeScale = 1;
+            GameUtils.ResumeTime ();
         }
     }
 
@@ -35,9 +37,8 @@ public class GamePausePanel : CommandMatrixPanel {
         localizedTextDetailsList.Add (new LocalizedTextDetails (titleText, "GamePausePanel_Title"));
         localizedTextDetailsList.Add (new LocalizedTextDetails (backToMMBtnText, "BackToMM"));
         localizedTextDetailsList.Add (new LocalizedTextDetails (restartBtnText, "Restart"));
+        localizedTextDetailsList.Add (new LocalizedTextDetails (viewEnvBtnText, "ViewEnv"));
         LangManager.SetTexts (localizedTextDetailsList);
-
-        backToMMBtn.SetInteractable (UserManager.CheckIsFirstMissionCleared ());
 
         return true;
     }
@@ -45,6 +46,10 @@ public class GamePausePanel : CommandMatrixPanel {
     #endregion
 
     new public void Show (Dictionary<CharEnum.InputSituation, CharEnum.Command> defaultCommandSettings) {
+        // btn interactable
+        backToMMBtn.SetInteractable (UserManager.CheckIsFirstMissionCleared ());
+        viewEnvBtn.SetInteractable (UserManager.GetIsAllowUserInput ());
+
         base.Show (defaultCommandSettings);
     }
 

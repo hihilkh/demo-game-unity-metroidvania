@@ -89,4 +89,13 @@ public class CharEnum {
         DropHitCharging = 1 << 8,
         DropHitting = 1 << 9,
     }
+
+    [Flags]
+    public enum UserControlTypes {
+        None = 0,
+        Action = 1 << 0,
+        Camera = 1 << 1,
+
+        All = Action + Camera,
+    }
 }

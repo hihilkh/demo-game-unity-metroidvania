@@ -2,6 +2,8 @@ LangName	English
 
 //Common
 Confirm	Confirm
+On	On
+Off	Off
 
 // ReadyGo
 Ready	Ready
@@ -13,7 +15,12 @@ PressToStart	Press to Start
 // Settings Panel
 SettingsPanel_Title	Settings
 SettingsPanel_LangTitle	Language
+SettingsPanel_BGMTitle	BGM
+SettingsPanel_SFXTitle	Sound Effect
 SettingsPanel_Apply	Apply Settings
+SettingsPanel_ViewCredits	View Credits
+SettingsPanel_CreditsTitle	Credits
+SettingsPanel_CreditsContent	<b>Background Music :</b><br><color #00ffff>Wanderlust</color> by Scott Buckley | www.scottbuckley.com.au<br>Music promoted by https://www.chosic.com<br>Attribution 4.0 International (CC BY 4.0)<br>https://creativecommons.org/licenses/by/4.0/<br><br><color #00ffff>The Epic 2</color> by Rafael Krux<br>Link: https://filmmusic.io/song/5384-the-epic-2-<br>License: http://creativecommons.org/licenses/by/4.0/<br>Music promoted on https://www.chosic.com<br><br><b>Sound Effects :</b><br>https://taira-komori.jpn.org/freesound.html<br>https://taira-komori.jpn.org/freesoundtw.html
 
 // MainMenu
 SelectArea	Select an Area
@@ -52,6 +59,8 @@ CommandPanel_Title	Set Commands
 GamePausePanel_Title	Pause
 BackToMM	Back to Main Menu
 Restart	Restart
+ViewEnv	View Environment
+ViewEnvInstruction	Drag the left side of the screen to look around the environment
 
 // Collectable related
 YouGot	You have got <color #00ffff>{0}</color>.

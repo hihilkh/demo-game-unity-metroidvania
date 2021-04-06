@@ -49,9 +49,9 @@ MonoBehaviour:
   _targetArrowMaxInitShootGradient: 1.7
   _targetArrowMaxTargetDistanceSquare: 225
   _tripleArrowShootingAngleList:
+  - 20
   - 30
   - 40
-  - 50
   _repelFromWallDistByTurn: 0.05
   _hpUpMagnitude: 20
   _powerUpMagnitude: 10

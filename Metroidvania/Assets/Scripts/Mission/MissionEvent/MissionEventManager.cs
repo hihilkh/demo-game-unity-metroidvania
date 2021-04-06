@@ -10,6 +10,7 @@ public class MissionEventManager : MonoBehaviour {
     [SerializeField] private MapManager mapManager;
     [SerializeField] private TutorialFinger tutorialFinger;
     [SerializeField] private CommandPanel commandPanel;
+    [SerializeField] private AudioSource burnTreeAudioSurce;
 
     public static MissionEvent CurrentMissionEvent { get; private set; } = null;
     public static SubEventBase CurrentMissionSubEvent { get; private set; } = null;
@@ -26,7 +27,6 @@ public class MissionEventManager : MonoBehaviour {
     #region All Events
 
     private const int BossMapSwitchId = 11;
-    private const int BurnTreeSwitchId = 12;
 
     private static readonly List<MissionEvent> AllMissionEvents = new List<MissionEvent> () {
         new MissionEvent (
@@ -185,7 +185,7 @@ public class MissionEventManager : MonoBehaviour {
             MissionEventEnum.SpecialSceneType.BurnTree,
             new ChangeSubSpecialSceneSubEvent (),
             new WaitSubEvent (1f),
-            new MapSwitchSubEvent (BurnTreeSwitchId)
+            new BurnTreeSubEvent ()
         ),
 
         new SpecialSceneEvent (
@@ -311,7 +311,7 @@ public class MissionEventManager : MonoBehaviour {
         Action reallyStartEventAction = () => {
             Log.Print ("Really start Mission Event : EventType = " + eventType, LogTypes.MissionEvent);
 
-            Time.timeScale = 0;
+            GameUtils.StopTime ();
 
             if (missionEvent.IsNeedToStopChar) {
                 charModel.CancelStopChar ();
@@ -320,7 +320,7 @@ public class MissionEventManager : MonoBehaviour {
             Action onEventFinished = () => {
                 CurrentMissionEvent = null;
 
-                Time.timeScale = 1;
+                GameUtils.ResumeTime ();
 
                 // If it is from collectable, set mission event done together with UserManager.CollectCollectable ()
                 if (!isFromCollectable) {
@@ -556,7 +556,7 @@ public class MissionEventManager : MonoBehaviour {
             }
 
             var charModel = GameUtils.FindOrSpawnChar ();
-            charModel.SetAllowUserControl (true, false, true);
+            charModel.SetAllowUserControl (true, CharEnum.UserControlTypes.All, true);
             charModel.SetCommandInputMissionEvent (subEvent, onInputFinished);
         };
 
@@ -568,13 +568,17 @@ public class MissionEventManager : MonoBehaviour {
     }
 
     private void StartMapSwitchSubEvent (MapSwitchSubEvent subEvent, Action onFinished = null) {
+        if (subEvent is BurnTreeSubEvent) {
+            burnTreeAudioSurce.Play ();
+        }
+
         mapManager.SwitchOnMapSwitch (subEvent, onFinished);
     }
 
     private IEnumerator StartWaitSubEvent (WaitSubEvent subEvent, Action onFinished = null) {
         var charModel = GameUtils.FindOrSpawnChar ();
         charModel.SetAllowUserControl (false);
-        Time.timeScale = 1;
+        GameUtils.ResumeTime ();
 
         yield return new WaitForSeconds (subEvent.WaitTime);
 
@@ -583,7 +587,7 @@ public class MissionEventManager : MonoBehaviour {
             charModel.SetAllowUserControl (true);
 
             // Only set time scale to 0 for MissionEvent (but not SpecialSceneEvent)
-            Time.timeScale = 0;
+            GameUtils.StopTime ();
         }
 
         onFinished?.Invoke ();

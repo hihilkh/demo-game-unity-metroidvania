@@ -18,11 +18,15 @@ public class GameSceneUIManager : MonoBehaviour {
     }
 
     [SerializeField] private GameObject uiBase;
-    [SerializeField] private HIHIButton pauseBtn;
+    [SerializeField] private HihiButton pauseBtn;
     [SerializeField] private GameObject clickOnScreenBtnObject;
     [SerializeField] private PanelControl collectedPanelControl;
     [SerializeField] private PanelControl notePanelControl;
     [SerializeField] private PanelControl dialogPanelControl;
+
+    [Header ("View Env Panel")]
+    [SerializeField] private GameObject viewEnvPanel;
+    [SerializeField] private TextMeshProUGUI viewEnvInstructionBtnText;
 
     [Header("Dialog Panel")]
     [SerializeField] private Transform dialogLeftSideBaseTransform;
@@ -53,6 +57,10 @@ public class GameSceneUIManager : MonoBehaviour {
         MissionEventManager.SpecialSceneEventFinished += SpecialSceneEventFinishedHandler;
     }
 
+    private void Start () {
+        SetTexts ();
+    }
+
     private void OnDestroy () {
         UIEventManager.RemoveEventHandler (BtnOnClickType.Game_ClickOnScreen, ClickOnScreenBtnClickedHandler);
         MissionEventManager.MissionEventStarted -= MissionEventStartedHandler;
@@ -76,6 +84,28 @@ public class GameSceneUIManager : MonoBehaviour {
     private bool GetUIInteractable () {
         return pauseBtn.interactable;
     }
+
+    private void SetTexts () {
+        var localizedTextDetailsList = new List<LocalizedTextDetails> ();
+        localizedTextDetailsList.Add (new LocalizedTextDetails (viewEnvInstructionBtnText, "ViewEnvInstruction"));
+        LangManager.SetTexts (localizedTextDetailsList);
+
+        GameUtils.AddBlackOutline (viewEnvInstructionBtnText);
+    }
+
+    #region View Env Panel
+
+    public void ShowViewEnvPanel () {
+        viewEnvPanel.SetActive (true);
+        pauseBtn.gameObject.SetActive (false);
+    }
+
+    public void HideViewEnvPanel () {
+        viewEnvPanel.SetActive (false);
+        pauseBtn.gameObject.SetActive (true);
+    }
+
+    #endregion
 
     #region General Panel Control
 
@@ -286,10 +316,13 @@ public class GameSceneUIManager : MonoBehaviour {
 
     #region Event Handler
 
-    private void ClickOnScreenBtnClickedHandler (HIHIButton sender) {
+    private void ClickOnScreenBtnClickedHandler (HihiButton sender) {
         if (!isAllowPanelClick) {
             return;
         }
+
+        // Trigger SFX here instead of inside HihiButton to prevent playing SFX while isAllowPanelClick = false
+        AudioManager.Instance.PlayDynamicSFX (AudioEnum.DynamicSfxType.ConfirmBtn);
 
         if (hasShownAllTexts) {
             HidePanel (currentShowingPanel);

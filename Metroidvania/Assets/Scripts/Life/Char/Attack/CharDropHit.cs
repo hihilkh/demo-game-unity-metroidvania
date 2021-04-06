@@ -8,6 +8,7 @@ public class CharDropHit : CharHitBase {
         base.StartAttack (refPoint, direction, charHorizontalSpeed, isPlayerAttack, additionalDP);
 
         FrameworkUtils.InsertChildrenToParent (refPoint, gameObject, false, false, -1, false);
+
         AttackTrigger.HitDropHitSwitch += HitDropHitSwitch;
     }
 

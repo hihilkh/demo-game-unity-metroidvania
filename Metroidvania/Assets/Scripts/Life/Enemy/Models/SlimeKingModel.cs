@@ -7,6 +7,8 @@ public class SlimeKingModel : EnemyModelBase {
     public override EnemyEnum.EnemyType EnemyType => EnemyEnum.EnemyType.SlimeKing;
     public override EnemyEnum.MovementType MovementType => EnemyEnum.MovementType.Walking;
 
+    private Coroutine keepFacingToCharCoroutine = null;
+
     public SlimeKingParams GetParams () {
         if (Params is SlimeKingParams) {
             return (SlimeKingParams)Params;
@@ -39,6 +41,34 @@ public class SlimeKingModel : EnemyModelBase {
         IsJustBeforeJumpedUp = true;
         SetAnimatorTrigger (EnemyAnimConstant.AttackTriggerName);
 
+        if (keepFacingToCharCoroutine == null) {
+            keepFacingToCharCoroutine = StartCoroutine (KeepFacingToChar ());
+        }
+
         return true;
+    }
+
+    private IEnumerator KeepFacingToChar () {
+        while (true) {
+            yield return null;
+            FacingDirection = GetChasingCharHorizontalDirection ();
+        }
+    }
+
+    private void StopKeepFacingToChar () {
+        if (keepFacingToCharCoroutine != null) {
+            StopCoroutine (keepFacingToCharCoroutine);
+            keepFacingToCharCoroutine = null;
+        }
+    }
+
+    public void AttackStarted () {
+        StopKeepFacingToChar ();
+    }
+
+    protected override void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection) {
+        base.StartBeatingBack (hurtDirection);
+
+        StopKeepFacingToChar ();
     }
 }

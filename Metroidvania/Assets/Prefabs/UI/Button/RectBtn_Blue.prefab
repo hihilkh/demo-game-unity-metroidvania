@@ -120,6 +120,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onClickType: 0
+  clickSoundType: 1
 --- !u!1 &7589426753805121841
 GameObject:
   m_ObjectHideFlags: 0

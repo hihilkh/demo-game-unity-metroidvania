@@ -23,11 +23,15 @@ public class EnemyAttackSMB : EnemySMBBase {
                     isHandleStateUpdate = false;
 
                     if (animator.GetNextAnimatorClipInfo (0).Length == 0) {
-                        var velocity = ((SlimeKingModel)AnimUtils.Model).GetParams ().AttackJumpInitVelocity;
+                        var slimeKingModel = (SlimeKingModel)AnimUtils.Model;
+                        slimeKingModel.AttackStarted ();
+                        var velocity = slimeKingModel.GetParams ().AttackJumpInitVelocity;
                         if (AnimUtils.Model.FacingDirection == LifeEnum.HorizontalDirection.Left) {
                             velocity = Vector2.Scale (velocity, new Vector2 (-1, 1));
                         }
                         AnimUtils.RB.velocity = velocity;
+
+                        AnimUtils.Model.AudioUtils.PlayJumpSfx ();
                     }
                 }
                 break;

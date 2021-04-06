@@ -9,10 +9,9 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     [SerializeField] private EnemyParams _params;
     public EnemyParams Params => _params;
-    [SerializeField] private Animator animator;
-    [SerializeField] private EnemyAnimSMBUtils animUtils;
-    [SerializeField] private Transform targetRefPoint;
-    [SerializeField] private EnemyCharDetection charDetection;
+
+    private EnemyModelBaseRef refScript;
+    public EnemyAudioUtils AudioUtils => refScript.AudioUtils;
 
     /// <summary>
     /// Input :<br />
@@ -113,6 +112,15 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     #region Initialization related
 
+    protected override void Awake () {
+        base.Awake ();
+
+        refScript = GetComponent<EnemyModelBaseRef> ();
+        if (refScript == null) {
+            Log.PrintError (gameObject.name + " : Cannot get EnemyModelBaseRef component. Please check.", LogTypes.Enemy);
+        }
+    }
+
     private void Start () {
         if (SceneManager.GetActiveScene ().name == GameVariable.MapEditorSceneName ||
             SceneManager.GetActiveScene ().name == GameVariable.SandboxSceneName) {
@@ -143,11 +151,11 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
             this.Id = id;
             
             if (Params.IsDetectChar) {
-                charDetection.CharDetected += CharDetectedHandler;
-                charDetection.CharLost += CharLostHandler;
-                charDetection.SetActive (true);
+                refScript.CharDetection.CharDetected += CharDetectedHandler;
+                refScript.CharDetection.CharLost += CharLostHandler;
+                refScript.CharDetection.SetActive (true);
             } else {
-                charDetection.SetActive (false);
+                refScript.CharDetection.SetActive (false);
             }
         }
 
@@ -163,8 +171,8 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
         if (IsInitialized) {
             if (Params.IsDetectChar) {
-                charDetection.CharDetected -= CharDetectedHandler;
-                charDetection.CharLost -= CharLostHandler;
+                refScript.CharDetection.CharDetected -= CharDetectedHandler;
+                refScript.CharDetection.CharLost -= CharLostHandler;
             }
         }
     }
@@ -288,12 +296,12 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
 
     protected void SetAnimatorTrigger (string triggerName) {
         Log.PrintDebug (gameObject.name + " : SetAnimatorTrigger : " + triggerName, LogTypes.Enemy | LogTypes.Animation);
-        animator.SetTrigger (triggerName);
+        refScript.Animator.SetTrigger (triggerName);
     }
 
     protected void SetAnimatorBool (string boolName, bool value) {
         Log.PrintDebug (gameObject.name + " : SetAnimatorBool : " + boolName + " ; Value : " + value, LogTypes.Enemy | LogTypes.Animation);
-        animator.SetBool (boolName, value);
+        refScript.Animator.SetBool (boolName, value);
     }
 
     #endregion
@@ -316,6 +324,11 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     }
 
     protected override void StartBeatingBack (LifeEnum.HorizontalDirection hurtDirection) {
+        // Play beak back SFX even the enemy do not have beatback action
+        if (!IsDying) {
+            AudioUtils.PlayBeatBackSfx ();
+        }
+
         if (Params.BeatBackInitSpeed <= 0) {
             return;
         }
@@ -611,7 +624,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
                         }
 
                         if (IsBeatingBack) {
-                            if (animUtils.RB.velocity.y > GameVariable.EpsilonForPhysicsChecking) {
+                            if (refScript.AnimUtils.RB.velocity.y > GameVariable.EpsilonForPhysicsChecking) {
                                 Log.PrintWarning (gameObject.name + " : The walking movement type enemy is trying to move away from the ground due to beating back, so do not do any touch ground action.", LogTypes.Enemy | LogTypes.Collision);
                             } else {
                                 StopBeatingBack ();
@@ -642,7 +655,7 @@ public abstract class EnemyModelBase : LifeBase , IMapTarget {
     #region IMapTarget
 
     public Vector2 GetTargetPos () {
-        return targetRefPoint.position;
+        return refScript.TargetRefPoint.position;
     }
 
     #endregion

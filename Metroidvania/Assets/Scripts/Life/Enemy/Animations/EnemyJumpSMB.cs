@@ -22,6 +22,8 @@ public class EnemyJumpSMB : EnemySMBBase {
                         velocity = Vector2.Scale (velocity, new Vector2 (-1, 1));
                     }
                     AnimUtils.RB.velocity = velocity;
+
+                    AnimUtils.Model.AudioUtils.PlayJumpSfx ();
                 }
             }
         }

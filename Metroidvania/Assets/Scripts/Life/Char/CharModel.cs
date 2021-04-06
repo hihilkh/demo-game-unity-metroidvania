@@ -40,6 +40,8 @@ public class CharModel : LifeBase, IMapTarget {
     [SerializeField] private CharCameraModel cameraModel;
     [SerializeField] private Transform targetRefPoint;
     [SerializeField] private Transform collectCollectableRefPoint;
+    [SerializeField] private CharAudioUtils _audioUtils;
+    public CharAudioUtils AudioUtils => _audioUtils;
 
     // static event
     public static event Action<CharEnum.CharType> Died;
@@ -393,7 +395,7 @@ public class CharModel : LifeBase, IMapTarget {
         MovingDirection = FacingDirection;
     }
 
-    public void SetAllowMove (bool isAllowMove) {
+    public void SetAllowMove (bool isAllowMove, bool isSetFreeFallIfJustJumpedUp = false) {
         this.isAllowMove = isAllowMove;
 
         SetAllowUserControl (isAllowMove);
@@ -409,7 +411,12 @@ public class CharModel : LifeBase, IMapTarget {
                 StartFreeFall ();
                 break;
             case LifeEnum.Location.Ground:
-                StartIdleOrWalk ();
+                if (isJustJumpedUp && isSetFreeFallIfJustJumpedUp) {
+                    Log.Print ("SetAllowMove : Just jumped up. Trigger free fall instead of idle or walk", LogTypes.Char | LogTypes.Animation);
+                    StartFreeFall ();
+                } else {
+                    StartIdleOrWalk ();
+                }
                 break;
         }
 
@@ -1088,6 +1095,7 @@ public class CharModel : LifeBase, IMapTarget {
         }
 
         SetStatuses (CharEnum.Statuses.Dashing, false);
+
         CurrentHorizontalSpeed = speedAfterStopDashing;
         if (isNeedToChangeMovementAnim) {
             if (CurrentLocation == LifeEnum.Location.Ground) {
@@ -1479,7 +1487,7 @@ public class CharModel : LifeBase, IMapTarget {
         isJustBeatingBack = true;
 
         BreakInProgressAction (false, false);
-        SetAllowUserControl (false, true);
+        SetAllowUserControl (false, CharEnum.UserControlTypes.Action);
 
         // If dying, dominated by die animation
         if (!IsDying) {
@@ -1491,6 +1499,8 @@ public class CharModel : LifeBase, IMapTarget {
 
                 SetAnimatorTrigger (CharAnimConstant.BeatBackTriggerName);
             }
+
+            AudioUtils.PlayBeatBackSfx ();
         }
 
 
@@ -1500,7 +1510,7 @@ public class CharModel : LifeBase, IMapTarget {
     protected override void StopBeatingBack () {
         base.StopBeatingBack ();
 
-        SetAllowUserControl (true, true);
+        SetAllowUserControl (true, CharEnum.UserControlTypes.Action);
     }
 
     protected override void StartInvincible () {
@@ -1846,7 +1856,7 @@ public class CharModel : LifeBase, IMapTarget {
 
     #region Controller
 
-    public void SetAllowUserControl (bool isAllow, bool isOnlyActionInput = false, bool isForceAllow = false) {
+    public void SetAllowUserControl (bool isAllow, CharEnum.UserControlTypes userControlTypes = CharEnum.UserControlTypes.All, bool isForceAllow = false) {
         if (CharType != CharEnum.CharType.Player) {
             return;
         }
@@ -1862,12 +1872,13 @@ public class CharModel : LifeBase, IMapTarget {
             }
         }
 
-        if (isOnlyActionInput) {
+        if ((userControlTypes & CharEnum.UserControlTypes.Action) == CharEnum.UserControlTypes.Action) {
             controller?.SetCharActionInputActive (isReallyAllow);
-        } else {
-            controller?.SetAllInputActive (isReallyAllow);
         }
 
+        if ((userControlTypes & CharEnum.UserControlTypes.Camera) == CharEnum.UserControlTypes.Camera) {
+            controller?.SetCameraMovementInputActive (isReallyAllow);
+        }
     }
 
     private void TappedHandler () {
@@ -1904,23 +1915,26 @@ public class CharModel : LifeBase, IMapTarget {
     #region Changing Scene
 
     private void SingleSceneChangingHandler (string fromSceneName, string toSceneName) {
+        // Detach from char to prevent audio listener stopped while char set to inactive
+        cameraModel?.DetachFromCharAndSetPos (Vector2.zero);
+
         // Do not show char if not specifically set active
         // Also, to ensure the collision stuff keep correct
         SetActive (false);
-
-        // Prevent multi audio listener issue
-        cameraModel?.SetAudioListener (false);
     }
 
     private void SingleSceneChangedHandler (string currentSceneName) {
         if (currentSceneName == GameVariable.GameSceneName || currentSceneName == GameVariable.LandingSceneName) {
             SetActive (true);
-            cameraModel?.SetAudioListener (true);
+            cameraModel?.AttachBackToChar ();
+        } else {
+            // Delay 1 frame to attach back camera to prevent no audio listener issue
+            FrameworkUtils.Instance.Wait (null, AttachBackCamera);
         }
     }
 
-
     #endregion
+
     #region Mission Event
 
     /// <summary>
@@ -1942,7 +1956,7 @@ public class CharModel : LifeBase, IMapTarget {
         Log.Print ("StopChar", LogTypes.Char);
 
         BreakInProgressAction (false, false);
-        SetAllowMove (false);
+        SetAllowMove (false, true);
 
         switch (CurrentLocation) {
             case LifeEnum.Location.Air:
@@ -1950,7 +1964,7 @@ public class CharModel : LifeBase, IMapTarget {
                 break;
             case LifeEnum.Location.Ground:
             default:
-                isWaitingLandingToStopChar = false;
+                isWaitingLandingToStopChar = isJustJumpedUp;
                 break;
         }
 

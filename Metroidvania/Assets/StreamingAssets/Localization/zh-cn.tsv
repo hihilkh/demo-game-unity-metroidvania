@@ -2,6 +2,8 @@ LangName	简体中文
 
 //Common
 Confirm	确定
+On	开
+Off	关
 
 // ReadyGo
 Ready	预备
@@ -13,12 +15,17 @@ PressToStart	按一下开始
 // Settings Panel
 SettingsPanel_Title	设定
 SettingsPanel_LangTitle	语言
+SettingsPanel_BGMTitle	背景音乐
+SettingsPanel_SFXTitle	音效
 SettingsPanel_Apply	套用设定
+SettingsPanel_ViewCredits	鸣谢
+SettingsPanel_CreditsTitle	鸣谢
+SettingsPanel_CreditsContent	<b>背景音乐：</b><br><color #00ffff>Wanderlust</color> by Scott Buckley | www.scottbuckley.com.au<br>Music promoted by https://www.chosic.com<br>Attribution 4.0 International (CC BY 4.0)<br>https://creativecommons.org/licenses/by/4.0/<br><br><color #00ffff>The Epic 2</color> by Rafael Krux<br>Link: https://filmmusic.io/song/5384-the-epic-2-<br>License: http://creativecommons.org/licenses/by/4.0/<br>Music promoted on https://www.chosic.com<br><br><b>音效：</b><br>https://taira-komori.jpn.org/freesound.html<br>https://taira-komori.jpn.org/freesoundtw.html
 
 // MainMenu
 SelectArea	选择地区
-ProgressDone	已完成 :
-SelectEntry	开始地点 :
+ProgressDone	已完成：
+SelectEntry	开始地点：
 UnknownText	? ? ?
 NotePanelTitle	冒险者游记
 
@@ -52,6 +59,8 @@ CommandPanel_Title	设定技能
 GamePausePanel_Title	暂停
 BackToMM	回到主选单
 Restart	重新开始
+ViewEnv	观察环境
+ViewEnvInstruction	拖曳画面的左边以观察环境
 
 // Collectable related
 YouGot	获得了 <color #00ffff>{0}</color> 。

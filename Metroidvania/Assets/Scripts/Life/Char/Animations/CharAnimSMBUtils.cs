@@ -271,24 +271,40 @@ public class CharAnimSMBUtils : MonoBehaviour {
 
     #region Particle System
 
-    public void SetThrusterPS (bool isOn) {
+    public void SetThruster (bool isOn) {
         foreach (var ps in thrusterPSList) {
             ps.gameObject.SetActive (isOn);
         }
+
+        if (isOn) {
+            Model.AudioUtils.PlayDashSfx ();
+        } else {
+            Model.AudioUtils.StopDashSfx ();
+        }
     }
 
-    private void SetJumpChargePS (bool isOn) {
+    private void SetJumpCharge (bool isOn) {
         jumpChargePS.gameObject.SetActive (isOn);
+        if (isOn) {
+            Model.AudioUtils.PlayJumpChargingSfx ();
+        } else {
+            Model.AudioUtils.StopJumpChargingSfx ();
+        }
     }
 
-    private void SetDropHitChargePS (bool isOn) {
+    private void SetDropHitCharge (bool isOn) {
         dropHitChargePS.gameObject.SetActive (isOn);
+        if (isOn) {
+            Model.AudioUtils.PlayDropHitChargingSfx ();
+        } else {
+            Model.AudioUtils.StopDropHitChargingSfx ();
+        }
     }
 
     private void UpdatePS () {
-        SetThrusterPS (Model.GetIsInStatuses (CharEnum.Statuses.Dashing));
-        SetJumpChargePS (Model.GetIsInStatuses (CharEnum.Statuses.JumpCharging));
-        SetDropHitChargePS (Model.GetIsInStatuses (CharEnum.Statuses.DropHitCharging));
+        SetThruster (Model.GetIsInStatuses (CharEnum.Statuses.Dashing));
+        SetJumpCharge (Model.GetIsInStatuses (CharEnum.Statuses.JumpCharging));
+        SetDropHitCharge (Model.GetIsInStatuses (CharEnum.Statuses.DropHitCharging));
     }
     #endregion
 

@@ -17,6 +17,6 @@ public class CharChargedHit : CharHitBase {
 
         RB.velocity = new Vector3 (velocity, 0, 0);
 
-        StartCoroutine (PSNotAliveDestroyCoroutine ());
+        DestroySelf (true, true);
     }
 }
