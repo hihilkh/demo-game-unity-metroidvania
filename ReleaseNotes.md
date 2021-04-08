@@ -3,6 +3,7 @@
 ## 1.0.1
 
 * Added audios (background music and sound effects).
+* Added view environment feature in pause menu within missions.
 * Adjust difficulty.
 * Bug fix and enhancement of known issues.
 
