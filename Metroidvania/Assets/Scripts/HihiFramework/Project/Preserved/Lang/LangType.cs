@@ -3,4 +3,5 @@ public enum LangType {
     TraditionalChinese = 0,
     English = 1,
     SimplifiedChinese = 2,
+    Japanese = 3,
 }
