@@ -34,7 +34,7 @@ Tony Lam
 
 # Latest Version
 
-* Version : 1.0.1
-* Tag : v1.0.1
-* [Download APK](https://drive.google.com/file/d/1LZWuNwGWp4ZS66Y2K0BdFdZVpvHpiPb-)
+* Version : 1.0.2
+* Tag : v1.0.2
+* [Download APK](https://drive.google.com/file/d/1C7zcS4Ua7hN784H1DKBo1xtzj1f6kqHX)
 * [Release Notes](./ReleaseNotes.md)
