@@ -31,8 +31,8 @@ NotePanelTitle	冒險者遊記
 
 // Mission Name
 Mission_1	洞穴入口
-Mission_2	走下去
-Mission_3	第二層
+Mission_2	往下走
+Mission_3	地下二層
 Mission_4	大空洞
 Mission_5	洞穴深處
 
@@ -161,7 +161,7 @@ Event_Opening1_0	前面有個洞穴，去看看吧。
 
 Event_FirstTimeCommandPanel_0	在冒險開始前，你可以設定你的技能。
 Event_FirstTimeCommandPanel_1	你可以<color #00ffff>拖曳指令到下方</color>來設定技能，
-Event_FirstTimeCommandPanel_2	你也可以<color #00ffff>按下已設定的技能</color>，然後<color #00ffff>按下取消鍵</color>來取下技能。
+Event_FirstTimeCommandPanel_2	你也可以<color #00ffff>按下已設定的技能，然後按下取消鍵</color>來取下技能。
 Event_FirstTimeCommandPanel_3	在冒險當中，你可能會想重新設定技能。
 Event_FirstTimeCommandPanel_4	你可以按下暫停頁面的重新開始鍵來重新開始冒險和設定技能。
 Event_FirstTimeCommandPanel_5	但要注意一旦重新開始，已收集的物品以外的所有進度也會重置。
@@ -180,7 +180,7 @@ Ending1_Dialog2_1	只是有一日，你跟我說你想離開這裡看看這個�
 Ending1_Dialog3_0	...縱然你我都知道有關這個洞穴的傳說。
 Ending1_Dialog3_1	誰想離開這個洞穴，他就會失去一切，包括記憶，
 Ending1_Dialog3_2	而當失去了記憶，當然就會走回這個就在旁邊的洞穴...
-Ending1_Dialog4_0	那麼我以後都要在這裡，像沒有過去一般的活著？
+Ending1_Dialog4_0	那麼我以後都要在這裡，沒有過去的記憶地活著？
 Ending1_Dialog5_0	不用擔心，你的記憶會慢慢回來的。
 Ending1_Dialog5_1	而且如果你想再次離開的話，這次你也不會再失去任何東西...
 Ending1_Dialog5_2	...除了想走出去的意志之外。

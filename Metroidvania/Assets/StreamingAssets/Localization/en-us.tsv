@@ -18,7 +18,7 @@ SettingsPanel_LangTitle	Language
 SettingsPanel_BGMTitle	BGM
 SettingsPanel_SFXTitle	Sound Effect
 SettingsPanel_Apply	Apply Settings
-SettingsPanel_ViewCredits	View Credits
+SettingsPanel_ViewCredits	Credits
 SettingsPanel_CreditsTitle	Credits
 SettingsPanel_CreditsContent	<b>Background Music :</b><br><color #00ffff>Wanderlust</color> by Scott Buckley | www.scottbuckley.com.au<br>Music promoted by https://www.chosic.com<br>Attribution 4.0 International (CC BY 4.0)<br>https://creativecommons.org/licenses/by/4.0/<br><br><color #00ffff>The Epic 2</color> by Rafael Krux<br>Link: https://filmmusic.io/song/5384-the-epic-2-<br>License: http://creativecommons.org/licenses/by/4.0/<br>Music promoted on https://www.chosic.com<br><br><b>Sound Effects :</b><br>https://taira-komori.jpn.org/freesound.html<br>https://taira-komori.jpn.org/freesoundtw.html
 
@@ -32,7 +32,7 @@ NotePanelTitle	Adventurer's Notes
 // Mission Name
 Mission_1	Cave Entry
 Mission_2	Go Down
-Mission_3	Level 2
+Mission_3	Underground Floor 2
 Mission_4	Large Cavity
 Mission_5	Deep in the Cave
 
@@ -125,15 +125,15 @@ Event_AirJump_Instruction1_0	<color #00ffff>While you are in air, tap the right 
 
 Event_WallAction_Instruction0_0	When you touch the wall while in air, you will slide down from the wall slowly.
 Event_WallAction_Instruction0_1	You can perform <b>In Air</b> action while you are sliding on the wall.
-Event_WallAction_Instruction0_2	Let's try it. First, <color #00ffff>perform the Charged Jump</color> action.
+Event_WallAction_Instruction0_2	Let's try it. First, <color #00ffff>perform the Charged Jump</color>.
 Event_WallAction_Instruction1_0	Now you are sliding on the wall and you can perform <b>In Air</b> action.
-Event_WallAction_Instruction1_1	<color #00ffff>Perform the Air Jump</color> action.
-Event_WallAction_Instruction2_0	<color #00ffff>Perform the Air Jump</color> action repeatedly to overcome this huge wall!
+Event_WallAction_Instruction1_1	<color #00ffff>Perform the Air Jump</color>.
+Event_WallAction_Instruction2_0	<color #00ffff>Perform the Air Jump</color> repeatedly to overcome this huge wall!
 
 Event_AirFinishingHit_0	This enemy is flying. I would need to hit in air in order to beat it.
 Event_AirFinishingHit_Panel_0	Drag the <b>Hit</b> command to below to activate it.
-Event_AirFinishingHit_Instruction0_0	First, <color #00ffff>perform the Charged Jump</color> action.
-Event_AirFinishingHit_Instruction1_0	Then, <color #00ffff>Hold the tap of the right side of the screen and then Release</color> to perform the <b>Finishing Hit</b> action you just activated.
+Event_AirFinishingHit_Instruction0_0	First, <color #00ffff>perform the Charged Jump</color>.
+Event_AirFinishingHit_Instruction1_0	Then, <color #00ffff>Hold the tap of the right side of the screen and then Release</color> to perform the <b>Finishing Hit</b> you just activated.
 
 Event_CameraMovement_0	This valley seems so deep. Let's have a look.
 Event_CameraMovement_Instruction0_0	<color #00ffff>Drag the left side of the screen from up to down</color> to look down.
@@ -161,7 +161,7 @@ Event_Opening1_0	There is a cave ahead. Let's have a look.
 
 Event_FirstTimeCommandPanel_0	Before starting your adventure, you can set your commands.
 Event_FirstTimeCommandPanel_1	You can <color #00ffff>drag a command to below</color> to assign it to an action.
-Event_FirstTimeCommandPanel_2	You can also <color #00ffff>click on an assigned action</color> and <color #00ffff>press the cross button</color> to remove the command.
+Event_FirstTimeCommandPanel_2	You can also <color #00ffff>click on an assigned action and press the cross button</color> to remove the command.
 Event_FirstTimeCommandPanel_3	During your adventure, you may want to reassign your commands.
 Event_FirstTimeCommandPanel_4	You can press the restart button in pause menu to restart the adventure and reassign your commands.
 Event_FirstTimeCommandPanel_5	But note that if you restart the adventure, all the progress except the collected items would also be reset.
@@ -188,10 +188,10 @@ Ending1_Dialog5_3	After all, yes you're right. You have to live here forever.
 Ending1_Dialog6_0	......
 
 Ending2_Dialog0_0	Congratulations.
-Ending2_Dialog1_0	The cave is collapsed...
+Ending2_Dialog1_0	The cave has collapsed...
 Ending2_Dialog2_0	I will not forget you.
 
-Ending2_NoBoss_Dialog0_0	Oh, the cave is collapsed.
+Ending2_NoBoss_Dialog0_0	Oh, the cave has collapsed.
 Ending2_NoBoss_Dialog0_1	Turn out I still do not remember anything...
 Ending2_NoBoss_Dialog1_0	Anyway, let's see how it goes.
 

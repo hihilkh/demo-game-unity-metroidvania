@@ -1,218 +1,218 @@
 LangName	日本語
 
 //Common
-Confirm	Confirm
-On	On
-Off	Off
+Confirm	確認
+On	オン
+Off	オフ
 
 // ReadyGo
-Ready	Ready
-Go	Go
+Ready	準備
+Go	スタート
 
 // Landing
-PressToStart	Press to Start
+PressToStart	押して開始
 
 // Settings Panel
-SettingsPanel_Title	Settings
-SettingsPanel_LangTitle	Language
-SettingsPanel_BGMTitle	BGM
-SettingsPanel_SFXTitle	Sound Effect
-SettingsPanel_Apply	Apply Settings
-SettingsPanel_ViewCredits	View Credits
-SettingsPanel_CreditsTitle	Credits
-SettingsPanel_CreditsContent	<b>Background Music :</b><br><color #00ffff>Wanderlust</color> by Scott Buckley | www.scottbuckley.com.au<br>Music promoted by https://www.chosic.com<br>Attribution 4.0 International (CC BY 4.0)<br>https://creativecommons.org/licenses/by/4.0/<br><br><color #00ffff>The Epic 2</color> by Rafael Krux<br>Link: https://filmmusic.io/song/5384-the-epic-2-<br>License: http://creativecommons.org/licenses/by/4.0/<br>Music promoted on https://www.chosic.com<br><br><b>Sound Effects :</b><br>https://taira-komori.jpn.org/freesound.html<br>https://taira-komori.jpn.org/freesoundtw.html
+SettingsPanel_Title	設定
+SettingsPanel_LangTitle	言語
+SettingsPanel_BGMTitle	音楽
+SettingsPanel_SFXTitle	効果音
+SettingsPanel_Apply	設定を適用
+SettingsPanel_ViewCredits	クレジット
+SettingsPanel_CreditsTitle	クレジット
+SettingsPanel_CreditsContent	<b>音楽：</b><br><color #00ffff>Wanderlust</color> by Scott Buckley | www.scottbuckley.com.au<br>Music promoted by https://www.chosic.com<br>Attribution 4.0 International (CC BY 4.0)<br>https://creativecommons.org/licenses/by/4.0/<br><br><color #00ffff>The Epic 2</color> by Rafael Krux<br>Link: https://filmmusic.io/song/5384-the-epic-2-<br>License: http://creativecommons.org/licenses/by/4.0/<br>Music promoted on https://www.chosic.com<br><br><b>効果音：</b><br>https://taira-komori.jpn.org/freesound.html<br>https://taira-komori.jpn.org/freesoundtw.html
 
 // MainMenu
-SelectArea	Select an Area
-ProgressDone	Progress Done :
-SelectEntry	Start at :
+SelectArea	地域を選択
+ProgressDone	完了：
+SelectEntry	スタート地点：
 UnknownText	? ? ?
-NotePanelTitle	Adventurer's Notes
+NotePanelTitle	冒険者手帳
 
 // Mission Name
-Mission_1	Cave Entry
-Mission_2	Go Down
-Mission_3	Level 2
-Mission_4	Large Cavity
-Mission_5	Deep in the Cave
+Mission_1	洞窟入り口
+Mission_2	下へ行く
+Mission_3	地下二階
+Mission_4	大空洞
+Mission_5	洞窟奥深く
 
 // MapEntry
-Entry_1	Entry
-Entry_2	Entry
-Entry_3	Entry
-Entry_4	Entry
-Entry_5	Entry
-Entry_6	Hidden Entry
-Entry_7	Hidden Entry
+Entry_1	入り口
+Entry_2	入り口
+Entry_3	入り口
+Entry_4	入り口
+Entry_5	入り口
+Entry_6	隠れる入り口
+Entry_7	隠れる入り口
 
 // Command Matrix
-InAir	In Air
-OnGround	On Ground
-Tap	Tap
-Hold	Hold
-Release	Release
+InAir	空中
+OnGround	地上
+Tap	短押し
+Hold	長押し
+Release	離し
 
 // Command Panel
-CommandPanel_Title	Set Commands
+CommandPanel_Title	スキルを設定
 
 //Game Pause Panel
-GamePausePanel_Title	Pause
-BackToMM	Back to Main Menu
-Restart	Restart
-ViewEnv	View Environment
-ViewEnvInstruction	Drag the left side of the screen to look around the environment
+GamePausePanel_Title	一時停止
+BackToMM	メインメニューへ帰る
+Restart	リスタート
+ViewEnv	環境を観察する
+ViewEnvInstruction	左側の画面をドラッグして周りの環境を観察する
 
 // Collectable related
-YouGot	You have got <color #00ffff>{0}</color>.
+YouGot	<color #00ffff>{0}</color> を手に入れる。
 
-Command_Hit	Hands
-Command_Jump	Legs
-Command_Dash	Thrusters
-Command_Arrow	Bow and Arrow
-Command_Turn	Turn Command
+Command_Hit	両手
+Command_Jump	両足
+Command_Dash	推進器
+Command_Arrow	弓箭
+Command_Turn	振り向くスキル
 
-HP_Up	Life Up
-Power_Up	Power Up
-FireArrow	Fire Arrow
+HP_Up	ライフアップ
+Power_Up	力アップ
+FireArrow	火箭
 
-Note_1	Adventurer's Note 1
-Note_1_Content	This cave is really mystical. There's an entrance but I can never go out through it... How many years have I been trying to get out?<br>Maybe I should find another way out.
+Note_1	冒険者手帳 1
+Note_1_Content	この洞窟は本当に不思議だ。出入り口があるのにどうしても出られない...俺はここから去るのを試すのが何年に渡ったっけ？<br>他の方法を探してここから出た方がいいかも。
 
-Note_2	Adventurer's Note 2
-Note_2_Content	You have probably noticed that there're some sign boards in this cave. Yes, I made them.<br>While I was finding my way out, it occurred to me that somebody else may also finding their ways out. So I'm trying to share what I have discovered about this cave.<br>Please be aware of the sign boards during your adventure!
+Note_2	冒険者手帳 2
+Note_2_Content	多分君は色々な道しるべをこの洞窟に散らされているのを発見した。 俺がしたことだ。<br>ここから出る道を探しているところ、もしかして俺と同じで、出る道を探している他の人があると思いついた。それで、俺の発見を分かち合ってみた。<br>その道しるべをよく注意してください。
 
-Note_3	Adventurer's Note 3
-Note_3_Content	I could feel that there's a room behind this wall. However, I couldn't find any way to go inside and had to give up.<br>But then, I found that the entry of that room is in next level! Even I was born here, I didn't know there's such a way. Maybe there're more hidden entries somewhere else.
+Note_3	冒険者手帳 3
+Note_3_Content	この壁の奥は部屋がある気がした。でも、入る方法が見つからなくて、諦めたほかはない。<br>しかしその後、次の階で入り口を見つけた！この洞窟生まれなのに、そんな通路があるのはわからなかった。もっと多くの隠れる入り口があるかもしれない。
 
-Note_4	Adventurer's Note 4
-Note_4_Content	There're some switches and secret paths around this cave. Some of them can be triggered by just walk through it, and others need some tricks.<br>I remember that once I have gone into a room that look differently from anywhere else of this cave. That room is really weird.
+Note_4	冒険者手帳 4
+Note_4_Content	色々なスイッチと秘密の通路はこの洞窟であっている。その一部はただ歩いて通って触発されるが、他はコツが要る。<br>以前、ある部屋に入ることはあり、周りの見かけは他の地域に比べてよく違った。その部屋は非常に変だね。
 
-Note_5	Adventurer's Note 5
-Note_5_Content	I know there's a treasure in that large cavity, but it is so hard to touch the switch of the hidden room... I must have missed something.<br>Could it be a hidden entry? Um... Where else is connecting to this area?<br>My intuition tells me that I must get the treasure.
+Note_5	冒険者手帳 5
+Note_5_Content	大空洞で宝があるのは分かるんだけど、秘密の部屋のスイッチを近寄るのは難しすぎだ...何かを見落としたに違いない。<br>もしかして隠れる入り口があるか？うーん、ここを接続する地域はまたどこだか？<br>勘によると、その宝は重要だ。
 
-Note_6	Adventurer's Note 6
-Note_6_Content	Everything is ready. I defeat the guard. I have the fire. I can go out if I burn the tree away.<br>!@#$*)*&!@#$%^$%^(*&^()*&^@$#%^&*)
+Note_6	冒険者手帳 6
+Note_6_Content	全て準備してしまった。ガードも負かして、火も手に入れた。あの木を燃やせば出られる。<br>!@#$*)*&!@#$%^$%^(*&^()*&^@$#%^&*)
 
-Ending_1	Ending 1
-Ending_2	Ending 2
-Ending_3	Ending 3
+Ending_1	エンディング 1
+Ending_2	エンディング 2
+Ending_3	エンディング 3
 
 // Mission Events
-Event_Command_Hit_0	O, these are my hands... Why are they here?
-Event_Command_Hit_Panel_0	Drag the <b>Hit</b> command to below to activate it.
+Event_Command_Hit_0	えー？これは僕の両手だ...何故ここにあったか？
+Event_Command_Hit_Panel_0	<b>ヒット</b>スキルを下の方へドラッグしてアクティブになります。
 
-Event_Command_Jump_0	This enemy keeps my legs. How come?
-Event_Command_Jump_Panel_0	Drag the <b>Jump</b> command to below to activate it.
-Event_Command_Jump_Panel_Done_0	While you put the command to <b>Hold</b> action, it also change the <b>Release</b> action.
-Event_Command_Jump_Panel_Done_1	For some commands like <b>Jump</b>, if you want to trigger it by <b>Hold</b>, it must link to <b>Release</b> and perform a <b>Charged Jump</b>.
-Event_Command_Jump_Panel_Done_2	Some commands have seperated <b>Hold</b> and <b>Release</b> action. Try it yourself to discover more combinations!
-Event_Command_Jump_Instruction_0	<color #00ffff>Hold the tap of the right side of the screen and then Release</color> to perform the <b>Charged Jump</b> you just activated.
+Event_Command_Jump_0	この敵は僕の両足を持った。どうして？
+Event_Command_Jump_Panel_0	<b>ジャンプ</b>スキルを下の方へドラッグしてアクティブになります。
+Event_Command_Jump_Panel_Done_0	スキルを<b>長押し</b>アクションに置くに伴って、<b>離し</b>アクションも変わります。
+Event_Command_Jump_Panel_Done_1	幾つかのスキル、例えば、<b>ジャンプ</b>、これは<b>長押し</b>によって使用したいことには、<b>離し</b>と繋げて<b>溜まるジャンプ</b>を使わなければなりません。
+Event_Command_Jump_Panel_Done_2	他のスキルは分かれる<b>長押し</b>と<b>離し</b>アクションがあります。試してみて様々な組み合わせを見つけましょう！
+Event_Command_Jump_Instruction_0	<color #00ffff>右側の画面を長押してから離して</color>先ほどアクティブになった<b>溜まるジャンプ</b>を使います。
 
-Event_Command_Dash_0	My thrusters! I don't remember I have thrown them here.
-Event_Command_Dash_Panel_0	Drag the <b>Dash</b> command to below to activate it.
+Event_Command_Dash_0	僕の推進器だ！ここに落とさなかったと思うけど...
+Event_Command_Dash_Panel_0	<b>ダッシュ</b>スキルを下の方へドラッグしてアクティブになります。
 
-Event_FirstHit_0	There is an enemy. I can beat it!
-Event_FirstHit_Instruction0_0	<color #00ffff>Tap the right side of the screen</color> to perform the <b>Hit</b> you just activated.
-Event_FirstHit_Instruction1_0	Enemies will become invincible after being attacked. Continue to attack the enemies after their invincible period finished.
+Event_FirstHit_0	敵だ。これを倒せる自信がある！
+Event_FirstHit_Instruction0_0	<color #00ffff>右側の画面を短押して</color>先ほどアクティブになった<b>ヒット</b>を使います。
+Event_FirstHit_Instruction1_0	攻められた直後、敵は無敵になります。無敵時間が終わったら敵を攻め続けましょう。
 
-Event_TouchWallAndTurn_0	When you touch the wall, your will turn and move in the opposite direction.
-Event_TouchWallAndTurn_1	Attack the enemy at the right time so that you can walk away from it while its invincible period.
+Event_TouchWallAndTurn_0	壁に触れたら、振り向いて逆方向に行くことになります。
+Event_TouchWallAndTurn_1	無敵時間で敵に遠ざかるように時機を見て敵を攻めましょう。
 
-Event_AirJump_0	The wall is too high. I think I need to use the <b>In Air</b> action to overcome.
-Event_AirJump_Panel_0	Drag the <b>Jump</b> command to below to activate it.
-Event_AirJump_Instruction0_0	First, <color #00ffff>perform the Charged Jump</color>.
-Event_AirJump_Instruction1_0	<color #00ffff>While you are in air, tap the right side of the screen</color> to perform the <b>Air Jump</b> you just activated.
+Event_AirJump_0	この壁は高すぎだ。<b>空中</b>アクションを利用して乗り越えるのは必要だと思う。
+Event_AirJump_Panel_0	<b>ジャンプ</b>スキルを下の方へドラッグしてアクティブになります。
+Event_AirJump_Instruction0_0	まず、<color #00ffff>溜まるジャンプを使います</color>。
+Event_AirJump_Instruction1_0	<color #00ffff>空中になるうちに、右側の画面を短押して</color>先ほどアクティブになった<b>空中ジャンプ</b>を使います。
 
-Event_WallAction_Instruction0_0	When you touch the wall while in air, you will slide down from the wall slowly.
-Event_WallAction_Instruction0_1	You can perform <b>In Air</b> action while you are sliding on the wall.
-Event_WallAction_Instruction0_2	Let's try it. First, <color #00ffff>perform the Charged Jump</color> action.
-Event_WallAction_Instruction1_0	Now you are sliding on the wall and you can perform <b>In Air</b> action.
-Event_WallAction_Instruction1_1	<color #00ffff>Perform the Air Jump</color> action.
-Event_WallAction_Instruction2_0	<color #00ffff>Perform the Air Jump</color> action repeatedly to overcome this huge wall!
+Event_WallAction_Instruction0_0	空中で壁に触れたら、ゆっくり滑り落ちるになります。
+Event_WallAction_Instruction0_1	壁に滑り落ちている時、<b>空中</b>アクションが使えます。
+Event_WallAction_Instruction0_2	やてみましょう。まず、<color #00ffff>溜まるジャンプを使います</color>。
+Event_WallAction_Instruction1_0	君は今壁に滑り落ちています。<b>空中</b>アクションが使えます。
+Event_WallAction_Instruction1_1	<color #00ffff>空中ジャンプを使います</color>。
+Event_WallAction_Instruction2_0	この高い壁を乗り越えるまで<color #00ffff>空中ジャンプを使う</color>ことを繰り返します！
 
-Event_AirFinishingHit_0	This enemy is flying. I would need to hit in air in order to beat it.
-Event_AirFinishingHit_Panel_0	Drag the <b>Hit</b> command to below to activate it.
-Event_AirFinishingHit_Instruction0_0	First, <color #00ffff>perform the Charged Jump</color> action.
-Event_AirFinishingHit_Instruction1_0	Then, <color #00ffff>Hold the tap of the right side of the screen and then Release</color> to perform the <b>Finishing Hit</b> action you just activated.
+Event_AirFinishingHit_0	この敵が飛んでいる。これを倒すことには、空中で攻めなければいけない。
+Event_AirFinishingHit_Panel_0	<b>ヒット</b>スキルを下の方へドラッグしてアクティブになります。
+Event_AirFinishingHit_Instruction0_0	まず、<color #00ffff>溜まるジャンプを使います</color>。
+Event_AirFinishingHit_Instruction1_0	<color #00ffff>右側の画面を長押してから離して</color>先ほどアクティブになった<b>フィニッシュヒット</b>を使います。
 
-Event_CameraMovement_0	This valley seems so deep. Let's have a look.
-Event_CameraMovement_Instruction0_0	<color #00ffff>Drag the left side of the screen from up to down</color> to look down.
-Event_CameraMovement_Instruction1_0	You can also drag the left side of the screen to look at other directions.
-Event_CameraMovement_Instruction1_1	By looking around, you may know more about the environment and may have more time to react to it.
-Event_CameraMovement_Instruction1_2	You may also discover some unexpected stuff!
-Event_CameraMovement_ValleyTip_0	I cannot see the bottom even looking down... I must be careful not to fall down the valley.
+Event_CameraMovement_0	この谷は随分深そうだね。見てみよう。
+Event_CameraMovement_Instruction0_0	<color #00ffff>左側の画面を上から下までドラッグして</color>下へ見ます。
+Event_CameraMovement_Instruction1_0	左側の画面を他の方向へドラッグしてその方向へ見られます。
+Event_CameraMovement_Instruction1_1	周りを観察するのを通じて、ここの環境をもっとわかって環境を応じる反応時間も長くなります。
+Event_CameraMovement_Instruction1_2	更に、思わない物を発見する可能性もあります！
+Event_CameraMovement_ValleyTip_0	下へ見るにもかかわらず、谷底を見えない...谷に転落しないように気を付けなきゃ。
 
-Event_WarningIfNoDash_0	Um...The stings in front seems very dangerous.
-Event_WarningIfNoDash_Tip_0	Maybe I should search to see if I can get anything to go through it.
+Event_WarningIfNoDash_0	うーん...この棘は危なそうだ。
+Event_WarningIfNoDash_Tip_0	周りに探せばこれを乗り越える方法を見つけるかも。
 
-Event_Boss_NotYetBeaten_Dialog0_0	Who are you?
+Event_Boss_NotYetBeaten_Dialog0_0	君は誰ですか？
 Event_Boss_NotYetBeaten_Dialog1_0	......
-Event_Boss_NotYetBeaten_Dialog2_0	Why are you look just like me?
+Event_Boss_NotYetBeaten_Dialog2_0	なぜ僕の様子とそんなに似ますか？
 Event_Boss_NotYetBeaten_Dialog3_0	......
 
-Event_Boss_Beaten_Dialog_0	You want to practise with me?
-Event_Boss_Beaten_Dialog_1	Let's go!
+Event_Boss_Beaten_Dialog_0	俺と練習したいか？
+Event_Boss_Beaten_Dialog_1	やろう！
 
-Event_LastNote_0	The last part of this note is so blur. Has it been erased?
+Event_LastNote_0	終わりは大変ぼやけている。誰か拭ったか？
 
 Event_Opening0_0	......
-Event_Opening0_1	Who are I? Where are I?
-Event_Opening1_0	There is a cave ahead. Let's have a look.
+Event_Opening0_1	僕は誰？ここはどこ？
+Event_Opening1_0	前には洞窟がある。見てみよう。
 
-Event_FirstTimeCommandPanel_0	Before starting your adventure, you can set your commands.
-Event_FirstTimeCommandPanel_1	You can <color #00ffff>drag a command to below</color> to assign it to an action.
-Event_FirstTimeCommandPanel_2	You can also <color #00ffff>click on an assigned action</color> and <color #00ffff>press the cross button</color> to remove the command.
-Event_FirstTimeCommandPanel_3	During your adventure, you may want to reassign your commands.
-Event_FirstTimeCommandPanel_4	You can press the restart button in pause menu to restart the adventure and reassign your commands.
-Event_FirstTimeCommandPanel_5	But note that if you restart the adventure, all the progress except the collected items would also be reset.
+Event_FirstTimeCommandPanel_0	冒険前、スキルを設定します。
+Event_FirstTimeCommandPanel_1	<color #00ffff>スキルを下の方へドラッグして</color>設定します。
+Event_FirstTimeCommandPanel_2	<color #00ffff>設定したスキルを押してからキャンセルボタンを押して</color>そのスキルを取り除くこともできます。
+Event_FirstTimeCommandPanel_3	冒険の際には、スキルを改めて設定したがるかもしれません。
+Event_FirstTimeCommandPanel_4	その場合は、一時停止画面でリスタートボタンを押して冒険をリスタートしてスキルを改めて設定します。
+Event_FirstTimeCommandPanel_5	しかし、冒険をリスタートしたら、手に入ったアイテムを除いて進度は全てレセットせれます。この点をご注意ください。
 
 Event_BackToCaveEntry0_0	......
-Event_BackToCaveEntry0_1	What am I doing here?
-Event_BackToCaveEntry1_0	Ar yes, I have to search for this cave.
+Event_BackToCaveEntry0_1	何をやっているのか？
+Event_BackToCaveEntry1_0	あー、この洞窟を調査している。
 
 // Ending
-Ending1_Dialog0_0	It's been a while. You become stronger.
+Ending1_Dialog0_0	久しぶりだ。強くなったね。
 Ending1_Dialog0_1	......
-Ending1_Dialog0_2	Ar yes. You don't remember me.
-Ending1_Dialog1_0	Do I know you?
-Ending1_Dialog2_0	Sure. We both live here.
-Ending1_Dialog2_1	But then one day, you tell me you want to go out and see the world...
-Ending1_Dialog3_0	...although we all know the legend about this cave.
-Ending1_Dialog3_1	Whoever try to go out of this cave will lose everything, including memory.
-Ending1_Dialog3_2	After losing the memory, of course you will go back to the cave that just aside you...
-Ending1_Dialog4_0	So I have to live here forever without my past?
-Ending1_Dialog5_0	Don't worry. Your memory will gradually come back.
-Ending1_Dialog5_1	Also, if you try to leave again, you won't lose anything again...
-Ending1_Dialog5_2	...except the mind of going out.
-Ending1_Dialog5_3	After all, yes you're right. You have to live here forever.
+Ending1_Dialog0_2	あーそう、君は俺のことを覚えなかった。
+Ending1_Dialog1_0	僕達は知り合いますか？
+Ending1_Dialog2_0	勿論。俺らはかつて一緒にここに住んでいた。
+Ending1_Dialog2_1	でもある日、”外の世界を見に行きたい”っと言ってくれた...
+Ending1_Dialog3_0	...この洞窟の伝説をよくわかったのに。
+Ending1_Dialog3_1	洞窟を出ってみる者は記憶を含む自分の全部も失うことになる。
+Ending1_Dialog3_2	記憶を失ったら、隣のこの洞窟に戻るのは当然だろ...
+Ending1_Dialog4_0	それで、僕はずっと過去の記憶抜きでここに過ごさなければなりませんか？
+Ending1_Dialog5_0	記憶がいつも帰る。心配しないで。
+Ending1_Dialog5_1	それに、洞窟をもう一度出ってみたら、何でも失わない...
+Ending1_Dialog5_2	...ここを出たい気持ちを除いて。
+Ending1_Dialog5_3	結局、君の言うことは間違いない。君はずっとここに過ごさなければならない。
 Ending1_Dialog6_0	......
 
-Ending2_Dialog0_0	Congratulations.
-Ending2_Dialog1_0	The cave is collapsed...
-Ending2_Dialog2_0	I will not forget you.
+Ending2_Dialog0_0	おめでとう。
+Ending2_Dialog1_0	洞窟は倒壊した...
+Ending2_Dialog2_0	君を忘れることはない。
 
-Ending2_NoBoss_Dialog0_0	Oh, the cave is collapsed.
-Ending2_NoBoss_Dialog0_1	Turn out I still do not remember anything...
-Ending2_NoBoss_Dialog1_0	Anyway, let's see how it goes.
+Ending2_NoBoss_Dialog0_0	ああ、洞窟は倒壊した。
+Ending2_NoBoss_Dialog0_1	とうとうまだ何も覚えない...
+Ending2_NoBoss_Dialog1_0	もういい、何とかなる。
 
-Ending3_Dialog0_0	Why are you here!? You should have gone out of here.
-Ending3_Dialog1_0	Why do you know that?
-Ending3_Dialog1_1	Are you the one who wrote the Adventurer's notes?
-Ending3_Dialog2_0	No, but I have seen those notes.
-Ending3_Dialog2_1	Actually, I have done what you have done a long time ago.
-Ending3_Dialog2_2	I tried so hard to find the way out and I got the same answer of yours.
-Ending3_Dialog2_3	The difference is that I have seen the complete Adventurer's notes.
-Ending3_Dialog2_4	The last note mentioned that the adventurer has done some research about the tree.
-Ending3_Dialog2_5	He found that the tree actually gave support to the whole cave.
-Ending3_Dialog2_6	If the tree is gone, the cave will definitely collapse.
-Ending3_Dialog2_7	So the adventurer finially gave up. And so do I.
-Ending3_Dialog2_8	But after you told me you want to leave, I know that note will hinder you. So I erased those contents.
+Ending3_Dialog0_0	どうしてここにいるのか！？既に出て行ったはずだ。
+Ending3_Dialog1_0	何故これを知るのか？
+Ending3_Dialog1_1	もしかして冒険者手帳を書き人は君だったか？
+Ending3_Dialog2_0	いいえ。だが、読んだとこがある。
+Ending3_Dialog2_1	実際に俺は昔、君のやったこともやっていた。
+Ending3_Dialog2_2	俺は随分頑張って出る方法を探した末、君と同じの答えを見つけた。
+Ending3_Dialog2_3	違うことには、俺は冒険者手帳をすっかり読んでいた。
+Ending3_Dialog2_4	最後の手帳は冒険者があの木について研究したのを記載した。
+Ending3_Dialog2_5	その木は実はこの洞窟の全体を支えている。
+Ending3_Dialog2_6	その木が消失すればこの洞窟は倒壊するに違いない。
+Ending3_Dialog2_7	そのため冒険者はついに諦めた。俺も。
+Ending3_Dialog2_8	でも君は外へ行きたいと言ってくれた時、この手帳は君の邪魔になるに決まっていると思った。それで、部分の内容を拭った。
 Ending3_Dialog3_0	......
-Ending3_Dialog3_1	You are so stupid.
-Ending3_Dialog4_0	So do you.
-Ending3_Dialog4_1	I don't expect that you are so stupid that coming to find me even you are watching the cave collapsing.
-Ending3_Dialog5_0	I can't leave you here. Let's go out together.
-Ending3_Dialog6_0	It's too late. We both can't leave now.
-Ending3_Dialog7_0	Anyway, thank you for finding me.
+Ending3_Dialog3_1	馬鹿だ。
+Ending3_Dialog4_0	君も。
+Ending3_Dialog4_1	洞窟は倒壊しっているのを見るとも帰って俺を探して、君はそんなに愚かでは思いもよらなかった。
+Ending3_Dialog5_0	君をここに残してはいけない。一緒に出よう。
+Ending3_Dialog6_0	もう遅れた。今俺たちも出られなくちゃう。
+Ending3_Dialog7_0	とにかく、帰って俺を探してありがとう。
 
-ThankYou	Thank you for playing!
+ThankYou	遊んでくださってありがとうございます！
