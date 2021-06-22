@@ -49,6 +49,8 @@ public class GameSceneUIManager : MonoBehaviour {
     private PanelControl currentShowingPanel = null;
     private Action currentShowPanelFinishedAction = null;
 
+    private List<LocalizedTextDetails> localizedTextDetailsList;
+
     private void Awake () {
         UIEventManager.AddEventHandler (BtnOnClickType.Game_ClickOnScreen, ClickOnScreenBtnClickedHandler);
         MissionEventManager.MissionEventStarted += MissionEventStartedHandler;
@@ -58,7 +60,11 @@ public class GameSceneUIManager : MonoBehaviour {
     }
 
     private void Start () {
+        localizedTextDetailsList = new List<LocalizedTextDetails> ();
+        localizedTextDetailsList.Add (new LocalizedTextDetails (viewEnvInstructionBtnText, "ViewEnvInstruction"));
         SetTexts ();
+
+        LangManager.LangChanged += LangChangedHandler;
     }
 
     private void OnDestroy () {
@@ -67,6 +73,8 @@ public class GameSceneUIManager : MonoBehaviour {
         MissionEventManager.MissionEventFinished -= MissionEventFinishedHandler;
         MissionEventManager.SpecialSceneEventStarted -= SpecialSceneEventStartedHandler;
         MissionEventManager.SpecialSceneEventFinished -= SpecialSceneEventFinishedHandler;
+
+        LangManager.LangChanged -= LangChangedHandler;
     }
 
     public void ShowUI () {
@@ -86,8 +94,6 @@ public class GameSceneUIManager : MonoBehaviour {
     }
 
     private void SetTexts () {
-        var localizedTextDetailsList = new List<LocalizedTextDetails> ();
-        localizedTextDetailsList.Add (new LocalizedTextDetails (viewEnvInstructionBtnText, "ViewEnvInstruction"));
         LangManager.SetTexts (localizedTextDetailsList);
 
         GameUtils.AddBlackOutline (viewEnvInstructionBtnText);
@@ -315,6 +321,10 @@ public class GameSceneUIManager : MonoBehaviour {
     #endregion
 
     #region Event Handler
+
+    private void LangChangedHandler () {
+        SetTexts ();
+    }
 
     private void ClickOnScreenBtnClickedHandler (HihiButton sender) {
         if (!isAllowPanelClick) {
