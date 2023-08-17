@@ -15,6 +15,9 @@
 
 # ゲームについて
 
+https://github.com/hihilkh/demo-game-unity-metroidvania/assets/35343910/a86c46c9-e8ea-4839-a405-06b1c9b1ed9a
+
+* タイトル：Find A Way Out
 * [ダウンロード](https://github.com/hihilkh/demo-game-unity-metroidvania/releases/latest)
 * プラットホーム：アンドロイド(ARMv7)
 * 最小APIレベル：アンドロイド6.0
