@@ -4,6 +4,9 @@ Hello, I am a game developer and this is a minigame project developed with Unity
 
 # About the Game
 
+https://github.com/hihilkh/demo-game-unity-metroidvania/assets/35343910/a86c46c9-e8ea-4839-a405-06b1c9b1ed9a
+
+* Title : Find A Way Out
 * [Download](https://github.com/hihilkh/demo-game-unity-metroidvania/releases/latest)
 * Platform : Android (ARMv7)
 * Minimum API Level : Android 6.0
