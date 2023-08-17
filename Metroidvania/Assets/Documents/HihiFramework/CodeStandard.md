@@ -1,9 +1,3 @@
----
-
-**Note** : This markdown would look weird in BitBucket. Please read it by other markdown viewer.
-
----
-
 # Code Standard
 
 ## Capitalization Styles

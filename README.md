@@ -1,40 +1,54 @@
-# Introduction
 
-Hello, I am a game developer and this is a minigame project developed with Unity. After I quited my last job, I wanted to write a demo game mainly for my work portfolio. So I started this project.
+---
 
-I was playing Hollow Knight when I was thinking what this game should be about, so I was inspired by Hollw Knight and try to write a Metroidvania game. The main ideas of this game are:
+**備考**：
 
-* My target development time is 2 - 3 months.
-* My target deploying platform is mobile device (because it is the most familiar platform of mine), and I want really simple user control.
+このプロジェクトは私が来日前に作ったプロジェクトです。基本的に英語で開発しました。
 
-So I designed the system of tap, hold and release with assigned commands. I originally only want to input by 1 finger. But then I realised that I was actually making a side-scrolling game and I should use landscape orientation. You actually hold the device by 2 hands. Limiting the user to use only a finger seems a bit weird. Hence, I add the left hand input to move the camera. I originally think that it is just a dispensable function, but when I tried to play the game, I found that it is actually quite useful (how lucky).
+このREADMEは英語版のREADMEの翻訳です。英語版のREADMEは[こちらへ](./README_en.md)。
 
-During the development of the game, I find out some problems of the gameplay:
+---
 
-* User may not be easily familier with the command input because the command mapping with tap, hold and release keep changing for different missions.
-* Some commands are quite elementary (e.g. jump, air jump, turn) and it is hard to exclude them from the command mapping. So the combination of command mapping is not as free as expected. For this reason, it is also hard to add new command or design new mission. But as this game is designed as a minigame and I have no plan to expand it, it would not be a big problem.
+# 初めに
 
-Turn out the first version of this game is released after almost 4 months... and that version have not included any audio stuffs (audio is supported from v1.0.1). Currently only android version is available (.apk). iOS version is not available because I haven't joined the Apple Developer Program, and I do not have Apple mobile device for testing...
+私はゲームデベロッパーです。このプロジェクトはUnityを使って作るミニゲームです。元の会社から辞めてから、就職活動のためにこのゲームの開発を始めました。
 
-Hope you would enjoy this game!
+# ゲームについて
 
-Tony Lam
+* [ダウンロード](https://github.com/hihilkh/demo-game-unity-metroidvania/releases/latest)
+* プラットホーム：アンドロイド(ARMv7)
+* 最小APIレベル：アンドロイド6.0
+* おすすめアスペクト比：16：9
+* [リリースノート](./ReleaseNotes.md)
 
-# Standards
+## 開発経緯
 
-* [Code Standard](./Metroidvania/Assets/Documents/HihiFramework/CodeStandard.md)
-* [Unity Project File Standard](./Metroidvania/Assets/Documents/HihiFramework/UnityProjectFileStandard.md)
+開発を始める時、私はHollow Knightをしていて、メトロイドヴァニアゲームを作ろうと発想させられました。
 
-# Insufficiency of this project
+このゲームは主に下記のアイディアをもとに作られました：
 
-* The image assets are not managed very well (e.g. The pixels per unit of the sprites are different). (Drawing those images have already used up all my strength...)
-* No connection with any server/API (I do not have backend development skill...). For this reason, I do not use Asset Bundle and use Resources folder instead for the dynamic assets.
-* Not much optimization has been done. Since the game is not high demanding, it should not be a critical problem.
-* I think the scripts of character model / animation / collision / action by user input are not written very well. They are a bit messy and not so flexiable for changes.
+* 目標開発時間：2 - 3ヶ月
+* ターゲットプラットホーム：スマホ(私の一番馴染みのプラットホームですから)
+* 簡単な操作
 
-# Latest Version
+そういうわけで、スキルを`短押し`、`長押し`と`離し`三つの操作へ割り当てるというシステムを作りました。元々全部の操作も一つの指だけで済むつもりでした。でも、このゲームは横スクロールゲームであり、スマホを横向きになるはずです。つまり、普通には両手でスマホを持ちます。操作を一つの指だけで制限するのはちょっと変だと思いました。そこで、左手でカメラの位置をコントロールするという操作を追加しました。最初、この操作はゲームに対してなくても構わないと思っていましたが、実際にゲームをプレイしたら、この操作はよく役に立つと感じました。
 
-* Version : 1.0.2
-* Tag : v1.0.2
-* [Download APK](https://drive.google.com/file/d/1C7zcS4Ua7hN784H1DKBo1xtzj1f6kqHX)
-* [Release Notes](./ReleaseNotes.md)
+予想より時間がかかりまして、初めてのリリース(v1.0.0)は４ヶ月くらいかかりました。しかも、このバージョンは音声を含めていません(v1.0.1から音声を含めます)。現在、アンドロイドバージョン(.apk)だけが提供されていて、iOSバージョンが提供されていません。というのも、私はApple Developer Programに加入していなくて、また、Appleのスマホを持っていなくて、テストができないからです。
+
+このゲームをお楽しみいただければ幸いです。
+
+# 開発について
+
+* Unityバージョン：2019.4.18f1
+* [コードスタンダード](./Metroidvania/Assets/Documents/HihiFramework/CodeStandard.md)
+* [Unityプロジェクトのファイルスタンダード](./Metroidvania/Assets/Documents/HihiFramework/UnityProjectFileStandard.md)
+
+# 不足点
+
+* 操作を慣れるのは難しいです。というのも、ミッションによってスキルの割り当てが変わるからです。
+* 一部分のスキルはミッションにとってはほぼ必要不可欠(例えば、ジャンプ、空中ジャンプ、振り向き)で、これらを取り除くのはほぼ不可能になります。そういうわけで、スキルの割り当ては想像より自由ではないです。新しいスキルの追加も新しいミッションのレベルデザインも難しくなります。幸いなことに、このゲームはミニゲームで、私もこのゲームにコンテンツを追加する予定がないので、大した問題にならないと思います。
+* このゲームのアスペクト比は16：9と想定します。他のアスペクト比でのフルテストを行っていませんので、16：9ではないデバイスでゲームをするのは問題が出る可能があります。
+* 画像のアセット管理は良くないです(例えば、Spriteたちの`Pixels per unit`は違います)。(画像を作ることだけで私の力が全部消耗されました...)
+* サーバーとの接続もAPIの使用も一切ありません(バックエンドの開発技術はありませんから...)。そういうわけで、`Asset Bundle`とかの動的なアセットを使わず、`Resources`フォルダを使います。
+* 最適化をあまり行っていません。
+* キャラクターに関連するスクリプト(例えば、モデル、アニメーション、コリジョン、入力によっての行動)の設計は良くないと思います。ゲームを複雑になるにつれて、スクリプトも混乱になり、柔軟に変更できなくなりました。
