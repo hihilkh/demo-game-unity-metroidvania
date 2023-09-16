@@ -15,13 +15,18 @@
 
 # ゲームについて
 
+## デモ動画
+
 https://github.com/hihilkh/demo-game-unity-metroidvania/assets/35343910/a86c46c9-e8ea-4839-a405-06b1c9b1ed9a
 
+## 紹介
+
 * タイトル：Find A Way Out
-* [ダウンロード](https://github.com/hihilkh/demo-game-unity-metroidvania/releases/latest)
-* プラットホーム：アンドロイド(ARMv7)
-* 最小APIレベル：アンドロイド6.0
+* 概要：あなたはある洞窟にいて、そうしても洞窟から出られないです。さらに困ったことに、以前の記憶も持っていなさそうです。スキルを選んで洞窟を探索し、洞窟の謎を解明し、そして出口を探しましょう。
+* 実行環境：Android (ARMv7)
+* 最小APIレベル：Android 6.0
 * おすすめアスペクト比：16：9
+* 実行ファイルを[ダウンロード](https://github.com/hihilkh/demo-game-unity-metroidvania/releases/latest)
 * [リリースノート](./ReleaseNotes.md)
 
 ## 開発経緯
@@ -42,9 +47,16 @@ https://github.com/hihilkh/demo-game-unity-metroidvania/assets/35343910/a86c46c9
 
 # 開発について
 
+* 開発期間：2020/11 ~ 2021/04
 * Unityバージョン：2019.4.18f1
-* [コードスタンダード](./Metroidvania/Assets/Documents/HihiFramework/CodeStandard.md)
-* [Unityプロジェクトのファイルスタンダード](./Metroidvania/Assets/Documents/HihiFramework/UnityProjectFileStandard.md)
+* コードスタンダード：[詳細はこちら](./Metroidvania/Assets/Documents/HihiFramework/CodeStandard.md)
+* Unityプロジェクトのファイルスタンダード：[詳細はこちら](./Metroidvania/Assets/Documents/HihiFramework/UnityProjectFileStandard.md)
+
+# アピールポイント
+
+* このプロジェクトのゲームシステム、ストーリー、マップデザイン、画像など (音声を除く) 全て自分で考えてから作りました。プログラミングにとってもゲーム企画にとってもいい経験だと思います。
+* このゲームはスキルの組み合わせによって、キャラクターは色々なアクションができるようになります。アクションの実装とアクションによってのレベルデザインとギミックの設計を工夫しました。
+* 開発した時、保守しやすいコードを書くことを心がけていました。コードの役目をなるべくちゃんと分けました。
 
 # 不足点
 
@@ -54,4 +66,4 @@ https://github.com/hihilkh/demo-game-unity-metroidvania/assets/35343910/a86c46c9
 * 画像のアセット管理は良くないです(例えば、Spriteたちの`Pixels per unit`は違います)。(画像を作ることだけで私の力が全部消耗されました...)
 * サーバーとの接続もAPIの使用も一切ありません(バックエンドの開発技術はありませんから...)。そういうわけで、`Asset Bundle`とかの動的なアセットを使わず、`Resources`フォルダを使います。
 * 最適化をあまり行っていません。
-* キャラクターに関連するスクリプト(例えば、モデル、アニメーション、コリジョン、入力によっての行動)の設計は良くないと思います。ゲームを複雑になるにつれて、スクリプトも混乱になり、柔軟に変更できなくなりました。
+* キャラクターに関連するスクリプト(例えば、モデル、AI、アニメーション、コリジョン、入力によっての行動)の設計は良くないと思います。ゲームを複雑になるにつれて、スクリプトも膨大と混乱になり、柔軟に変更できなくなりました。

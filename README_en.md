@@ -4,13 +4,18 @@ Hello, I am a game developer and this is a minigame project developed with Unity
 
 # About the Game
 
+## Demo Video
+
 https://github.com/hihilkh/demo-game-unity-metroidvania/assets/35343910/a86c46c9-e8ea-4839-a405-06b1c9b1ed9a
 
+## Basic Information
+
 * Title : Find A Way Out
-* [Download](https://github.com/hihilkh/demo-game-unity-metroidvania/releases/latest)
+* Story : You find youself being trapped in a cave and cannot go out. Also, it seems you do not quite remember anything at the past. Choose your skills wisely to search the cave, figure out the mystery of the cave and find a way to go out of it.
 * Platform : Android (ARMv7)
 * Minimum API Level : Android 6.0
 * Recommended Aspect Ratio : 16:9
+* [Download](https://github.com/hihilkh/demo-game-unity-metroidvania/releases/latest)
 * [Release Notes](./ReleaseNotes.md)
 
 ## Development Progress
@@ -31,11 +36,18 @@ Hope you would enjoy the game!
 
 # About Development
 
+* Development Period : 2020/11 ~ 2021/04
 * Unity Version : 2019.4.18f1
 * [Code Standard](./Metroidvania/Assets/Documents/HihiFramework/CodeStandard.md)
 * [Unity Project File Standard](./Metroidvania/Assets/Documents/HihiFramework/UnityProjectFileStandard.md)
 
-# Insufficiency of this project
+# What Is Good About This Project
+
+* I thought of and implemented the whole game by myself, such as the game system, story, map design and the image assets (excluding audio assets). I think it is a good experience for both programming and game planning.
+* In this game, depending on the combination of the skills, the character can do a variety of actions. I made an effort to do the implementation of those actions and also to do the level design and gimmick design base on the actions.
+* Within the development, I kept reminding myself to write code that is easy to maintain and try my best to seperate the responsibility of the codes.
+
+# Insufficiency Of This Project
 
 * User may not be easily familier with the command input because the command mapping with tap, hold and release keep changing for different missions.
 * Some commands are quite elementary (e.g. jump, air jump, turn) and it is hard to exclude them from the command mapping. So the combination of command mapping is not as free as expected. For this reason, it is also hard to add new command or design new mission. But as this game is designed as a minigame and I have no plan to expand it, it would not be a big problem.
@@ -43,4 +55,4 @@ Hope you would enjoy the game!
 * The image assets are not managed very well (e.g. The `Pixels per unit` of the sprites are different). (Drawing those images have already used up all my strength...)
 * No connection with any server and no usage of API call (I do not have backend development skill...). For this reason, I do not use `Asset Bundle` and use `Resources` folder instead of dynamic assets.
 * Not much optimization has been done.
-* The scripts about the character (e.g. model / animation / collision / action by user input) are not well designed. As the game became more complicated, the scripts became quite messy and not so flexiable for further changes.
+* The scripts about the character (e.g. model / AI / animation / collision / action by user input) are not well designed. As the game became more complicated, the scripts became too large and messy and and not so flexiable for further changes.
