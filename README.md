@@ -5,31 +5,34 @@
 
 このプロジェクトは私が来日前に作ったプロジェクトです。基本的に英語で開発しました。
 
-このREADMEは英語版のREADMEの翻訳です。英語版のREADMEは[こちらへ](./README_en.md)。
+このREADMEは英語版のREADMEの翻訳です。英語版のREADMEは[こちら](./README_en.md)へ。
 
 ---
 
-# 初めに
-
-私はゲームデベロッパーです。このプロジェクトはUnityを使って作るミニゲームです。元の会社から辞めてから、就職活動のためにこのゲームの開発を始めました。
-
-# ゲームについて
-
-## デモ動画
+# デモ動画
 
 https://github.com/hihilkh/demo-game-unity-metroidvania/assets/35343910/a86c46c9-e8ea-4839-a405-06b1c9b1ed9a
 
-## 紹介
+# 紹介
 
 * タイトル：Find A Way Out
 * 概要：あなたはある洞窟にいて、そうしても洞窟から出られないです。さらに困ったことに、以前の記憶も持っていなさそうです。スキルを選んで洞窟を探索し、洞窟の謎を解明し、そして出口を探しましょう。
+
+### 開発について
+
+* 開発期間：2020/11 ~ 2021/04
+* Unityバージョン：2019.4.18f1
+* ソースコードのご案内：[こちら](./SourceCodeGuide.md)
+
+### 実行について
+
 * 実行環境：Android (ARMv7)
 * 最小APIレベル：Android 6.0
 * おすすめアスペクト比：16：9
 * 実行ファイルを[ダウンロード](https://github.com/hihilkh/demo-game-unity-metroidvania/releases/latest)
 * [リリースノート](./ReleaseNotes.md)
 
-## 開発経緯
+# 開発経緯
 
 開発を始める時、私はHollow Knightをしていて、メトロイドヴァニアゲームを作ろうと発想させられました。
 
@@ -44,13 +47,6 @@ https://github.com/hihilkh/demo-game-unity-metroidvania/assets/35343910/a86c46c9
 予想より時間がかかりまして、初めてのリリース(v1.0.0)は４ヶ月くらいかかりました。しかも、このバージョンは音声を含めていません(v1.0.1から音声を含めます)。現在、アンドロイドバージョン(.apk)だけが提供されていて、iOSバージョンが提供されていません。というのも、私はApple Developer Programに加入していなくて、また、Appleのスマホを持っていなくて、テストができないからです。
 
 このゲームをお楽しみいただければ幸いです。
-
-# 開発について
-
-* 開発期間：2020/11 ~ 2021/04
-* Unityバージョン：2019.4.18f1
-* コードスタンダード：[詳細はこちら](./Metroidvania/Assets/Documents/HihiFramework/CodeStandard.md)
-* Unityプロジェクトのファイルスタンダード：[詳細はこちら](./Metroidvania/Assets/Documents/HihiFramework/UnityProjectFileStandard.md)
 
 # アピールポイント
 
