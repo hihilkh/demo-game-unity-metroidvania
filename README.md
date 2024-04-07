@@ -1,65 +1,59 @@
+[![en](https://img.shields.io/badge/lang-en-red.svg)](./README.md)
+[![jp](https://img.shields.io/badge/lang-jp-green.svg)](./README.jp.md)
 
----
-
-**備考**：
-
-このプロジェクトは私が来日前に作ったプロジェクトです。基本的に英語で開発しました。
-
-このREADMEは英語版のREADMEの翻訳です。英語版のREADMEは[こちら](./README_en.md)へ。
-
----
-
-# デモ動画
+# Demo Video
 
 https://github.com/hihilkh/demo-game-unity-metroidvania/assets/35343910/a86c46c9-e8ea-4839-a405-06b1c9b1ed9a
 
-# 紹介
+# Introduction
 
-* タイトル：Find A Way Out
-* 概要：あなたはある洞窟にいて、そうしても洞窟から出られないです。さらに困ったことに、以前の記憶も持っていなさそうです。スキルを選んで洞窟を探索し、洞窟の謎を解明し、そして出口を探しましょう。
+* Title : Find A Way Out
+* Genre : Metroidvania
+* Platform : Android
 
-### 開発について
+# Story
 
-* 開発期間：2020/11 ~ 2021/04
-* Unityバージョン：2019.4.18f1
-* ソースコードのご案内：[こちら](./SourceCodeGuide.md)
+One day, you wake up and find that you are trapped in a cave and cannot go out. What's worse, it seems you do not remember anything at the past. You are going to explore the cave, figure out the mystery and find a way to escape from the cave.
 
-### 実行について
+# Game System
 
-* 実行環境：Android (ARMv7)
-* 最小APIレベル：Android 6.0
-* おすすめアスペクト比：16：9
-* 実行ファイルを[ダウンロード](https://github.com/hihilkh/demo-game-unity-metroidvania/releases/latest)
-* [リリースノート](./ReleaseNotes.md)
+The cave is separated into a few areas and first you need to select which area to explore.
 
-# 開発経緯
+The character will automatically walk horizontally. What you have to do is to select the skills to use (out of total 5 skills) to control the character in order to walk through the area. You can perform different actions by the same skill, depending on the input gesture (`Tap`, `Hold` or `Release`) and location (`on ground` or `in the air`).
 
-開発を始める時、私はHollow Knightをしていて、メトロイドヴァニアゲームを作ろうと発想させられました。
+You can check your progress within the area selection scene (e.g., if there is any items not yet been collected). Also, there are 3 endings in total. Please try to get all the items and endings. Hope you would enjoy the game!
 
-このゲームは主に下記のアイディアをもとに作られました：
+# About the Development
 
-* 目標開発時間：2 - 3ヶ月
-* ターゲットプラットホーム：スマホ(私の一番馴染みのプラットホームですから)
-* 簡単な操作
+* Development Period : 2020/11 ~ 2021/04
+* Development Environment : Unity2019.4.18f1 / C#
+* More About Source Code : [here](./SourceCodeGuide.md)
 
-そういうわけで、スキルを`短押し`、`長押し`と`離し`三つの操作へ割り当てるというシステムを作りました。元々全部の操作も一つの指だけで済むつもりでした。でも、このゲームは横スクロールゲームであり、スマホを横向きになるはずです。つまり、普通には両手でスマホを持ちます。操作を一つの指だけで制限するのはちょっと変だと思いました。そこで、左手でカメラの位置をコントロールするという操作を追加しました。最初、この操作はゲームに対してなくても構わないと思っていましたが、実際にゲームをプレイしたら、この操作はよく役に立つと感じました。
+# About the Release
 
-予想より時間がかかりまして、初めてのリリース(v1.0.0)は４ヶ月くらいかかりました。しかも、このバージョンは音声を含めていません(v1.0.1から音声を含めます)。現在、アンドロイドバージョン(.apk)だけが提供されていて、iOSバージョンが提供されていません。というのも、私はApple Developer Programに加入していなくて、また、Appleのスマホを持っていなくて、テストができないからです。
+* [Download APK File](https://github.com/hihilkh/demo-game-unity-metroidvania/releases/latest)
+* Platform : Android (ARMv7)
+* Minimum API Level : Android 6.0
+* Recommended Aspect Ratio : 16:9
+* [Release Notes](./ReleaseNotes.md)
 
-このゲームをお楽しみいただければ幸いです。
+# Self Evaluation
 
-# アピールポイント
+### What I Have Learned
 
-* このプロジェクトのゲームシステム、ストーリー、マップデザイン、画像など (音声を除く) 全て自分で考えてから作りました。プログラミングにとってもゲーム企画にとってもいい経験だと思います。
-* このゲームはスキルの組み合わせによって、キャラクターは色々なアクションができるようになります。アクションの実装とアクションによってのレベルデザインとギミックの設計を工夫しました。
-* 開発した時、保守しやすいコードを書くことを心がけていました。コードの役目をなるべくちゃんと分けました。
+* In this project, I have done all the designs and implementations of the whole game, including the game system, story, map design and the image assets (excluding audio assets). I think it is a good experience for both programming and game planning.
+* Depending on the combination of the skills, the character can do quite a lot of things. I made an effort to do the implementation of those actions and also to do the level design and gimmick design based on the actions.
+* Within the development, I kept reminding myself to write code that is easy to maintain and try my best to separate the responsibility of the codes. For example,
+	* I used ScriptableObject to store character and enemies status. 
+	* I have separated the player scripts into model, controller, camera, audio, different attacks, StateMachineBehaviour of animations, etc.
+	* I have made my own game framework for some generic features, such as logging, audios, localization, game configuration.
 
-# 不足点
+### Insufficiency
 
-* 操作を慣れるのは難しいです。というのも、ミッションによってスキルの割り当てが変わるからです。
-* 一部分のスキルはミッションにとってはほぼ必要不可欠(例えば、ジャンプ、空中ジャンプ、振り向き)で、これらを取り除くのはほぼ不可能になります。そういうわけで、スキルの割り当ては想像より自由ではないです。新しいスキルの追加も新しいミッションのレベルデザインも難しくなります。幸いなことに、このゲームはミニゲームで、私もこのゲームにコンテンツを追加する予定がないので、大した問題にならないと思います。
-* このゲームのアスペクト比は16：9と想定します。他のアスペクト比でのフルテストを行っていませんので、16：9ではないデバイスでゲームをするのは問題が出る可能があります。
-* 画像のアセット管理は良くないです(例えば、Spriteたちの`Pixels per unit`は違います)。(画像を作ることだけで私の力が全部消耗されました...)
-* サーバーとの接続もAPIの使用も一切ありません(バックエンドの開発技術はありませんから...)。そういうわけで、`Asset Bundle`とかの動的なアセットを使わず、`Resources`フォルダを使います。
-* 最適化をあまり行っていません。
-* キャラクターに関連するスクリプト(例えば、モデル、AI、アニメーション、コリジョン、入力によっての行動)の設計は良くないと思います。ゲームを複雑になるにつれて、スクリプトも膨大と混乱になり、柔軟に変更できなくなりました。
+* Users may not be easily familier with the control because the skill table (the selected skills) may keep changing in different areas of the cave.
+* Some skills (e.g., jump, air jump, turn) are quite elementary and it is hard to exclude them from the skill table. So the combination of skill table is not as free as expected. For this reason, it is also hard to add new skills or design new areas. Fortunately, the story and contents of this game is decided and I have no plan to expand it, so it is not a big problem.
+* The game is primarily designed for 16:9 aspect ratio and I have not done a full testing for other aspect ratio. It may have problem while playing with devices with aspect ratio other than 16:9.
+* The image assets are not managed very well (e.g., the pixels per unit of the sprites are not consistent). (Drawing the images has already exhausted all of my strength...)
+* Asset bundle or addressable are not used. Only the Resources folder is used for simplicity sake.
+* Not much optimization has been done.
+* The scripts about the character (e.g., model / AI / animation / collision / action by user input) are not well designed. As the game became more complicated, the scripts became too large and messy and not so flexiable for further changes.
